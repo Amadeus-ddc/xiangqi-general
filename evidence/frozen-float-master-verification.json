@@ -1,0 +1,60 @@
+{
+  "mode": "bridge",
+  "courses": [
+    "move_quality"
+  ],
+  "mixture": {
+    "move_quality": 1.0
+  },
+  "steps_completed": 2,
+  "selected_step": 0,
+  "world_size": 1,
+  "global_batch_size": 4,
+  "supervised_tokens_seen": 24,
+  "training_loss_normalization": "token",
+  "validation_loss_normalization": "token",
+  "deterministic_training": true,
+  "cublas_workspace_config": ":4096:8",
+  "initial_validation_nll": 1.0444053411483765,
+  "final_validation_nll": 1.0444053411483765,
+  "zero_memory_validation_nll": 10.689712524414062,
+  "shuffled_memory_validation_nll": 2.592219829559326,
+  "trainable_parameters": 139920416,
+  "trainable_parameter_dtypes": {
+    "torch.float32": 139920416
+  },
+  "frozen_base_verified": true,
+  "decoder_training": "frozen",
+  "decoder_parameter_dtype": "torch.bfloat16",
+  "frozen_parameter_dtypes": {
+    "torch.bfloat16": 4022468096
+  },
+  "compute_dtype": "torch.bfloat16",
+  "selected_decoder_probe_max_change": null,
+  "frozen_parameter_gradients_verified": true,
+  "nonzero_gradients": true,
+  "generation_examples": 0,
+  "generation_exact_matches": 0,
+  "peak_allocated_gib": 12.890120029449463,
+  "seconds": 69.04064381401986,
+  "purpose": "Two-step actual frozen-decoder FP32 master execution verification; not trained model strength",
+  "feature_cache_sha256": "15b5454ae37c7280a6edc18e7c7ceb14f6efe90cb11ce9baa33b074f9f0dbc26",
+  "source_manifest_sha256": "57edfc1627405886ff7f6988987b534eda690edcbedfaffa23b01129d25c1581",
+  "all_output_hashes_read_back": true,
+  "scope": "two-step actual mixed-precision execution; not a strength comparison or exact full-decoder continuation",
+  "actual_latest_board_parameter_updates": {
+    "base.model.embed_tokens.board_weight": {
+      "maximum_absolute_change": 2.0153820514678955e-06,
+      "changed_elements": 268800,
+      "total_elements": 268800
+    },
+    "base.lm_head.board_weight": {
+      "maximum_absolute_change": 2.0153820514678955e-06,
+      "changed_elements": 268297,
+      "total_elements": 268800
+    }
+  },
+  "initial_checkpoint_sha256": "90321e8467810ca9c42b3513dd0cbd6abd3ac87f8cb68490b5ad7c117ebe87d9",
+  "latest_checkpoint_sha256": "85bb6feb8a69a84862e1fa665ee2bd5e9d556db982298911c8ac0f84fb631350",
+  "initial_metadata_failure_preserved": "runs/frozen-float-master-verification/verification-failure.json"
+}

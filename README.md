@@ -105,9 +105,11 @@ python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
   --replay-data data/research-balanced-v1 --output data/move-quality-v1
 python -m xqgeneral.cache_features --data data/move-quality-v1 \
   --output data/move-quality-v1/features-16.pt --depths 0 1 2 3 4 5 6 8 9 10 11 12 14 15 17 19
-python -m xqgeneral.sft --recipe configs/move-quality-v1.json \
-  --init DICTIONARY_COURSE_CHECKPOINT.pt --output runs/move-quality-v1/bridge/training
+python -m xqgeneral.sft --recipe configs/move-quality-v2.json \
+  --init DICTIONARY_COURSE_CHECKPOINT.pt --output runs/move-quality-v2/bridge/training
 ```
+
+冻结解码器时，`trainable_parameter_dtype: float32` 将桥接、棋盘词元或 LoRA 参数保留为 FP32，计算继续使用 BF16；棋盘词元输出匹配冻结解码器精度。`configs/move-quality-v2.json` 启用此设置。旧配置默认 `base`，续训不能更改精度合同。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
