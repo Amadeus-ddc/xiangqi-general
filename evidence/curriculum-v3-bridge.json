@@ -1,0 +1,148 @@
+{
+  "courses": [
+    {
+      "mode": "bridge",
+      "courses": [
+        "static_current"
+      ],
+      "mixture": {
+        "static_current": 1.0
+      },
+      "steps_completed": 1500,
+      "selected_step": 1125,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 101213,
+      "initial_validation_nll": 7.74421105233591,
+      "final_validation_nll": 0.06786463343939717,
+      "zero_memory_validation_nll": 12.915881300150458,
+      "shuffled_memory_validation_nll": 0.15308325769772418,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "decoder_training": "frozen",
+      "decoder_parameter_dtype": "torch.bfloat16",
+      "compute_dtype": "torch.bfloat16",
+      "selected_decoder_probe_max_change": null,
+      "frozen_parameter_gradients_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 22,
+      "peak_allocated_gib": 22.104722499847412,
+      "seconds": 2801.4939680127427,
+      "purpose": "Controlled explicit-board experiment: identical square dictionary for expert and text arms, preserving oracle-free raw generation",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current"
+      ],
+      "mixture": {
+        "static_current": 0.1,
+        "dynamic_current": 0.9
+      },
+      "steps_completed": 1375,
+      "selected_step": 875,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 145387,
+      "initial_validation_nll": 3.7640455806238853,
+      "final_validation_nll": 0.3946736452645039,
+      "zero_memory_validation_nll": 12.067443721027296,
+      "shuffled_memory_validation_nll": 0.6996758738700121,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "decoder_training": "frozen",
+      "decoder_parameter_dtype": "torch.bfloat16",
+      "compute_dtype": "torch.bfloat16",
+      "selected_decoder_probe_max_change": null,
+      "frozen_parameter_gradients_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 17,
+      "peak_allocated_gib": 22.38280963897705,
+      "seconds": 2505.221969555132,
+      "purpose": "Controlled explicit-board experiment: identical square dictionary for expert and text arms, preserving oracle-free raw generation",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.08,
+        "static_future": 0.86
+      },
+      "steps_completed": 1500,
+      "selected_step": 1125,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 105744,
+      "initial_validation_nll": 0.5272517980253495,
+      "final_validation_nll": 0.31486170300985317,
+      "zero_memory_validation_nll": 9.390895689923338,
+      "shuffled_memory_validation_nll": 0.45277331912307284,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "decoder_training": "frozen",
+      "decoder_parameter_dtype": "torch.bfloat16",
+      "compute_dtype": "torch.bfloat16",
+      "selected_decoder_probe_max_change": null,
+      "frozen_parameter_gradients_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 17,
+      "peak_allocated_gib": 22.898290634155273,
+      "seconds": 2889.881850820966,
+      "purpose": "Controlled explicit-board experiment: identical square dictionary for expert and text arms, preserving oracle-free raw generation",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future",
+        "dynamic_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.06,
+        "static_future": 0.08,
+        "dynamic_future": 0.8
+      },
+      "steps_completed": 1375,
+      "selected_step": 875,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 143988,
+      "initial_validation_nll": 0.5540598248949473,
+      "final_validation_nll": 0.3317014807847824,
+      "zero_memory_validation_nll": 9.251438097637626,
+      "shuffled_memory_validation_nll": 0.42357672999974677,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "decoder_training": "frozen",
+      "decoder_parameter_dtype": "torch.bfloat16",
+      "compute_dtype": "torch.bfloat16",
+      "selected_decoder_probe_max_change": null,
+      "frozen_parameter_gradients_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 18,
+      "peak_allocated_gib": 23.09076499938965,
+      "seconds": 2566.3871807819232,
+      "purpose": "Controlled explicit-board experiment: identical square dictionary for expert and text arms, preserving oracle-free raw generation",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    }
+  ],
+  "replay_mixtures_verified": true,
+  "source_manifest_sha256": "71b20c002619c39123dd7d542ecdd697e8a0f7057c3ec353f6b0c880e6ef22fd",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "completed explicit-board four-course bridge experiment; generation quality evaluated separately"
+}

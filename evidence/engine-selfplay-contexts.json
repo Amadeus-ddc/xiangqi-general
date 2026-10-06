@@ -1,0 +1,39 @@
+{
+  "games": 128,
+  "game_statuses": {
+    "completed": 112,
+    "censored": 16
+  },
+  "termination_reasons": {
+    "checkmate_or_stalemate_loss": 95,
+    "AXF_repetition_or_move_limit": 17,
+    "ply_limit": 16
+  },
+  "contexts": 2937,
+  "by_side": {
+    "w": 1466,
+    "b": 1471
+  },
+  "rejected": {
+    "duplicate_history": 851
+  },
+  "heldout_root_or_future_overlap": 0,
+  "unscored_search_retries": 23,
+  "full_histories_preserved": true,
+  "all_contexts_training_only": true,
+  "neural_prose_generated": false,
+  "training_labels_generated": false,
+  "censored_games_counted_as_draws": false,
+  "source_manifest_sha256": "a751f887be38e39ec976df8f596ae22ab5644b09328c88f358370c9537b4f9e3",
+  "all_output_hashes_read_back": true,
+  "all_context_histories_replayed": true,
+  "evidence_state": "reconstructed_baseline",
+  "failed_first_attempt_preserved": {
+    "log": "runs/engine-selfplay-train-v1.log",
+    "complete_games": 25,
+    "reproduced_error": "Engine completed without a scored best-move candidate",
+    "failure_sha256": "1ab83524a48e78da780d43b7acb89e686753d7c21b5d9ee2ec748dda0a1382f7",
+    "actual_10000_node_retry_sha256": "62d8a7088cac037d113d5ccfcafecdddbdd20fa46640580f1241451ce8cc1a37"
+  },
+  "scope": "train-only self-play contexts; new labels and neural prose not claimed"
+}

@@ -7,7 +7,7 @@
 - 原型基线保留：冻结 Px0 与 Qwen，四个 384 宽桥接块，80 步静态课程；12 条生成样例中 8 条正确。这仅证明链路可执行。
 - 原生输入编码：原始 102 个局面逐平面一致。
 - 完整网络数值对照：34 个局面，2062 个策略输出、胜和负、剩余步数与四层特征均一致。胜和负最大误差 `6.85e-7`，策略最大误差 `5.60e-6`。参考为官方 C++ 编码器与未修改的 C++ ONNX 导出器，通过 ONNX Runtime CPU 执行。证据见 `evidence/native-network.json`。
-- 46 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。新增检查验证样本损失权重、梯度累积、续训精度合同，以及规则约束对非法高分词元、提前结束和终局历史的处理。独立走法评测拒收非法或终局后走法，并按原始输出统计全样本与合法样本条件指标。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
+- 50 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。新增检查验证样本损失权重、梯度累积、续训精度合同、合法词元树、自对弈截尾与完整历史、补充局面归属及未来局面隔离。独立走法评测拒收非法或终局后走法，并按原始输出统计全样本与合法样本条件指标。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
 - 课程数据生成器加入空格、零数量、棋子位置、子力、吃子、将军与未来非法反例；训练/验证/测试按棋局划分并检查当前及未来局面重叠。
 - Git 已建立，原始原型有独立基线提交。软件包改名 `xqgeneral`；本地目录已同步改名为 `xiangqi-general`，项目环境与可编辑安装路径已修复。
 - [GitHub 仓库](https://github.com/Amadeus-ddc/xiangqi-general) 已同步并合并首个源码里程碑；Python 3.11/3.12 的 CPU CI 均通过。
@@ -35,6 +35,9 @@
 - 冻结 Px0 自身的原生合法策略在相同 192 个验证局面中有 191 个无明显失误。见 `evidence/frozen-expert-move-validation.json`。它显式使用规则合法走法掩码，没有语言解码器；该结果用于定位专家能力与语言模型之间的差距，不能算成桥接模型棋力。
 - 两门课程后走法模型的可选规则约束解码已实测：192 题全部输出合法，167 个无明显失误（87.0%）。模型在合法词元树内按自身概率选招，没有引擎选招或替换。见 `evidence/move-quality-warm-legal-validation.json`。合法率由规则保证，该模式与原始生成分别报告，不评测讲解。
 - 同一走法模型完成 12 局规则约束对弈：两种固定开局交换红黑，对皮卡鱼 100/1000/10000 节点各四局，总计 1 胜 11 负，零非法弃权、零截尾；唯一胜局来自 100 节点组。完整历史、逐步原始答案及终局均保存，输出哈希已读回；见 `evidence/move-quality-warm-legal-matches.json`。这证明合法输出不足以带来强棋力，未换算 Elo。
+- 棋盘字典对照两组均完成四门课程，专家组执行 1500/1375/1500/1375 步，纯语言组均为 1500 步。264 道平衡验证题的原始正确率分别为 73.9% / 72.7%；专家打乱后为 68.9%。吃子题仍弱，专家组当前吃子题仅 1/12 正确、未来吃子题为 0/12，纯语言组两者均为零。原始回答显示了实际走法错误，不能据总体问答正确率宣称强棋力。见 `evidence/curriculum-v3-{bridge,text}.json` 与对应问答证据；字典输入属于论文条件以外的改动。
+- 128 局引擎自对弈已完成，112 局裁定终局、16 局截尾；去除 851 个重复完整历史后保留 2937 个训练上下文，红黑分别 1466/1471。全部历史及未来变化已重新回放，与保留集根/未来局面重叠为零，输出哈希全部读回。实际触发 23 次缺评分搜索重试，失败输出均保留。见 `evidence/engine-selfplay-contexts.json`。这些是上下文，尚不证明补训收益或讲解质量。
+- 扩充讲解 SFT 第 512 步中间检查点完成相同 96 个验证局面的原始评测：74 个可解析、60 个推荐走法合法、50 个无明显失误；只有 2 个完整主变化合法，完整结构合同为零。见 `evidence/explanation-v3-interim-512.json`。走法较前一版改善，但正文仍出现原地走法及虚构交换；训练预算、数据和初始化同时改变，不能归因于单项改动。
 - 搜索挖掘、真实 BF16 汇总收集及完整对弈入口已实现并通过受控测试，真实搜索蒸馏与讲解模式对弈结果尚待产生。
 - 终端学习入口支持棋盘显示、推荐讲解、悔棋和完整历史保存/续读；命令行入口已检查，真实训练模型的学习体验仍待验证。
 
@@ -42,14 +45,13 @@
 
 - 红黑平衡数据上的扩大纯语言基线已完成四门课程，执行 4000/2750/4000/3250 步，264 道平衡验证问答正确率为 51.9%；见 `evidence/curriculum-v2-text.json`。完整讲解 SFT 与 96 根局面评测均已完成。
 - Astra 已生成新增 579 个训练根局面的初始讲解，并对新增训练项抽检 72 条；一处“回吃”表述已修正并复核。合并后的 1,315 条原始标注与颜色派生项共 2,630 条（2182 训练、192 验证、256 测试），全部结构校验与输出哈希读回通过；验证/测试文件与原版本字节一致。共 144 条神经抽检，见 `evidence/initial-teacher-full.json`。
-- 棋盘字典对照两组正在执行四门课程，配置 `configs/research-v3.json`。双方第一门课程均在 24 条生成样例中答对 22 条，不能推广为整体正确率。这是论文专家输入条件以外的改动，结果与专家消融需单独报告。
-- 四门字典课程完成后，两组将自动进入 `configs/move-quality-v2.json` 的真实引擎走法课程，再进行讲解训练。课程按验证集选检查点。
+- 四门字典课程已完成，两组均在执行 `configs/move-quality-v2.json` 的真实引擎走法课程。课程按验证集选检查点；随后执行讲解训练。
 - 第二门字典课程后的走法预训练及全量消融均已完成。其选定检查点已开始 `configs/explanation-sft-v3.json` 的扩充讲解 SFT；这是自适应的额外实验，四门课程的匹配对照仍单独进行。
 - 扩充讲解收集与数据检查已完成。后续 `configs/explanation-sft-v3.json` 按样本平均损失混合讲解、走法题及四门基础课程回放，完整解码器两步 GPU 执行检查已通过。
 - 扩充初始讲解 SFT 与实际分支搜索蒸馏。
 - 相同数据预算的纯语言模型基线、专家桥接与蒸馏比较。
 - 独立走法质量、解释事实和完整对弈评测。
-- 根据弱对手对弈失败补充引擎自对弈的开局、中局训练上下文；此前随机合法棋局及其搜索子局面不足以代表实战分布。
+- 根据弱对手对弈失败补充引擎自对弈的开局、中局训练上下文；此前随机合法棋局及其搜索子局面不足以代表实战分布。生成器仅产生训练上下文，不生成神经讲解；补充局面再经独立搜索才能形成走法标签。
 - 开源发布资产、可复现入口、GitHub CI 与里程碑同步。
 
 ## 结果解释
@@ -60,10 +62,12 @@
 
 ## 当前运行与续跑
 
-- 完整教师验证已完成，日志与输出位于 `runs/consolidator-weight-verification.log`、`runs/consolidator-verification-v1/`。GPU 3 字典纯语言课程已从保存的第 1000 步恢复。
-- 字典专家组四门课程已完成；纯语言组仍运行 `xqgeneral-v3-text-resume`（GPU 3），日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log`。
+- 完整教师验证已完成，日志与输出位于 `runs/consolidator-weight-verification.log`、`runs/consolidator-verification-v1/`。
+- 字典专家组和纯语言组四门课程及问答验证均已完成，日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log` 与 `runs/research-v3-{bridge,text}-qa-validation.log`。
 - 两组首轮讲解训练及原始输出评测均已完成。扩充讲解训练：`xqgeneral-explanation-v3-warm-bridge`（GPU 1），日志 `runs/explanation-v3-warm-bridge.log`；初始化与验证门槛见 `runs/explanation-v3-warm/bridge/plan.json`。
-- 正式走法课程：`xqgeneral-move-quality-v2-bridge`（GPU 2）已启动；`xqgeneral-move-quality-v2-text_lora`（GPU 3）等待对应四门课程完成。日志 `runs/move-quality-v2-{bridge,text_lora}.log`。
+- 正式走法课程：`xqgeneral-move-quality-v2-bridge`（GPU 2）与 `xqgeneral-move-quality-v2-text_lora`（GPU 3）均已启动。日志 `runs/move-quality-v2-{bridge,text_lora}.log`。
+- 讲解中间检查：`xqgeneral-explanation-v3-interim-512`（GPU 0），日志 `runs/explanation-v3-interim-512.log`；原子保存的最佳检查点通过硬链接固定，后续训练不会替换该评测输入。
+- 自对弈上下文已完成；`xqgeneral-selfplay-policy-v1` 正在独立搜索新局面，随后在 GPU 0 缓存特征。日志 `runs/engine-selfplay-train-v2.log`、`runs/selfplay-policy-v1.log`，精确命令及续跑说明在对应 `runs/*/plan.json`。首次 1000 节点运行因推荐走法没有完整评分而失败；相同局面真实重试 10000 节点成功，原始失败与复现保留于 `runs/engine-selfplay-debug-v1/`。新生成器仅对这一明确错误进行一次较大预算重试，并保存失败输出。
 - 可选约束解码的验证与 12 局对弈已完成：`runs/move-quality-warm-v1/legal-validation/` 与 `runs/move-quality-warm-v1/legal-matches/`。
 - 完成的课程纯语言基线问答与专家最佳讲解检查点验证日志：`runs/research-v2-text-qa-validation.log` 与 `runs/explanation-v2-bridge-validation.log`。完成的走法裁判检查日志：`runs/move-quality-v1-pre-curriculum-validation.log`。
 - 走法早期实验与消融已完成：`runs/move-quality-warm-v1.log` 与 `runs/move-quality-warm-v1/final-validation/`；初始化范围见 `runs/move-quality-warm-v1/plan.json`。
