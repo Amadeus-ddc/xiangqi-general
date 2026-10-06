@@ -7,9 +7,10 @@ import random
 
 from .calibration import candidate_probability, evaluation_probability
 from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, position_key, write_jsonl
-from .explanations import EXPLANATION_QUESTION, line_facts, move_facts, parse_explanation, validate_explanation
+from .explanations import (EXPLANATION_QUESTION, continuation_positions, line_facts, move_facts,
+                           parse_explanation, validate_explanation)
 from .oracle import Pikafish
-from .rules import adjudicate, legal_moves, play, side
+from .rules import adjudicate, legal_moves, piece_map, piece_name, play, side
 
 
 def first_divergence(fen, before, after):
@@ -50,9 +51,13 @@ def reserved_positions(data):
     positions = set()
     for split in ['validation', 'test']:
         for row in load_jsonl(Path(data) / f'{split}.jsonl'):
-            fen = row['fen']; positions.add(position_key(fen))
-            for move in row.get('future_moves', []):
-                fen = play(fen, move); positions.add(position_key(fen))
+            positions.add(position_key(row['fen']))
+            for line in [row.get('future_moves', []), *row.get('future_branches', [])]:
+                fen = row['fen']
+                for move in line:
+                    fen = play(fen, move); positions.add(position_key(fen))
+            if row.get('stage') == 'explanation':
+                positions.update(continuation_positions(row, parse_explanation(row['answer'])))
     return positions
 
 
@@ -84,6 +89,12 @@ class SearchMiner:
         try:
             value = parse_explanation(raw)
             proof = validate_explanation(row['fen'], value)
+            if proof['valid']:
+                try:
+                    continuation_positions(row, value)
+                except ValueError:
+                    proof['valid'] = False
+                    proof['errors'].append('invalid_history_continuation')
         except (ValueError, TypeError, KeyError, IndexError):
             value, proof = None, {'valid': False, 'errors': ['invalid_json']}
         return {'raw': raw, 'analysis': value, 'verification': proof}
@@ -136,6 +147,8 @@ class SearchMiner:
                     offending = offending or child
                     continue
                 analysis = generation['analysis']
+                if continuation_positions(child, analysis) & self.reserved:
+                    return None, trace, 'reserved_child_continuation'
                 engine = self.analyze(child)
                 p_best = self.move_probability(child, engine['best_move'], engine)
                 p_move = self.move_probability(child, analysis['move'], engine)
@@ -180,8 +193,11 @@ class SearchMiner:
                                    for c in children],
                       'evaluation': {'type': best_candidate['score_type'], 'value': best_candidate['score'],
                                      'perspective': 'side_to_move'}, 'facts': move_facts(root['fen'], selected['move'])}
-            content = {'root_side': side(root['fen']), 'target_fields': target,
-                       'root_line_facts': [{'move': c['move'], 'facts': line_facts(root['fen'], c['root_pv'])}
+            content = {'root_side': side(root['fen']), 'root_fen': root['fen'],
+                       'root_board': {square: piece_name(piece) for square, piece in piece_map(root['fen']).items()},
+                       'target_fields': target,
+                       'root_line_facts': [{'move': c['move'], 'facts': line_facts(root['fen'], c['root_pv'],
+                                                                               include_positions=True)}
                                            for c in children],
                        'verified_child_analyses': [{'move': c['move'], 'analysis': c['analysis'],
                                                      'terminal_outcome': c.get('outcome')} for c in children]}
@@ -257,6 +273,7 @@ def main():
     proof = {'processed': len(results), 'accepted_for_consolidation': len(accepted),
              'reasons': dict(Counter(r['reason'] for r in results)), 'new_session_counters': dict(miner.counts),
              'training_roots_only': True, 'heldout_positions_excluded': True,
+             'all_child_branch_positions_isolated': True, 'full_history_termination_checked': True,
              'strict_pv_improvement_required': True, 'probability_model': 'pinned_Pikafish_material_WDL',
              'teacher_consolidation_executed': False, 'student_generations_preserved': True}
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', vars(args), input_paths,

@@ -1,0 +1,32 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "pre_fix_revision": "cd42fda6fddee65f0a7f843910b024034a10de9b",
+  "pre_fix_code_sha256": {
+    "src/xqgeneral/search_distillation.py": "a605ae16e2aa4c834e6016f2de85287e2caca7a97992b5a09d7c8b60b10dabca",
+    "src/xqgeneral/explanations.py": "35e84474e6f3b01af50b7452d7b72badbfc214e807e16fc4273294494556833c"
+  },
+  "reproduced_failures": [
+    "heldout second-ply child continuation accepted for consolidation",
+    "FEN-legal child PV continued after complete-history repetition terminal"
+  ],
+  "regression_tests_failed_before_fix": 2,
+  "focused_tests_passed_after_fix": 12,
+  "full_CPU_tests_passed": 60,
+  "checks": [
+    "all generated child branches replay with initial FEN and complete history",
+    "all child continuation positions checked against heldout union",
+    "collected labels preserve primary and candidate future lines",
+    "split verifier considers distinct branches even with identical root and primary PV",
+    "heldout explanation answers expand reserved positions even without future metadata",
+    "missing candidate branches and terminal extensions rejected before label assembly"
+  ],
+  "test_source_sha256": {
+    "tests/test_search_distillation.py": "506ebcbbd9a0039bd016c50c34ce805da720e320d89a10d5f66b85c5b3092465",
+    "tests/test_search_collection.py": "5a04f14886397895ee2a6ad67e99a5c7726b62855a1d0e853e91a8633015d781"
+  },
+  "limits": [
+    "Controlled regression tests, not trained-model quality",
+    "Actual search pilot remains separate",
+    "No independent test result or human prose rating"
+  ]
+}

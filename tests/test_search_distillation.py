@@ -2,7 +2,8 @@ import json
 import pytest
 from xqgeneral.calibration import evaluation_probability
 from xqgeneral.explanations import move_facts
-from xqgeneral.rules import START_FEN, play
+from xqgeneral.rules import START_FEN, play, replay
+from xqgeneral.evidence import history_key, position_key
 from xqgeneral.search_distillation import SearchMiner, descend, first_divergence, root_evaluation
 
 
@@ -73,6 +74,10 @@ def test_actual_mining_contract_improves_pv_and_only_injects_when_all_candidates
         assert query['target_fields']['evaluation']['value'] == 200
         assert trace[0]['injected_oracle_move'] == inject
         assert query['selected_root_move_loss'] == 0
+        content = json.loads(query['messages'][1]['content'])
+        assert content['root_fen'] == START_FEN and content['root_board']['e0'] == '红帅'
+        first = content['root_line_facts'][0]['facts'][0]
+        assert first['fen_before'] == START_FEN and first['fen_after'] == play(START_FEN, first['move'])
 
 
 def test_incorrect_child_forces_recursion_instead_of_oracle_replacing_its_analysis():
@@ -81,3 +86,27 @@ def test_incorrect_child_forces_recursion_instead_of_oracle_replacing_its_analys
     assert query is None and reason == 'recursion_limit'
     assert trace[0]['children'][0]['verification']['errors'] == ['incorrect_move_facts']
     assert miner.counts['recursive_descents'] == 1
+
+
+def test_search_rejects_heldout_continuation_beyond_the_immediate_child():
+    reserved = {position_key(replay(START_FEN, ['b0c2', 'b9c7'])[-1])}
+    miner = SearchMiner(ControlledPredictor(), ControlledOracle(), reserved)
+    query, trace, reason = miner.mine(root_record())
+    assert query is None and reason == 'reserved_child_continuation'
+
+
+def test_child_analysis_cannot_extend_a_terminal_repetition():
+    moves = (['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2)[:-1]
+    history = replay(START_FEN, moves)
+    row = dict(root_record(), moves=moves, history=history, fen=history[-1], feature_key=history_key(history))
+
+    class Predictor:
+        def generate(self, record, question, max_new_tokens):
+            return json.dumps({'move': 'c7b9', 'pv': ['c7b9', 'b0c2'], 'candidates': ['c7b9'],
+                'facts': move_facts(record['fen'], 'c7b9'),
+                'evaluation': {'type':'cp', 'value':0, 'perspective':'side_to_move'},
+                'explanation':'按原始棋盘检查变化，不得在完整历史终局以后继续。'}, ensure_ascii=False)
+
+    result = SearchMiner(Predictor(), None, set()).model_analysis(row)
+    assert not result['verification']['valid']
+    assert 'invalid_history_continuation' in result['verification']['errors']

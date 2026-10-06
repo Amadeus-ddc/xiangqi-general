@@ -128,16 +128,18 @@ def verify_splits(rows):
         s = row["split"]
         games.setdefault(s, set()).add(row["game_id"])
         roots.setdefault(s, set()).add(position_key(row["fen"]))
-        key = (s, row['fen'], tuple(row.get('future_moves', [])))
+        lines = [row.get('future_moves', []), *row.get('future_branches', [])]
+        key = (s, row['fen'], tuple(tuple(line) for line in lines))
         if key in seen:
             continue
         seen.add(key)
         positions = future.setdefault(s, set())
         positions.add(position_key(row["fen"]))
-        fen = row["fen"]
-        for move in row.get("future_moves", []):
-            fen = play(fen, move)
-            positions.add(position_key(fen))
+        for line in lines:
+            fen = row["fen"]
+            for move in line:
+                fen = play(fen, move)
+                positions.add(position_key(fen))
     splits = sorted(games)
     for i, s in enumerate(splits):
         for t in splits[i + 1:]:
