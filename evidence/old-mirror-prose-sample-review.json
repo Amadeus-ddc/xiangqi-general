@@ -1,0 +1,37 @@
+{
+  "population_train_mirrors": 3139,
+  "sample": 384,
+  "sampling": "fixed-seed uniform sample without replacement",
+  "seed": 20261034,
+  "original_accept": 350,
+  "original_revision_requested": 34,
+  "final_revisions_independently_accepted": 34,
+  "first_revision_rejects": 1,
+  "root_independent_rule_replayed_branches": 1123,
+  "root_independent_rule_replayed_plies": 6658,
+  "full_history_and_structure_valid": true,
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "human_rating": false,
+  "source_training_labels_modified": false,
+  "completed_training_benefit_measured": false,
+  "heldout_labels_reviewed": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Sampled neural prose review, not a full-population or human quality rating",
+    "Generic unambiguous piece names alone do not cause rejection; requested revisions include minor score wording",
+    "Existing experiments keep their original data; revised annotations are a separate future input"
+  ],
+  "all_annotation_and_review_hash_bindings_verified": true,
+  "all_output_hashes_read_back": true,
+  "manifest_sha256": "85f2229629423a4828e6a7db01a2d4f09578199843e949adbcda6b427deed8fd",
+  "review_file_sha256": {
+    "data/old-mirror-prose-review-v1/manifest.json": "336b0f1ec3380139f7b6ec12dafa81a08c8df9fad05335a20b2028c49f6e5499",
+    "data/old-mirror-prose-review-v1/review-0.json": "d197bf6686ef243329ee8492118c735d1433e447811d8df00b73fb113d41dbdf",
+    "data/old-mirror-prose-review-v1/correction-review-0.json": "69670399c53be78998eeb1603eccaa1639effd6c48c06683a32f440e0df43478",
+    "data/old-mirror-prose-review-v1/correction-review-0-round2.json": "80e65637892bc67bfac55337dcdc349870ad7149bb79901e7b96aed19d513745",
+    "data/old-mirror-prose-review-v1/review-1.json": "c464ad867857b3abc7ec70cedf634f45f576a764d8dc1590749496643ea3fc6f",
+    "data/old-mirror-prose-review-v1/correction-review-1.json": "7fab69ba438d8690deb4ddc91b3aa1f3b0390b16d05f9d44fd4e9e8ceb8d2285"
+  }
+}

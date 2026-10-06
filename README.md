@@ -82,6 +82,16 @@ python -m xqgeneral.collect_teacher --input data/astra-seed-full-v1 \
 
 ## 讲解训练与搜索蒸馏
 
+对已有训练讲解的审查与修订要保存原文、拒收、修订稿和独立复核。完整审查包声明其输入、最终 `annotations.jsonl` 和哈希；修订链须逐项绑定被拒收正文，最终正文须独立接受。仅修订训练正文，已有走法、评分、历史及验证／测试标签保持不变：
+
+```bash
+python -m xqgeneral.revise_prose --data data/astra-explanations-full-v4 \
+  --reviews data/old-mirror-prose-reviewed-v1 data/old-original-prose-reviewed-v1 \
+  --output data/astra-explanations-full-v5
+```
+
+使用新输出目录；抽样复核不代表其余训练正文已审查，数据修订完成也不证明学生收益。新的训练须另行冻结配置与源码。
+
 `configs/explanation-sft.json` 从已完成、哈希核验的最佳课程检查点初始化。讲解训练同时更新桥接块、棋盘词元和完整解码器，使用 FP32 参数、BF16 计算与梯度累积，并保留课程问答回放。验证集只选讲解检查点。全量优化器和检查点较大，需要为运行目录保留磁盘空间。
 
 ```bash
@@ -164,6 +174,8 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
 `configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放，质量必须另行实测。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。
+
+`configs/explanation-sft-v5.json` 继续已完成的全量讲解模型，使用审查后数据、新优化器与 15% 规划回放。45% 主讲解池已包含 384 条实战原始讲解，另以 15% 重采样这些条目；它们不是新的独立标注。该实验保留先前训练及其失败，待初始化检查点实际完成并核验后启动。新数据并未全量审查，教学质量须继续评测。
 
 新讲解配置启用 `deterministic_training`，在创建 CUDA 上下文前配置 CuBLAS 工作区并要求 PyTorch 使用确定性算法。续训核对损失归一化、确定性设置和工作区合同，不能中途切换；不支持的确定性操作会报错。精确复现仍要求相同源码、输入、环境和 GPU 配置，不保证跨平台逐位一致。
 

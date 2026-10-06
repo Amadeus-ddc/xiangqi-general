@@ -1,0 +1,43 @@
+{
+  "examples": 96,
+  "parse_valid_rate": 0.40625,
+  "first_move_legal_rate": 0.3854166666666667,
+  "structured_contract_valid_rate": 0.0,
+  "first_move_no_mistake_rate": 0.2916666666666667,
+  "legal_scored_first_moves": 37,
+  "mean_first_move_expected_score_loss_conditional": 0.15335135135135136,
+  "pv_legal_rate": 0.010416666666666666,
+  "judged_legal_pv_plies": 90,
+  "pv_no_mistake_fraction_conditional": 0.6,
+  "errors": {
+    "invalid_json": 57,
+    "illegal_pv": 38,
+    "illegal_branch_pv": 115,
+    "invalid_candidates": 28,
+    "branch_candidates_mismatch": 11,
+    "unsupported_prose_move": 4,
+    "illegal_or_missing_move": 2,
+    "incorrect_move_facts": 1
+  },
+  "raw_generation": true,
+  "oracle_repairs": 0,
+  "score_model": "pinned_Pikafish_material_WDL",
+  "prose_semantic_rating": "unmeasured",
+  "split": "validation",
+  "judge_nodes_per_position": 1000000,
+  "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+  "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+  "seconds": 469.5720784049481,
+  "actual_selected_step": 512,
+  "requested_minimum_step": 512,
+  "checkpoint_sha256": "45a4e46167395dbca6abfb34d2fd6a06565f619404e7102526c655de625e6806",
+  "all_output_hashes_read_back": true,
+  "source_manifest_sha256": "a2d9b81fa917d32663a8a300125f41c7e315c132c6c35abda5fc21173cfdc1be",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Interim formal four-course initialized full-decoder experiment, training continues",
+    "Same held-out raw 96 validation examples; independent test is unused",
+    "Initialization, data and mixture differ from prior SFT, no single-change causal attribution",
+    "Prose semantics and strong match play remain separately unmeasured"
+  ]
+}

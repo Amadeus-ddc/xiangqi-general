@@ -1,0 +1,47 @@
+{
+  "data_path": "data/astra-explanations-full-v5",
+  "replay_data_paths": [
+    "data/astra-selfplay-explanation-replay-v1",
+    "data/move-planning-v1"
+  ],
+  "feature_path": "data/move-quality-selfplay-v2/features-16.pt",
+  "decoder_training": "full",
+  "loss_normalization": "example",
+  "deterministic_training": true,
+  "stages": [
+    "explanation"
+  ],
+  "mixture": {
+    "explanation": 0.45,
+    "selfplay_explanation": 0.15,
+    "move_quality": 0.2,
+    "move_planning": 0.15,
+    "static_current": 0.0125,
+    "dynamic_current": 0.0125,
+    "static_future": 0.0125,
+    "dynamic_future": 0.0125
+  },
+  "validation_stages": [
+    "explanation"
+  ],
+  "epochs": 4,
+  "max_steps": 8192,
+  "min_steps": 2048,
+  "batch_size": 4,
+  "micro_batch_size": 1,
+  "eval_batch_size": 4,
+  "learning_rate": 1e-05,
+  "decoder_learning_rate": 1e-06,
+  "token_learning_rate": 1e-06,
+  "lr_schedule": "constant",
+  "weight_decay": 0.1,
+  "warmup_fraction": 0.05,
+  "eval_every": 512,
+  "patience": 6,
+  "max_tokens": 1024,
+  "validation_examples": 96,
+  "generation_examples": 8,
+  "max_new_tokens": 768,
+  "seed": 20261036,
+  "purpose": "Adaptive continuation from completed prior full-decoder SFT with reviewed prose-only revisions and increased planning replay; original prior experiments and held-out labels remain archived; multiple conditions differ"
+}

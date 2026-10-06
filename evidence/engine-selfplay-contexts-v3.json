@@ -1,0 +1,36 @@
+{
+  "games": 512,
+  "game_statuses": {
+    "censored": 226,
+    "completed": 286
+  },
+  "termination_reasons": {
+    "ply_limit": 226,
+    "checkmate_or_stalemate_loss": 237,
+    "AXF_repetition_or_move_limit": 49
+  },
+  "contexts": 27432,
+  "by_side": {
+    "b": 13741,
+    "w": 13691
+  },
+  "rejected": {
+    "duplicate_history": 2375
+  },
+  "heldout_root_or_future_overlap": 0,
+  "unscored_search_retries": 190,
+  "full_histories_preserved": true,
+  "all_contexts_training_only": true,
+  "neural_prose_generated": false,
+  "training_labels_generated": false,
+  "censored_games_counted_as_draws": false,
+  "context_records_read_back": 27432,
+  "all_output_hashes_read_back": true,
+  "source_manifest_sha256": "0f4146046081f0df05a3bd2149cf29549cf7c644cd5d2070f6a0e54cdeb28c03",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Train-only engine-generated contexts; new move searches and features run separately",
+    "226 capped games are censored, not draws",
+    "No neural explanation or measured student improvement"
+  ]
+}

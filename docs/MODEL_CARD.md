@@ -91,6 +91,15 @@ across moves, planning and complete explanations, while prose semantics remain
 separately unmeasured. The formal four-course move arm
 has also completed 12 rule-constrained matches: one win, ten losses and one draw.
 Strong bridge-model play has not been established.
+Grounded Astra Low review of 32 uniformly sampled raw 4096-step validation
+answers scored factual correctness 1.59/5 and strategic reasoning 1.44/5;
+none reached four on all four rubric dimensions. Review packets omit checkpoint
+identity, but agents retain prior project context and share the initial teacher's
+foundation model. This is neural sample review, not a fully blinded or human rating.
+The separate four-course initialized SFT v4, at 512 steps, parsed only 39 of the
+same 96 validation answers, recommended 37 legal moves and 28 without a large loss;
+one principal variation was legal and complete contracts remained zero.
+Repeated or unclosed output is preserved as failure.
 The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
 the same opening/node protocol. This diagnostic uses the native policy directly,
 without the language decoder, and does not establish bridge-model strength.
@@ -120,6 +129,17 @@ and unqualified advisor-name errors. The selected combined pool has 6662 train
 rows, with unchanged validation and test files. The adaptive next recipe samples
 the new originals at 15% and includes 10% multi-step planning replay. This is
 additional initial-teacher data, not a completed search-distillation round.
+
+A paired sample of 384 old originals and their 384 mirrored train annotations
+was reviewed by authorized Astra Low agents. Twenty-seven original and 34 mirrored
+prose revisions were independently accepted, with one mirror revision requiring
+a second correction. Generic unambiguous piece names alone do not count as
+factual rejection. A fresh dataset applies those 61 prose changes while preserving
+structured labels, histories, features and byte-identical validation/test files.
+The remaining old annotations have not been fully reviewed; this curation does
+not establish a student improvement or human-rated data quality. Subsequent
+training uses a new run and optimizer, with three raw capabilities selecting
+checkpoints and prose quality assessed separately.
 Shared-base-model review is not a human assessment or student-quality proof.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
