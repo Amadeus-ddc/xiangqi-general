@@ -1,0 +1,22 @@
+{
+  "positions": 34,
+  "mismatches": 0,
+  "failures": [],
+  "max_absolute_errors": {
+    "wdl": 6.854534149169922e-07,
+    "policy": 5.602836608886719e-06,
+    "moves_left": 6.103515625e-05,
+    "/encoder4/ln2": 2.473592758178711e-06,
+    "/encoder9/ln2": 2.942979335784912e-06,
+    "/encoder14/ln2": 2.8908252716064453e-06,
+    "/encoder19/ln2": 3.948807716369629e-06
+  },
+  "rtol": 0.0002,
+  "wdl_features_atol": 0.0002,
+  "policy_moves_left_atol": 0.002,
+  "all_policy_logits_compared": 2062,
+  "expert_sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c",
+  "reference_sha256": "8e12bda9dcee3d13214967a3ccb19cafaa6486b5cc55265bb2bf4dd2db81c016",
+  "reference": "pinned official C++ input encoder + unmodified C++ ONNX exporter + ONNX Runtime CPU",
+  "scope": "all output heads plus four intermediate feature levels"
+}

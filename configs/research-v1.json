@@ -1,0 +1,35 @@
+{
+  "model_path": "models/qwen3-4b",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "expert_weights": "models/px0-latest.pb.gz",
+  "feature_path": "data/research-v1/features.pt",
+  "data_path": "data/research-v1",
+  "decoder_bridge_positions": [3, 11, 19, 27],
+  "bridge_width": 384,
+  "lora_rank": 16,
+  "batch_size": 8,
+  "learning_rate": 0.0001,
+  "seed": 20261007,
+  "max_tokens": 768,
+  "validation_examples": 64,
+  "generation_examples": 16,
+  "max_new_tokens": 96,
+  "eval_every": 200,
+  "steps_per_course": 800,
+  "course_mixtures": [
+    {"static_current": 1.0},
+    {"static_current": 0.10, "dynamic_current": 0.90},
+    {"static_current": 0.06, "dynamic_current": 0.08, "static_future": 0.86},
+    {"static_current": 0.06, "dynamic_current": 0.06, "static_future": 0.08, "dynamic_future": 0.80}
+  ],
+  "output": "runs/research-v1",
+  "purpose": "Initial domain-adaptation experiment; additional training selected by validation diagnostics",
+  "quality_targets": {
+    "illegal_move_rate": 0.0,
+    "structured_explanation_error_rate": 0.02,
+    "mean_engine_expected_score_loss": 0.05,
+    "match_score_vs_pikafish_100_nodes": 0.60,
+    "completed_match_games": 16,
+    "strategic_explanation_review": "independent_review_required"
+  }
+}
