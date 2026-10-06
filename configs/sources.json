@@ -1,0 +1,22 @@
+[
+  {
+    "name": "queen",
+    "url": "https://github.com/queen-project/queen",
+    "revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb"
+  },
+  {
+    "name": "px0",
+    "url": "https://github.com/official-pikafish/px0",
+    "revision": "d1b7bf287a14b55f731fa8cabb72dbdc968ae0c2"
+  },
+  {
+    "name": "pikafish",
+    "url": "https://github.com/official-pikafish/Pikafish",
+    "revision": "1c66b9b21cf2f280ce3b3ffa80c1c6609f2b29ff"
+  },
+  {
+    "name": "abseil-cpp",
+    "url": "https://github.com/abseil/abseil-cpp",
+    "revision": "95e66a06829f69f725c72aef6f3e842917d878ee"
+  }
+]

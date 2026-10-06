@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "kind": "expert_feature_cache",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-06T13:36:50.255272+00:00",
+  "config": {
+    "weights": "models/px0-latest.pb.gz",
+    "data": "data/research-v1",
+    "output": "data/research-v1/features.pt",
+    "batch_size": 32,
+    "report": null
+  },
+  "code": {
+    "revision": "9f3f678f91913ffb6e9d9781356a17758a489a84",
+    "source_sha256": {
+      "src/xqgeneral/__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+      "src/xqgeneral/ask.py": "ee4f17f45be3fc63763a4d64d8034dca63f70d7470d7b529376db048c13c617d",
+      "src/xqgeneral/bridge.py": "671428c2767fd382d6a30022e2c1f17fc25fb213f814aa4bb20f2364f67e5d08",
+      "src/xqgeneral/cache_features.py": "3cba44b3acb32e39db9b03f1fbfb3c521e76d66fd64468cc4fb156dd4ff1cbbc",
+      "src/xqgeneral/curriculum_data.py": "92585f1803fdefd4c7fbe1d64bd08df17ef16686e4822b62664eb25b66990732",
+      "src/xqgeneral/data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+      "src/xqgeneral/evidence.py": "fe415494cfa208fae10d2595a5af3e0fce86f504eef79ce9632df0f368e304a7",
+      "src/xqgeneral/expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+      "src/xqgeneral/modeling.py": "d734d78b71698d00d0010d1acbddc878d8aa398aa38101645e38927e07ed1351",
+      "src/xqgeneral/net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+      "src/xqgeneral/oracle.py": "9487161047794ba035d94bc80ba1e6dc528d305eb9496bc84e337487bf3b940f",
+      "src/xqgeneral/rules.py": "7eb17f436fd08dddf2e28aa2bd28ae2252a16027796a0db44eefcbabb7ca3c67",
+      "src/xqgeneral/train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+      "src/xqgeneral/training.py": "b633ac4da7509e0c93a37f54c50f5f57000c242df9ae216f99597451c2457341",
+      "src/xqgeneral/verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+      "src/xqgeneral/verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9"
+    }
+  },
+  "inputs": {
+    "data/research-v1/train.jsonl": {
+      "sha256": "35ea2b91cc4411763738f8b94332795218ac68e4fe926928d2d2c3e1d8d7ff7d",
+      "bytes": 88562603
+    },
+    "data/research-v1/validation.jsonl": {
+      "sha256": "58ea2f79711e1e9d2739c39649a8bb2d6473c54f4635c801b18c0aceadc7e6b2",
+      "bytes": 27354105
+    },
+    "data/research-v1/test.jsonl": {
+      "sha256": "87894f2b32cf07391eab7b77b91175d2f0d64b143ee73f2d12fdef4a8281bdd1",
+      "bytes": 20121003
+    },
+    "models/px0-latest.pb.gz": {
+      "sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c",
+      "bytes": 152979644
+    }
+  },
+  "outputs": {
+    "data/research-v1/features.pt": {
+      "sha256": "70cb4c040b4c985e9278ea24b07b21436069386986e626a7feb41da83d555ca4",
+      "bytes": 618355620
+    }
+  },
+  "verification": {
+    "roots": 1677,
+    "feature_shapes": [
+      [
+        1677,
+        90,
+        512
+      ],
+      [
+        1677,
+        90,
+        512
+      ],
+      [
+        1677,
+        90,
+        512
+      ],
+      [
+        1677,
+        90,
+        512
+      ]
+    ],
+    "depths": [
+      4,
+      9,
+      14,
+      19
+    ],
+    "expert_dim": 512,
+    "expert_layers": 20,
+    "stored_expert_weight_elements": 83305380,
+    "expert_trainable_parameters": 0,
+    "feature_mean_std": [
+      [
+        -0.000806062133051455,
+        0.37228310108184814
+      ],
+      [
+        -0.0004735719703603536,
+        0.3499477803707123
+      ],
+      [
+        2.8070617190678604e-06,
+        0.33299005031585693
+      ],
+      [
+        0.0006758903036825359,
+        0.40205568075180054
+      ]
+    ],
+    "seconds": 12.224677085876465,
+    "expert_sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c"
+  }
+}

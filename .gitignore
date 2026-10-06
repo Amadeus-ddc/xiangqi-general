@@ -1,4 +1,4 @@
-# Generated local research assets
+# Local environments and generated research assets
 .venv/
 __pycache__/
 *.py[cod]

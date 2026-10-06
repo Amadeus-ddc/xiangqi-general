@@ -1,0 +1,16 @@
+{
+  "model_path": "models/qwen3-4b",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "feature_path": "data/features.pt",
+  "decoder_bridge_positions": [3, 11, 19, 27],
+  "bridge_width": 384,
+  "steps": 80,
+  "batch_size": 4,
+  "learning_rate": 0.0001,
+  "seed": 20261006,
+  "max_tokens": 256,
+  "stages": ["static_current"],
+  "validation_examples": 24,
+  "output": "runs/pilot-v1",
+  "purpose": "Stage-1 pipeline feasibility; not Elo or full Queen reproduction"
+}
