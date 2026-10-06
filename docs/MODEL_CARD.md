@@ -75,6 +75,13 @@ selection, is labeled separately from raw generation, and imposes legal output
 by construction. Its games do not establish explanation quality. The current
 move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
 
+Additional train-only engine self-play covers opening, middlegame and endgame
+contexts with complete histories. Early exploration is limited to candidates
+within 0.03 of the best fitted WDL score; this score is not a measured winning
+probability. Reserved root/future positions are excluded, and supplemental move
+labels require independent searches. These contexts do not supply neural prose
+and their availability does not establish a strength improvement.
+
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the

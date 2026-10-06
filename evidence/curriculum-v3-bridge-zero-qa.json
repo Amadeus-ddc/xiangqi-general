@@ -1,0 +1,101 @@
+{
+  "examples": 264,
+  "accuracy": 0.0,
+  "by_task": {
+    "dynamic_current/captures": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_current/checks": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_current/illegal": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_current/legal": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_current/moves": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_future/captures": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_future/checks": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_future/illegal": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_future/legal": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "dynamic_future/moves": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/count": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/empty": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/locate": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/material": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/piece": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_current/rank": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/count": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/empty": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/locate": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/material": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/piece": {
+      "n": 12,
+      "accuracy": 0.0
+    },
+    "static_future/rank": {
+      "n": 12,
+      "accuracy": 0.0
+    }
+  },
+  "raw_generation": true,
+  "oracle_used": false,
+  "split": "validation",
+  "seconds": 443.02053765021265,
+  "source_manifest_sha256": "a9cc0e1862ed41e01cd0b236b3dd532ab83ce5eba276f7db4d2cfcecfb706180",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "balanced validation QA with explicit square dictionary; raw output; validation only"
+}
