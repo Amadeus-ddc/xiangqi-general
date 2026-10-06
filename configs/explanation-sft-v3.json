@@ -5,6 +5,8 @@
   ],
   "feature_path": "data/move-quality-v1/features-16.pt",
   "decoder_training": "full",
+  "loss_normalization": "example",
+  "deterministic_training": true,
   "stages": [
     "explanation"
   ],

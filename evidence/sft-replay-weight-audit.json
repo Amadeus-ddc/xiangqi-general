@@ -1,0 +1,37 @@
+{
+  "dataset": "completed full-v1 used to estimate pending full-v2 replay weights",
+  "sampled_records": {
+    "explanation": 128,
+    "move_quality": 128,
+    "static_current": 128,
+    "dynamic_current": 128,
+    "static_future": 128,
+    "dynamic_future": 128
+  },
+  "mean_supervised_tokens": {
+    "explanation": 385.453125,
+    "move_quality": 3.0,
+    "static_current": 3.2734375,
+    "dynamic_current": 5.7265625,
+    "static_future": 5.0703125,
+    "dynamic_future": 6.703125
+  },
+  "planned_example_sampling": {
+    "explanation": 0.75,
+    "move_quality": 0.15,
+    "static_current": 0.025,
+    "dynamic_current": 0.025,
+    "static_future": 0.025,
+    "dynamic_future": 0.025
+  },
+  "scope": "Ratio of expected supervised token counts under planned sample mixture; not realized per-step loss weights or gradient contributions. Dataset is completed full-v1, pending full-v2 audited separately.",
+  "estimated_supervised_token_share": {
+    "explanation": 0.9966581442499275,
+    "move_quality": 0.0015514075454699102,
+    "static_current": 0.00028213531317356443,
+    "dynamic_current": 0.0004935684595613907,
+    "static_future": 0.0004370067261328003,
+    "dynamic_future": 0.0005777377057348885
+  },
+  "source_sha256": "6a0b802bc87c4dc30ae10c9acebaebd4df51e3c4ab8bc87a771afe231ee2f0cf"
+}

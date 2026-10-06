@@ -1,0 +1,44 @@
+{
+  "games": {
+    "train": 78,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 6276,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "original_teacher_annotations": 3363,
+  "accepted_original_annotations": 3363,
+  "rejected_by_review": [],
+  "records": 6726,
+  "by_split": {
+    "train": 6278,
+    "validation": 192,
+    "test": 256
+  },
+  "by_side": {
+    "b": 3363,
+    "w": 3363
+  },
+  "teacher_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "legality_and_structured_facts_checked": true,
+  "independent_neural_review_samples": 216,
+  "review_is_human_rating": false,
+  "strategic_prose_accuracy_fully_proven": false,
+  "derived_color_mirror_records": 3363,
+  "derived_scores_independently_recomputed": false,
+  "source_manifest_sha256": "705868c854fba91244581ae33d4a799c260da7edaa5181c99b78f8a2c1e6a055",
+  "all_output_hashes_read_back": true,
+  "validation_and_test_byte_identical_to_full_v1": true,
+  "new_original_train_annotations": 2048,
+  "new_cross_review_samples": 72,
+  "new_cross_review_sampling_scope": "random draws from fixed completed author prefixes; not a full-corpus accuracy estimate",
+  "correction_audit": "one unsupported rook/cannon-exchange claim corrected by original Astra author and independently re-reviewed; original annotation and rejection preserved",
+  "scope": "completed teacher labeling and mechanical collection; strategic accuracy not fully proven"
+}
