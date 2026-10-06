@@ -1,0 +1,19 @@
+{
+  "original_train_roots": 512,
+  "seed": 20261039,
+  "workers": 8,
+  "chunk_size": 16,
+  "train_validation_test_files_byte_identical": true,
+  "rejection_counts_identical": true,
+  "all_output_hashes_read_back": true,
+  "parallel_full_pipeline_seconds": 241.9560357471928,
+  "serial_manifest_sha256": "6c68ad7f395e54ecfe8946a8a4e89a090b811d1ba78cd36472065f14b7a91996",
+  "parallel_manifest_sha256": "adeeec199951e9ffb2437044e41d2697d79a0b89c4af29344d00f2d53e8165e2",
+  "student_training_benefit_measured": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Real 512-root dataset equivalence, not a trained model improvement",
+    "No matched serial wall-time benchmark or overall speedup claimed",
+    "Separate 8192-root new dataset remains queued"
+  ]
+}

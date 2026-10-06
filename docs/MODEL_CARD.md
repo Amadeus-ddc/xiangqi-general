@@ -87,8 +87,13 @@ contracts. Prose semantics remain unmeasured.
 At 4096 steps, the same set yielded 80 legal recommendations, 62 without a large
 loss, 22 legal principal variations and seven complete contracts. First-move
 quality regressed despite improved contracts; this motivates validation selection
-across moves, planning and complete explanations, while prose semantics remain
-separately unmeasured. The formal four-course move arm
+across moves, planning and complete explanations, with prose requiring separate
+semantic review. A training-label-pool diagnostic of the same 4096-step model
+sampled 16 rows per side: 30 of 32 recommendations were legal and 28 avoided a
+large loss, but only five principal variations and one complete contract were
+valid. This is not held-out evaluation; individual rows were not confirmed as
+drawn during training. It does not select checkpoints or establish generalization.
+The formal four-course move arm
 has also completed 12 rule-constrained matches: one win, ten losses and one draw.
 Strong bridge-model play has not been established.
 Grounded Astra Low review of 32 uniformly sampled raw 4096-step validation
@@ -118,7 +123,29 @@ and conditional variations from preserved engine searches. Full histories stop
 at terminal states and train rows overlapping any held-out continuation are
 excluded. Raw planning evaluation separately measures legality, requested first
 move, horizon length and independent per-ply quality; an inferior forced first
-move is excluded from optimal-move quality. Training benefits remain unmeasured.
+move is excluded from optimal-move quality. The first real 2000-step planning
+candidate produced six-ply answers for all 96 validation questions and matched
+every conditional first move, but only ten full lines passed the contract.
+Of 192 raw move answers, 158 were legal and 141 avoided a large loss. The
+two-capability validation score is 0.4823; training and final selection continue,
+and this is not a strong-match or independent test result.
+The 3072-step model's selfplay search pilot completed 128 training roots, 168
+root attempts and 40 recursive descents without any accepted strict improvement.
+All raw traces are preserved; no teacher consolidation or distillation training
+was executed for this empty result.
+
+New rule grounding supports four-course questions from independently searched
+selfplay histories and one-to-six-ply prefixes of the best engine variation.
+Historical terminal roots/futures and reserved continuations are excluded,
+including color-derived questions. Existing course validation/test labels stay
+unchanged. These are rule questions with reused root features, not neural prose
+or proof of improved student performance. A real 512-root verification generated
+22,528 new questions from 108 training games. Every new answer was independently
+checked against rules; all 70,532 training records fit within 521 tokens and have
+cached root features. Serial and eight-process generation produced byte-identical
+train, validation and test files with identical rejection counts. Color-derived
+records do not count as new games. The larger new dataset remains queued
+behind independent searches and requires length/feature checks before training.
 
 A supplemental 384 original self-play explanations, balanced across sides,
 were independently cross-reviewed by authorized Astra subagents. Thirty-nine
