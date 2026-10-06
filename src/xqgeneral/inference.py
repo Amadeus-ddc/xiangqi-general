@@ -41,7 +41,27 @@ class Predictor:
                                    max_new_tokens=max_new_tokens)[0]
 
     @torch.no_grad()
-    def generate_batch(self, records, max_new_tokens=768, memory='normal'):
+    def generate_moves(self, records, memory='normal', beams=4):
+        """Choose with model probabilities inside the rule-legal token trie."""
+        if not records:
+            return []
+        if beams < 1:
+            raise ValueError('Move decoding beam count must be positive')
+        if 'move_quality' not in self.config.get('mixture', {}):
+            raise ValueError('Checkpoint has no trained move-answer capability')
+        from .move_decoding import MoveTokenConstraint, legal_options
+        from .policy_data import QUESTION
+        constraints = [MoveTokenConstraint(self.tokenizer, legal_options(r),
+                                            self.config.get('board_tokens', False)) for r in records]
+        answers = self.generate_batch([dict(r, question=QUESTION) for r in records],
+                                      max_new_tokens=max(c.max_tokens for c in constraints), memory=memory,
+                                      _move_constraints=constraints, _beams=beams)
+        if any(a not in c.moves for a, c in zip(answers, constraints)):
+            raise RuntimeError('Constrained decoding returned a move outside its legal contract')
+        return answers
+
+    @torch.no_grad()
+    def generate_batch(self, records, max_new_tokens=768, memory='normal', _move_constraints=None, _beams=1):
         if not records:
             return []
         if memory not in {'normal', 'zero', 'shuffled'}:
@@ -64,9 +84,16 @@ class Predictor:
             if len(records) < 2:
                 raise ValueError('Memory shuffling needs at least two histories')
             features = [torch.roll(f, 1, 0) for f in features]
+        options = {}
+        if _move_constraints is not None:
+            prefix_length = inputs['input_ids'].shape[1]
+            options = {'prefix_allowed_tokens_fn': lambda batch, ids:
+                       _move_constraints[batch].allowed(ids[prefix_length:].tolist()),
+                       'num_beams': _beams, 'length_penalty': 0.0}
+            features = [f.repeat_interleave(_beams, dim=0) for f in features]
         with self.model.board_context(features), model_autocast(self.device):
             outputs = self.model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
-                                               pad_token_id=self.tokenizer.pad_token_id)
+                                               pad_token_id=self.tokenizer.pad_token_id, **options)
         answers = [self.tokenizer.decode(o[inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
                    for o in outputs]
         return [decode_board_text(a) for a in answers] if self.config.get('board_tokens', False) else answers
