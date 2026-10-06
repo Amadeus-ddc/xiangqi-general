@@ -1,0 +1,85 @@
+{
+  "source_id": "d25fff23c919bb005ba6-explanation-color-mirror",
+  "audit_sha256": "ae6328ed123242bc588500f86a784c504922710309870f95ecce1ef7b264130c",
+  "original_answer_sha256": "0ae8be65b99d0bc9c99d04afaaeb612b7fb275b63a12550a4ec206260ca241cd",
+  "actual_replayed_plies": 24,
+  "unique_branch_plies": 18,
+  "all_replay_facts_independently_read_back": true,
+  "annotation_tactically_supported": true,
+  "reviewer_tactical_accusations_valid": false,
+  "claim_verdicts": [
+    {
+      "claim": "红兵e4e5主动推进，黑卒e6e5会吃卒并继续e5e4，红方用a2b2和i3h3调整双车，主选有明确弃卒代价",
+      "tactical_accusation_valid": false,
+      "reason": "e4e5是红兵向空格推进；e6e5吃该红兵；e5e4是不吃子的继续推进。原文“吃卒并继续e5e4”分别叙述前后两步，并未声称e5e4再次吃子。选择推进且在给定变化中损失该兵，称其有弃兵代价与被吃事实相容，不是事实相反。a2b2和i3h3确为两辆红车。",
+      "terminology_issue": true
+    },
+    {
+      "claim": "若先车a2b2，黑马d5f4吃红马，虽红车再吃炮，评分低77厘兵",
+      "tactical_accusation_valid": false,
+      "reason": "a2b2后黑马d5f4先吃红马，此时b7黑炮仍在；下一步红车b2b7才吃该炮。“再吃炮”表示红方失马之后吃炮，并非声称炮已被吃后重复取子或回吃该黑马。所有分支cp均为根方红方视角，313-236=77；省略主语的“评分低77”指本句备选a2b2低于主选e4e5，方向与算术都正确。",
+      "terminology_issue": false
+    },
+    {
+      "claim": "应比较完整交换与车的活动，不能把进卒称为得兵，更不能忽略黑方过河兵后续推进",
+      "tactical_accusation_valid": false,
+      "reason": "主线首步未吃子，之后红兵确实损失，原文提醒不能称得兵符合事实。黑卒从e6到e5吃兵，再到e4跨过河界，确有后续推进。比较交换与车活动属于有事实基础的温和建议，原文明确提醒黑方威胁，未宣称补偿已充分或强制获胜。",
+      "terminology_issue": true
+    }
+  ],
+  "reason_claim_verdicts": [
+    {
+      "claim": "e5e4是继续推进而非吃卒，原文描述相反",
+      "valid": false,
+      "reason": "前半句关于e5e4不吃子正确，但原文从未称此步吃子；Qwen把e6e5的吃子修饰错接到e5e4。"
+    },
+    {
+      "claim": "并未弃卒而是被吃子",
+      "valid": false,
+      "reason": "弃兵描述所选走法接受兵的损失，被吃描述执行结果，两者不互斥。给定主线确为推兵后被吃；并未据此证明其他应对必然如此。"
+    },
+    {
+      "claim": "红方并未再吃炮，炮已被吃",
+      "valid": false,
+      "reason": "黑马d5f4吃的是f4红马，未吃b7黑炮；红车第三步b2b7才吃黑炮，逐步局面明确。"
+    },
+    {
+      "claim": "313-236=77但评分低77方向错误",
+      "valid": false,
+      "reason": "备选a2b2为236，低于主选313恰好77，根方均为红方，原句方向正确。"
+    },
+    {
+      "claim": "主动推进和弃卒代价不符实际且未评估黑方威胁",
+      "valid": false,
+      "reason": "e4e5为空格推进；损失一红兵是明确代价；原文还指出黑卒过河继续推进。是否充分解释全部战略补偿可作教学深度评价，不能转化为这几项不存在的战术事实错误。"
+    }
+  ],
+  "terminology": {
+    "issue_present": true,
+    "severity": "称谓不够规范，不是吃子或走法事实错误",
+    "details": "红方棋子应称兵，黑方应称卒。原文“吃卒”“弃卒”“进卒”用于红兵，而“黑方过河兵”用于黑卒，属于兵卒泛称混用。",
+    "suggested_wording_only": [
+      "吃卒→吃掉该红兵",
+      "弃卒代价→弃兵代价",
+      "进卒→进兵",
+      "黑方过河兵→黑方过河卒"
+    ]
+  },
+  "score_check": {
+    "root_side": "红方",
+    "perspective": "side_to_move",
+    "main_cp": 313,
+    "alternative_cp": 236,
+    "alternative_lower_by_cp": 77,
+    "third_cp": 223,
+    "note": "保留原评分。后来独立搜索改变候选分数和排序，不等于原记录虚构；本复核不改写原裁判分数。"
+  },
+  "annotations_or_ratings_modified": false,
+  "evidence_state": "reconstructed_baseline",
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "limits": [
+    "One reference case only; not population quality",
+    "Reviewer shares initial teacher base model; not human evaluation"
+  ]
+}

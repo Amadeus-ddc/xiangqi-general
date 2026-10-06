@@ -127,6 +127,21 @@ python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
 
 若输入目录已包含全部旧搜索结果，追加 `--no-descendants` 可只搜索新补充上下文，跳过旧 PV 的再次派生；原查询和走法标签仍保留。
 
+多步规划课程从这些已完成搜索的主变化及候选分支生成最多六步的走法序列。每步按完整历史检查终局，训练项与保留集根及全部变化局面重叠时剔除；颜色派生项保留原分割。新课程复用原根局面的专家缓存，不生成神经讲解。
+
+```bash
+python -m xqgeneral.planning_data --data data/move-quality-selfplay-v2 \
+  --output data/move-planning-v1
+python scripts/freeze_run.py --output runs/move-planning-v1/source-run -- \
+  python -m xqgeneral.sft --recipe configs/move-planning-v1.json \
+  --init WARM_MOVE_CHECKPOINT.pt --output runs/move-planning-v1/bridge/training
+python -m xqgeneral.evaluate_plans --checkpoint PLAN_CHECKPOINT.pt \
+  --data data/move-planning-v1 --features data/move-quality-selfplay-v2/features-16.pt \
+  --split validation --output runs/planning-validation
+```
+
+规划评测保留原始序列，分别检查整条合法性、条件首着、参考长度和逐步走法损失。指定候选的首着不计入最优选招指标，后续每步独立搜索；终局后续着仍是错误。短答案不会因前缀合法就通过长度合同。课程的有效训练配置由 `sft` 入口计算步数；改配置须新建实验。
+
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
 新讲解配置启用 `deterministic_training`，在创建 CUDA 上下文前配置 CuBLAS 工作区并要求 PyTorch 使用确定性算法。续训核对损失归一化、确定性设置和工作区合同，不能中途切换；不支持的确定性操作会报错。精确复现仍要求相同源码、输入、环境和 GPU 配置，不保证跨平台逐位一致。
@@ -176,7 +191,7 @@ python -m xqgeneral.review_explanations collect --queries runs/prose-review/quer
   --responses runs/prose-review/inference/responses.jsonl --output runs/prose-review/ratings
 ```
 
-裁判输入不带检查点身份，保留具体无依据声明和理由。神经裁判与训练汇总教师使用同一基础模型，评分存在相关偏差；它不计为人工评价，也不能替代机械事实和独立走法检查。
+裁判输入不带检查点身份，附根局面的棋子坐标表、每步前后棋盘、规则事实及回答声明的评分，保留具体无依据声明和理由。神经裁判与训练汇总教师使用同一基础模型，评分存在相关偏差；它不计为人工评价，也不能替代机械事实和独立走法检查。
 
 ## 原型推理
 
