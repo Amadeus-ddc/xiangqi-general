@@ -1,7 +1,7 @@
 import json
 import pytest
 from xqgeneral.review_explanations import blinded_query, parse_rating
-from xqgeneral.rules import START_FEN
+from xqgeneral.rules import START_FEN, play
 
 
 def test_neural_review_hides_identity_and_marks_illegal_continuation():
@@ -14,6 +14,10 @@ def test_neural_review_hides_identity_and_marks_illegal_continuation():
     assert content['root_side'] == '红方'
     assert content['principal_variation_facts']['error'] == 'illegal_move'
     assert len(content['principal_variation_facts']['facts']) == 1
+    assert content['root_board']['e0'] == '红帅'
+    first = content['principal_variation_facts']['facts'][0]
+    assert first['fen_before'] == START_FEN and first['fen_after'] == play(START_FEN, 'b0c2')
+    assert first['piece'] == '红马' and first['captured'] == '空'
 
 
 def test_neural_review_requires_full_teacher_and_integer_rating():

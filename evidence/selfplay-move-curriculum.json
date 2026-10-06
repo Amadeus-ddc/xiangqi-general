@@ -1,0 +1,214 @@
+{
+  "policy": {
+    "games": {
+      "train": 190,
+      "validation": 24,
+      "test": 18
+    },
+    "roots": {
+      "train": 21968,
+      "validation": 672,
+      "test": 500
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0,
+    "move_lessons": 22696,
+    "by_split": {
+      "train": 22248,
+      "validation": 192,
+      "test": 256
+    },
+    "new_independently_searched_contexts": 2933,
+    "extra_training_contexts": 2937,
+    "extra_context_rejections": {},
+    "new_descendant_generation_enabled": false,
+    "rejected": {},
+    "root_and_answer_positions_checked": true,
+    "neural_prose_generated": false,
+    "original_course_replay_preserved": true
+  },
+  "cache": {
+    "roots": 23420,
+    "feature_shapes": [
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ],
+      [
+        23420,
+        90,
+        512
+      ]
+    ],
+    "depths": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      17,
+      19
+    ],
+    "expert_dim": 512,
+    "expert_layers": 20,
+    "stored_expert_weight_elements": 83305380,
+    "expert_trainable_parameters": 0,
+    "feature_mean_std": [
+      [
+        0.0004325940099079162,
+        0.43078330159187317
+      ],
+      [
+        -0.0009455845574848354,
+        0.4050760865211487
+      ],
+      [
+        -0.0017388438573107123,
+        0.3837984800338745
+      ],
+      [
+        -0.002006471622735262,
+        0.39336392283439636
+      ],
+      [
+        -0.0009913654066622257,
+        0.36906862258911133
+      ],
+      [
+        -0.0028858825098723173,
+        0.37835854291915894
+      ],
+      [
+        -0.0020049589220434427,
+        0.35871073603630066
+      ],
+      [
+        -0.0005794790922664106,
+        0.35670801997184753
+      ],
+      [
+        -0.000629646994639188,
+        0.34682661294937134
+      ],
+      [
+        -0.0015149660175666213,
+        0.36044472455978394
+      ],
+      [
+        0.00040490523679181933,
+        0.3606055676937103
+      ],
+      [
+        -0.0003303191624581814,
+        0.33966338634490967
+      ],
+      [
+        -0.00011190971417818218,
+        0.3289605379104614
+      ],
+      [
+        -0.0010949248680844903,
+        0.3428986668586731
+      ],
+      [
+        -0.005642665084451437,
+        0.3410619795322418
+      ],
+      [
+        -0.0008629628573544323,
+        0.37762123346328735
+      ]
+    ],
+    "seconds": 207.11217427253723,
+    "expert_sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c"
+  },
+  "policy_manifest_sha256": "b5c6725df0bb3d5838b6cd61f7a9bd6652ad1a6eff39eca02e995918d7165b6a",
+  "cache_manifest_sha256": "a166508105c89f3285613345ec92dcd6533291f495fb8cec11e54bbac5ba0aa1",
+  "all_output_hashes_read_back": true,
+  "validation_test_byte_identical_to_previous_course": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Independent engine labels and frozen expert features only; no neural prose was generated",
+    "No proof yet that this added data improves student strength or explanations"
+  ]
+}

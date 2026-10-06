@@ -1,0 +1,44 @@
+{
+  "pairs": 8,
+  "same_raw_answers_and_blind_ids_as_previous_review": true,
+  "rule_grounding_added": [
+    "root_piece_map",
+    "each_ply_fen",
+    "declared_scores",
+    "score_probability_error"
+  ],
+  "human_rating": false,
+  "reviewer_also_used_for_training_consolidation": true,
+  "by_group": {
+    "teacher_reference": {
+      "examples": 8,
+      "mean_scores": {
+        "factual_correctness": 4.5,
+        "strategic_reasoning": 4.125,
+        "clarity": 4.125,
+        "instruction_adherence": 4.875
+      },
+      "with_unsupported_claims": 1,
+      "all_dimensions_at_least_4": 7
+    },
+    "student_interim_512": {
+      "examples": 8,
+      "mean_scores": {
+        "factual_correctness": 1.125,
+        "strategic_reasoning": 1.125,
+        "clarity": 1.875,
+        "instruction_adherence": 1.375
+      },
+      "with_unsupported_claims": 8,
+      "all_dimensions_at_least_4": 0
+    }
+  },
+  "source_manifest_sha256": "dab699392750df23334a8bc6ed4daf40c5eebfe2be73fca619d12d42f0efd1c0",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "eight validation pairs only",
+    "neural scores require factual audit",
+    "prompt changes do not establish population-wide reviewer accuracy"
+  ]
+}

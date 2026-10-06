@@ -74,6 +74,11 @@ rule-legal moves and chooses using model probabilities. It uses no engine move
 selection, is labeled separately from raw generation, and imposes legal output
 by construction. Its games do not establish explanation quality. The current
 move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
+Expanded explanation SFT reached 72 legal recommendations and 57 without a
+large fitted-score loss out of 96 validation answers at its 1024-step checkpoint.
+Only four complete principal variations were legal and no answer passed the
+whole explanation contract. These are interim validation results, not a usable
+coaching model or independent test result.
 The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
 the same opening/node protocol. This diagnostic uses the native policy directly,
 without the language decoder, and does not establish bridge-model strength.
@@ -86,6 +91,13 @@ within 0.03 of the best fitted WDL score; this score is not a measured winning
 probability. Reserved root/future positions are excluded, and supplemental move
 labels require independent searches. These contexts do not supply neural prose
 and their availability does not establish a strength improvement.
+Completed supplemental searches yielded 22,248 train move labels, with unchanged
+validation/test files. An additional planning course teaches up to six-ply best
+and conditional variations from preserved engine searches. Full histories stop
+at terminal states and train rows overlapping any held-out continuation are
+excluded. Raw planning evaluation separately measures legality, requested first
+move, horizon length and independent per-ply quality; an inferior forced first
+move is excluded from optimal-move quality. Training benefits remain unmeasured.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
