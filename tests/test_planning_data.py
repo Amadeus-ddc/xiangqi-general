@@ -42,3 +42,32 @@ def test_planning_stops_at_full_history_repetition_before_the_next_move():
     assert planning_label(query(cycle * 2), {'move':'b0c2','pv':['b0c2']}) is None
     with pytest.raises(ValueError, match='first PV'):
         planning_label(query(), {'move': 'h0g2', 'pv': ['b0c2']})
+
+
+def test_parallel_planning_is_byte_identical_including_terminal_rejections():
+    import json
+    queries = []
+    for index, moves in enumerate([[], ['b0c2'], [], ['b0c2', 'b9c7']]):
+        q = query(moves)
+        q['id'] = f'query-{index}'
+        pv = ['b0c2', 'b9c7', 'h0g2', 'h9g7'][len(moves):]
+        q['oracle'] = {'best_move': pv[0], 'candidates': [{'move': pv[0], 'pv': pv}]}
+        queries.append(q)
+    ended = query(['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2)
+    ended['oracle'] = {'best_move': 'b0c2', 'candidates': [{'move': 'b0c2', 'pv': ['b0c2']}]}
+    queries.append(ended)
+    keys = {k for q in queries for k in [q['record']['feature_key'],
+        mirrored_qa(dict(q['record'], task_type='best_line', question='', answer=''))['feature_key']]}
+    serial = planning_lessons(queries, keys, chunk_size=2)
+    parallel = planning_lessons(queries, keys, workers=2, chunk_size=1)
+    assert json.dumps(serial, ensure_ascii=False) == json.dumps(parallel, ensure_ascii=False)
+    assert serial[1] == {'terminal_root': 2}
+
+
+def test_isolation_includes_nonprincipal_branch_futures():
+    row = dict(query()['record'], stage='move_planning', future_moves=['h0g2'],
+               future_branches=[['b0c2', 'b9c7']])
+    target = play(play(START_FEN, 'b0c2'), 'b9c7')
+    heldout = dict(row, split='validation', game_id='validation-game', fen=target,
+                   future_moves=[], future_branches=[])
+    assert isolate_planning_rows([heldout], [row]) == ([heldout], {'move_planning': 1})

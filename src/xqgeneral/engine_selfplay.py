@@ -10,7 +10,7 @@ from .calibration import candidate_probability
 from .evaluate_games import OPENINGS
 from .evidence import atomic_json, code_identity, digest, history_key, manifest, position_key, write_jsonl
 from .oracle import Pikafish
-from .rules import START_FEN, adjudicate, legal_moves, play, replay
+from .rules import START_FEN, adjudicate, future_fens, legal_moves, play, replay
 from .search_distillation import reserved_positions
 
 
@@ -83,11 +83,9 @@ def generate_game(oracle, index, seed, nodes, max_plies, explore_plies, min_ply,
 
 
 def context_positions(row):
-    fen = row['fen']
-    positions = {position_key(fen)}
-    for move in row.get('future_moves', []):
-        fen = play(fen, move)
-        positions.add(position_key(fen))
+    positions = {position_key(row['fen'])}
+    for line in [row.get('future_moves', []), *row.get('future_branches', [])]:
+        positions.update(position_key(fen) for fen in future_fens(row['fen'], tuple(line)))
     return positions
 
 

@@ -5,7 +5,7 @@ import hashlib
 from pathlib import Path
 import random
 from .evidence import atomic_json, history_key, manifest, position_key, write_jsonl
-from .rules import START_FEN, gives_check, legal_moves, play, piece_map, piece_name
+from .rules import START_FEN, future_fens, gives_check, legal_moves, play, piece_map, piece_name
 
 STAGES = ("static_current", "dynamic_current", "static_future", "dynamic_future")
 SQUARES = tuple(f"{file}{rank}" for rank in range(10) for file in "abcdefghi")
@@ -136,10 +136,7 @@ def verify_splits(rows):
         positions = future.setdefault(s, set())
         positions.add(position_key(row["fen"]))
         for line in lines:
-            fen = row["fen"]
-            for move in line:
-                fen = play(fen, move)
-                positions.add(position_key(fen))
+            positions.update(position_key(fen) for fen in future_fens(row['fen'], tuple(line)))
     splits = sorted(games)
     for i, s in enumerate(splits):
         for t in splits[i + 1:]:
