@@ -52,8 +52,11 @@ coverage, or Western-chess rule equivalence.
 
 AXF engine adjudication is a fixed software rule profile, not certification under
 every competition rule book. Mechanical explanation checks cover declared
-facts, moves, score perspectives, and continuations; strategic prose needs
-separate human evaluation. A match stopped at a ply limit is reported as censored.
+facts, moves, score perspectives, and continuations. An optional blinded neural
+review scores prose against independently checked board and engine evidence.
+The reviewer shares its base model with the training consolidator, so correlated
+bias remains and these scores are not human ratings. A match stopped at a ply
+limit is reported as censored.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing

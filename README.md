@@ -110,6 +110,19 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 
 讲解评测使用更高预算、独立执行的皮卡鱼检查推荐走法、变化、评分方向和棋盘事实；中文战略正文仍需单独评审。对弈从固定开局交换红黑，完整保留历史。非法模型走法判负，达到步数上限记为截尾，结果不自动换算 Elo。先用验证集完成开发，最终选择的模型才进入独立测试。
 
+可将已完成引擎评测的原始讲解提交给本地 BF16 教师作盲评，检查事实、战略理由、教学清晰度与要求完成度：
+
+```bash
+python -m xqgeneral.review_explanations prepare \
+  --predictions runs/explanation-validation/judged-predictions.jsonl --output runs/prose-review/queries
+python -m xqgeneral.local_teacher --input runs/prose-review/queries/queries.jsonl \
+  --output runs/prose-review/inference
+python -m xqgeneral.review_explanations collect --queries runs/prose-review/queries/queries.jsonl \
+  --responses runs/prose-review/inference/responses.jsonl --output runs/prose-review/ratings
+```
+
+裁判输入不带检查点身份，保留具体无依据声明和理由。神经裁判与训练汇总教师使用同一基础模型，评分存在相关偏差；它不计为人工评价，也不能替代机械事实和独立走法检查。
+
 ## 原型推理
 
 已有本地首轮检查点时：
