@@ -11,11 +11,19 @@ import time
 import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
-from .evidence import atomic_json, digest, load_jsonl, manifest
+from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .modeling import load_model, load_trainable, trainable_state
 from .rules import prompt
+from .board_tokens import decode_board_text, encode_board_text
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
+
+
+def atomic_checkpoint(path, value):
+    path = Path(path)
+    partial = path.with_suffix(path.suffix + '.partial')
+    torch.save(value, partial)
+    partial.replace(path)
 
 
 def messages(record, mode='bridge'):
@@ -25,17 +33,20 @@ def messages(record, mode='bridge'):
     return [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': text}]
 
 
-def encode_record(tokenizer, record, max_tokens, mode='bridge'):
+def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=False):
     text = tokenizer.apply_chat_template(messages(record, mode), tokenize=False, add_generation_prompt=True)
+    answer = record['answer']
+    if board_tokens:
+        text, answer = encode_board_text(text), encode_board_text(answer)
     prefix = tokenizer.encode(text, add_special_tokens=False)
-    target = tokenizer.encode(record['answer'] + tokenizer.eos_token, add_special_tokens=False)
+    target = tokenizer.encode(answer + tokenizer.eos_token, add_special_tokens=False)
     if len(prefix) + len(target) > max_tokens:
         raise ValueError(f"Record {record['id']} exceeds max_tokens; supervision must not be silently truncated")
     return prefix + target, [-100] * len(prefix) + target
 
 
-def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge'):
-    pairs = [encode_record(tokenizer, r, max_tokens, mode) for r in records]
+def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_tokens=False):
+    pairs = [encode_record(tokenizer, r, max_tokens, mode, board_tokens) for r in records]
     length = max(len(p[0]) for p in pairs)
     ids, labels, mask = [], [], []
     for inputs, targets in pairs:
@@ -85,7 +96,8 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
     size = config.get('eval_batch_size', config['batch_size'])
     for offset in range(0, len(rows), size):
         batch = rows[offset:offset + size]
-        inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'))
+        inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'),
+                              config.get('board_tokens', False))
         tokens = int((inputs['labels'][:, 1:] != -100).sum())
         with model.board_context(select_features(cache, indices, batch, device, zero, rotate)):
             loss = model(**inputs).loss
@@ -97,16 +109,20 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
 
 
 @torch.no_grad()
-def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64):
+def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False):
     model.eval()
     results = []
     for record in rows:
         text = tokenizer.apply_chat_template(messages(record, mode), tokenize=False, add_generation_prompt=True)
+        if board_tokens:
+            text = encode_board_text(text)
         inputs = tokenizer(text, return_tensors='pt', add_special_tokens=False).to(device)
         with model.board_context(select_features(cache, indices, [record], device)):
             tokens = model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
                                          pad_token_id=tokenizer.pad_token_id)
         answer = tokenizer.decode(tokens[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
+        if board_tokens:
+            answer = decode_board_text(answer)
         results.append({'id': record['id'], 'game_id': record['game_id'], 'stage': record['stage'],
                         'question': record['question'], 'expected': record['answer'], 'generated': answer,
                         'exact_match': answer == record['answer']})
@@ -116,7 +132,8 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
-            'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps']
+            'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
+            'board_tokens', 'expert_feature_depths']
     if any(saved.get(k) != requested.get(k) for k in keys):
         raise ValueError('Resume configuration differs; initialize a new experiment instead')
 
@@ -148,9 +165,22 @@ def main():
     torch.backends.cuda.matmul.allow_tf32 = False
     rng = random.Random(config['seed'])
     started = time.monotonic()
+    execution_code = code_identity()
     cache = torch.load(config['feature_path'], map_location='cpu', weights_only=True)
+    if len(cache['features']) != len(config['decoder_bridge_positions']):
+        raise ValueError('Cached expert levels do not match bridge positions')
+    if config.get('expert_feature_depths') and list(cache['depths']) != config['expert_feature_depths']:
+        raise ValueError('Expert layer contract differs from the cached features')
     indices = {key: i for i, key in enumerate(cache['keys'])}
     data_path = Path(config.get('data_path', 'data'))
+    input_paths = [config['feature_path'], *[data_path / f'{s}.jsonl' for s in ['train', 'validation']]]
+    if config.get('init_from'):
+        input_paths.append(config['init_from'])
+    input_hashes = {str(p): digest(p) for p in input_paths} if rank == 0 else None
+    if world > 1:
+        objects = [input_hashes]
+        dist.broadcast_object_list(objects, src=0)
+        input_hashes = objects[0]
     mixture = config.get('mixture', {s: 1.0 for s in config['stages']})
     rows = {s: [r for r in load_jsonl(data_path / f'{s}.jsonl') if r['stage'] in mixture]
             for s in ['train', 'validation']}
@@ -170,6 +200,8 @@ def main():
     if args.resume:
         resume = torch.load(args.resume, map_location='cpu', weights_only=True)
         compatible_resume(resume['config'], config)
+        if resume.get('input_hashes') != input_hashes:
+            raise ValueError('Resume input hashes are missing or changed; initialize a new experiment')
         if resume['world_size'] != world:
             raise ValueError('Exact optimizer resume requires the same DDP world size')
         load_trainable(model, resume)
@@ -197,8 +229,11 @@ def main():
         atomic_json(dest / 'validation_ids.json', [r['id'] for r in validation])
         if not resume:
             best_loss = evaluate(model, tokenizer, validation, cache, indices, config, device)
-            torch.save({'trainable': trainable_state(model), 'config': config, 'selected_step': 0}, dest / 'adapter.pt')
-        initial_loss = best_loss
+            atomic_checkpoint(dest / 'adapter.pt', {'trainable': trainable_state(model), 'config': config,
+                              'selected_step': 0, 'input_hashes': input_hashes, 'code': execution_code})
+        initial_loss = resume['initial_loss'] if resume else best_loss
+        atomic_json(dest / 'execution.json', {'code': execution_code, 'input_hashes': input_hashes,
+                                            'resumed_from_step': begin, 'initial_loss': initial_loss})
         handle = (dest / 'training.jsonl').open('a' if resume else 'w')
     if world > 1:
         state = [best_loss, best_step]
@@ -208,11 +243,12 @@ def main():
     completed = begin
     incomplete = False
     losses, norms = [], []
-    patience_count = 0
+    patience_count = resume.get('patience_count', 0) if resume else 0
     for step in range(begin, config['steps']):
         wrapped.train()
         records = sample_batch(rows['train'], mixture, rng, config['batch_size'], rank, world, pools)
-        inputs = batch_inputs(tokenizer, records, config['max_tokens'], device, config.get('mode', 'bridge'))
+        inputs = batch_inputs(tokenizer, records, config['max_tokens'], device, config.get('mode', 'bridge'),
+                              config.get('board_tokens', False))
         local_tokens = (inputs['labels'][:, 1:] != -100).sum().to(dtype=torch.float32)
         total_tokens = local_tokens.clone()
         if world > 1:
@@ -257,8 +293,8 @@ def main():
                 current = evaluate(model, tokenizer, validation, cache, indices, config, device)
                 if current < best_loss - config.get('min_delta', 0.001):
                     best_loss, best_step, patience_count = current, completed, 0
-                    torch.save({'trainable': trainable_state(model), 'config': config, 'selected_step': best_step},
-                               dest / 'adapter.pt')
+                    atomic_checkpoint(dest / 'adapter.pt', {'trainable': trainable_state(model), 'config': config,
+                                      'selected_step': best_step, 'input_hashes': input_hashes, 'code': execution_code})
                 else:
                     patience_count += 1
                 stop = patience_count >= config.get('patience', 5) and completed >= config.get('min_steps', config['steps'])
@@ -273,10 +309,11 @@ def main():
             else:
                 cuda_states = [torch.cuda.get_rng_state(device)]
             if rank == 0:
-                torch.save({'trainable': trainable_state(model), 'optimizer': optimizer.state_dict(), 'step': completed,
+                atomic_checkpoint(dest / 'latest.pt', {'trainable': trainable_state(model), 'optimizer': optimizer.state_dict(), 'step': completed,
                             'config': config, 'best_loss': best_loss, 'best_step': best_step, 'tokens_seen': tokens_seen,
                             'random_state': rng.getstate(), 'torch_rng_state': torch.get_rng_state(),
-                            'cuda_rng_states': cuda_states, 'world_size': world}, dest / 'latest.pt')
+                            'cuda_rng_states': cuda_states, 'world_size': world, 'input_hashes': input_hashes,
+                            'initial_loss': initial_loss, 'patience_count': patience_count, 'code': execution_code})
         if args.stop_after and completed >= args.stop_after and completed < config['steps']:
             incomplete = True
             break
@@ -301,7 +338,8 @@ def main():
         zero = evaluate(model, tokenizer, validation, cache, indices, config, device, zero=True)
         shuffled = evaluate(model, tokenizer, validation, cache, indices, config, device, rotate=True)
         examples = generate_examples(model, tokenizer, validation[:config.get('generation_examples', 12)], cache,
-                                     indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64))
+                                     indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64),
+                                     config.get('board_tokens', False))
         atomic_json(dest / 'examples.json', examples)
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
                   'steps_completed': completed, 'selected_step': best_step, 'world_size': world,
@@ -316,9 +354,9 @@ def main():
         inputs = [data_path / f'{s}.jsonl' for s in ['train', 'validation']]
         if config.get('init_from'):
             inputs.append(config['init_from'])
-        result['feature_cache_sha256'] = digest(config['feature_path'])
+        result['feature_cache_sha256'] = input_hashes[config['feature_path']]
         atomic_json(dest / 'manifest.json', manifest('model_training', config, inputs,
-                    [dest / 'adapter.pt', dest / 'examples.json', dest / 'training.jsonl'], result))
+                    [dest / 'adapter.pt', dest / 'examples.json', dest / 'training.jsonl'], result, code=execution_code))
         atomic_json(dest / 'metrics.json', result)
         print(json.dumps(result), flush=True)
     if world > 1:

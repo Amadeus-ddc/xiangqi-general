@@ -1,0 +1,18 @@
+{
+  "parameters_compared": 258,
+  "max_absolute_error": 0.0,
+  "bitwise_equal": true,
+  "supervised_tokens": [
+    84,
+    84
+  ],
+  "initial_loss": [
+    11.363096237182617,
+    11.363096237182617
+  ],
+  "code_equal": true,
+  "board_weight_parameters": [
+    "base.model.embed_tokens.board_weight",
+    "base.lm_head.board_weight"
+  ]
+}

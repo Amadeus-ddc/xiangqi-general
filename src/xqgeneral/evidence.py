@@ -2,6 +2,7 @@
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -42,17 +43,16 @@ def position_key(fen):
 
 
 def code_identity():
-    root = Path(__file__).resolve().parents[2]
-    rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, text=True, capture_output=True)
-    files = sorted((root / "src/xqgeneral").glob("*.py"))
-    return {"revision": rev.stdout.strip() if rev.returncode == 0 else None,
-            "source_sha256": {str(p.relative_to(root)): digest(p) for p in files}}
+    source = Path(__file__).resolve().parent
+    rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=source, text=True, capture_output=True)
+    return {"revision": os.environ.get('XQGENERAL_CODE_REVISION') or (rev.stdout.strip() if rev.returncode == 0 else None),
+            "source_sha256": {f'src/xqgeneral/{p.name}': digest(p) for p in sorted(source.glob('*.py'))}}
 
 
-def manifest(kind, config, inputs=(), outputs=(), verification=None):
+def manifest(kind, config, inputs=(), outputs=(), verification=None, code=None):
     def artifacts(paths):
         return {str(p): {"sha256": digest(p), "bytes": Path(p).stat().st_size} for p in paths}
     return {"schema_version": 1, "kind": kind, "status": "complete",
             "evidence_state": "reconstructed_baseline", "created_utc": datetime.now(timezone.utc).isoformat(),
-            "config": config, "code": code_identity(), "inputs": artifacts(inputs),
+            "config": config, "code": code or code_identity(), "inputs": artifacts(inputs),
             "outputs": artifacts(outputs), "verification": verification or {}}

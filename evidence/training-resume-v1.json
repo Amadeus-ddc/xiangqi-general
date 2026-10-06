@@ -1,0 +1,7 @@
+{
+  "single_step": 4,
+  "resumed_step": 4,
+  "max_absolute_error": 0.0,
+  "identical_supervised_token_count": true,
+  "all_trainable_tensors_equal": true
+}

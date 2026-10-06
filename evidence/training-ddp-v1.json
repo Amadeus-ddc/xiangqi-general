@@ -1,0 +1,17 @@
+{
+  "global_batch_size": 4,
+  "single_world": 1,
+  "ddp_world": 2,
+  "steps": [
+    4,
+    4
+  ],
+  "supervised_tokens": [
+    48,
+    48
+  ],
+  "both_frozen_checks": true,
+  "rng_equal": true,
+  "max_abs_parameter_difference": 0.0005645751953125,
+  "note": "BF16 reductions across microbatches are not bitwise equivalent; this checks execution and identical sample exposure."
+}

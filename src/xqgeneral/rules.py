@@ -64,6 +64,7 @@ def legal_moves(fen):
     return tuple(from_fairy(m) for m in pyffish.legal_moves(VARIANT, fen, []))
 
 
+@lru_cache(maxsize=131072)
 def play(fen, move):
     if move not in legal_moves(fen):
         raise ValueError(f"Illegal move {move} for {fen}")

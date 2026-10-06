@@ -72,7 +72,7 @@ def dynamic_tasks(fen, rng):
              " ".join(checks) or "无", {})]
 
 
-def make_records(games=80, seed=20261006, plies=64, test_fraction=0.15):
+def make_records(games=80, seed=20261006, plies=64, test_fraction=0.15, root_sampling='balanced'):
     if games < 3 or not 0 <= test_fraction < 0.4:
         raise ValueError("At least three games and a valid test fraction are required")
     rows, ownership = [], {}
@@ -89,7 +89,8 @@ def make_records(games=80, seed=20261006, plies=64, test_fraction=0.15):
             fen = play(fen, chosen)
             moves.append(chosen)
             history.append(fen)
-            if ply < 8 or ply % 4 or position_key(fen) in ownership:
+            phase = game % 2 if root_sampling == 'balanced' else 0
+            if ply < 8 or ply % 4 != phase or position_key(fen) in ownership:
                 continue
             future, future_moves, future_keys = fen, [], set()
             for _ in range(rng.randint(1, 8)):
@@ -151,11 +152,12 @@ def main():
     parser.add_argument("--output", default="data/research-v1")
     parser.add_argument("--games", type=int, default=120)
     parser.add_argument("--seed", type=int, default=20261007)
+    parser.add_argument('--root-sampling', choices=['balanced', 'legacy_black_only'], default='balanced')
     args = parser.parse_args()
     dest = Path(args.output)
     if (dest / "manifest.json").exists():
         raise FileExistsError("Completed dataset exists; select a new output directory")
-    rows = make_records(games=args.games, seed=args.seed)
+    rows = make_records(games=args.games, seed=args.seed, root_sampling=args.root_sampling)
     proof, outputs = verify_splits(rows), []
     for split in ["train", "validation", "test"]:
         path = dest / f"{split}.jsonl"

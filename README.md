@@ -2,7 +2,7 @@
 
 将 [Queen 论文](https://arxiv.org/abs/2610.03695v1) 的棋类专家与语言模型桥接路线迁移到中国象棋，目标是同时提供强走法和可核对的中文讲解。当前能力与实测限制见 [STATUS.md](STATUS.md)，模型用途与评测边界见 [模型说明](docs/MODEL_CARD.md)。
 
-专家为冻结的 Px0 20 层、512 维 Transformer；语言模型为固定 revision 的 Qwen3-4B-Instruct-2507。四个可训练交叉注意力块读取 90 个棋盘 token。首轮原型使用宽度 384，完整配置、分割、检查点选择和输出校验由各实验 manifest 记录。
+专家为冻结的 Px0 20 层、512 维 Transformer；语言模型为固定 revision 的 Qwen3-4B-Instruct-2507。可训练交叉注意力读取 90 个棋盘 token。首轮原型为四个 384 宽桥接块；扩大方案为 16 个 768 宽桥接块与 105 个棋盘词元。完整配置、分割、检查点选择和输出校验由各实验 manifest 记录。
 
 ## 安装与 CPU 验证
 
@@ -34,12 +34,40 @@ python -m xqgeneral.verify_network
 ## 数据与训练
 
 ```bash
-python -m xqgeneral.data --games 120 --output data/research-v1
-python -m xqgeneral.cache_features --data data/research-v1 --output data/research-v1/features.pt
-python -m xqgeneral.train --config configs/pilot.json
+python -m xqgeneral.data --games 120 --root-sampling legacy_black_only --output data/research-v1
+python -m xqgeneral.symmetry --data data/research-v1 --output data/research-balanced-v1
+python -m xqgeneral.cache_features --data data/research-balanced-v1 \
+  --output data/research-balanced-v1/features-16.pt --depths 0 1 2 3 4 5 6 8 9 10 11 12 14 15 17 19
+python scripts/freeze_run.py --output runs/research-v2/bridge/source-run -- \
+  python -m xqgeneral.curriculum --config configs/research-v2.json --mode bridge
 ```
 
-新实验必须使用新的输出目录。课程按棋局预先划分训练、验证、独立测试，检查当前与未来局面重叠。课程间继承验证集选出的最佳检查点，并混合之前课程。每次运行保存配置、输入与输出哈希、源代码身份和验证结果。长任务放在 tmux，完整研究配置和后续评测入口随已验证里程碑补齐。
+这些命令重建本次对称增强实验。新数据生成默认使用红黑平衡采样；`legacy_black_only` 仅用于重建第一版及其对称派生数据。新实验必须使用新的输出目录。课程按棋局预先划分训练、验证、独立测试，检查当前与未来局面重叠。课程间继承验证集选出的最佳检查点，并混合之前课程。长任务放在 tmux；每次运行保存配置、输入与输出哈希及冻结执行源码。
+
+相同预算的纯语言基线使用 `--mode text_lora`。原始回答的平衡题评测入口：
+
+```bash
+python -m xqgeneral.evaluate_qa --checkpoint CHECKPOINT.pt \
+  --data data/research-balanced-v1 --features data/research-balanced-v1/features-16.pt \
+  --split validation --output runs/qa-validation
+```
+
+验证集用于选模型；独立测试不参与选模型。评测保留原始错误，不通过引擎修复答案。
+
+## 讲解教师
+
+教师身份固定在 `configs/teachers.json`：初始标注为用户授权的 GPT-6-Astra Low 子代理；搜索汇总为本地官方 Qwen3.8-27B 完整权重，BF16、无量化。后者只做推理。
+
+```bash
+python -m xqgeneral.prepare_explanations --data data/research-v1 --output data/astra-seed-v1
+# 显式教师生成 annotations-*.jsonl 后，核对全部 ID、身份、结构与走法。
+python -m xqgeneral.collect_teacher --input data/astra-seed-v1 --color-mirror
+pip install -e '.[teacher]'
+python scripts/fetch_teacher.py
+python scripts/verify_teacher_weights.py
+```
+
+标注文件每行包含 `id`、真实 `explanation`、`teacher_model`、`reasoning_effort` 和 `backend`。不生成模板替代缺失教师。颜色派生项会记录来源，不计为独立教师调用。完整教师加载与实际蒸馏的完成状态见 `STATUS.md`。
 
 ## 原型推理
 

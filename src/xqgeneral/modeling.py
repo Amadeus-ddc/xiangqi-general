@@ -37,6 +37,9 @@ def load_model(config, expert_dim=512, device="cuda"):
         model = TextLanguageModel(base)
     else:
         raise ValueError(f"Unsupported model mode {mode}")
+    if config.get('board_tokens', False):
+        from .board_tokens import install_board_tokens
+        install_board_tokens(base, tokenizer)
     return model.to(device=device, dtype=dtype), tokenizer
 
 
