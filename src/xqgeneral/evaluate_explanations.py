@@ -14,6 +14,29 @@ from .oracle import Pikafish
 from .rules import adjudicate, legal_moves, play
 
 
+def judge_move(oracle, record, move, nodes):
+    """Score a raw root move with a separate engine and the complete history."""
+    result = {'first_move_legal': False, 'first_move_no_mistake': False}
+    outcome = adjudicate(record['initial_fen'], record['moves'])
+    if outcome['ended']:
+        return dict(result, terminal_root=outcome)
+    if move not in legal_moves(record['fen']):
+        return result
+    result['first_move_legal'] = True
+    engine = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'])
+    best = next(c for c in engine['candidates'] if c['move'] == engine['best_move'])
+    chosen = next((c for c in engine['candidates'] if c['move'] == move), None)
+    if chosen is None:
+        restricted = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'],
+                                     searchmoves=[move])
+        chosen = next(c for c in restricted['candidates'] if c['move'] == move)
+        result['first_move_restricted_oracle'] = restricted
+    loss = max(0, candidate_probability(record['fen'], best) - candidate_probability(record['fen'], chosen))
+    result.update(first_move_expected_score_loss=loss, first_move_no_mistake=loss < .10,
+                  first_move_oracle=engine)
+    return result
+
+
 def judgment(oracle, record, raw, nodes):
     try:
         analysis = parse_explanation(raw)
@@ -22,26 +45,15 @@ def judgment(oracle, record, raw, nodes):
                 'errors': ['invalid_json'], 'first_move_no_mistake': False, 'prose_semantic_rating': 'unmeasured'}
     proof = validate_explanation(record['fen'], analysis, require_branches=True)
     result = {'parse_valid': True, 'contract_valid': proof['valid'], 'errors': proof['errors'],
-              'first_move_legal': analysis.get('move') in legal_moves(record['fen']),
-              'first_move_no_mistake': False, 'pv_move_losses': [], 'prose_semantic_rating': 'unmeasured'}
-    outcome = adjudicate(record['initial_fen'], record['moves'])
-    if outcome['ended']:
-        result.update(first_move_legal=False, contract_valid=False, pv_legal=False, terminal_root=outcome)
+              'pv_move_losses': [], 'prose_semantic_rating': 'unmeasured',
+              **judge_move(oracle, record, analysis.get('move'), nodes)}
+    if 'terminal_root' in result:
+        result.update(contract_valid=False, pv_legal=False)
         result['errors'].append('move_after_terminal_root')
         return result
-    root_engine = None
+    root_engine = result.get('first_move_oracle')
     if result['first_move_legal']:
-        root_engine = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'])
         best = next(c for c in root_engine['candidates'] if c['move'] == root_engine['best_move'])
-        chosen = next((c for c in root_engine['candidates'] if c['move'] == analysis['move']), None)
-        if chosen is None:
-            restricted = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'],
-                                         searchmoves=[analysis['move']])
-            chosen = next(c for c in restricted['candidates'] if c['move'] == analysis['move'])
-            result['first_move_restricted_oracle'] = restricted
-        loss = max(0, candidate_probability(record['fen'], best) - candidate_probability(record['fen'], chosen))
-        result.update(first_move_expected_score_loss=loss, first_move_no_mistake=loss < .10,
-                      first_move_oracle=root_engine)
         try:
             result['evaluation_probability_error'] = abs(evaluation_probability(record['fen'], analysis.get('evaluation')) -
                                                           candidate_probability(record['fen'], best))

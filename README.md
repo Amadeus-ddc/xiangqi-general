@@ -123,6 +123,15 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 
 讲解评测使用更高预算、独立执行的皮卡鱼检查推荐走法、变化、评分方向和棋盘事实；中文战略正文仍需单独评审。对弈从固定开局交换红黑，完整保留历史。非法模型走法判负，达到步数上限记为截尾，结果不自动换算 Elo。先用验证集完成开发，最终选择的模型才进入独立测试。
 
+走法课程采用相同的独立引擎质量判断，同时统计原始 UCCI 格式、合法率和相对教师标签的完全匹配率。非法回答不会被引擎替换：
+
+```bash
+python -m xqgeneral.evaluate_moves --checkpoint MOVE_CHECKPOINT.pt \
+  --data data/move-quality-v1 --split validation --output runs/move-validation
+```
+
+专家消融使用 `--memory zero` 或 `--memory shuffled`，保持验证题及独立裁判预算一致。颜色派生样本会单独计数；合法样本上的平均质量损失必须与覆盖全部样本的合法率及无明显失误率一起解读。
+
 可将已完成引擎评测的原始讲解提交给本地 BF16 教师作盲评，检查事实、战略理由、教学清晰度与要求完成度：
 
 ```bash

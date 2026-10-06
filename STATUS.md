@@ -7,7 +7,7 @@
 - 原型基线保留：冻结 Px0 与 Qwen，四个 384 宽桥接块，80 步静态课程；12 条生成样例中 8 条正确。这仅证明链路可执行。
 - 原生输入编码：原始 102 个局面逐平面一致。
 - 完整网络数值对照：34 个局面，2062 个策略输出、胜和负、剩余步数与四层特征均一致。胜和负最大误差 `6.85e-7`，策略最大误差 `5.60e-6`。参考为官方 C++ 编码器与未修改的 C++ ONNX 导出器，通过 ONNX Runtime CPU 执行。证据见 `evidence/native-network.json`。
-- 37 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
+- 38 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。独立走法评测拒收非法或终局后走法，并按原始输出统计全样本与合法样本条件指标。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
 - 课程数据生成器加入空格、零数量、棋子位置、子力、吃子、将军与未来非法反例；训练/验证/测试按棋局划分并检查当前及未来局面重叠。
 - Git 已建立，原始原型有独立基线提交。软件包改名 `xqgeneral`；本地目录已同步改名为 `xiangqi-general`，项目环境与可编辑安装路径已修复。
 - [GitHub 仓库](https://github.com/Amadeus-ddc/xiangqi-general) 已同步并合并首个源码里程碑；Python 3.11/3.12 的 CPU CI 均通过。
@@ -19,20 +19,23 @@
 - 全量讲解训练通过两步 GPU 执行检查：41.62 亿可训练参数，FP32 参数、BF16 计算，解码器参数实际变化，峰值 77.66GiB；见 `evidence/full-decoder-sft-verification.json`。这不是完成的讲解模型。全局批量 4、微批量 1 的连续与续跑结果逐位一致，见 `evidence/microbatch-resume.json`。
 - 专家组初始讲解 SFT 已执行 1408 步，选择验证集最佳第 896 步；NLL 从 8.5569 降至 0.6584，峰值 77.59GiB。见 `evidence/explanation-sft-v2-bridge.json`。损失不能代替走法与正文质量评测。
 - 中间检查点已完成 32 个验证局面的独立 100 万节点评测：31 个可解析，7 个推荐走法合法，4 个未出现引擎判定的明显失误，完整结构及主变化合法率均为零。原始错误和引擎证据均保留；见 `evidence/interim-explanation-v2-001.json`。这解释了追加走法课程的必要性，不是最终模型结论。
+- 已完成 SFT 的最佳检查点另经 96 局验证：全部可解析，22 个推荐走法合法，14 个无明显失误；完整结构与主变化合法率仍为零。见 `evidence/explanation-v2-bridge-validation.json`。该模型不能作为可靠教练交付。
 - 本地完整 BF16 教师已实际完成 8 条中间讲解盲评，事实与战略维度平均均为 1/5，全部指出了无依据声明。首次被截断的 1 条经更大输出预算真实重试，最终评分全量覆盖、零拒收。见 `evidence/interim-neural-prose-review.json`。该神经裁判与汇总教师共享基础模型，评分不是人工评价或绝对事实标准。
 - 官方 **Qwen/Qwen3.8-27B 未量化完整权重**已部署：18 个分片、55,563,006,776 字节，全部官方 SHA256 匹配；真实加载 27,356,728,560 个 BF16 参数，一张 H20 占用约 50.96GiB，完成真实生成。见 `evidence/full-teacher-weights.json` 与 `evidence/full-teacher-deployment.json`。已有 Q4_K_M GGUF 不用于本项目。
 - 新增 7100 个独立引擎搜索局面，形成 16,382 条训练走法题、192 条验证题、256 条测试题，并保留四门课程回放；棋局与当前/未来局面跨分割重叠均为零。16 层专家特征已缓存，共 17,554 个完整历史上下文。见 `evidence/move-quality-data.json` 与 `evidence/move-quality-feature-cache.json`。这些是引擎标签，不是神经讲解。
+- 新走法评测已实际执行：字典课程第二门检查点在补训前的 32 道验证题中，20 个格式有效、9 个走法合法、8 个无明显失误。独立裁判每局使用 100 万节点，保留全部原始回答；见 `evidence/move-quality-before-training.json`。抽样含颜色派生项，不是 32 个新独立棋局。
 - 搜索挖掘、真实 BF16 汇总收集及完整对弈入口已实现并通过受控测试，真实搜索蒸馏与对弈结果尚待产生。
 - 终端学习入口支持棋盘显示、推荐讲解、悔棋和完整历史保存/续读；命令行入口已检查，真实训练模型的学习体验仍待验证。
 
 ## 正在完成
 
-- 红黑平衡数据上的扩大纯语言基线已完成四门课程，执行 4000/2750/4000/3250 步；见 `evidence/curriculum-v2-text.json`。当前正在进行与专家组相同的完整讲解 SFT，平衡问答评测待执行。
+- 红黑平衡数据上的扩大纯语言基线已完成四门课程，执行 4000/2750/4000/3250 步，264 道平衡验证问答正确率为 51.9%；见 `evidence/curriculum-v2-text.json`。当前正在进行与专家组相同的完整讲解 SFT。
 - Astra 已生成新增 579 个训练根局面的初始讲解，并对新增训练项抽检 72 条；一处“回吃”表述已修正并复核。合并后的 1,315 条原始标注与颜色派生项共 2,630 条（2182 训练、192 验证、256 测试），全部结构校验与输出哈希读回通过；验证/测试文件与原版本字节一致。共 144 条神经抽检，见 `evidence/initial-teacher-full.json`。
 - 棋盘字典对照两组正在执行四门课程，配置 `configs/research-v3.json`。双方第一门课程均在 24 条生成样例中答对 22 条，不能推广为整体正确率。这是论文专家输入条件以外的改动，结果与专家消融需单独报告。
 - 四门字典课程完成后，两组将自动进入 `configs/move-quality-v1.json` 的真实引擎走法课程，再进行讲解训练。课程按验证集选检查点。
 - 授权 Astra Low 子代理正在为 2048 个新增训练局面逐条生成初始讲解。原始引擎事实与查询批次已固定；未完成标注不进入训练。后续 `configs/explanation-sft-v3.json` 将混合扩充讲解、走法题及四门基础课程回放。
 - 扩充初始讲解 SFT 与实际分支搜索蒸馏。
+- 已完成讲解检查点的 16 个训练根局面搜索诊断正在执行；没有通过事实、候选与严格变化改善校验的样本不会进入汇总或蒸馏训练。
 - 相同数据预算的纯语言模型基线、专家桥接与蒸馏比较。
 - 独立走法质量、解释事实和完整对弈评测。
 - 开源发布资产、可复现入口、GitHub CI 与里程碑同步。
@@ -49,6 +52,7 @@
 - 字典对照：`xqgeneral-curriculum-v3-bridge`（GPU 2）、`xqgeneral-v3-text-resume`（GPU 3），日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log`。
 - 讲解训练：`xqgeneral-explanation-v2-text`（GPU 1），日志 `runs/explanation-v2-text.log`；专家组已完成。
 - 走法课程排队：`xqgeneral-move-quality-bridge`（GPU 2）、`xqgeneral-move-quality-text`（GPU 3），日志 `runs/move-quality-v1-{bridge,text}.log`，等待对应四门课程完成。
-- 完成的课程纯语言基线问答与专家最佳讲解检查点验证：`xqgeneral-v2-validation`（GPU 0），日志 `runs/research-v2-text-qa-validation.log` 与 `runs/explanation-v2-bridge-validation.log`。
+- 完成的课程纯语言基线问答与专家最佳讲解检查点验证日志：`runs/research-v2-text-qa-validation.log` 与 `runs/explanation-v2-bridge-validation.log`。完成的走法裁判检查日志：`runs/move-quality-v1-pre-curriculum-validation.log`。
+- 搜索诊断：`xqgeneral-search-v2-diagnostic`（GPU 0），日志 `runs/search-v2-diagnostic.log`，原始学生与分支回答位于 `runs/search-v2-diagnostic/mining/`。
 - Astra 新标注进度：`data/astra-engine-seed-v1/shards/annotations-*.progress.json`。完成的神经盲评与重试输出位于 `runs/interim-explanation-v2-001/prose-review/`。
 - 训练通过 `scripts/freeze_run.py` 保存执行源码；开发中的后续修改不会改变已启动的训练。课程入口自动从 `latest.pt` 续跑，并核对输入哈希；改变数据或配置必须新建实验。
