@@ -1,0 +1,34 @@
+{
+  "selected_student_step": 3072,
+  "mining": {
+    "processed": 128,
+    "accepted_for_consolidation": 0,
+    "reasons": {
+      "invalid_root_candidates": 128
+    },
+    "new_session_counters": {
+      "root_attempts": 168,
+      "recursive_descents": 40,
+      "oracle_candidate_injections": 10
+    },
+    "training_roots_only": true,
+    "heldout_positions_excluded": true,
+    "all_child_branch_positions_isolated": true,
+    "full_history_termination_checked": true,
+    "strict_pv_improvement_required": true,
+    "probability_model": "pinned_Pikafish_material_WDL",
+    "teacher_consolidation_executed": false,
+    "student_generations_preserved": true
+  },
+  "mining_manifest_sha256": "555227a6495b7c6745681db2126b4f8fddf1339de3b1fcc76a998d2906a3a25a",
+  "consolidation_executed": false,
+  "student_distillation_training_executed": false,
+  "validation_or_test_roots_used_for_mining": false,
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "128 train-only true selfplay roots; this is a mining and conditional consolidation pilot",
+    "An empty result is not successful distillation",
+    "No student distillation training or independent test result claimed"
+  ]
+}

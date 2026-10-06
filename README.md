@@ -158,6 +158,19 @@ python -m xqgeneral.evaluate_plans --checkpoint PLAN_CHECKPOINT.pt \
 
 规划评测保留原始序列，分别检查整条合法性、条件首着、参考长度和逐步走法损失。指定候选的首着不计入最优选招指标，后续每步独立搜索；终局后续着仍是错误。短答案不会因前缀合法就通过长度合同。课程的有效训练配置由 `sft` 入口计算步数；改配置须新建实验。
 
+也可用已完成独立搜索的实战局面补充四门规则问答：
+
+```bash
+python -m xqgeneral.selfplay_grounding --data data/move-quality-selfplay-v3 \
+  --reserved-data data/move-planning-v1 data/astra-explanations-full-v5 \
+  --game-prefix engine-selfplay-20261029- --train-roots 8192 \
+  --workers 8 --chunk-size 16 --output data/research-selfplay-v1
+```
+
+每个原始根局面生成当前静态、当前动态、未来静态和未来动态问题，并生成颜色派生项。未来前缀从引擎最佳变化中抽取一至六步，保留初始局面与完整历史；历史已终局的根局面和未来局面都拒收。原始根局面按双方平衡采样，派生项不算新独立棋局。已有课程及其验证、测试标签保持原样，所有新问题的根局面、所问未来变化和镜像排除保留局面。
+
+并行生成按查询顺序返回，预取数量有界，各查询使用固定独立随机种子；相同参数的单进程与多进程生成保持标签一致。这个数据集只有规则问答，不生成神经讲解或重新搜索。训练前还须检查词元长度和完成的特征缓存，数据生成本身不证明模型改善。长任务用冻结源码在 tmux 内运行，并选择新输出目录。
+
 可在另一个 tmux 会话中，按实际走法与变化结果持续选检查点：
 
 ```bash
