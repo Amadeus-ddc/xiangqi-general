@@ -52,7 +52,7 @@ def play_game(predictor, oracle, opening, model_color, nodes, max_plies, action_
                         'reason': 'raw_model_invalid_move_forfeit', 'moves': moves, 'turns': turns,
                         'opening': name, 'model_color': model_color, 'opponent_nodes': nodes}
         else:
-            result = oracle.analyze(fen, nodes, START_FEN, moves)
+            result = oracle.choose_move(fen, nodes, START_FEN, moves)
             move = result['best_move']
             turns.append({'ply': len(moves), 'mover': mover, 'move': move, 'oracle': result})
         moves.append(move); history.append(play(fen, move))

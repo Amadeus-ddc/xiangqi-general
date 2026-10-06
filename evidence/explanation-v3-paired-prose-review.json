@@ -1,0 +1,50 @@
+{
+  "pairs": 8,
+  "blinded_to_checkpoint_and_annotation_source": true,
+  "human_rating": false,
+  "reviewer_also_used_for_training_consolidation": true,
+  "teacher_reference_mechanical_metrics": {
+    "examples": 8,
+    "parse_valid_rate": 1.0,
+    "first_move_legal_rate": 1.0,
+    "structured_contract_valid_rate": 1.0,
+    "first_move_no_mistake_rate": 1.0,
+    "legal_scored_first_moves": 8,
+    "mean_first_move_expected_score_loss_conditional": 0.0001875000000000071,
+    "pv_legal_rate": 1.0,
+    "judged_legal_pv_plies": 48,
+    "pv_no_mistake_fraction_conditional": 1.0,
+    "errors": {},
+    "raw_generation": true,
+    "oracle_repairs": 0,
+    "score_model": "pinned_Pikafish_material_WDL",
+    "prose_semantic_rating": "unmeasured"
+  },
+  "by_group": {
+    "teacher_reference": {
+      "examples": 8,
+      "mean_scores": {
+        "factual_correctness": 3.5,
+        "strategic_reasoning": 3.5,
+        "clarity": 3.875,
+        "instruction_adherence": 4.5
+      },
+      "with_unsupported_claims": 3,
+      "all_dimensions_at_least_4": 5
+    },
+    "student_interim_512": {
+      "examples": 8,
+      "mean_scores": {
+        "factual_correctness": 1.0,
+        "strategic_reasoning": 1.0,
+        "clarity": 1.75,
+        "instruction_adherence": 1.25
+      },
+      "with_unsupported_claims": 8,
+      "all_dimensions_at_least_4": 0
+    }
+  },
+  "source_manifest_sha256": "0289a2636d06456d20e447cdffc94d7103ed33c792270c6e1b8f309dbceb922e",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline"
+}

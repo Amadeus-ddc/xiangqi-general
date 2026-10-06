@@ -82,6 +82,8 @@ def main():
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--extra-contexts', nargs='*', default=[],
                         help='Additional train-only complete-history contexts to independently search')
+    parser.add_argument('--no-descendants', action='store_true',
+                        help='Keep existing searched roots and search only the supplied extra contexts')
     args = parser.parse_args()
     root = Path(args.output)
     if (root/'manifest.json').exists():
@@ -102,7 +104,8 @@ def main():
     train_roots = sum(q['record']['split']=='train' for q in queries)
     if args.limit < train_roots + len(extra) or args.workers < 1 or args.nodes < 1:
         raise ValueError('Invalid policy-data budget')
-    descendants = descendant_contexts(queries,forbidden,args.limit-train_roots-len(extra),args.seed)
+    descendants = ([] if args.no_descendants else
+                   descendant_contexts(queries,forbidden,args.limit-train_roots-len(extra),args.seed))
     # A supplement may match a searched continuation. Search each history only once.
     extra_keys = {r['feature_key'] for r in extra}
     new_contexts = extra + [r for r in descendants if r['feature_key'] not in extra_keys]
@@ -136,6 +139,7 @@ def main():
     summary = {**proof,'move_lessons':len(labels),'by_split':dict(Counter(r['split'] for r in labels)),
                'new_independently_searched_contexts':len(queries)-sum(len(load_jsonl(p)) for p in query_paths),
                'extra_training_contexts':len(extra),'extra_context_rejections':extra_rejected,
+               'new_descendant_generation_enabled':not args.no_descendants,
                'rejected':dict(rejected),'root_and_answer_positions_checked':True,
                'neural_prose_generated':False,'original_course_replay_preserved':True}
     atomic_json(root/'manifest.json',manifest('engine_move_quality_curriculum',vars(args),inputs,outputs,summary))

@@ -1,0 +1,22 @@
+{
+  "reviewed_reference_annotations": 3,
+  "challenged_claims": 11,
+  "reviewers": 2,
+  "unique_candidate_branches_replayed_per_reviewer": 9,
+  "unique_plies_replayed_per_reviewer": 54,
+  "substantive_tactical_and_score_claims_supported": true,
+  "qwen_substantive_accusations_not_supported": true,
+  "minor_color_terminology_suggestions": 2,
+  "annotations_and_ratings_modified": false,
+  "human_rating": false,
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "reviewers_share_initial_teacher_base_model": true,
+  "scope": "Astra review of Qwen accusations on three teacher references; not a whole-corpus prose quality estimate",
+  "input_sha256": "6b1d7693161c45d26ab55da5043114df015430aa2b48f01582195ee55454929e",
+  "review_sha256": {
+    "astra-reference-review-0.json": "b56f89599db252b12d6f1e5fb0b9a60bb1f1d2b7b1c6ee3167f22c202d136eb8",
+    "astra-reference-review-1.json": "7b3159ca1d8ccab206bcbed3df49bbe3a387fe0a308193b599b4ee14ada2f582"
+  },
+  "evidence_state": "reconstructed_baseline"
+}

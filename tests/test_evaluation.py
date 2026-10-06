@@ -44,3 +44,15 @@ def test_explanation_cannot_continue_after_full_history_repetition():
     assert not result['first_move_legal'] and not result['pv_legal']
     assert result['terminal_root']['reason'] == 'AXF_repetition_or_move_limit'
     assert 'move_after_terminal_root' in result['errors']
+
+
+def test_match_opponent_needs_only_a_legal_move_at_the_fixed_budget():
+    class Oracle:
+        def analyze(self, *args):
+            raise AssertionError('Match play must not require an exact scored analysis')
+        def choose_move(self, fen, nodes, initial_fen, moves):
+            assert fen == initial_fen == START_FEN and moves == [] and nodes == 100
+            return {'best_move': 'b0c2', 'requested_nodes': nodes, 'score_consumed': False}
+    game = play_game(None, Oracle(), ('initial', []), 'black', 100, 1)
+    assert game['status'] == 'censored' and game['moves'] == ['b0c2']
+    assert game['turns'][0]['oracle']['requested_nodes'] == 100
