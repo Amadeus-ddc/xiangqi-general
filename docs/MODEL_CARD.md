@@ -69,6 +69,12 @@ The reviewer shares its base model with the training consolidator, so correlated
 bias remains and these scores are not human ratings. A match stopped at a ply
 limit is reported as censored.
 
+An optional move-only decoding mode restricts the language model to a trie of
+rule-legal moves and chooses using model probabilities. It uses no engine move
+selection, is labeled separately from raw generation, and imposes legal output
+by construction. Its games do not establish explanation quality. The current
+move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
+
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the

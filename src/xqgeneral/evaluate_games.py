@@ -14,7 +14,7 @@ OPENINGS = [('central_cannon', ['b2e2', 'h9g7', 'h0g2', 'b9c7']),
             ('two_horses', ['b0c2', 'b9c7', 'h0g2', 'h9g7'])]
 
 
-def play_game(predictor, oracle, opening, model_color, nodes, max_plies):
+def play_game(predictor, oracle, opening, model_color, nodes, max_plies, action_mode='explanation', move_beams=4):
     name, book = opening
     moves, history = list(book), replay(START_FEN, book)
     turns = []
@@ -31,15 +31,22 @@ def play_game(predictor, oracle, opening, model_color, nodes, max_plies):
         if mover == model_color:
             record = {'initial_fen': START_FEN, 'moves': list(moves), 'history': list(history), 'fen': fen,
                       'question': EXPLANATION_QUESTION}
-            raw = predictor.generate(record, max_new_tokens=768)
-            try:
-                analysis = parse_explanation(raw)
-                move = analysis.get('move')
-                proof = validate_explanation(fen, analysis, require_branches=True)
-            except (ValueError, TypeError, KeyError):
-                move, proof = None, {'valid': False, 'errors': ['invalid_json']}
+            if action_mode == 'legal_move':
+                raw = predictor.generate_moves([record], beams=move_beams)[0]
+                move = raw
+                proof = {'rule_legal_constraints': True, 'explanation_generated': False}
+            elif action_mode == 'explanation':
+                raw = predictor.generate(record, max_new_tokens=768)
+                try:
+                    analysis = parse_explanation(raw)
+                    move = analysis.get('move')
+                    proof = validate_explanation(fen, analysis, require_branches=True)
+                except (ValueError, TypeError, KeyError):
+                    move, proof = None, {'valid': False, 'errors': ['invalid_json']}
+            else:
+                raise ValueError('Unknown match action mode')
             turns.append({'ply': len(moves), 'mover': mover, 'move': move, 'raw': raw, 'verification': proof,
-                          'model_oracle_used': False})
+                          'model_oracle_used': False, 'action_mode': action_mode})
             if not isinstance(move, str) or move not in legal_moves(fen):
                 return {'status': 'completed', 'winner': 'black' if model_color == 'red' else 'red',
                         'reason': 'raw_model_invalid_move_forfeit', 'moves': moves, 'turns': turns,
@@ -70,6 +77,8 @@ def main():
     parser.add_argument('--checkpoint', required=True)
     parser.add_argument('--nodes', nargs='+', type=int, default=[100, 1000, 10000])
     parser.add_argument('--max-plies', type=int, default=256)
+    parser.add_argument('--action-mode', choices=['explanation', 'legal_move'], default='explanation')
+    parser.add_argument('--move-beams', type=int, default=4)
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--output', required=True)
@@ -77,7 +86,7 @@ def main():
     dest = Path(args.output)
     if dest.exists():
         raise FileExistsError('Use a fresh match evaluation output')
-    if args.max_plies <= 0 or any(n <= 0 for n in args.nodes):
+    if args.max_plies <= 0 or args.move_beams < 1 or any(n <= 0 for n in args.nodes):
         raise ValueError('Match budgets must be positive')
     from .inference import Predictor
     predictor = Predictor(args.checkpoint)
@@ -88,14 +97,18 @@ def main():
         for nodes in args.nodes:
             for opening in OPENINGS:
                 for color in ['red', 'black']:
-                    game = play_game(predictor, oracle, opening, color, nodes, args.max_plies)
+                    game = play_game(predictor, oracle, opening, color, nodes, args.max_plies,
+                                     args.action_mode, args.move_beams)
                     games.append(game)
                     atomic_json(dest/f'game-{len(games):03d}.json', game)
                     print(json.dumps(match_summary(games)), flush=True)
     finally:
         oracle.close()
     write_jsonl(dest/'games.jsonl', games)
-    proof = {**match_summary(games), 'by_opponent_nodes': {str(n): match_summary([g for g in games if g['opponent_nodes'] == n])
+    proof = {**match_summary(games), 'action_mode': args.action_mode,
+             'rule_legal_constraints': args.action_mode == 'legal_move',
+             'explanation_quality_evaluated': False,
+             'by_opponent_nodes': {str(n): match_summary([g for g in games if g['opponent_nodes'] == n])
                                                          for n in args.nodes},
              'seconds': time.monotonic()-started, 'rule_profile': 'pyffish-0.0.90-xiangqi-AXF'}
     atomic_json(dest/'metrics.json', proof)

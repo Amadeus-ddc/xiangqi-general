@@ -136,6 +136,17 @@ python -m xqgeneral.evaluate_moves --checkpoint MOVE_CHECKPOINT.pt \
 
 专家消融使用 `--memory zero` 或 `--memory shuffled`，保持验证题及独立裁判预算一致。颜色派生样本会单独计数；合法样本上的平均质量损失必须与覆盖全部样本的合法率及无明显失误率一起解读。
 
+训练过走法课程的检查点可使用规则约束解码。模型概率在合法走法词元树中选招，不调用引擎提供走法；该模式与原始生成分别记录，合法率由约束保证，棋力仍需独立评分和完整对弈验证：
+
+```bash
+python -m xqgeneral.evaluate_moves --checkpoint MOVE_CHECKPOINT.pt \
+  --decoding legal --beams 4 --output runs/legal-move-validation
+python -m xqgeneral.evaluate_games --checkpoint MOVE_CHECKPOINT.pt \
+  --action-mode legal_move --move-beams 4 --output runs/legal-move-matches
+```
+
+`legal_move` 对弈只评测走法，不评测讲解。默认对弈入口继续使用原始 JSON 讲解答案。
+
 可将已完成引擎评测的原始讲解提交给本地 BF16 教师作盲评，检查事实、战略理由、教学清晰度与要求完成度：
 
 ```bash

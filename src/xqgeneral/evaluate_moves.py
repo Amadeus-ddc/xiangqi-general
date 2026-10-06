@@ -52,6 +52,8 @@ def main():
     parser.add_argument('--batch-size', type=int, default=8)
     parser.add_argument('--max-new-tokens', type=int, default=16)
     parser.add_argument('--memory', choices=['normal', 'zero', 'shuffled'], default='normal')
+    parser.add_argument('--decoding', choices=['raw', 'legal'], default='raw')
+    parser.add_argument('--beams', type=int, default=4)
     parser.add_argument('--nodes', type=int, default=1000000)
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--seed', type=int, default=20261016)
@@ -62,7 +64,7 @@ def main():
     dest = Path(args.output)
     if dest.exists():
         raise FileExistsError('Use a fresh raw move evaluation output')
-    if min(args.limit, args.batch_size, args.nodes, args.workers) < 1:
+    if min(args.limit, args.batch_size, args.nodes, args.workers, args.beams) < 1:
         raise ValueError('Move evaluation budgets must be positive')
     data = Path(args.data)/f'{args.split}.jsonl'
     rows = [r for r in load_jsonl(data) if r['stage'] == 'move_quality']
@@ -77,7 +79,8 @@ def main():
         batch = rows[offset:offset+args.batch_size]
         if args.memory == 'shuffled' and len(batch) == 1:
             raise ValueError('A singleton batch cannot shuffle expert memory')
-        answers = predictor.generate_batch(batch, args.max_new_tokens, args.memory)
+        answers = (predictor.generate_moves(batch, args.memory, args.beams) if args.decoding == 'legal' else
+                   predictor.generate_batch(batch, args.max_new_tokens, args.memory))
         raw.extend({'id': r['id'], 'record': r, 'raw': a, 'move': parsed_move(a)} for r,a in zip(batch,answers))
         print(json.dumps({'generated': len(raw), 'requested': len(rows)}), flush=True)
     dest.mkdir(parents=True)
@@ -91,6 +94,9 @@ def main():
     judged.sort(key=lambda r:r['id'])
     write_jsonl(dest/'judged-predictions.jsonl', judged)
     proof = {**move_summary(judged), 'split': args.split, 'memory': args.memory,
+             'decoding': args.decoding, 'raw_generation': args.decoding == 'raw',
+             'rule_legal_constraints': args.decoding == 'legal',
+             'legality_is_imposed_by_decoding': args.decoding == 'legal',
              'judge_nodes_per_position': args.nodes, 'engine_sha256': digest(args.executable),
              'engine_weights_sha256': digest(args.weights), 'seconds': time.monotonic()-started}
     atomic_json(dest/'metrics.json', proof)

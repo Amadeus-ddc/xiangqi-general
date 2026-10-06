@@ -1,0 +1,73 @@
+{
+  "games": 12,
+  "wins": 1,
+  "losses": 11,
+  "draws": 0,
+  "censored": 0,
+  "score_on_completed_games": 0.08333333333333333,
+  "termination_reasons": {
+    "checkmate_or_stalemate_loss": 11,
+    "AXF_repetition_or_move_limit": 1
+  },
+  "raw_model_forfeits": 0,
+  "censored_games_counted_as_draws": false,
+  "elo_estimate": null,
+  "model_oracle_repairs": 0,
+  "action_mode": "legal_move",
+  "rule_legal_constraints": true,
+  "explanation_quality_evaluated": false,
+  "by_opponent_nodes": {
+    "100": {
+      "games": 4,
+      "wins": 1,
+      "losses": 3,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 0.25,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 3,
+        "AXF_repetition_or_move_limit": 1
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "1000": {
+      "games": 4,
+      "wins": 0,
+      "losses": 4,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 0.0,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 4
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "10000": {
+      "games": 4,
+      "wins": 0,
+      "losses": 4,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 0.0,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 4
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    }
+  },
+  "seconds": 81.82623043190688,
+  "rule_profile": "pyffish-0.0.90-xiangqi-AXF",
+  "source_manifest_sha256": "0128ab509e8bd0eb3cf251a79fb2a368844cff595bcfddea6870245abddfa404",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "scope": "actual 12 full-history matches, two fixed openings and swapped colors; move-only rule-constrained decoding; no explanation quality or Elo claim"
+}
