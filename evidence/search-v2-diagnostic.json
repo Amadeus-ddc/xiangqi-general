@@ -1,0 +1,20 @@
+{
+  "processed": 16,
+  "accepted_for_consolidation": 0,
+  "reasons": {
+    "invalid_root_candidates": 16
+  },
+  "new_session_counters": {
+    "root_attempts": 17,
+    "recursive_descents": 1
+  },
+  "training_roots_only": true,
+  "heldout_positions_excluded": true,
+  "strict_pv_improvement_required": true,
+  "probability_model": "pinned_Pikafish_material_WDL",
+  "teacher_consolidation_executed": false,
+  "student_generations_preserved": true,
+  "source_manifest_sha256": "6f9e18262561d631bf35e7ea0e3b16317b8d43c895a52d257cbaf1d473065349",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "real diagnostic mining; zero accepted queries, no consolidation or distillation training executed"
+}

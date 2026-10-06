@@ -1,0 +1,57 @@
+{
+  "steps": 4,
+  "interruption_step": 2,
+  "trainable_tensors": 258,
+  "bitwise_equal_after_resume": true,
+  "supervised_tokens": 4290,
+  "initial_validation_nll": 11.386359501532509,
+  "loss_normalization": "example",
+  "deterministic_training": true,
+  "micro_batch_size": 1,
+  "global_batch_size": 4,
+  "scope": "actual frozen-decoder bridge run; not full-decoder SFT or distributed verification",
+  "source_manifest_sha256": "41d8f0fb6cdb9ffe85b53bf84097830e0395e533f6b193561cd134919ee3587e",
+  "optimizer_state_bitwise_equal": true,
+  "sampling_and_torch_rng_states_equal": true,
+  "compute_contract": {
+    "deterministic_training": true,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "evidence_state": "reconstructed_baseline",
+  "continuous_checkpoint_sha256": "ccaf43b2416b1b56ce3388f83203924b2e164c6b209b1a359880d41356e88e07",
+  "resumed_checkpoint_sha256": "e573d730468c656b9a431987c4172a7a96aaef30b44995dd741996fa913ab463",
+  "diagnosis": {
+    "original_non_deterministic_verification_failed": true,
+    "original_failed_artifacts_preserved": "runs/example-normalization-verification-v1",
+    "full_graph_gradient_probe_sha256": "0c1e32e1797a28b3cef0f619da984b7ab8ae6fdf10c5e20a9e0aab8fbaa78353",
+    "probe": [
+      {
+        "strict_determinism": false,
+        "repeats": 3,
+        "unequal_gradient_repeats": 2,
+        "maximum_absolute_gradient_difference": 0.0078125,
+        "losses": [
+          8.492982380481408,
+          8.492982380481408,
+          8.492982380481408
+        ],
+        "error": null,
+        "seconds": 13.158555977977812
+      },
+      {
+        "strict_determinism": true,
+        "repeats": 3,
+        "unequal_gradient_repeats": 0,
+        "maximum_absolute_gradient_difference": 0.0,
+        "losses": [
+          8.492982380481408,
+          8.492982380481408,
+          8.492982380481408
+        ],
+        "error": null,
+        "seconds": 22.229995233006775
+      }
+    ],
+    "cause_scope": "same actual model and batch, forward loss stable, default backward nondeterministic; strict flag removes repeated gradient differences; no claim identifying one kernel"
+  }
+}

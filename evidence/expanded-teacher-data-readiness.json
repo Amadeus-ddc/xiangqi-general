@@ -1,0 +1,36 @@
+{
+  "lengths": {
+    "train": {
+      "rows": 6278,
+      "maximum_tokens": 935,
+      "p95_tokens": 925,
+      "exceeds_1024": 0,
+      "source_sha256": "8cabef6dc355076952a52eeb905f45820250cdbea5e782d20acda42765dc7bd3"
+    },
+    "validation": {
+      "rows": 192,
+      "maximum_tokens": 911,
+      "p95_tokens": 908,
+      "exceeds_1024": 0,
+      "source_sha256": "6bc233bfb465c88b311bb4b4e6aa7b2939e61d0e2f5f1c6740348dddd8794911"
+    },
+    "test": {
+      "rows": 256,
+      "maximum_tokens": 926,
+      "p95_tokens": 918,
+      "exceeds_1024": 0,
+      "source_sha256": "b11fc17a7cfa5d4fed41d28d4f3da556731ee6ddc641e21954b098daf55fa66f"
+    }
+  },
+  "board_text": "dictionary",
+  "board_tokens": true,
+  "all_feature_history_keys_present": true,
+  "feature_contexts": 17554,
+  "train_branch_plies_checked": 146042,
+  "heldout_root_future_and_branch_positions": 14358,
+  "heldout_branch_overlap_ids": [],
+  "validation_and_test_used_for_exclusion_only": true,
+  "scope": "data readiness and train/heldout branch isolation; not model-quality evaluation",
+  "evidence_state": "reconstructed_baseline",
+  "source_proof_sha256": "c278f47541645912731e53ceee5f16b19e94eb21cb832842d729980a131c3a4c"
+}

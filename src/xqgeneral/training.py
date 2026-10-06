@@ -12,6 +12,7 @@ import time
 import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
+from torch.nn import functional as F
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .modeling import initialize_trainable, load_model, load_trainable, trainable_state
 from .rules import piece_map, piece_name, prompt
@@ -22,6 +23,30 @@ SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题�
 
 def model_autocast(device):
     return torch.autocast('cuda', dtype=torch.bfloat16, enabled=str(device).startswith('cuda'))
+
+
+def example_normalized_loss(logits, labels):
+    """Give each supervised example equal weight despite different answer lengths."""
+    targets = labels[:, 1:]
+    counts = (targets != -100).sum(dim=1)
+    if not torch.all(counts > 0):
+        raise ValueError('Every training example must contain supervised target tokens')
+    losses = F.cross_entropy(logits[:, :-1].float().transpose(1, 2), targets,
+                             reduction='none', ignore_index=-100)
+    return (losses.sum(dim=1) / counts).mean()
+
+
+def configure_determinism(enabled):
+    """Set the CUDA reproducibility contract before creating a CUDA context."""
+    if not isinstance(enabled, bool):
+        raise ValueError('deterministic_training must be a boolean')
+    workspace = None
+    if enabled:
+        workspace = os.environ.setdefault('CUBLAS_WORKSPACE_CONFIG', ':4096:8')
+        if workspace not in {':4096:8', ':16:8'}:
+            raise ValueError('Deterministic training requires a supported CUBLAS workspace configuration')
+    torch.use_deterministic_algorithms(enabled)
+    return {'deterministic_training': enabled, 'cublas_workspace_config': workspace}
 
 
 def atomic_checkpoint(path, value):
@@ -145,6 +170,10 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
+    if saved.get('loss_normalization', 'token') != requested.get('loss_normalization', 'token'):
+        raise ValueError('Resume loss normalization differs; initialize a new experiment instead')
+    if saved.get('deterministic_training', False) != requested.get('deterministic_training', False):
+        raise ValueError('Resume determinism differs; initialize a new experiment instead')
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
             'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
             'board_tokens', 'expert_feature_depths', 'decoder_training', 'decoder_learning_rate',
@@ -162,6 +191,10 @@ def main():
     parser.add_argument('--stop-after', type=int, help='Save an incomplete checkpoint at this absolute step for controlled resume verification')
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text())
+    normalization = config.get('loss_normalization', 'token')
+    if normalization not in {'token', 'example'}:
+        raise ValueError('Loss normalization must be token or example')
+    compute_contract = configure_determinism(config.get('deterministic_training', False))
     world, rank = int(os.environ.get('WORLD_SIZE', 1)), int(os.environ.get('RANK', 0))
     if world > 1:
         local_rank = int(os.environ['LOCAL_RANK'])
@@ -229,6 +262,8 @@ def main():
     if args.resume:
         resume = torch.load(args.resume, map_location='cpu', weights_only=True)
         compatible_resume(resume['config'], config)
+        if compute_contract['deterministic_training'] and resume.get('compute_contract') != compute_contract:
+            raise ValueError('Resume deterministic compute contract differs')
         if resume.get('input_hashes') != input_hashes:
             raise ValueError('Resume input hashes are missing or changed; initialize a new experiment')
         if resume.get('code') != execution_code:
@@ -266,7 +301,8 @@ def main():
                               'selected_step': 0, 'input_hashes': input_hashes, 'code': execution_code})
         initial_loss = resume['initial_loss'] if resume else best_loss
         atomic_json(dest / 'execution.json', {'code': execution_code, 'input_hashes': input_hashes,
-                                            'resumed_from_step': begin, 'initial_loss': initial_loss})
+                                            'resumed_from_step': begin, 'initial_loss': initial_loss,
+                                            'compute_contract': compute_contract})
         handle = (dest / 'training.jsonl').open('a' if resume else 'w')
     if world > 1:
         state = [best_loss, best_step]
@@ -286,6 +322,11 @@ def main():
         total_tokens = local_tokens.clone()
         if world > 1:
             dist.all_reduce(total_tokens)
+        total_units = total_tokens
+        if normalization == 'example':
+            total_units = torch.tensor(len(records), dtype=torch.float32, device=device)
+            if world > 1:
+                dist.all_reduce(total_units)
         warmup = max(1, int(config['steps'] * config.get('warmup_fraction', 0.05)))
         schedule = config.get('lr_schedule', 'cosine')
         if schedule not in {'cosine', 'constant'}:
@@ -303,22 +344,27 @@ def main():
             batch = records[offset:offset + micro_size]
             micro_inputs = {k: v[offset:offset + micro_size] if torch.is_tensor(v) else v for k, v in inputs.items()}
             micro_tokens = (micro_inputs['labels'][:, 1:] != -100).sum()
+            micro_units = len(batch) if normalization == 'example' else micro_tokens
             synchronize = offset + micro_size >= len(records)
             context = wrapped.no_sync() if world > 1 and not synchronize else nullcontext()
             with context, model.board_context(select_features(cache, indices, batch, device)), model_autocast(device):
-                raw_loss = wrapped(**micro_inputs).loss
-                loss = raw_loss * micro_tokens * world / total_tokens
+                if normalization == 'example':
+                    forward_inputs = {k: v for k, v in micro_inputs.items() if k != 'labels'}
+                    raw_loss = example_normalized_loss(wrapped(**forward_inputs).logits, micro_inputs['labels'])
+                else:
+                    raw_loss = wrapped(**micro_inputs).loss
+                loss = raw_loss * micro_units * world / total_units
                 if not torch.isfinite(loss):
                     raise RuntimeError('Non-finite training loss')
                 loss.backward()
-            weighted += raw_loss.detach() * micro_tokens
+            weighted += raw_loss.detach() * micro_units
         norm = torch.nn.utils.clip_grad_norm_(parameters, 1.0)
         if not torch.isfinite(norm):
             raise RuntimeError('Non-finite gradients')
         optimizer.step()
         if world > 1:
             dist.all_reduce(weighted)
-        value = float(weighted / total_tokens)
+        value = float(weighted / total_units)
         tokens_seen += int(total_tokens)
         losses.append(value)
         norms.append(float(norm))
@@ -359,7 +405,8 @@ def main():
                             'config': config, 'best_loss': best_loss, 'best_step': best_step, 'tokens_seen': tokens_seen,
                             'random_state': rng.getstate(), 'torch_rng_state': torch.get_rng_state(),
                             'cuda_rng_states': cuda_states, 'world_size': world, 'input_hashes': input_hashes,
-                            'initial_loss': initial_loss, 'patience_count': patience_count, 'code': execution_code})
+                            'initial_loss': initial_loss, 'patience_count': patience_count, 'code': execution_code,
+                            'compute_contract': compute_contract})
         if args.stop_after and completed >= args.stop_after and completed < config['steps']:
             incomplete = True
             break
@@ -390,6 +437,8 @@ def main():
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
                   'steps_completed': completed, 'selected_step': best_step, 'world_size': world,
                   'global_batch_size': config['batch_size'], 'supervised_tokens_seen': tokens_seen,
+                  'training_loss_normalization': normalization, 'validation_loss_normalization': 'token',
+                  **compute_contract,
                   'initial_validation_nll': initial_loss, 'final_validation_nll': after,
                   'zero_memory_validation_nll': zero, 'shuffled_memory_validation_nll': shuffled,
                   'trainable_parameters': sum(p.numel() for p in parameters),

@@ -1,0 +1,58 @@
+{
+  "mode": "text_lora",
+  "courses": [
+    "explanation",
+    "static_current",
+    "dynamic_current",
+    "static_future",
+    "dynamic_future"
+  ],
+  "mixture": {
+    "explanation": 0.9,
+    "static_current": 0.03,
+    "dynamic_current": 0.03,
+    "static_future": 0.02,
+    "dynamic_future": 0.02
+  },
+  "steps_completed": 1408,
+  "selected_step": 896,
+  "world_size": 1,
+  "global_batch_size": 4,
+  "supervised_tokens_seen": 1974027,
+  "initial_validation_nll": 2.0751590334332213,
+  "final_validation_nll": 0.6412510780541504,
+  "zero_memory_validation_nll": 0.6412510780541504,
+  "shuffled_memory_validation_nll": 0.6412510780541504,
+  "trainable_parameters": 4034802176,
+  "frozen_base_verified": false,
+  "decoder_training": "full",
+  "decoder_parameter_dtype": "torch.float32",
+  "compute_dtype": "torch.bfloat16",
+  "selected_decoder_probe_max_change": 9.439326822757721e-05,
+  "frozen_parameter_gradients_verified": true,
+  "nonzero_gradients": true,
+  "generation_examples": 8,
+  "generation_exact_matches": 0,
+  "peak_allocated_gib": 75.64663457870483,
+  "seconds": 3398.323974448256,
+  "purpose": "Initial Astra explanation SFT with full FP32 decoder parameters, BF16 compute and prior-course replay",
+  "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e",
+  "source_manifest_sha256": "abfe082dc79e7eb38ba6a87808f18f99f20381985296a5ef7a25752328a9fe78",
+  "outputs": {
+    "runs/explanation-v2/text_lora/training/adapter.pt": {
+      "sha256": "9d1f97d05a508047c04f51b469cf31ff0d021eef04bf285f463cf5d1a7037632",
+      "bytes": 16139463653
+    },
+    "runs/explanation-v2/text_lora/training/examples.json": {
+      "sha256": "5595cd13f775eeb96d29acc7852436d5592b02b51f6e74b78f848ad315f3e497",
+      "bytes": 24661
+    },
+    "runs/explanation-v2/text_lora/training/training.jsonl": {
+      "sha256": "769d9f31ff0566ac5fd6aa15b0c1d416ad0bb73c02a5c4e6daf3f42a22945273",
+      "bytes": 214357
+    }
+  },
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "scope": "completed matched text SFT; quality measured separately"
+}
