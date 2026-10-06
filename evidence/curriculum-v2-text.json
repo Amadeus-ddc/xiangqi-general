@@ -129,5 +129,104 @@
       "sha256": "32bc63974c2116d8c7dd801bf8ef2bdb57554fa2dbe86e3eea537176f4caa8e7",
       "bytes": 24776947
     }
-  }
+  },
+  "balanced_validation": {
+    "examples": 264,
+    "accuracy": 0.5189393939393939,
+    "by_task": {
+      "dynamic_current/captures": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "dynamic_current/checks": {
+        "n": 12,
+        "accuracy": 0.3333333333333333
+      },
+      "dynamic_current/illegal": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "dynamic_current/legal": {
+        "n": 12,
+        "accuracy": 1.0
+      },
+      "dynamic_current/moves": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "dynamic_future/captures": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "dynamic_future/checks": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "dynamic_future/illegal": {
+        "n": 12,
+        "accuracy": 0.6666666666666666
+      },
+      "dynamic_future/legal": {
+        "n": 12,
+        "accuracy": 0.9166666666666666
+      },
+      "dynamic_future/moves": {
+        "n": 12,
+        "accuracy": 0.16666666666666666
+      },
+      "static_current/count": {
+        "n": 12,
+        "accuracy": 0.75
+      },
+      "static_current/empty": {
+        "n": 12,
+        "accuracy": 0.9166666666666666
+      },
+      "static_current/locate": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_current/material": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_current/piece": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_current/rank": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_future/count": {
+        "n": 12,
+        "accuracy": 1.0
+      },
+      "static_future/empty": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "static_future/locate": {
+        "n": 12,
+        "accuracy": 0.25
+      },
+      "static_future/material": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_future/piece": {
+        "n": 12,
+        "accuracy": 0.6666666666666666
+      },
+      "static_future/rank": {
+        "n": 12,
+        "accuracy": 0.25
+      }
+    },
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 32.696071674115956
+  },
+  "balanced_validation_manifest_sha256": "83b1713a35abbe17b93edf3a5f5f235bb709aafbb1e7ddbb2af9514732a384e9"
 }
