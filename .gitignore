@@ -1,0 +1,22 @@
+# Generated local research assets
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.env
+.env.*
+!.env.example
+._*
+.DS_Store
+build/
+dist/
+vendor/
+models/
+data/
+runs/
+*.pt
+*.safetensors
+*.onnx
+*.nnue
+*.pb.gz
