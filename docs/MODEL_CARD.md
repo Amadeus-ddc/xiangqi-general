@@ -74,6 +74,11 @@ rule-legal moves and chooses using model probabilities. It uses no engine move
 selection, is labeled separately from raw generation, and imposes legal output
 by construction. Its games do not establish explanation quality. The current
 move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
+The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
+the same opening/node protocol. This diagnostic uses the native policy directly,
+without the language decoder, and does not establish bridge-model strength.
+Match opponents select legal engine moves at their fixed budgets without
+consuming scores; independent quality judgments still require exact scores.
 
 Additional train-only engine self-play covers opening, middlegame and endgame
 contexts with complete histories. Early exploration is limited to candidates

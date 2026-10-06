@@ -85,7 +85,7 @@ class Pikafish:
             if time.monotonic() > deadline:
                 raise TimeoutError(f"Pikafish did not return {prefix}")
 
-    def analyze(self, fen, nodes=20000, initial_fen=None, moves=(), searchmoves=None):
+    def search(self, fen, nodes=20000, initial_fen=None, moves=(), searchmoves=None):
         if nodes <= 0:
             raise ValueError("Search node budget must be positive")
         self.send("ucinewgame")
@@ -107,7 +107,20 @@ class Pikafish:
         self.send(search)
         output = self.until("bestmove")
         self.last_output = output
+        return output
+
+    def analyze(self, fen, nodes=20000, initial_fen=None, moves=(), searchmoves=None):
+        output = self.search(fen, nodes, initial_fen, moves, searchmoves)
         return parse_analysis(fen, output, nodes)
+
+    def choose_move(self, fen, nodes=20000, initial_fen=None, moves=()):
+        """Play at the fixed node budget; exact scores are not needed for a move."""
+        output = self.search(fen, nodes, initial_fen, moves)
+        fields = output[-1].split()
+        if len(fields) < 2 or fields[0] != 'bestmove' or fields[1] not in legal_moves(fen):
+            raise RuntimeError('Oracle returned an illegal or terminal move')
+        return {'best_move': fields[1], 'requested_nodes': nodes, 'raw_output': output,
+                'score_consumed': False}
 
     def close(self):
         if self.process.poll() is None:

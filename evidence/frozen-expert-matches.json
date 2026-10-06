@@ -1,0 +1,78 @@
+{
+  "games": 12,
+  "wins": 7,
+  "losses": 2,
+  "draws": 2,
+  "censored": 1,
+  "score_on_completed_games": 0.7272727272727273,
+  "termination_reasons": {
+    "checkmate_or_stalemate_loss": 8,
+    "AXF_repetition_or_move_limit": 3,
+    "ply_limit": 1
+  },
+  "raw_model_forfeits": 0,
+  "censored_games_counted_as_draws": false,
+  "elo_estimate": null,
+  "model_oracle_repairs": 0,
+  "seconds": 46.31114539690316,
+  "language_decoder_used": false,
+  "expert_search_used": false,
+  "native_legal_policy_masking": true,
+  "explanation_quality_evaluated": false,
+  "scope": "diagnostic standalone frozen expert with the same 12-game opponent protocol; not a delivered language model",
+  "by_opponent_nodes": {
+    "100": {
+      "games": 4,
+      "wins": 3,
+      "losses": 0,
+      "draws": 1,
+      "censored": 0,
+      "score_on_completed_games": 0.875,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 2,
+        "AXF_repetition_or_move_limit": 2
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "1000": {
+      "games": 4,
+      "wins": 4,
+      "losses": 0,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 1.0,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 4
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "10000": {
+      "games": 4,
+      "wins": 0,
+      "losses": 2,
+      "draws": 1,
+      "censored": 1,
+      "score_on_completed_games": 0.16666666666666666,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 2,
+        "ply_limit": 1,
+        "AXF_repetition_or_move_limit": 1
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    }
+  },
+  "source_manifest_sha256": "6166cdc063c134ba38c1180a1a623761493ba31ed6f1ebcdd825802554c82242",
+  "all_output_hashes_read_back": true,
+  "all_opponent_requested_budgets_unchanged": true,
+  "failed_original_match_preserved": "runs/frozen-expert-matches-v1/log.txt",
+  "evidence_state": "reconstructed_baseline"
+}
