@@ -1,0 +1,29 @@
+{
+  "requested": 8,
+  "valid_ratings": 8,
+  "rejected": 0,
+  "mean_scores_conditional_on_valid_ratings": {
+    "factual_correctness": 1.0,
+    "strategic_reasoning": 1.0,
+    "clarity": 2.0,
+    "instruction_adherence": 1.0
+  },
+  "all_dimensions_at_least_4_fraction_all_queries": 0.0,
+  "ratings_with_unsupported_claims": 8,
+  "reviewer": {
+    "provider": "local_huggingface",
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "model_path": "models/qwen3.8-27b",
+    "inference_dtype": "bfloat16",
+    "quantization": "none",
+    "purpose": "Consolidate verified child explanations into a root explanation"
+  },
+  "reviewer_also_used_for_training_consolidation": true,
+  "blinded_to_checkpoint_identity": true,
+  "human_rating": false,
+  "source_manifest_sha256": "f72807c623fe782d516646500453f107c4abf86591409dd41a66af0ed6a354db",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "8 validation explanations from an interim checkpoint; neural review shares the training consolidator base model; not human evaluation",
+  "real_retry_replacements": 1
+}

@@ -98,6 +98,19 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
 
 `configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。
 
+根据中间模型的非法走法实测，增加一门引擎监督走法课程。新标签来自真实根局面与重新搜索的变化子局面，保持原棋局分割并排除保留集当前及未来局面：
+
+```bash
+python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
+  --replay-data data/research-balanced-v1 --output data/move-quality-v1
+python -m xqgeneral.cache_features --data data/move-quality-v1 \
+  --output data/move-quality-v1/features-16.pt --depths 0 1 2 3 4 5 6 8 9 10 11 12 14 15 17 19
+python -m xqgeneral.sft --recipe configs/move-quality-v1.json \
+  --init DICTIONARY_COURSE_CHECKPOINT.pt --output runs/move-quality-v1/bridge/training
+```
+
+`configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。
+
 ## 原始输出与对弈评测
 
 ```bash

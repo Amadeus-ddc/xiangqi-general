@@ -11,7 +11,7 @@ from .calibration import candidate_probability, evaluation_probability
 from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
 from .explanations import EXPLANATION_QUESTION, parse_explanation, validate_explanation
 from .oracle import Pikafish
-from .rules import legal_moves, play
+from .rules import adjudicate, legal_moves, play
 
 
 def judgment(oracle, record, raw, nodes):
@@ -24,6 +24,11 @@ def judgment(oracle, record, raw, nodes):
     result = {'parse_valid': True, 'contract_valid': proof['valid'], 'errors': proof['errors'],
               'first_move_legal': analysis.get('move') in legal_moves(record['fen']),
               'first_move_no_mistake': False, 'pv_move_losses': [], 'prose_semantic_rating': 'unmeasured'}
+    outcome = adjudicate(record['initial_fen'], record['moves'])
+    if outcome['ended']:
+        result.update(first_move_legal=False, contract_valid=False, pv_legal=False, terminal_root=outcome)
+        result['errors'].append('move_after_terminal_root')
+        return result
     root_engine = None
     if result['first_move_legal']:
         root_engine = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'])
@@ -49,6 +54,10 @@ def judgment(oracle, record, raw, nodes):
     position, moves = record['fen'], list(record['moves'])
     engine_judgments = []
     for i, move in enumerate(pv):
+        if adjudicate(record['initial_fen'], moves)['ended']:
+            result['pv_legal'] = False
+            result['errors'].append('pv_continues_after_game_end')
+            break
         if not isinstance(move, str) or move not in legal_moves(position):
             result['pv_legal'] = False
             break
