@@ -81,6 +81,11 @@ whole explanation contract. At 2048 steps, the same validation set yielded 78
 legal recommendations, 63 without a large loss, five legal principal variations
 and one answer passing the complete contract. These are interim results, not a usable
 coaching model or independent test result.
+At 3072 steps, the same raw validation set yielded 79 legal recommendations,
+67 without a large loss, 11 legal principal variations and three complete
+contracts. Prose semantics remain unmeasured. The formal four-course move arm
+has also completed 12 rule-constrained matches: one win, ten losses and one draw.
+Strong bridge-model play has not been established.
 The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
 the same opening/node protocol. This diagnostic uses the native policy directly,
 without the language decoder, and does not establish bridge-model strength.
@@ -100,6 +105,17 @@ at terminal states and train rows overlapping any held-out continuation are
 excluded. Raw planning evaluation separately measures legality, requested first
 move, horizon length and independent per-ply quality; an inferior forced first
 move is excluded from optimal-move quality. Training benefits remain unmeasured.
+
+A supplemental 384 original self-play explanations, balanced across sides,
+were independently cross-reviewed by authorized Astra subagents. Thirty-nine
+revisions were accepted on repeat review; original annotations and rejections
+remain archived. Only these reviewed originals enter the new training pool.
+New mirrored prose remains a separate candidate after finding explicit rank
+and unqualified advisor-name errors. The selected combined pool has 6662 train
+rows, with unchanged validation and test files. The adaptive next recipe samples
+the new originals at 15% and includes 10% multi-step planning replay. This is
+additional initial-teacher data, not a completed search-distillation round.
+Shared-base-model review is not a human assessment or student-quality proof.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing

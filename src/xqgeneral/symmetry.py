@@ -33,7 +33,9 @@ def mirror_fen(fen):
 def mirror_text(text):
     text = NAME_PATTERN.sub(lambda m: NAME_SWAP[m.group()], text)
     text = SQUARE_PATTERN.sub(lambda m: mirror_square(m.group()), text)
-    return re.sub(r'第([0-9])行', lambda m: f'第{9-int(m.group(1))}行', text)
+    text = re.sub(r'第([0-9])行', lambda m: f'第{9-int(m.group(1))}行', text)
+    return re.sub(r'(?<![A-Za-z0-9_])rank([0-9])(?![0-9])',
+                  lambda m: f'rank{9-int(m.group(1))}', text)
 
 
 def mirrored_qa(row, context=None):
