@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from .evidence import atomic_json
-from .explanations import EXPLANATION_QUESTION, parse_explanation, validate_explanation
+from .explanations import EXPLANATION_QUESTION, continuation_positions, parse_explanation, validate_explanation
 from .rules import START_FEN, adjudicate, piece_map, piece_name, replay, side
 
 
@@ -23,6 +23,12 @@ def advise(predictor, initial_fen, moves):
     try:
         value = parse_explanation(raw)
         proof = validate_explanation(record['fen'], value, require_branches=True)
+        if proof['valid']:
+            try:
+                continuation_positions(record, value)
+            except ValueError:
+                proof['valid'] = False
+                proof['errors'].append('invalid_history_continuation')
     except (ValueError, TypeError, KeyError):
         value, proof = None, {'valid': False, 'errors': ['invalid_json']}
     return {'record': record, 'raw': raw, 'analysis': value, 'verification': proof,

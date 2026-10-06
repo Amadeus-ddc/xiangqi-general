@@ -1,0 +1,20 @@
+{
+  "queries": 3747,
+  "annotations": 3747,
+  "by_split": {
+    "train": 3523,
+    "validation": 96,
+    "test": 128
+  },
+  "original_queries_and_annotations_preserved": true,
+  "held_out_sets_unchanged": true,
+  "teacher_identity_checked": true,
+  "prior_combined_seed_manifest_supported": true,
+  "source_manifest_sha256": "fa2a36e6d252f36ecb362119f0f938c2da825d6c1e0d9d7450f4968eb429bd5f",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "This combines originals and reviews, not new generations or color-mirrored prose",
+    "Original review decisions and separate corrections remain archived at their source"
+  ]
+}
