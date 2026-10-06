@@ -1,0 +1,19 @@
+{
+  "initial_explanation_teacher": {
+    "provider": "codex_subagent",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "purpose": "Generate engine-verified initial Chinese explanations",
+    "authorization": "User explicitly authorized Astra Low subagents for initial labels",
+    "api_alternative": "Requires runtime credentials; never serialized"
+  },
+  "search_consolidator": {
+    "provider": "local_huggingface",
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "model_path": "models/qwen3.8-27b",
+    "inference_dtype": "bfloat16",
+    "quantization": "none",
+    "purpose": "Consolidate verified child explanations into a root explanation"
+  }
+}

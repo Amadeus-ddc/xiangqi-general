@@ -11,6 +11,41 @@ import time
 from .rules import legal_moves, play, piece_map, piece_name, side
 
 
+def parse_analysis(fen, output, nodes):
+    best = output[-1].split()[1]
+    ranks, scored = {}, {}
+    for line in output:
+        if not line.startswith('info ') or ' pv ' not in line:
+            continue
+        score = re.search(r' score (cp|mate) (-?\d+)', line)
+        if not score or 'upperbound' in line or 'lowerbound' in line:
+            continue
+        rank = re.search(r' multipv (\d+)', line)
+        depth = re.search(r' depth (\d+)', line)
+        wdl = re.search(r' wdl (\d+) (\d+) (\d+)', line)
+        pv = line.split(' pv ', 1)[1].split()
+        if not pv:
+            continue
+        ranks[int(rank.group(1)) if rank else 1] = pv[0]
+        scored[pv[0]] = {'move': pv[0], 'pv': pv[:12], 'score_type': score.group(1),
+                         'score': int(score.group(2)), 'perspective': 'side_to_move',
+                         'depth': int(depth.group(1)) if depth else None,
+                         'wdl': [int(x) for x in wdl.groups()] if wdl else None}
+    if best not in legal_moves(fen):
+        raise RuntimeError(f'Oracle returned an illegal or terminal move: {best}')
+    if best not in scored:
+        raise RuntimeError('Engine completed without a scored best-move candidate')
+    # Preserve previous exact scores by move when a stop interrupts a MultiPV iteration.
+    ordered_moves = list(dict.fromkeys([best, *[ranks[k] for k in sorted(ranks)]]))
+    ordered = [scored[m] for m in ordered_moves[:3]]
+    for candidate in ordered:
+        position = fen
+        for move in candidate['pv']:
+            position = play(position, move)
+    return {'best_move': best, 'candidates': ordered, 'requested_nodes': nodes,
+            'score_perspective': 'side_to_move', 'raw_output': output}
+
+
 class Pikafish:
     def __init__(self, executable, weights, threads=2, multipv=3):
         self.process = subprocess.Popen([str(Path(executable).resolve())], stdin=subprocess.PIPE,
@@ -71,35 +106,8 @@ class Pikafish:
             search += " searchmoves " + " ".join(searchmoves)
         self.send(search)
         output = self.until("bestmove")
-        best = output[-1].split()[1]
-        candidates = {}
-        for line in output:
-            if not line.startswith("info ") or " pv " not in line:
-                continue
-            score = re.search(r" score (cp|mate) (-?\d+)", line)
-            if not score or "upperbound" in line or "lowerbound" in line:
-                continue
-            rank = re.search(r" multipv (\d+)", line)
-            depth = re.search(r" depth (\d+)", line)
-            wdl = re.search(r" wdl (\d+) (\d+) (\d+)", line)
-            pv = line.split(" pv ", 1)[1].split()
-            candidates[int(rank.group(1)) if rank else 1] = {
-                "move": pv[0], "pv": pv[:12], "score_type": score.group(1),
-                "score": int(score.group(2)), "perspective": "side_to_move",
-                "depth": int(depth.group(1)) if depth else None,
-                "wdl": [int(x) for x in wdl.groups()] if wdl else None,
-            }
-        if best not in legal_moves(fen):
-            raise RuntimeError(f"Oracle returned an illegal or terminal move: {best}")
-        if not any(c['move'] == best for c in candidates.values()):
-            raise RuntimeError("Engine completed without a scored best-move candidate")
-        for candidate in candidates.values():
-            position = fen
-            for move in candidate["pv"]:
-                position = play(position, move)
-        return {"best_move": best, "candidates": [candidates[i] for i in sorted(candidates)],
-                "requested_nodes": nodes, "score_perspective": "side_to_move",
-                "raw_output": output}
+        self.last_output = output
+        return parse_analysis(fen, output, nodes)
 
     def close(self):
         if self.process.poll() is None:
@@ -120,7 +128,7 @@ def template_explanation(fen, result):
     first = next(c for c in result["candidates"] if c["move"] == move)
     destination = f"吃掉{victim}" if victim != "空" else "落到空格"
     return (f"建议走 {move}：{source}从 {move[:2]} 到 {move[2:]}，{destination}。"
-            f"皮卡鱼主要变化为 {' '.join(first['pv'])}。"
+            f"皮卡鱼主要变化为 {' '.join(first['pv'][:6])}。"
             f"评分从当前{side(fen)}角度为 {first['score_type']} {first['score']}。")
 
 

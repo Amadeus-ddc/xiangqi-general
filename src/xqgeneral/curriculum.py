@@ -22,10 +22,10 @@ def main():
         if stage not in mixture or any(s not in STAGES[:index + 1] for s in mixture):
             raise ValueError('Curriculum mixture must include the new course and only preceding courses')
         config = {key: value for key, value in recipe.items() if key not in
-                  {'course_mixtures', 'steps_per_course', 'quality_targets', 'expert_weights'}}
+                  {'course_mixtures', 'steps_per_course', 'minimum_steps_per_course', 'quality_targets', 'expert_weights'}}
         output = root / stage
         config.update(mode=args.mode, stages=[stage], mixture=mixture, steps=recipe['steps_per_course'],
-                      min_steps=recipe['steps_per_course'], output=str(output))
+                      min_steps=recipe.get('minimum_steps_per_course', recipe['steps_per_course']), output=str(output))
         if previous:
             config['init_from'] = str(previous)
         path = configs / f'{stage}.json'

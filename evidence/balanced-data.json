@@ -1,0 +1,84 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "kind": "balanced_curriculum_augmentation",
+  "verification": {
+    "games": {
+      "train": 78,
+      "validation": 24,
+      "test": 18
+    },
+    "roots": {
+      "train": 2182,
+      "validation": 672,
+      "test": 500
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0,
+    "records": 73772,
+    "side_to_move": {
+      "b": 1677,
+      "w": 1677
+    },
+    "augmentation": "color_rank_symmetry; parent game stays in the same split",
+    "rejected_mirror_roots_for_leakage": 0
+  },
+  "input_artifact_hashes": {
+    "data/research-v1/train.jsonl": {
+      "sha256": "35ea2b91cc4411763738f8b94332795218ac68e4fe926928d2d2c3e1d8d7ff7d",
+      "bytes": 88562603
+    },
+    "data/research-v1/validation.jsonl": {
+      "sha256": "58ea2f79711e1e9d2739c39649a8bb2d6473c54f4635c801b18c0aceadc7e6b2",
+      "bytes": 27354105
+    },
+    "data/research-v1/test.jsonl": {
+      "sha256": "87894f2b32cf07391eab7b77b91175d2f0d64b143ee73f2d12fdef4a8281bdd1",
+      "bytes": 20121003
+    }
+  },
+  "output_artifact_hashes": {
+    "data/research-balanced-v1/train.jsonl": {
+      "sha256": "e8e483df907a3bb6e8aa8a88ec05fccb1ae92e99c3b8a6a1f590813f98f876ec",
+      "bytes": 179067628
+    },
+    "data/research-balanced-v1/validation.jsonl": {
+      "sha256": "b96b1f1c77f26e832b7af066eb54e193d8ea2b9ac749d4512608c6173133acea",
+      "bytes": 55306428
+    },
+    "data/research-balanced-v1/test.jsonl": {
+      "sha256": "8ad91697fafe40e6c24beb667baf4b302f44d0398413937850fcff0e2b677481",
+      "bytes": 40686450
+    }
+  },
+  "code": {
+    "revision": "c9f10c1424b76110b1d6f16a74809fddb275693d",
+    "source_sha256": {
+      "src/xqgeneral/__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+      "src/xqgeneral/ask.py": "93b49e2119a06c200e7e4f31c23c10595c8efccc8c8480a220025b9e92bebeee",
+      "src/xqgeneral/board_tokens.py": "26ff5b0ef1c69d3ad37e0c808b5499a6c12b3d1274dede4b3844fd84fbb5cc5d",
+      "src/xqgeneral/bridge.py": "671428c2767fd382d6a30022e2c1f17fc25fb213f814aa4bb20f2364f67e5d08",
+      "src/xqgeneral/cache_features.py": "1a610f8d5b0450fc2d607f8992dd6ab1a6ad4acbd6c2c938a28bf36f4000b5c5",
+      "src/xqgeneral/collect_teacher.py": "016b87788dc701c54c73e53aa3978e47e5648294f6c62a30f495e1b901155e37",
+      "src/xqgeneral/curriculum.py": "ab1a9967f7e7b0930e3f3c5ff0b6c3090c6869cb61e2db96f838f7ea4f603f7f",
+      "src/xqgeneral/curriculum_data.py": "9c1472f994ecaec4ccd42b4626e4e66745e903be31c6b3abe4627ec4f37a2d2b",
+      "src/xqgeneral/data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+      "src/xqgeneral/evaluate_qa.py": "c91737f53a2229804a7f8e2720fbb8e60465f3efde0277cf3192304721891666",
+      "src/xqgeneral/evidence.py": "fdb8a7386ef5fea1bac4788c04dfa0cc2858e983bb6f25cf2e2b96b09310347e",
+      "src/xqgeneral/expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+      "src/xqgeneral/explanations.py": "9d642b8c170ad37301294f0c63d6d8806bd58ece835ad1259e8e1be4f81d1cca",
+      "src/xqgeneral/inference.py": "22fe764fa6b7e5f0ed6ec1b9ee0d17134dd0400821c9e0e988e7037a8b2ef27b",
+      "src/xqgeneral/label_explanations.py": "2b0cb0fc00f5f978a1cc7dd3a7c83c93427348d65a52fd3e8b0a87df34df02aa",
+      "src/xqgeneral/local_teacher.py": "7d24eed468200cbaf29e8dda6942b2f39dbcdbacd9d79806029b1ea64336bafc",
+      "src/xqgeneral/modeling.py": "48229629903e1f45d9f580408bb7ce76b227d2fc6cc41b5009e4fbe86fe22f3f",
+      "src/xqgeneral/net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+      "src/xqgeneral/oracle.py": "612077ae3c1d9eca758565d761069417a1387a17d57ed5af6235f631f3623d52",
+      "src/xqgeneral/prepare_explanations.py": "fa8ccf49c9211c4485f53d8fe01bf9c5ff0ab0b74816cd0dc2a6a3d1dfc67488",
+      "src/xqgeneral/rules.py": "7eb17f436fd08dddf2e28aa2bd28ae2252a16027796a0db44eefcbabb7ca3c67",
+      "src/xqgeneral/symmetry.py": "6f01ab8497d43c202c93e572283336ebffd10d847cabe39eb199b010015e1773",
+      "src/xqgeneral/train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+      "src/xqgeneral/training.py": "0b9b507218c37b6e629c2c0bbd4f700992a3b674666b56b4ebff1085c9199524",
+      "src/xqgeneral/verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+      "src/xqgeneral/verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9"
+    }
+  }
+}

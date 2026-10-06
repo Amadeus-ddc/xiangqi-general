@@ -1,0 +1,122 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "kind": "initial_teacher_annotations",
+  "verification": {
+    "games": {
+      "train": 78,
+      "validation": 24,
+      "test": 18
+    },
+    "roots": {
+      "train": 1024,
+      "validation": 192,
+      "test": 256
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0,
+    "original_teacher_annotations": 736,
+    "accepted_original_annotations": 736,
+    "rejected_by_review": [],
+    "records": 1472,
+    "by_split": {
+      "train": 1024,
+      "validation": 192,
+      "test": 256
+    },
+    "by_side": {
+      "b": 736,
+      "w": 736
+    },
+    "teacher_model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "backend": "codex_subagent",
+    "legality_and_structured_facts_checked": true,
+    "independent_neural_review_samples": 72,
+    "review_is_human_rating": false,
+    "strategic_prose_accuracy_fully_proven": false,
+    "derived_color_mirror_records": 736,
+    "derived_scores_independently_recomputed": false
+  },
+  "input_artifact_hashes": {
+    "data/astra-seed-v1/train.queries.jsonl": {
+      "sha256": "71630c8e7dbcce3a81a2a94195604e10c4b4aa02e400a053081c144c130fe3d9",
+      "bytes": 7266592
+    },
+    "data/astra-seed-v1/validation.queries.jsonl": {
+      "sha256": "85ebb33d2ae584ad3b64270883bf18f7d823f00c73f85e5d1d3427676f99ed0b",
+      "bytes": 1341955
+    },
+    "data/astra-seed-v1/test.queries.jsonl": {
+      "sha256": "0591bcf39856c29b067e8f46c231bad306f9ee41f502b03ac9969e867d8f241a",
+      "bytes": 1830730
+    },
+    "data/astra-seed-v1/shards/annotations-0.jsonl": {
+      "sha256": "b1630644c2d4d81c3f3898b0e0976d8169552ad022a749e71036e7985dd2c1e3",
+      "bytes": 114229
+    },
+    "data/astra-seed-v1/shards/annotations-1.jsonl": {
+      "sha256": "74a42bd79896c8baa96b931656f4daa0eeb5ecbecc4db0e9ad7fcfe36ac1d971",
+      "bytes": 117017
+    },
+    "data/astra-seed-v1/shards/annotations-2.jsonl": {
+      "sha256": "4aa30fdb9c068931b8c40860829ca04a2907f1447d9104172aee6e35520b3131",
+      "bytes": 111775
+    },
+    "data/astra-seed-v1/review-0.json": {
+      "sha256": "5e0c168a1323299c67308653e432f7eaa7e6867de02258f52c706c37dff38a37",
+      "bytes": 5839
+    },
+    "data/astra-seed-v1/review-1.json": {
+      "sha256": "8f25a4394a4b38c3a99517e6b43e1ed3dd575741fceed5992ad513d72c4a70d1",
+      "bytes": 5481
+    },
+    "data/astra-seed-v1/review-2.json": {
+      "sha256": "df6c75d741f37eed45ecda0beee04269b6dbddeb08b431f05b537e44509c34f0",
+      "bytes": 5588
+    }
+  },
+  "output_artifact_hashes": {
+    "data/astra-explanations-v1/train.jsonl": {
+      "sha256": "7d92aa71baa01cea25668ba34c0c1e191552d282a62063b138d96f97cb93a5ec",
+      "bytes": 5748739
+    },
+    "data/astra-explanations-v1/validation.jsonl": {
+      "sha256": "6bc233bfb465c88b311bb4b4e6aa7b2939e61d0e2f5f1c6740348dddd8794911",
+      "bytes": 1047580
+    },
+    "data/astra-explanations-v1/test.jsonl": {
+      "sha256": "b11fc17a7cfa5d4fed41d28d4f3da556731ee6ddc641e21954b098daf55fa66f",
+      "bytes": 1416134
+    }
+  },
+  "code": {
+    "revision": "c9f10c1424b76110b1d6f16a74809fddb275693d",
+    "source_sha256": {
+      "src/xqgeneral/__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+      "src/xqgeneral/ask.py": "93b49e2119a06c200e7e4f31c23c10595c8efccc8c8480a220025b9e92bebeee",
+      "src/xqgeneral/board_tokens.py": "26ff5b0ef1c69d3ad37e0c808b5499a6c12b3d1274dede4b3844fd84fbb5cc5d",
+      "src/xqgeneral/bridge.py": "671428c2767fd382d6a30022e2c1f17fc25fb213f814aa4bb20f2364f67e5d08",
+      "src/xqgeneral/cache_features.py": "1a610f8d5b0450fc2d607f8992dd6ab1a6ad4acbd6c2c938a28bf36f4000b5c5",
+      "src/xqgeneral/collect_teacher.py": "016b87788dc701c54c73e53aa3978e47e5648294f6c62a30f495e1b901155e37",
+      "src/xqgeneral/curriculum.py": "ab1a9967f7e7b0930e3f3c5ff0b6c3090c6869cb61e2db96f838f7ea4f603f7f",
+      "src/xqgeneral/curriculum_data.py": "9c1472f994ecaec4ccd42b4626e4e66745e903be31c6b3abe4627ec4f37a2d2b",
+      "src/xqgeneral/data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+      "src/xqgeneral/evaluate_qa.py": "c91737f53a2229804a7f8e2720fbb8e60465f3efde0277cf3192304721891666",
+      "src/xqgeneral/evidence.py": "fdb8a7386ef5fea1bac4788c04dfa0cc2858e983bb6f25cf2e2b96b09310347e",
+      "src/xqgeneral/expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+      "src/xqgeneral/explanations.py": "9d642b8c170ad37301294f0c63d6d8806bd58ece835ad1259e8e1be4f81d1cca",
+      "src/xqgeneral/inference.py": "22fe764fa6b7e5f0ed6ec1b9ee0d17134dd0400821c9e0e988e7037a8b2ef27b",
+      "src/xqgeneral/label_explanations.py": "2b0cb0fc00f5f978a1cc7dd3a7c83c93427348d65a52fd3e8b0a87df34df02aa",
+      "src/xqgeneral/modeling.py": "48229629903e1f45d9f580408bb7ce76b227d2fc6cc41b5009e4fbe86fe22f3f",
+      "src/xqgeneral/net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+      "src/xqgeneral/oracle.py": "612077ae3c1d9eca758565d761069417a1387a17d57ed5af6235f631f3623d52",
+      "src/xqgeneral/prepare_explanations.py": "fa8ccf49c9211c4485f53d8fe01bf9c5ff0ab0b74816cd0dc2a6a3d1dfc67488",
+      "src/xqgeneral/rules.py": "7eb17f436fd08dddf2e28aa2bd28ae2252a16027796a0db44eefcbabb7ca3c67",
+      "src/xqgeneral/symmetry.py": "6f01ab8497d43c202c93e572283336ebffd10d847cabe39eb199b010015e1773",
+      "src/xqgeneral/train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+      "src/xqgeneral/training.py": "0b9b507218c37b6e629c2c0bbd4f700992a3b674666b56b4ebff1085c9199524",
+      "src/xqgeneral/verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+      "src/xqgeneral/verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9"
+    }
+  }
+}
