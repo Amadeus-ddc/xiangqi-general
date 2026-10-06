@@ -121,6 +121,15 @@ python -m xqgeneral.ask --adapter runs/pilot-v1/adapter.pt \
 
 原型检查点只完成过 80 步训练。它的回答不调用皮卡鱼，当前不具备成熟教练的验证证据。
 
+完成训练后，可使用终端学习入口显示棋盘、查看推荐与主要变化，并保存完整棋局历史：
+
+```bash
+python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --interactive --output runs/study.json
+python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
+```
+
+交互命令为 UCCI 走法、`hint`、`undo`、`board` 与 `quit`。学习入口保留原始模型回答并执行规则核验；推荐本身不调用引擎。各检查点的实测质量以状态与评测证据为准。
+
 ## 开源与贡献
 
 源码采用 GPL-3.0-or-later，保留 Px0 派生实现与协议的来源声明。依赖、参考代码与权重的边界见 [第三方说明](THIRD_PARTY_NOTICES.md)，贡献步骤见 [CONTRIBUTING.md](CONTRIBUTING.md)。本项目独立于 Queen、Px0、Qwen 和皮卡鱼官方项目。训练完成后的棋力与讲解结论以独立评测为准。

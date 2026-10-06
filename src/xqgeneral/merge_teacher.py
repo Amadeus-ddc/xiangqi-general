@@ -19,6 +19,9 @@ def main():
     queries, annotations, reviews, inputs = [], [], [], []
     for index, name in enumerate(args.inputs):
         root = Path(name)
+        source_manifest = root / 'queries.manifest.json'
+        if json.loads(source_manifest.read_text())['status'] != 'complete':
+            raise ValueError('Teacher query preparation is incomplete')
         paths = [root / f'{s}.queries.jsonl' for s in ('train', 'validation', 'test')]
         batch_queries = [q for p in paths for q in load_jsonl(p)]
         if index and any(q['record']['split'] != 'train' for q in batch_queries):
@@ -36,7 +39,8 @@ def main():
         reviews += [json.loads(p.read_text()) for p in review_paths]
         queries += batch_queries
         annotations += batch_annotations
-        inputs += [*paths, *annotation_paths, *review_paths, root / 'manifest.json']
+        inputs += [*paths, *annotation_paths, *review_paths,
+                   *sorted(root.glob('corrections-*.jsonl')), source_manifest]
     if (len({q['id'] for q in queries}) != len(queries)
             or len({q['feature_key'] for q in queries}) != len(queries)):
         raise ValueError('Teacher batches overlap by ID or board-history context')
