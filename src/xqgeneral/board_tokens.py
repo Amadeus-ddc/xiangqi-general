@@ -43,7 +43,7 @@ class BoardInputEmbedding(nn.Module):
         slots = self.slots[ids]
         # Added IDs may occupy unused padded rows or extend the original vocabulary.
         old = self.frozen(ids.clamp_max(self.frozen.num_embeddings - 1))
-        new = F.embedding(slots.clamp_min(0), self.board_weight)
+        new = F.embedding(slots.clamp_min(0), self.board_weight).to(old.dtype)
         return torch.where((slots >= 0).unsqueeze(-1), new, old)
 
 

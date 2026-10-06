@@ -174,6 +174,8 @@ def compatible_resume(saved, requested):
         raise ValueError('Resume loss normalization differs; initialize a new experiment instead')
     if saved.get('deterministic_training', False) != requested.get('deterministic_training', False):
         raise ValueError('Resume determinism differs; initialize a new experiment instead')
+    if saved.get('trainable_parameter_dtype', 'base') != requested.get('trainable_parameter_dtype', 'base'):
+        raise ValueError('Resume trainable precision differs; initialize a new experiment instead')
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
             'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
             'board_tokens', 'expert_feature_depths', 'decoder_training', 'decoder_learning_rate',
@@ -442,9 +444,13 @@ def main():
                   'initial_validation_nll': initial_loss, 'final_validation_nll': after,
                   'zero_memory_validation_nll': zero, 'shuffled_memory_validation_nll': shuffled,
                   'trainable_parameters': sum(p.numel() for p in parameters),
+                  'trainable_parameter_dtypes': {str(dtype): sum(p.numel() for p in parameters if p.dtype == dtype)
+                                               for dtype in {p.dtype for p in parameters}},
                   'frozen_base_verified': config.get('decoder_training', 'frozen') == 'frozen',
                   'decoder_training': config.get('decoder_training', 'frozen'),
-                  'decoder_parameter_dtype': str(next(model.base.parameters()).dtype),
+                  'decoder_parameter_dtype': str(model.base.get_input_embeddings().weight.dtype),
+                  'frozen_parameter_dtypes': {str(dtype): sum(p.numel() for p, _ in frozen if p.dtype == dtype)
+                                             for dtype in {p.dtype for p, _ in frozen}},
                   'compute_dtype': 'torch.bfloat16',
                   'selected_decoder_probe_max_change': (float((decoder_probe.detach().flatten()[:1024] - decoder_before).abs().max())
                                                         if decoder_probe is not None else None),

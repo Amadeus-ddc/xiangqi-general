@@ -19,6 +19,15 @@ class TextLanguageModel(nn.Module):
         return self.base(**kwargs)
 
 
+def configure_trainable_precision(model, precision):
+    if precision not in {'base', 'float32'}:
+        raise ValueError('Trainable precision must be base or float32')
+    if precision == 'float32':
+        for parameter in model.parameters():
+            if parameter.requires_grad:
+                parameter.data = parameter.data.float()
+
+
 def load_model(config, expert_dim=512, device="cuda"):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['model_path'], local_files_only=True)
@@ -48,7 +57,9 @@ def load_model(config, expert_dim=512, device="cuda"):
         install_board_tokens(base, tokenizer)
     if decoder_training == 'full':
         base.requires_grad_(True)
-    return model.to(device=device, dtype=dtype), tokenizer
+    model.to(device=device, dtype=dtype)
+    configure_trainable_precision(model, config.get('trainable_parameter_dtype', 'base'))
+    return model, tokenizer
 
 
 def trainable_state(model):

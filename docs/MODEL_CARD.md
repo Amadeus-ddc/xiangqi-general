@@ -43,6 +43,9 @@ lessons use independently searched root and continuation positions, preserving
 the held-out game and position split. An optional experiment supplies the same 90-square text
 dictionary to both expert and text arms; this differs from expert-only board
 input and requires separate reporting and ablations.
+Frozen-decoder move training can preserve trainable bridge, token and LoRA
+parameters in FP32 while computing in BF16. Older runs retain their original
+parameter precision; new execution verification is not a model-strength claim.
 The next explanation recipe averages supervised loss within each example before
 averaging examples, so long prose does not overwhelm short move replay. It also
 requires deterministic GPU algorithms. Validation still uses token-average NLL;
