@@ -1,0 +1,84 @@
+{
+  "original_queries": 384,
+  "original_annotations_preserved": true,
+  "original_full_cross_reviewed": 384,
+  "original_accepted": 345,
+  "original_rejected": 39,
+  "author_revisions": 39,
+  "revisions_cross_reviewed_and_accepted": 39,
+  "final_accepted": 384,
+  "all_revised_review_hashes_bound": true,
+  "human_rating": false,
+  "original_annotation_dataset_not_modified": true,
+  "source": "independently searched real selfplay roots",
+  "is_search_distillation": false,
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "games": {
+    "train": 183,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 7038,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "by_split": {
+    "train": 7046,
+    "validation": 192,
+    "test": 256
+  },
+  "original_training_rows": 6278,
+  "supplementary_original_annotations": 384,
+  "supplementary_color_derived_rows": 384,
+  "excluded_training_ids": [],
+  "all_training_root_and_branches_checked_with_full_history": true,
+  "train_branch_plies_checked": 163906,
+  "heldout_root_future_and_branch_positions": 14358,
+  "heldout_branch_overlap_after_exclusion": 0,
+  "validation_and_test_byte_identical_to_parent": true,
+  "test_used_for_training_or_selection": false,
+  "all_feature_history_keys_present": true,
+  "reused_feature_contexts": 23420,
+  "lengths": {
+    "train": {
+      "rows": 7046,
+      "maximum_tokens": 943,
+      "p95_tokens": 928,
+      "exceeds_1024": 0
+    },
+    "validation": {
+      "rows": 192,
+      "maximum_tokens": 911,
+      "p95_tokens": 908,
+      "exceeds_1024": 0
+    },
+    "test": {
+      "rows": 256,
+      "maximum_tokens": 926,
+      "p95_tokens": 918,
+      "exceeds_1024": 0
+    }
+  },
+  "feature_cache_manifest_sha256": "a166508105c89f3285613345ec92dcd6533291f495fb8cec11e54bbac5ba0aa1",
+  "strategic_prose_accuracy_is_human_verified": false,
+  "limits": [
+    "Astra authors and reviewers share a base model",
+    "Mirrors are derived, not independent teacher calls",
+    "Initial teacher supplement, not search distillation",
+    "Data readiness does not prove student strength or explanation quality"
+  ],
+  "source_manifest_sha256": "97b131d91d25959b9e25ee16907cbc513223981bec7fd67e69cbf3cd986c021d",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "new_mirrored_prose_not_selected_for_training": true,
+  "known_derived_rank_text_errors": [
+    "8151bf07ddec7592f734-explanation-color-mirror",
+    "2b97d24d0ad97c20f418-explanation-color-mirror"
+  ],
+  "known_derived_unqualified_advisor_name_issue": "2b97d24d0ad97c20f418-explanation-color-mirror",
+  "original_candidate_outputs_preserved": true
+}

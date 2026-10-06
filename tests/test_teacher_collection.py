@@ -77,3 +77,22 @@ def test_merge_teacher_rejects_added_heldout_before_writing(tmp_path, monkeypatc
     with pytest.raises(ValueError, match='held-out'):
         main()
     assert not dest.exists()
+
+
+def test_merge_teacher_can_extend_a_completed_combined_seed(tmp_path, monkeypatch):
+    from xqgeneral.merge_teacher import main
+    from xqgeneral.evidence import load_jsonl
+    base, extra, following, first, final = [tmp_path/n for n in ('base','extra','following','first','final')]
+    make_batch(base, [('a','train',['b0c2']), ('v','validation',['h0g2']), ('t','test',['h0i2'])])
+    make_batch(extra, [('b','train',['b0a2'])])
+    make_batch(following, [('c','train',['a0a1'])])
+    monkeypatch.setattr('sys.argv', ['merge_teacher','--inputs',str(base),str(extra),'--output',str(first)])
+    main()
+    assert not (first/'queries.manifest.json').exists()
+    monkeypatch.setattr('sys.argv', ['merge_teacher','--inputs',str(first),str(following),'--output',str(final)])
+    main()
+    for split in ('validation','test'):
+        assert (final/f'{split}.queries.jsonl').read_bytes() == (base/f'{split}.queries.jsonl').read_bytes()
+    assert len(load_jsonl(final/'train.queries.jsonl')) == 3
+    proof = json.loads((final/'manifest.json').read_text())
+    assert str(first/'manifest.json') in proof['inputs']

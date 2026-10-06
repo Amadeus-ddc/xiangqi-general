@@ -20,6 +20,8 @@ def main():
     for index, name in enumerate(args.inputs):
         root = Path(name)
         source_manifest = root / 'queries.manifest.json'
+        if not source_manifest.exists():
+            source_manifest = root / 'manifest.json'
         if json.loads(source_manifest.read_text())['status'] != 'complete':
             raise ValueError('Teacher query preparation is incomplete')
         paths = [root / f'{s}.queries.jsonl' for s in ('train', 'validation', 'test')]

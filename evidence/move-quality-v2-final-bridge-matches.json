@@ -1,0 +1,79 @@
+{
+  "games": 12,
+  "wins": 1,
+  "losses": 10,
+  "draws": 1,
+  "censored": 0,
+  "score_on_completed_games": 0.125,
+  "termination_reasons": {
+    "AXF_repetition_or_move_limit": 2,
+    "checkmate_or_stalemate_loss": 10
+  },
+  "raw_model_forfeits": 0,
+  "censored_games_counted_as_draws": false,
+  "elo_estimate": null,
+  "model_oracle_repairs": 0,
+  "action_mode": "legal_move",
+  "rule_legal_constraints": true,
+  "explanation_quality_evaluated": false,
+  "by_opponent_nodes": {
+    "100": {
+      "games": 4,
+      "wins": 1,
+      "losses": 2,
+      "draws": 1,
+      "censored": 0,
+      "score_on_completed_games": 0.375,
+      "termination_reasons": {
+        "AXF_repetition_or_move_limit": 2,
+        "checkmate_or_stalemate_loss": 2
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "1000": {
+      "games": 4,
+      "wins": 0,
+      "losses": 4,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 0.0,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 4
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    },
+    "10000": {
+      "games": 4,
+      "wins": 0,
+      "losses": 4,
+      "draws": 0,
+      "censored": 0,
+      "score_on_completed_games": 0.0,
+      "termination_reasons": {
+        "checkmate_or_stalemate_loss": 4
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0
+    }
+  },
+  "seconds": 92.87109659891576,
+  "rule_profile": "pyffish-0.0.90-xiangqi-AXF",
+  "selected_step": 2750,
+  "checkpoint_sha256": "09d3fe245dae17331a89ae964540ff8b07f074c05d993af756853a378fe8ce05",
+  "source_manifest_sha256": "6df64b13b51c533aec717b730e69c1b22e95d89497eecf80f12e6bd459762921",
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "12 diagnostic matches, no Elo estimate",
+    "Rule-constrained moves impose legality; no neural prose evaluated",
+    "Fixed openings and colors are correlated"
+  ]
+}

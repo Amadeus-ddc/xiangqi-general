@@ -51,3 +51,11 @@ def test_mirror_preserves_all_future_branch_positions():
             fen = play(fen, move); original_fens.append(fen)
     assert context_positions(mirror) == {position_key(mirror_fen(f)) for f in original_fens}
     assert mirrored_qa(mirror)['future_branches'] == row['future_branches']
+
+
+def test_mirror_transforms_explicit_rank_names_in_teacher_prose():
+    original = '红兵由e6横到d6，始终在rank6横线上；黑卒在rank3的f3、g3间活动。'
+    mirrored = mirror_text(original)
+    assert mirrored == '黑卒由e3横到d3，始终在rank3横线上；红兵在rank6的f6、g6间活动。'
+    assert mirror_text(mirrored) == original
+    assert mirror_text('rank10不是单个棋盘横线。') == 'rank10不是单个棋盘横线。'
