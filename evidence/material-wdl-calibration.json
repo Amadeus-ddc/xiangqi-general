@@ -1,0 +1,15 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "probability_model": "pinned_Pikafish_material_WDL",
+  "compared_engine_cp_wdl_pairs": 2150,
+  "max_absolute_error": 0.0025000000000000022,
+  "mean_absolute_error": 0.0002072093023255813,
+  "cp_integer_rounding_present": true,
+  "empirical_human_win_probability_measured": false,
+  "inputs": {
+    "data/astra-seed-v1/train.queries.jsonl": "71630c8e7dbcce3a81a2a94195604e10c4b4aa02e400a053081c144c130fe3d9",
+    "data/astra-seed-v1/validation.queries.jsonl": "85ebb33d2ae584ad3b64270883bf18f7d823f00c73f85e5d1d3427676f99ed0b",
+    "data/astra-seed-v1/test.queries.jsonl": "0591bcf39856c29b067e8f46c231bad306f9ee41f502b03ac9969e867d8f241a"
+  },
+  "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837"
+}

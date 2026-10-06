@@ -40,10 +40,12 @@ class GatedBridge(nn.Module):
 
 
 class BoardLanguageModel(nn.Module):
-    def __init__(self, base, expert_dim, positions=(3, 11, 19, 27), width=384):
+    def __init__(self, base, expert_dim, positions=(3, 11, 19, 27), width=384, freeze_decoder=True):
         super().__init__()
         self.base = base
-        self.base.requires_grad_(False)
+        self.freeze_decoder = freeze_decoder
+        if freeze_decoder:
+            self.base.requires_grad_(False)
         self.positions = tuple(positions)
         self.bridges = nn.ModuleList([GatedBridge(base.config.hidden_size, expert_dim, width) for _ in positions])
         self.memory = None
@@ -76,7 +78,8 @@ class BoardLanguageModel(nn.Module):
 
     def train(self, mode=True):
         super().train(mode)
-        self.base.eval()
+        if self.freeze_decoder:
+            self.base.eval()
         return self
 
     def forward(self, **kwargs):

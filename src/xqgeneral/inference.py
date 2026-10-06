@@ -4,7 +4,7 @@ from .evidence import history_key
 from .expert import FrozenPx0, encode_history
 from .modeling import load_checkpoint
 from .rules import replay
-from .training import messages
+from .training import messages, model_autocast
 from .board_tokens import decode_board_text, encode_board_text
 
 
@@ -46,7 +46,7 @@ class Predictor:
             return []
         if memory not in {'normal', 'zero', 'shuffled'}:
             raise ValueError('Unknown expert-memory ablation')
-        texts = [self.tokenizer.apply_chat_template(messages(r, self.config.get('mode', 'bridge')),
+        texts = [self.tokenizer.apply_chat_template(messages(r, self.config.get('mode', 'bridge'), self.config.get('board_text')),
                                                    tokenize=False, add_generation_prompt=True) for r in records]
         if self.config.get('board_tokens', False):
             texts = [encode_board_text(t) for t in texts]
@@ -64,7 +64,7 @@ class Predictor:
             if len(records) < 2:
                 raise ValueError('Memory shuffling needs at least two histories')
             features = [torch.roll(f, 1, 0) for f in features]
-        with self.model.board_context(features):
+        with self.model.board_context(features), model_autocast(self.device):
             outputs = self.model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
                                                pad_token_id=self.tokenizer.pad_token_id)
         answers = [self.tokenizer.decode(o[inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()

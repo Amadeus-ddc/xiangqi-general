@@ -21,6 +21,7 @@ dev = ["pytest>=8,<10", "build>=1,<2"]
 xqgeneral-ask = "xqgeneral.ask:main"
 xqgeneral-train = "xqgeneral.train:main"
 xqgeneral-data = "xqgeneral.data:main"
+xqgeneral-coach = "xqgeneral.coach:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

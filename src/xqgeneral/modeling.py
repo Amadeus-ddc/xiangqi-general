@@ -23,12 +23,18 @@ def load_model(config, expert_dim=512, device="cuda"):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['model_path'], local_files_only=True)
     tokenizer.pad_token = tokenizer.eos_token
-    dtype = torch.bfloat16 if str(device).startswith('cuda') else torch.float32
+    # Full SFT keeps FP32 master parameters so small decoder updates are retained.
+    dtype = (torch.bfloat16 if str(device).startswith('cuda') and
+             config.get('decoder_training', 'frozen') != 'full' else torch.float32)
     base = AutoModelForCausalLM.from_pretrained(config['model_path'], local_files_only=True,
                                                dtype=dtype, attn_implementation='sdpa').to(device)
     mode = config.get('mode', 'bridge')
+    decoder_training = config.get('decoder_training', 'frozen')
+    if decoder_training not in {'frozen', 'full'}:
+        raise ValueError('Decoder training must be explicitly frozen or full')
     if mode == 'bridge':
-        model = BoardLanguageModel(base, expert_dim, config['decoder_bridge_positions'], config['bridge_width'])
+        model = BoardLanguageModel(base, expert_dim, config['decoder_bridge_positions'], config['bridge_width'],
+                                   freeze_decoder=decoder_training == 'frozen')
     elif mode == 'text_lora':
         from peft import LoraConfig, get_peft_model
         base = get_peft_model(base, LoraConfig(r=config.get('lora_rank', 16), lora_alpha=config.get('lora_rank', 16) * 2,
@@ -40,6 +46,8 @@ def load_model(config, expert_dim=512, device="cuda"):
     if config.get('board_tokens', False):
         from .board_tokens import install_board_tokens
         install_board_tokens(base, tokenizer)
+    if decoder_training == 'full':
+        base.requires_grad_(True)
     return model.to(device=device, dtype=dtype), tokenizer
 
 
@@ -63,6 +71,29 @@ def load_trainable(model, checkpoint):
         model.bridges.load_state_dict(checkpoint['bridges'])
     else:
         raise ValueError("Unsupported checkpoint format")
+
+
+def initialize_trainable(model, checkpoint, config):
+    saved = checkpoint['config']
+    architecture = ['mode', 'decoder_bridge_positions', 'bridge_width', 'board_tokens', 'model_revision', 'board_text']
+    if any(saved.get(k) != config.get(k) for k in architecture):
+        raise ValueError('Initialization architecture differs from the selected checkpoint')
+    expanding = saved.get('decoder_training', 'frozen') == 'frozen' and config.get('decoder_training') == 'full'
+    if not expanding:
+        load_trainable(model, checkpoint)
+        return
+    parameters = dict(model.named_parameters())
+    state = checkpoint['trainable']
+    if not state or any(n not in parameters or not parameters[n].requires_grad or
+                        parameters[n].shape != v.shape for n, v in state.items()):
+        raise ValueError('Expanded SFT initialization has an incompatible parameter contract')
+    required = {n for n, p in parameters.items() if p.requires_grad and
+                (n.startswith('bridges.') or n.endswith('board_weight') or 'lora_' in n)}
+    if set(state) != required:
+        raise ValueError('Expanded SFT initialization must load all bridges and board embeddings')
+    with torch.no_grad():
+        for name, value in state.items():
+            parameters[name].copy_(value)
 
 
 def load_checkpoint(path, device='cuda'):

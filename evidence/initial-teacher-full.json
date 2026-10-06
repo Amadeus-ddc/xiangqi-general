@@ -1,0 +1,42 @@
+{
+  "games": {
+    "train": 78,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 2182,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "original_teacher_annotations": 1315,
+  "accepted_original_annotations": 1315,
+  "rejected_by_review": [],
+  "records": 2630,
+  "by_split": {
+    "train": 2182,
+    "validation": 192,
+    "test": 256
+  },
+  "by_side": {
+    "b": 1315,
+    "w": 1315
+  },
+  "teacher_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "legality_and_structured_facts_checked": true,
+  "independent_neural_review_samples": 144,
+  "review_is_human_rating": false,
+  "strategic_prose_accuracy_fully_proven": false,
+  "derived_color_mirror_records": 1315,
+  "derived_scores_independently_recomputed": false,
+  "input_manifest_sha256": "3b10a02c5c7b66d226d558ecd5ad6e786837fa273f43188fc3cd84f3367ff2b8",
+  "evidence_state": "reconstructed_baseline",
+  "additional_original_train_labels": 579,
+  "review_corrected_errors": 1,
+  "teacher_query_manifest_sha256": "026b0a127acb8af1da1f5012e39e49c0e616ae01233b4a688d9898cd2455c0c2",
+  "correction_audit_sha256": "7813c926b7a5379527e4499b6c84c27597f85a701da3a546f9d93e126bd74868"
+}

@@ -37,7 +37,7 @@ def parse_explanation(text):
     return value
 
 
-def validate_explanation(fen, value, require_facts=True):
+def validate_explanation(fen, value, require_facts=True, require_branches=False):
     if not isinstance(value, dict):
         return {'valid': False, 'errors': ['not_an_object'],
                 'strategic_prose_verdict': 'requires_separate_human_review'}
@@ -71,6 +71,8 @@ def validate_explanation(fen, value, require_facts=True):
         errors.append('invalid_evaluation_contract')
     branch_moves = []
     branches = value.get('branches', [])
+    if require_branches and not branches:
+        errors.append('missing_branches')
     if not isinstance(branches, list) or len(branches) > 4:
         errors.append('invalid_branches')
         branches = []
@@ -90,8 +92,10 @@ def validate_explanation(fen, value, require_facts=True):
                 break
     if branches and (branch_moves != candidates or len(set(branch_moves)) != len(branch_moves)):
         errors.append('branch_candidates_mismatch')
-    if require_facts and move in legal and value.get('facts') != move_facts(fen, move):
-        errors.append('incorrect_move_facts')
+    if require_facts and move in legal:
+        facts = value.get('facts')
+        if not isinstance(facts, dict) or type(facts.get('check')) is not bool or facts != move_facts(fen, move):
+            errors.append('incorrect_move_facts')
     prose = value.get('explanation')
     if not isinstance(prose, str) or not re.search(r'[\u4e00-\u9fff]', prose):
         errors.append('missing_chinese_explanation')

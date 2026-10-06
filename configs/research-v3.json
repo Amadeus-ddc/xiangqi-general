@@ -1,0 +1,81 @@
+{
+  "model_path": "models/qwen3-4b",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "expert_weights": "models/px0-latest.pb.gz",
+  "feature_path": "data/research-balanced-v1/features-16.pt",
+  "data_path": "data/research-balanced-v1",
+  "expert_feature_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "decoder_bridge_positions": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30
+  ],
+  "bridge_width": 768,
+  "board_tokens": true,
+  "lora_rank": 16,
+  "batch_size": 16,
+  "learning_rate": 0.0001,
+  "seed": 20261011,
+  "max_tokens": 768,
+  "validation_examples": 264,
+  "generation_examples": 24,
+  "max_new_tokens": 384,
+  "eval_every": 125,
+  "steps_per_course": 1500,
+  "minimum_steps_per_course": 500,
+  "patience": 4,
+  "course_mixtures": [
+    {
+      "static_current": 1.0
+    },
+    {
+      "static_current": 0.1,
+      "dynamic_current": 0.9
+    },
+    {
+      "static_current": 0.06,
+      "dynamic_current": 0.08,
+      "static_future": 0.86
+    },
+    {
+      "static_current": 0.06,
+      "dynamic_current": 0.06,
+      "static_future": 0.08,
+      "dynamic_future": 0.8
+    }
+  ],
+  "output": "runs/research-v3",
+  "purpose": "Controlled explicit-board experiment: identical square dictionary for expert and text arms, preserving oracle-free raw generation",
+  "board_text": "dictionary",
+  "micro_batch_size": 4
+}
