@@ -1,0 +1,186 @@
+{
+  "training": {
+    "mode": "text_lora",
+    "courses": [
+      "move_quality",
+      "static_current",
+      "dynamic_current",
+      "static_future",
+      "dynamic_future"
+    ],
+    "mixture": {
+      "move_quality": 0.8,
+      "static_current": 0.05,
+      "dynamic_current": 0.05,
+      "static_future": 0.05,
+      "dynamic_future": 0.05
+    },
+    "steps_completed": 5500,
+    "selected_step": 4000,
+    "world_size": 1,
+    "global_batch_size": 16,
+    "supervised_tokens_seen": 309049,
+    "training_loss_normalization": "token",
+    "validation_loss_normalization": "token",
+    "deterministic_training": true,
+    "cublas_workspace_config": ":4096:8",
+    "initial_validation_nll": 2.4001212219397225,
+    "final_validation_nll": 1.206864555676778,
+    "zero_memory_validation_nll": 1.206864555676778,
+    "shuffled_memory_validation_nll": 1.206864555676778,
+    "trainable_parameters": 12334080,
+    "trainable_parameter_dtypes": {
+      "torch.float32": 12334080
+    },
+    "frozen_base_verified": true,
+    "decoder_training": "frozen",
+    "decoder_parameter_dtype": "torch.bfloat16",
+    "frozen_parameter_dtypes": {
+      "torch.bfloat16": 4022468096
+    },
+    "compute_dtype": "torch.bfloat16",
+    "selected_decoder_probe_max_change": null,
+    "frozen_parameter_gradients_verified": true,
+    "nonzero_gradients": true,
+    "generation_examples": 32,
+    "generation_exact_matches": 5,
+    "peak_allocated_gib": 22.287731170654297,
+    "seconds": 10053.465878887102,
+    "purpose": "FP32 trainable master parameters with frozen BF16 decoder; retain small bridge/token updates during engine move learning",
+    "feature_cache_sha256": "15b5454ae37c7280a6edc18e7c7ceb14f6efe90cb11ce9baa33b074f9f0dbc26"
+  },
+  "training_manifest_sha256": "f6a982b14690e550026c7c6b3cacc85c2d30d70ae8cd248ab6e6424def6bcd89",
+  "checkpoint_sha256": "20895b8af5fdabf7eea5d2c12229f918a85fcf2d03e53804519782c4c1caa34c",
+  "evaluations": {
+    "raw": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 1.0,
+        "legal_rate": 0.796875,
+        "no_mistake_rate": 0.5729166666666666,
+        "teacher_best_move_exact_rate": 0.19270833333333334,
+        "legal_scored_moves": 153,
+        "mean_expected_score_loss_conditional": 0.1817124183006536,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 166.88440161570907
+      },
+      "manifest_sha256": "a1fd6f276a05e6df3f4abf98bcfcaf9345a5a4dc4b5867bb214d4186edee44d3"
+    },
+    "legal": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 1.0,
+        "legal_rate": 1.0,
+        "no_mistake_rate": 0.7291666666666666,
+        "teacher_best_move_exact_rate": 0.24479166666666666,
+        "legal_scored_moves": 192,
+        "mean_expected_score_loss_conditional": 0.16333333333333333,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": false,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "legal",
+        "rule_legal_constraints": true,
+        "legality_is_imposed_by_decoding": true,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 216.4471160620451
+      },
+      "manifest_sha256": "871b68b87177276aa6d4988202292f0f9ace1d8008ced85b8fed537975ac469f"
+    }
+  },
+  "matches": {
+    "games": 12,
+    "wins": 0,
+    "losses": 12,
+    "draws": 0,
+    "censored": 0,
+    "score_on_completed_games": 0.0,
+    "termination_reasons": {
+      "checkmate_or_stalemate_loss": 12
+    },
+    "raw_model_forfeits": 0,
+    "censored_games_counted_as_draws": false,
+    "elo_estimate": null,
+    "model_oracle_repairs": 0,
+    "action_mode": "legal_move",
+    "rule_legal_constraints": true,
+    "explanation_quality_evaluated": false,
+    "by_opponent_nodes": {
+      "100": {
+        "games": 4,
+        "wins": 0,
+        "losses": 4,
+        "draws": 0,
+        "censored": 0,
+        "score_on_completed_games": 0.0,
+        "termination_reasons": {
+          "checkmate_or_stalemate_loss": 4
+        },
+        "raw_model_forfeits": 0,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      },
+      "1000": {
+        "games": 4,
+        "wins": 0,
+        "losses": 4,
+        "draws": 0,
+        "censored": 0,
+        "score_on_completed_games": 0.0,
+        "termination_reasons": {
+          "checkmate_or_stalemate_loss": 4
+        },
+        "raw_model_forfeits": 0,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      },
+      "10000": {
+        "games": 4,
+        "wins": 0,
+        "losses": 4,
+        "draws": 0,
+        "censored": 0,
+        "score_on_completed_games": 0.0,
+        "termination_reasons": {
+          "checkmate_or_stalemate_loss": 4
+        },
+        "raw_model_forfeits": 0,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      }
+    },
+    "seconds": 81.1886684447527,
+    "rule_profile": "pyffish-0.0.90-xiangqi-AXF",
+    "manifest_sha256": "8c95d4cd1c707a81935eff63120caedd6655ed50e87b614c49fc8b86f17797dc"
+  },
+  "all_output_hashes_read_back": true,
+  "test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Same formal four-course foundation and move budget as bridge arm; validation colors are correlated",
+    "Legal decoding imposes legality; no oracle repairs",
+    "12 diagnostic games do not establish Elo or explanation quality"
+  ]
+}

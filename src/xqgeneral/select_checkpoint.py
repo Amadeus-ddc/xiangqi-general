@@ -1,4 +1,4 @@
-"""Select real checkpoints by raw move and planning validation, outside the trainer."""
+"""Select real checkpoints by raw capability validation, outside the trainer."""
 import argparse
 import json
 import math
@@ -12,16 +12,20 @@ import uuid
 from .evidence import atomic_json, digest, manifest
 
 
-def functional_score(move, plan):
-    for result in [move, plan]:
+def functional_score(move, plan, explanation=None):
+    for result in [move, plan, *([explanation] if explanation is not None else [])]:
         if (result.get('split') != 'validation' or result.get('raw_generation') is not True or
                 result.get('oracle_repairs') != 0 or result.get('examples', 0) < 1):
             raise ValueError('Selection requires nonempty raw validation without repairs')
         if result.get('legality_is_imposed_by_decoding', False) or result.get('rule_legal_constraints', False):
             raise ValueError('Rule-constrained legality cannot select a raw model')
     values = [move['no_mistake_rate'], plan['contract_valid_rate']]
+    if explanation is not None:
+        values.append(explanation['structured_contract_valid_rate'])
     if any(type(v) not in (float, int) or not math.isfinite(v) or not 0 <= v <= 1 for v in values):
         raise ValueError('Invalid functional quality metric')
+    if explanation is not None:
+        return .4 * values[0] + .2 * values[1] + .4 * values[2]
     return .6 * values[0] + .4 * values[1]
 
 
@@ -80,6 +84,7 @@ def main():
     parser.add_argument('--training-session', required=True)
     parser.add_argument('--data', default='data/move-planning-v1')
     parser.add_argument('--features', default='data/move-quality-selfplay-v2/features-16.pt')
+    parser.add_argument('--explanation-data', help='Also select by complete raw explanation contracts on this validation set')
     parser.add_argument('--every', type=int, default=2000)
     parser.add_argument('--nodes', type=int, default=1000000)
     parser.add_argument('--workers', type=int, default=4)
@@ -93,6 +98,10 @@ def main():
         raise FileExistsError('Completed selection exists; use a fresh output')
     output.mkdir(parents=True, exist_ok=True)
     deadline = time.monotonic() + args.timeout_hours * 3600
+    evaluation_inputs = [Path(args.data) / 'validation.jsonl', args.features]
+    if args.explanation_data:
+        evaluation_inputs.append(Path(args.explanation_data) / 'validation.jsonl')
+    evaluation_hashes = {str(p): digest(p) for p in evaluation_inputs}
     results = json.loads((output / 'progress.json').read_text()) if (output / 'progress.json').exists() else []
     for row in results:
         checkpoint = Path(row['checkpoint'])
@@ -101,8 +110,13 @@ def main():
                 digest(root / 'moves/manifest.json') != row['move_manifest_sha256'] or
                 digest(root / 'plans/manifest.json') != row['plan_manifest_sha256']):
             raise ValueError('Saved candidate evidence changed')
+        explanation = None
+        if args.explanation_data:
+            if digest(root / 'explanations/manifest.json') != row['explanation_manifest_sha256']:
+                raise ValueError('Saved explanation candidate evidence changed')
+            explanation = read_validation(root / 'explanations', checkpoint)
         if functional_score(read_validation(root / 'moves', checkpoint),
-                            read_validation(root / 'plans', checkpoint)) != row['functional_score']:
+                            read_validation(root / 'plans', checkpoint), explanation) != row['functional_score']:
             raise ValueError('Saved functional score differs from verified evidence')
     seen = {r['step'] for r in results}
     best = max(results, key=lambda r: r['functional_score']) if results else None
@@ -112,27 +126,39 @@ def main():
         root, step = snapshot_checkpoint(source, output / 'candidates')
         snapshot = json.loads((root / 'snapshot.json').read_text())
         contract = {'arguments': vars(args), **{k: snapshot[k] for k in
-                    ['training_config', 'training_input_hashes', 'training_code']}}
+                    ['training_config', 'training_input_hashes', 'training_code']},
+                    'evaluation_input_hashes': evaluation_hashes}
         contract_path = output / 'contract.json'
         if contract_path.exists() and json.loads(contract_path.read_text()) != contract:
             raise ValueError('Selection continuation configuration, training inputs or source changed')
         atomic_json(contract_path, contract)
         if step in seen:
             return
+        if any(digest(p) != expected for p, expected in evaluation_hashes.items()):
+            raise ValueError('Selection validation inputs or expert features changed')
         checkpoint = root / 'adapter.pt'
-        for module, name, limit in [('evaluate_moves', 'moves', 192), ('evaluate_plans', 'plans', 96)]:
+        evaluations = [('evaluate_moves', 'moves', 192, args.data), ('evaluate_plans', 'plans', 96, args.data)]
+        if args.explanation_data:
+            evaluations.append(('evaluate_explanations', 'explanations', 96, args.explanation_data))
+        for module, name, limit, data in evaluations:
             dest = root / name
             if not (dest / 'manifest.json').exists():
                 subprocess.run([sys.executable, '-u', '-m', 'xqgeneral.' + module, '--checkpoint', str(checkpoint),
-                    '--data', args.data, '--features', args.features, '--split', 'validation', '--limit', str(limit),
+                    '--data', data, '--features', args.features, '--split', 'validation', '--limit', str(limit),
                     '--nodes', str(args.nodes), '--workers', str(args.workers), '--output', str(dest)], check=True)
         move, plan = [read_validation(root / name, checkpoint) for name in ['moves', 'plans']]
+        explanation = read_validation(root / 'explanations', checkpoint) if args.explanation_data else None
         row = {'step': step, 'checkpoint': str(checkpoint), 'checkpoint_sha256': digest(checkpoint),
-               'functional_score': functional_score(move, plan),
+               'functional_score': functional_score(move, plan, explanation),
                'raw_move_no_mistake_rate': move['no_mistake_rate'],
                'raw_move_legal_rate': move['legal_rate'], 'raw_plan_contract_valid_rate': plan['contract_valid_rate'],
                'move_manifest_sha256': digest(root / 'moves/manifest.json'),
                'plan_manifest_sha256': digest(root / 'plans/manifest.json')}
+        if explanation is not None:
+            row.update(raw_explanation_contract_valid_rate=explanation['structured_contract_valid_rate'],
+                       raw_explanation_first_move_no_mistake_rate=explanation['first_move_no_mistake_rate'],
+                       raw_explanation_pv_legal_rate=explanation['pv_legal_rate'],
+                       explanation_manifest_sha256=digest(root / 'explanations/manifest.json'))
         results.append(row); seen.add(step)
         if best is None or row['functional_score'] > best['functional_score']:
             best = row
@@ -165,11 +191,13 @@ def main():
     if best is None:
         raise RuntimeError('No candidate passed actual functional validation')
     summary = {'candidates': results, 'selected': best, 'selection_split': 'validation',
-               'selection_rule': '0.6 * raw_move_no_mistake_rate + 0.4 * raw_plan_contract_valid_rate',
+               'selection_rule': ('0.4 * raw_move_no_mistake_rate + 0.2 * raw_plan_contract_valid_rate + '
+                                  '0.4 * raw_explanation_contract_valid_rate' if args.explanation_data else
+                                  '0.6 * raw_move_no_mistake_rate + 0.4 * raw_plan_contract_valid_rate'),
                'NLL_training_selection_preserved': True, 'independent_test_used': False,
                'strong_play_or_explanation_quality_established': False}
     atomic_json(output / 'manifest.json', manifest('functional_checkpoint_selection', vars(args),
-        [training / 'manifest.json', Path(args.data) / 'validation.jsonl', args.features],
+        [training / 'manifest.json', *evaluation_inputs],
         [output / 'selected.pt', output / 'selected.json', output / 'progress.json'], summary))
     print(json.dumps(summary), flush=True)
 

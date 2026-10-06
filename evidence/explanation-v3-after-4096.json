@@ -1,0 +1,41 @@
+{
+  "examples": 96,
+  "parse_valid_rate": 1.0,
+  "first_move_legal_rate": 0.8333333333333334,
+  "structured_contract_valid_rate": 0.07291666666666667,
+  "first_move_no_mistake_rate": 0.6458333333333334,
+  "legal_scored_first_moves": 80,
+  "mean_first_move_expected_score_loss_conditional": 0.15089999999999998,
+  "pv_legal_rate": 0.22916666666666666,
+  "judged_legal_pv_plies": 285,
+  "pv_no_mistake_fraction_conditional": 0.6947368421052632,
+  "errors": {
+    "illegal_or_missing_move": 16,
+    "illegal_pv": 74,
+    "invalid_candidates": 45,
+    "illegal_branch_pv": 232,
+    "branch_candidates_mismatch": 4,
+    "incorrect_move_facts": 13,
+    "unsupported_prose_move": 6
+  },
+  "raw_generation": true,
+  "oracle_repairs": 0,
+  "score_model": "pinned_Pikafish_material_WDL",
+  "prose_semantic_rating": "unmeasured",
+  "split": "validation",
+  "judge_nodes_per_position": 1000000,
+  "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+  "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+  "seconds": 364.3515898967162,
+  "selected_step": 4096,
+  "observed_training_validation_step": 4096,
+  "checkpoint_sha256": "1c5f07b35cf2578b6fc9317116e38932fcbb94ee54b5c04737603ee04ded3632",
+  "all_output_hashes_read_back": true,
+  "source_manifest_sha256": "54fe0b4af24da217c465520ca939ddb641fe06c6ec52ff8d3e6161843aff5489",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Interim checkpoint, training continues",
+    "Same raw 96 validation examples, no independent test",
+    "No single-change causal attribution or human semantic rating"
+  ]
+}
