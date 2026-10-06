@@ -2,7 +2,8 @@
 import json
 import math
 import re
-from .rules import gives_check, legal_moves, play, piece_map, piece_name
+from .rules import adjudicate, gives_check, legal_moves, play, piece_map, piece_name, replay
+from .evidence import position_key
 
 EXPLANATION_QUESTION = ('请分析当前局面，以JSON回答，包含move（建议走法）、pv（主要变化列表）、'
                         'candidates（三个候选走法列表）、branches（各候选的move、pv和evaluation）、'
@@ -19,12 +20,33 @@ def move_facts(fen, move):
             'captured': piece_name(board.get(move[2:])), 'check': gives_check(fen, move)}
 
 
-def line_facts(fen, moves):
+def line_facts(fen, moves, include_positions=False):
     result = []
     for move in moves:
-        result.append({'move': move, **move_facts(fen, move)})
+        before = fen
+        fact = {'move': move, **move_facts(fen, move)}
         fen = play(fen, move)
+        if include_positions:
+            fact.update(fen_before=before, fen_after=fen)
+        result.append(fact)
     return result
+
+
+def continuation_positions(record, value):
+    """Validate all explanation lines against the original complete history."""
+    if replay(record['initial_fen'], record['moves'])[-1] != record['fen']:
+        raise ValueError('Explanation root differs from its complete history')
+    positions = {position_key(record['fen'])}
+    lines = [value['pv'], *[branch['pv'] for branch in value.get('branches', [])]]
+    for line in lines:
+        fen, moves = record['fen'], list(record['moves'])
+        for move in line:
+            if adjudicate(record['initial_fen'], moves)['ended']:
+                raise ValueError('Explanation continuation extends a terminal history')
+            fen = play(fen, move)
+            moves.append(move)
+            positions.add(position_key(fen))
+    return positions
 
 
 def parse_explanation(text):

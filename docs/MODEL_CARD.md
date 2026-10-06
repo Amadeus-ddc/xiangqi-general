@@ -77,7 +77,9 @@ move warmup won only 1 of 12 such matches; useful playing strength remains unpro
 Expanded explanation SFT reached 72 legal recommendations and 57 without a
 large fitted-score loss out of 96 validation answers at its 1024-step checkpoint.
 Only four complete principal variations were legal and no answer passed the
-whole explanation contract. These are interim validation results, not a usable
+whole explanation contract. At 2048 steps, the same validation set yielded 78
+legal recommendations, 63 without a large loss, five legal principal variations
+and one answer passing the complete contract. These are interim results, not a usable
 coaching model or independent test result.
 The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
 the same opening/node protocol. This diagnostic uses the native policy directly,
