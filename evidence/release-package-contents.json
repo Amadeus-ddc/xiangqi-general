@@ -1,0 +1,31 @@
+{
+  "sdist_required_files_present": [
+    "THIRD_PARTY_NOTICES.md",
+    "CONTRIBUTING.md",
+    "STATUS.md",
+    "docs/MODEL_CARD.md",
+    "configs/teachers.json",
+    "configs/explanation-sft-v4.json",
+    "scripts/freeze_run.py",
+    "evidence/full-teacher-weights.json",
+    "evidence/coach-real-checkpoint.json"
+  ],
+  "sdist_files": 178,
+  "wheel_files": 48,
+  "wheel_contains_source_license_and_third_party_notices": true,
+  "weights_datasets_logs_vendor_excluded": true,
+  "artifacts": {
+    "runs/coach-selfplay-release-check-v2/dist/xiangqi_general-0.2.0.tar.gz": {
+      "sha256": "87f4b4472e7842dd3bfec2d0be2f3a03ae060c13678330c6e28ce2d16f2f9f5a",
+      "bytes": 189341
+    },
+    "runs/coach-selfplay-release-check-v2/dist/xiangqi_general-0.2.0-py3-none-any.whl": {
+      "sha256": "ab690577365ec929d9d9cdbb431b73eea888cf3a44b9cc3ef09d69bc6cd676a5",
+      "bytes": 116894
+    }
+  },
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Source-package contents verified, not a trained-model distribution or model-license clearance"
+  ]
+}

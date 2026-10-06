@@ -12,6 +12,7 @@ copyright notices when distributing these sources.
 | Pikafish labeling engine | https://github.com/official-pikafish/Pikafish | GPL-3.0-or-later; downloaded/built separately |
 | abseil-cpp native headers | https://github.com/abseil/abseil-cpp | Apache-2.0; separate upstream checkout |
 | Qwen3-4B-Instruct-2507 | https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507 | Apache-2.0 in the pinned asset; downloaded separately |
+| Qwen3.8-27B consolidation teacher | https://huggingface.co/Qwen/Qwen3.8-27B | Apache-2.0 in the [pinned official license](https://huggingface.co/Qwen/Qwen3.8-27B/raw/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0/LICENSE); full BF16 inference only, downloaded separately |
 | Px0 network weights | https://github.com/official-pikafish/pxzero-networks | Weight redistribution permission is not established by the code license; not bundled |
 | Pikafish NNUE weights | https://github.com/official-pikafish/Pikafish | Obtain via the upstream engine; not bundled |
 | pyffish | https://github.com/fairy-stockfish/Fairy-Stockfish | GPL-3.0; pinned to 0.0.90 |

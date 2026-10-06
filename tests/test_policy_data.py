@@ -1,6 +1,6 @@
 import pytest
 from xqgeneral.evidence import history_key,position_key,write_jsonl
-from xqgeneral.policy_data import descendant_contexts,move_label,extra_training_contexts
+from xqgeneral.policy_data import descendant_contexts,move_label,extra_training_contexts,heldout_contract
 from xqgeneral.rules import START_FEN,replay
 
 
@@ -41,3 +41,28 @@ def test_extra_policy_contexts_verify_ownership_history_and_future_exclusion(tmp
     write_jsonl(path,[dict(row,split='validation')])
     with pytest.raises(ValueError,match='training games'):
         extra_training_contexts([path],[],set(),set())
+
+
+def test_additional_reserved_dataset_excludes_deep_branch_and_game(tmp_path):
+    base, additional = tmp_path/'base', tmp_path/'additional'
+    moves = ['a3a4']
+    history = replay(START_FEN, moves)
+    heldout = {'id': 'heldout', 'game_id': 'reserved-game', 'initial_fen': START_FEN,
+               'moves': moves, 'history': history, 'fen': history[-1],
+               'future_moves': [], 'future_branches': [['h9g7', 'b0c2']], 'stage': 'move_planning'}
+    for root, validation in [(base, []), (additional, [heldout])]:
+        write_jsonl(root/'validation.jsonl', validation)
+        write_jsonl(root/'test.jsonl', [])
+    positions, games, paths = heldout_contract([base, additional])
+    train_moves = [*moves, 'h9g7', 'b0c2']
+    train_history = replay(START_FEN, train_moves)
+    row = {'id': 'extra', 'split': 'train', 'game_id': 'new-training-game',
+           'initial_fen': START_FEN, 'moves': train_moves, 'history': train_history,
+           'fen': train_history[-1], 'feature_key': history_key(train_history), 'future_moves': []}
+    extra = tmp_path/'extra.jsonl'
+    write_jsonl(extra, [row])
+    assert extra_training_contexts([extra], [], positions, games) == ([], {'heldout_root_or_future': 1})
+    assert len(paths) == 4 and games == {'reserved-game'}
+    write_jsonl(extra, [dict(row, game_id='reserved-game')])
+    with pytest.raises(ValueError, match='training games'):
+        extra_training_contexts([extra], [], set(), games)

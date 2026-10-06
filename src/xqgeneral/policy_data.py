@@ -17,6 +17,17 @@ from .symmetry import mirrored_qa
 QUESTION = '请推荐当前局面最好的走法。只回答一个 UCCI 走法，不写说明。'
 
 
+def heldout_contract(data_roots):
+    positions, games, paths = set(), set(), []
+    for root in data_roots:
+        positions.update(reserved_positions(root))
+        for split in ('validation', 'test'):
+            path = Path(root) / f'{split}.jsonl'
+            paths.append(path)
+            games.update(row['game_id'] for row in load_jsonl(path))
+    return positions, games, paths
+
+
 def extra_training_contexts(paths, queries, reserved, heldout_games):
     seen = {q['feature_key'] for q in queries}
     selected, rejected = [], Counter()
@@ -82,6 +93,8 @@ def main():
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--extra-contexts', nargs='*', default=[],
                         help='Additional train-only complete-history contexts to independently search')
+    parser.add_argument('--reserved-data', nargs='*', default=[],
+                        help='Additional held-out games, roots and all future branches to exclude; labels are not replayed')
     parser.add_argument('--no-descendants', action='store_true',
                         help='Keep existing searched roots and search only the supplied extra contexts')
     args = parser.parse_args()
@@ -90,16 +103,17 @@ def main():
         raise FileExistsError('Completed policy dataset exists')
     query_paths = [Path(args.input)/f'{s}.queries.jsonl' for s in ('train','validation','test')]
     replay_paths = [Path(args.replay_data)/f'{s}.jsonl' for s in ('train','validation','test')]
-    inputs = [*query_paths,*replay_paths,*args.extra_contexts,args.executable,args.weights]
+    forbidden, reserved_games, reserved_paths = heldout_contract([args.replay_data, *args.reserved_data])
+    inputs = list(dict.fromkeys([*query_paths,*replay_paths,*reserved_paths,*args.extra_contexts,
+                                args.executable,args.weights]))
     contract = {'arguments':vars(args),'input_hashes':{str(p):digest(p) for p in inputs}}
     if (root/'contract.json').exists() and json.loads((root/'contract.json').read_text()) != contract:
         raise ValueError('Policy-data continuation inputs changed')
     atomic_json(root/'contract.json',contract)
     queries = [q for p in query_paths for q in load_jsonl(p)]
-    forbidden = reserved_positions(args.replay_data)
     heldout_games = {q['record']['game_id'] for q in queries if q['record']['split'] != 'train'}
     if args.extra_contexts:
-        heldout_games.update(r['game_id'] for p in replay_paths[1:] for r in load_jsonl(p))
+        heldout_games.update(reserved_games)
     extra, extra_rejected = extra_training_contexts(args.extra_contexts, queries, forbidden, heldout_games)
     train_roots = sum(q['record']['split']=='train' for q in queries)
     if args.limit < train_roots + len(extra) or args.workers < 1 or args.nodes < 1:
@@ -140,6 +154,8 @@ def main():
                'new_independently_searched_contexts':len(queries)-sum(len(load_jsonl(p)) for p in query_paths),
                'extra_training_contexts':len(extra),'extra_context_rejections':extra_rejected,
                'new_descendant_generation_enabled':not args.no_descendants,
+               'additional_reserved_datasets':args.reserved_data,
+               'heldout_reserved_positions':len(forbidden),
                'rejected':dict(rejected),'root_and_answer_positions_checked':True,
                'neural_prose_generated':False,'original_course_replay_preserved':True}
     atomic_json(root/'manifest.json',manifest('engine_move_quality_curriculum',vars(args),inputs,outputs,summary))

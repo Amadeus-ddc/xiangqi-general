@@ -1,0 +1,25 @@
+{
+  "checkpoint_step": 3072,
+  "checkpoint_sha256": "257b664efe7a3d4c5ce514aa2c04d140816415c2757747f2854b308f59789bd9",
+  "real_model_generations": 3,
+  "initial_analysis_saved": true,
+  "saved_analysis_retained_on_resume": true,
+  "legal_user_move_then_hint_exercised": true,
+  "undo_returns_to_original_history": true,
+  "all_advice_histories_replayed": true,
+  "raw_answers_and_verdicts_preserved": true,
+  "structured_contract_valid_answers": 0,
+  "external_oracle_used": false,
+  "oracle_repairs": 0,
+  "output_hashes": {
+    "runs/coach-real-checkpoint-v1/initial.json": "60388b3684ad68057b6d282cfae3acae65371bce0c340da1416581f38f0107c7",
+    "runs/coach-real-checkpoint-v1/resumed.json": "e50c5c84a25884e0c7e351ee9360b4b65e3934acea1a53ad19d06e6453229fd2",
+    "runs/coach-real-checkpoint-v1/first.log": "1bb80b6745d16dcc929b5f5a801a434d294969cdc3a576d8e61b21f6cf973ad2",
+    "runs/coach-real-checkpoint-v1/interactive.log": "807d6b29ae94fd0dc5ecb595d3a9de93ef134e59aaf48bf7e4993e052ba794da"
+  },
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Learning-interface execution only, not a strong or reliable teaching-model claim",
+    "Three correlated analyses including repeated starting position; no independent-test assessment"
+  ]
+}

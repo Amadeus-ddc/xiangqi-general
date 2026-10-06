@@ -127,6 +127,8 @@ python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
 
 长任务放入 tmux。自对弈按完成棋局原子保存，用相同冻结源码、参数和输入可续跑；配置、源码或输入哈希改变时拒绝续跑。1000 节点停止若使最佳走法缺少完整评分，会真实重试一次 10000 节点搜索并保留失败输出。`--extra-contexts` 拒绝保留集棋局归属和不一致历史，去除重复或与保留集当前/未来局面重叠的训练项；它不改变验证、测试标签。
 
+已有规划或讲解保留集时，`policy_data --reserved-data DATASET...` 将其棋局、根局面和全部未来分支加入排除范围，仅使用保留信息，不追加这些标签到回放集。相关文件哈希纳入续跑合同，新训练标签及颜色镜像也检查这组保留局面。
+
 若输入目录已包含全部旧搜索结果，追加 `--no-descendants` 可只搜索新补充上下文，跳过旧 PV 的再次派生；原查询和走法标签仍保留。
 
 多步规划课程从这些已完成搜索的主变化及候选分支生成最多六步的走法序列。每步按完整历史检查终局，训练项与保留集根及全部变化局面重叠时剔除；颜色派生项保留原分割。新课程复用原根局面的专家缓存，不生成神经讲解。
@@ -229,6 +231,8 @@ python -m xqgeneral.ask --adapter runs/pilot-v1/adapter.pt \
 python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --interactive --output runs/study.json
 python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
 ```
+
+学习入口核验推荐、主线和全部候选分支，按保存的完整历史拒绝终局后的续着。检查失败时保留原始答案和错误；规则检查通过仍需独立验证讲解理由与棋力。
 
 交互命令为 UCCI 走法、`hint`、`undo`、`board` 与 `quit`。学习入口保留原始模型回答并执行规则核验；推荐本身不调用引擎。各检查点的实测质量以状态与评测证据为准。
 
