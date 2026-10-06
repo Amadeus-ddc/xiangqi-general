@@ -34,3 +34,20 @@ def test_color_mirror_commutes_with_legal_moves_and_preserves_task_answers():
             expected = sorted(s for s, p in piece_map(actual).items() if p == mirrored['query']['symbol'])
             assert mirrored['answer'] == (' '.join(expected) or '无')
     assert verify_splits(rows)['game_overlap'] == 0
+
+
+def test_mirror_preserves_all_future_branch_positions():
+    from xqgeneral.engine_selfplay import context_positions
+    from xqgeneral.evidence import position_key
+    row = make_records(games=6, seed=7, plies=16)[0]
+    row = dict(row, fen=START_FEN, initial_fen=START_FEN, moves=[], history=[START_FEN],
+               future_moves=['b0c2'], future_branches=[['b0c2', 'b9c7'], ['h0g2', 'h9g7']])
+    mirror = mirrored_qa(row)
+    assert mirror['future_branches'] == [[mirror_move(m) for m in line] for line in row['future_branches']]
+    original_fens = [START_FEN]
+    for line in [row['future_moves'], *row['future_branches']]:
+        fen = START_FEN
+        for move in line:
+            fen = play(fen, move); original_fens.append(fen)
+    assert context_positions(mirror) == {position_key(mirror_fen(f)) for f in original_fens}
+    assert mirrored_qa(mirror)['future_branches'] == row['future_branches']

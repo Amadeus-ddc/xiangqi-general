@@ -58,7 +58,10 @@ def mirrored_qa(row, context=None):
     answer = mirror_text(row['answer'])
     if row['task_type'] in {'locate', 'rank', 'moves', 'captures', 'checks'} and answer != '无':
         answer = ' '.join(sorted(answer.split()))
-    return dict(row, id=row['id'] + '-color-mirror', fen=history[-1], initial_fen=initial,
+    branches = ({'future_branches': [[mirror_move(m) for m in line]
+                                    for line in row['future_branches']]}
+                if 'future_branches' in row else {})
+    return dict(row, **branches, id=row['id'] + '-color-mirror', fen=history[-1], initial_fen=initial,
                 moves=moves, history=history, feature_key=history_key(history), query=query,
                 question=mirror_text(row['question']), answer=answer,
                 future_moves=[mirror_move(m) for m in row.get('future_moves', [])],

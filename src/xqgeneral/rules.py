@@ -78,6 +78,12 @@ def replay(initial_fen, moves):
     return history
 
 
+@lru_cache(maxsize=131072)
+def future_fens(fen, moves):
+    """Cache immutable, legally replayed continuations for repeated split checks."""
+    return tuple(replay(fen, moves))
+
+
 def gives_check(fen, move):
     if move not in legal_moves(fen):
         raise ValueError("Cannot check an illegal move")

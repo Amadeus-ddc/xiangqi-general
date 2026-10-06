@@ -1,0 +1,96 @@
+{
+  "variants": {
+    "legacy": {
+      "queries": 256,
+      "labels": 1994,
+      "rejected": {},
+      "isolation_rejections": {},
+      "split": {
+        "games": {
+          "train": 112,
+          "validation": 2,
+          "test": 3
+        },
+        "roots": {
+          "train": 500,
+          "validation": 4,
+          "test": 6
+        },
+        "game_overlap": 0,
+        "root_and_future_overlap": 0
+      },
+      "workers": 1,
+      "lessons_seconds": 83.15152414422482,
+      "isolation_seconds": 15.943250238895416,
+      "verify_seconds": 0.01464794296771288,
+      "repeated_verify_seconds": 0.011729763820767403,
+      "labels_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc",
+      "isolated_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc"
+    },
+    "serial": {
+      "queries": 256,
+      "labels": 1994,
+      "rejected": {},
+      "isolation_rejections": {},
+      "split": {
+        "games": {
+          "train": 112,
+          "validation": 2,
+          "test": 3
+        },
+        "roots": {
+          "train": 500,
+          "validation": 4,
+          "test": 6
+        },
+        "game_overlap": 0,
+        "root_and_future_overlap": 0
+      },
+      "workers": 1,
+      "lessons_seconds": 83.53500606119633,
+      "isolation_seconds": 15.943266998045146,
+      "verify_seconds": 0.014811202883720398,
+      "repeated_verify_seconds": 0.012526213191449642,
+      "labels_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc",
+      "isolated_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc"
+    },
+    "parallel": {
+      "queries": 256,
+      "labels": 1994,
+      "rejected": {},
+      "isolation_rejections": {},
+      "split": {
+        "games": {
+          "train": 112,
+          "validation": 2,
+          "test": 3
+        },
+        "roots": {
+          "train": 500,
+          "validation": 4,
+          "test": 6
+        },
+        "game_overlap": 0,
+        "root_and_future_overlap": 0
+      },
+      "workers": 8,
+      "lessons_seconds": 20.82871032319963,
+      "isolation_seconds": 32.39594412408769,
+      "verify_seconds": 0.014197804033756256,
+      "repeated_verify_seconds": 0.01303772535175085,
+      "labels_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc",
+      "isolated_sha256": "caf01f3ec3499e73ddfbaf23ec0ee51ba2638bca78ea557d9bb190ffa08d25dc"
+    }
+  },
+  "all_labels_and_isolated_rows_byte_identical": true,
+  "real_queries": 256,
+  "source_queries_sha256": "44ec438ba845652baf2443ce4122d8750f9b9128847eca2647bfeb7a286fa28e",
+  "preserved_legacy_source_manifest_sha256": "6756a7fa65eabc31f28dffdf951ecde8b79b701b242ffb65bd223eb40c287785",
+  "new_source_manifest_sha256": "a8cf96c589cf82e8ef248c7f01e7d8a4aaf10e984b3c3cde077cc5f92f98ba98",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Bounded subset timing is not full-dataset throughput",
+    "Completed and active old runs are preserved unchanged",
+    "No new teacher prose or model-quality claim"
+  ]
+}

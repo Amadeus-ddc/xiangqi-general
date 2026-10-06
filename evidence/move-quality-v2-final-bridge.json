@@ -1,0 +1,171 @@
+{
+  "training": {
+    "mode": "bridge",
+    "courses": [
+      "move_quality",
+      "static_current",
+      "dynamic_current",
+      "static_future",
+      "dynamic_future"
+    ],
+    "mixture": {
+      "move_quality": 0.8,
+      "static_current": 0.05,
+      "dynamic_current": 0.05,
+      "static_future": 0.05,
+      "dynamic_future": 0.05
+    },
+    "steps_completed": 4250,
+    "selected_step": 2750,
+    "world_size": 1,
+    "global_batch_size": 16,
+    "supervised_tokens_seen": 238532,
+    "training_loss_normalization": "token",
+    "validation_loss_normalization": "token",
+    "deterministic_training": true,
+    "cublas_workspace_config": ":4096:8",
+    "initial_validation_nll": 3.089500983556112,
+    "final_validation_nll": 0.9158082058032354,
+    "zero_memory_validation_nll": 11.998977820078531,
+    "shuffled_memory_validation_nll": 3.094216803709666,
+    "trainable_parameters": 139920416,
+    "trainable_parameter_dtypes": {
+      "torch.float32": 139920416
+    },
+    "frozen_base_verified": true,
+    "decoder_training": "frozen",
+    "decoder_parameter_dtype": "torch.bfloat16",
+    "frozen_parameter_dtypes": {
+      "torch.bfloat16": 4022468096
+    },
+    "compute_dtype": "torch.bfloat16",
+    "selected_decoder_probe_max_change": null,
+    "frozen_parameter_gradients_verified": true,
+    "nonzero_gradients": true,
+    "generation_examples": 32,
+    "generation_exact_matches": 16,
+    "peak_allocated_gib": 24.326965808868408,
+    "seconds": 7454.8162325285375,
+    "purpose": "FP32 trainable master parameters with frozen BF16 decoder; retain small bridge/token updates during engine move learning",
+    "feature_cache_sha256": "15b5454ae37c7280a6edc18e7c7ceb14f6efe90cb11ce9baa33b074f9f0dbc26"
+  },
+  "training_manifest_sha256": "5cbd3072c0e613f3775989ff17a32b8d72cbd721a0bbfbb2988cef850c143b02",
+  "evaluations": {
+    "normal-raw": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 1.0,
+        "legal_rate": 0.8802083333333334,
+        "no_mistake_rate": 0.8125,
+        "teacher_best_move_exact_rate": 0.4166666666666667,
+        "legal_scored_moves": 169,
+        "mean_expected_score_loss_conditional": 0.046760355029585796,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 146.0084035480395
+      },
+      "manifest_sha256": "5f5fe38790a905b530b70c40bb24e9d55fa95765aa31e2ad377aca9612568966"
+    },
+    "zero-raw": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 0.0,
+        "legal_rate": 0.0,
+        "no_mistake_rate": 0.0,
+        "teacher_best_move_exact_rate": 0.0,
+        "legal_scored_moves": 0,
+        "mean_expected_score_loss_conditional": null,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "zero",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 67.12167059630156
+      },
+      "manifest_sha256": "43b70e3ab68df7621c0beb71d2e9edd1ae6b961b335d0644ec1ad856c54a1af4"
+    },
+    "shuffled-raw": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 0.9947916666666666,
+        "legal_rate": 0.6041666666666666,
+        "no_mistake_rate": 0.3385416666666667,
+        "teacher_best_move_exact_rate": 0.0625,
+        "legal_scored_moves": 116,
+        "mean_expected_score_loss_conditional": 0.2539051724137931,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "shuffled",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 163.8654848486185
+      },
+      "manifest_sha256": "37ddc20b71389845b9e3ec04bb0fe3e1a2d85509cb2f87ee0579b98f3fba215c"
+    },
+    "normal-legal": {
+      "metrics": {
+        "examples": 192,
+        "format_valid_rate": 1.0,
+        "legal_rate": 1.0,
+        "no_mistake_rate": 0.9270833333333334,
+        "teacher_best_move_exact_rate": 0.4791666666666667,
+        "legal_scored_moves": 192,
+        "mean_expected_score_loss_conditional": 0.0461328125,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": false,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "legal",
+        "rule_legal_constraints": true,
+        "legality_is_imposed_by_decoding": true,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 236.08111236058176
+      },
+      "manifest_sha256": "2684b9a1d5235951972af55d2a782fe4f371fb5e3bad265bc21bc5087a7ed977"
+    }
+  },
+  "all_output_hashes_read_back": true,
+  "test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Validation and color mirrors are correlated",
+    "Legal decoding imposes legality; no oracle repairs",
+    "No full-game or explanation-strength claim"
+  ]
+}

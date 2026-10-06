@@ -7,7 +7,7 @@
 - 原型基线保留：冻结 Px0 与 Qwen，四个 384 宽桥接块，80 步静态课程；12 条生成样例中 8 条正确。这仅证明链路可执行。
 - 原生输入编码：原始 102 个局面逐平面一致。
 - 完整网络数值对照：34 个局面，2062 个策略输出、胜和负、剩余步数与四层特征均一致。胜和负最大误差 `6.85e-7`，策略最大误差 `5.60e-6`。参考为官方 C++ 编码器与未修改的 C++ ONNX 导出器，通过 ONNX Runtime CPU 执行。证据见 `evidence/native-network.json`。
-- 62 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。新增检查验证样本损失权重、梯度累积、续训精度合同、合法词元树、自对弈截尾与完整历史、补充局面归属及未来局面隔离。规划数据和评测检查完整历史终局、条件首着、变化长度及保留集第二步以后局面的隔离。搜索汇总标签保存全部分支未来局面，排除更深的保留集变化及完整历史终局后的走法。选模快照固定原子检查点，拒绝同一步数的不同权重、篡改证据、独立测试或强制合法结果。对弈选招不消耗评分，严格评分查询仍拒绝缺少完整评分的结果，两者均保持请求节点预算。独立走法评测拒收非法或终局后走法，并按原始输出统计全样本与合法样本条件指标。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
+- 65 项 CPU 测试通过，覆盖规则与完整历史终局、分割、梯度、重复、长将与长捉，以及新增词元冻结、对称数据、教师身份、引擎 MultiPV 中断、全量 SFT 初始化、搜索递归、追加标注合并、盲评协议和引擎走法课程的保留集隔离。新增检查验证样本损失权重、梯度累积、续训精度合同、合法词元树、自对弈截尾与完整历史、补充局面归属及未来局面隔离。规划数据和评测检查完整历史终局、条件首着、变化长度及保留集第二步以后局面的隔离。搜索汇总标签保存全部分支未来局面，排除更深的保留集变化及完整历史终局后的走法。选模快照固定原子检查点，拒绝同一步数的不同权重、篡改证据、独立测试或强制合法结果。新增检查验证并行规划标签逐字节一致、终局拒收计数一致，以及非主线未来局面的隔离和颜色镜像。对弈选招不消耗评分，严格评分查询仍拒绝缺少完整评分的结果，两者均保持请求节点预算。独立走法评测拒收非法或终局后走法，并按原始输出统计全样本与合法样本条件指标。裁定锁定 `pyffish 0.0.90 xiangqi AXF`，保留完整历史。
 - 课程数据生成器加入空格、零数量、棋子位置、子力、吃子、将军与未来非法反例；训练/验证/测试按棋局划分并检查当前及未来局面重叠。
 - Git 已建立，原始原型有独立基线提交。软件包改名 `xqgeneral`；本地目录已同步改名为 `xiangqi-general`，项目环境与可编辑安装路径已修复。
 - [GitHub 仓库](https://github.com/Amadeus-ddc/xiangqi-general) 已同步并合并首个源码里程碑；Python 3.11/3.12 的 CPU CI 均通过。
@@ -49,6 +49,10 @@
 - 搜索挖掘、真实 BF16 汇总收集及完整对弈入口已实现并通过受控测试，真实搜索蒸馏与讲解模式对弈结果尚待产生。
 - 搜索隔离回归先复现了两个错误：更深的子变化进入保留集仍被接收，以及仅按 FEN 合法的变化越过完整历史重复终局。修复后 12 项集中检查及全套 60 项测试通过，见 `evidence/search-history-isolation.json`。这是合同验证，实际搜索收益仍须单独测量。
 - 2048 步学生的 32 个训练根局面搜索试批已完成：零个目标通过，31 条最终止于非法根候选、1 条达到递归上限；原始学生生成与递归轨迹保留。见 `evidence/search-v3-after-2048-pilot.json`。没有调用汇总教师或进行蒸馏训练，空结果不计为一轮蒸馏。
+- 规划数据已完成：88,676 条真实引擎主变化及条件变化题，其中 86,892 条训练项；共 185,144 条规划、走法及四门问答回放。完整历史终局与棋局、根及未来局面分割检查通过，原非规划标签全分割逐字节保留，全部特征键存在。见 `evidence/move-planning-data.json`。颜色派生项不是独立棋局，数据就绪不代表规划能力。
+- 同一 256 个真实查询的原实现、新单进程与八进程共生成 1994 条标签，标签及隔离后记录逐字节一致；生成阶段耗时约 83.15/83.54/20.83 秒，八进程父进程的隔离阶段约 32.40 秒。见 `evidence/planning-generation-performance.json`。这不是全数据吞吐或共享缓存收益的测量。后续生成支持保序多进程、复用镜像历史与未来复演，并报告各阶段进度；已完成旧运行不改变。
+- 未学习规划课程的走法预训练基线已评测同一 96 条规划验证题：95 条只输出一步，完整规划合同通过率为零，条件首着匹配率 45.8%。见 `evidence/planning-baseline-warm.json`。合法短前缀不算合格规划，后续补训须比较完整合同与逐步质量。
+- 四门课程后的正式专家走法训练已完成 4250 步，按 NLL 选择 2750 步。192 道同题原始验证中 169 个走法合法、156 个无明显失误（88.0%/81.3%）；置零专家均为零，打乱专家为 60.4%/33.9%。规则约束解码得到 178 个无明显失误（92.7%），合法性由约束保证。见 `evidence/move-quality-v2-final-bridge.json`。原始输出、全部裁判证据和输出哈希已读回；仍须完整对弈及讲解验证。
 - 实际走法检查点的选模快照已验证：258 个张量、139920416 个可训练参数逐位一致，快照与原检查点 SHA256 相同；见 `evidence/functional-checkpoint-snapshot.json`。这验证参数保存，不证明选模收益。
 - 终端学习入口支持棋盘显示、推荐讲解、悔棋和完整历史保存/续读；命令行入口已检查，真实训练模型的学习体验仍待验证。
 
@@ -56,10 +60,11 @@
 
 - 红黑平衡数据上的扩大纯语言基线已完成四门课程，执行 4000/2750/4000/3250 步，264 道平衡验证问答正确率为 51.9%；见 `evidence/curriculum-v2-text.json`。完整讲解 SFT 与 96 根局面评测均已完成。
 - Astra 已生成新增 579 个训练根局面的初始讲解，并对新增训练项抽检 72 条；一处“回吃”表述已修正并复核。合并后的 1,315 条原始标注与颜色派生项共 2,630 条（2182 训练、192 验证、256 测试），全部结构校验与输出哈希读回通过；验证/测试文件与原版本字节一致。共 144 条神经抽检，见 `evidence/initial-teacher-full.json`。
-- 四门字典课程已完成，两组均在执行 `configs/move-quality-v2.json` 的真实引擎走法课程。课程按验证集选检查点；随后执行讲解训练。
+- 四门字典课程已完成；专家组的 `configs/move-quality-v2.json` 正式走法训练与消融验证已完成，纯语言组继续训练。随后比较同题走法及完整对弈。
 - 第二门字典课程后的走法预训练及全量消融均已完成。其选定检查点已开始 `configs/explanation-sft-v3.json` 的扩充讲解 SFT；这是自适应的额外实验，四门课程的匹配对照仍单独进行。
-- `configs/move-planning-v1.json` 加入真实自对弈走法与最多六步主变化、条件变化课程，保留四门问答回放；预算上限 12000 步、最少 4000 步，再按验证集早停。正在生成完整历史规划数据，GPU 0 的训练队列等待数据和裁判校准完成。
+- `configs/move-planning-v1.json` 加入真实自对弈走法与最多六步主变化、条件变化课程，保留四门问答回放；预算上限 12000 步、最少 4000 步，再按验证集早停。完整历史规划数据与裁判校准已完成，GPU 0 正在实际训练；独立选模队列随后测量走法与完整规划合同。
 - 扩充讲解收集与数据检查已完成。后续 `configs/explanation-sft-v3.json` 按样本平均损失混合讲解、走法题及四门基础课程回放，完整解码器两步 GPU 执行检查已通过。
+- 实战补充初始教师已生成 384 条训练讲解。72 条交叉抽查发现 8 处事实、方向或数值比较错误，已扩大到全量交叉复核并请作者单独修正；原文与拒收记录保留，新批次尚未进入训练。它是 Astra Low 初始标注补充，不是一轮搜索蒸馏。
 - 扩充初始讲解 SFT 与实际分支搜索蒸馏。
 - 相同数据预算的纯语言模型基线、专家桥接与蒸馏比较。
 - 独立走法质量、解释事实和完整对弈评测。
@@ -77,12 +82,12 @@
 - 完整教师验证已完成，日志与输出位于 `runs/consolidator-weight-verification.log`、`runs/consolidator-verification-v1/`。
 - 字典专家组和纯语言组四门课程及问答验证均已完成，日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log` 与 `runs/research-v3-{bridge,text}-qa-validation.log`。
 - 两组首轮讲解训练及原始输出评测均已完成。扩充讲解训练：`xqgeneral-explanation-v3-warm-bridge`（GPU 1），日志 `runs/explanation-v3-warm-bridge.log`；初始化与验证门槛见 `runs/explanation-v3-warm/bridge/plan.json`。
-- 正式走法课程：`xqgeneral-move-quality-v2-bridge`（GPU 2）与 `xqgeneral-move-quality-v2-text_lora`（GPU 3）均已启动。日志 `runs/move-quality-v2-{bridge,text_lora}.log`。
+- 正式走法课程：专家组已完成，纯语言组 `xqgeneral-move-quality-v2-text_lora`（GPU 3）继续。日志 `runs/move-quality-v2-{bridge,text_lora}.log`。专家最终同题消融均已完成，日志 `runs/move-quality-v2-final-bridge-v2/log.txt`；首次评测启动错误和虚拟环境路径修正另存。
 - 讲解中间检查：`xqgeneral-explanation-v3-interim-512`（GPU 0），日志 `runs/explanation-v3-interim-512.log`；原子保存的最佳检查点通过硬链接固定，后续训练不会替换该评测输入。
 - 自对弈上下文、独立搜索及特征缓存均已完成。日志 `runs/engine-selfplay-train-v2.log`、`runs/selfplay-policy-v2.log`，精确命令及续跑说明在对应 `runs/*/plan.json`。旧准备遍历额外的历史 PV，在真正引擎搜索开始前停止，合同和源码均保留。新批次用 `--no-descendants` 保留全部旧搜索结果，仅搜索新自对弈上下文。首次自对弈缺评分错误及真实重试证据保留于 `runs/engine-selfplay-debug-v1/`。
 - 第 512、1024 步讲解检查及两轮成对盲评均已完成，输出位于 `runs/explanation-v3-interim-{512,1024}/`、`runs/explanation-v3-paired-prose-review/`、`runs/explanation-v3-grounded-prose-review/`；Astra 复核不改已有标注和评分。
-- 规划数据：`xqgeneral-move-planning-data-v1`，日志 `runs/move-planning-data-v1.log`；新课程队列：`xqgeneral-move-planning-v1-bridge`（GPU 0），日志 `runs/move-planning-v1-bridge.log`，配置、等待条件及精确续跑命令在 `runs/move-planning-v1/bridge/plan.json`。使用精确 tmux 会话匹配，避免相似名称互相等待。
-- 补训前原始规划基线：`xqgeneral-planning-baseline-warm-v1`（GPU 2），日志 `runs/planning-baseline-warm-v1/log.txt`；等待规划数据和正式桥接走法课程结束，评测相同 96 条验证题。
+- 规划数据及输出哈希检查已完成，日志 `runs/move-planning-data-v1.log`，验证 `runs/move-planning-data-v1/verification.json`；新课程正在训练：`xqgeneral-move-planning-v1-bridge`（GPU 0），日志 `runs/move-planning-v1-bridge.log`，配置、等待条件及精确续跑命令在 `runs/move-planning-v1/bridge/plan.json`。使用精确 tmux 会话匹配，避免相似名称互相等待。
+- 补训前原始规划基线已完成，日志 `runs/planning-baseline-warm-v1/log.txt`；新旧生成器保序验证已完成，日志 `runs/planning-generation-benchmark-v1/log.txt`。
 - 实际能力选模：`xqgeneral-move-planning-functional-selection`（GPU 0），日志 `runs/move-planning-v1/functional-selection/log.txt`；每 2000 步固定真实参数，评测同一 192 道原始走法及 96 道规划验证题，另存功能分数最佳模型。NLL 训练选择保留；独立测试集不参与。配置、分数定义及续跑入口在同目录 `plan.json`，尚未产生候选质量结果。
 - 可选约束解码的验证与 12 局对弈已完成：`runs/move-quality-warm-v1/legal-validation/` 与 `runs/move-quality-warm-v1/legal-matches/`。
 - 完成的课程纯语言基线问答与专家最佳讲解检查点验证日志：`runs/research-v2-text-qa-validation.log` 与 `runs/explanation-v2-bridge-validation.log`。完成的走法裁判检查日志：`runs/move-quality-v1-pre-curriculum-validation.log`。
@@ -90,6 +95,8 @@
 - 新损失桥接续训检查已完成：`runs/example-normalization-verification-v2/log.txt`。完整解码器检查与 FP32 主参数检查分别已完成于 `runs/example-normalization-full-sft-verification/`、`runs/frozen-float-master-verification-v2/`。
 - 搜索诊断已完成：`runs/search-v2-diagnostic.log` 与 `runs/search-v2-diagnostic/mining/`。新增 Astra 收集与数据检查已完成：`runs/astra-full-v2-collection/verification.json` 与 `runs/astra-full-v2-preflight/verification.json`。
 - 2048 步后讲解检查：`xqgeneral-explanation-v3-after-2048`（GPU 2），日志 `runs/explanation-v3-after-2048/log.txt`；选定检查点通过硬链接固定，真实选定步数写入同目录 `pinned-checkpoint.json`。实际搜索试批：`xqgeneral-search-v3-after-2048`（GPU 3），日志 `runs/search-v3-after-2048/log.txt`；仅挖掘 32 个训练根局面，符合严格改进条件才调用完整 BF16 教师汇总，不等同于完成蒸馏训练。
-- 下一批实战上下文：`xqgeneral-engine-selfplay-train-v3`（CPU，8 工作者），日志 `runs/engine-selfplay-train-v3/log.txt`；等待规划分割完成后生成 512 局、每局最多 64 个平衡上下文，排除完整保留变化。尚未产生新走法标签或补训结果。
+- 第 3072 步讲解检查：`xqgeneral-explanation-v3-after-3072`（GPU 2），日志 `runs/explanation-v3-after-3072/log.txt`；真实选定步数、哈希与原子硬链接在 `pinned-checkpoint.json`，使用相同 96 道原始验证题。
+- Astra 实战讲解及全量复核输入位于 `data/astra-selfplay-seed-v1/`，作者分配与审查计划在 `runs/astra-selfplay-seed-v1/`。未通过复核的讲解不收集为训练输入。
+- 下一批实战上下文：`xqgeneral-engine-selfplay-train-v3`（CPU，8 工作者），日志 `runs/engine-selfplay-train-v3/log.txt`；规划分割已完成，正在生成 512 局、每局最多 64 个平衡上下文，排除完整保留变化。尚未产生新走法标签或补训结果。
 - 完成的神经盲评与重试输出位于 `runs/interim-explanation-v2-001/prose-review/`；新增交叉复核输入、修改记录及原始拒收意见分别位于 `data/astra-engine-seed-v1/review-inputs/`、`data/astra-engine-seed-v1/corrections-2.jsonl` 与 `runs/astra-engine-seed-v1/pre-review/`。
 - 训练通过 `scripts/freeze_run.py` 保存执行源码；开发中的后续修改不会改变已启动的训练。课程入口自动从 `latest.pt` 续跑，并核对输入哈希；改变数据或配置必须新建实验。

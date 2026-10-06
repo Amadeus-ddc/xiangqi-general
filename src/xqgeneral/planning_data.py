@@ -1,15 +1,17 @@
 """Engine PV planning lessons with full-history termination and heldout isolation."""
 import argparse
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
 from functools import lru_cache
 import json
+import multiprocessing
 from pathlib import Path
 
 from .curriculum_data import verify_splits
 from .engine_selfplay import context_positions
 from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
-from .rules import adjudicate, play
-from .symmetry import mirrored_qa
+from .rules import adjudicate, play, replay
+from .symmetry import mirror_fen, mirror_move, mirrored_qa
 
 BEST_QUESTION = '给出当前最佳走法的主变化，最多六步。只输出 UCCI 走法，按顺序用空格分隔，不写说明。'
 BRANCH_QUESTION = '以 {move} 为首着给出分析变化，最多六步。只输出 UCCI 走法，按顺序用空格分隔，不写说明。'
@@ -42,17 +44,22 @@ def planning_label(query, candidate, forced=False, max_plies=6):
                 provenance=row['provenance'] + ';full_history_engine_pv_planning')
 
 
-def planning_lessons(queries, available_keys, max_plies=6, progress=None):
+def _planning_chunk(queries, available_keys, max_plies):
     labels, rejected = [], Counter()
-    for index, query in enumerate(queries):
+    for query in queries:
         candidates = query['oracle']['candidates']
         best = next(c for c in candidates if c['move'] == query['oracle']['best_move'])
+        context = None
         for candidate, forced in [(best, False), *[(c, True) for c in candidates]]:
             row = planning_label(query, candidate, forced, max_plies)
             if row is None:
                 rejected['terminal_root'] += 1
                 continue
-            for item in (row, mirrored_qa(row)):
+            if context is None:
+                initial = mirror_fen(row['initial_fen'])
+                moves = [mirror_move(m) for m in row['moves']]
+                context = initial, moves, replay(initial, moves)
+            for item in (row, mirrored_qa(row, context)):
                 if item['feature_key'] not in available_keys:
                     rejected['root_not_in_verified_policy_data'] += 1
                     continue
@@ -60,8 +67,42 @@ def planning_lessons(queries, available_keys, max_plies=6, progress=None):
                     item['teacher'] = dict(item['teacher'], independent_engine_query=False,
                                            derivation='color_rank_symmetry')
                 labels.append(item)
-        if progress is not None and (index + 1) % 500 == 0:
-            progress(index + 1)
+    return labels, dict(rejected)
+
+
+def _planning_worker_init(available_keys, max_plies):
+    global _worker_keys, _worker_plies
+    _worker_keys, _worker_plies = available_keys, max_plies
+
+
+def _planning_worker(queries):
+    return _planning_chunk(queries, _worker_keys, _worker_plies)
+
+
+def planning_lessons(queries, available_keys, max_plies=6, progress=None, workers=1, chunk_size=64):
+    if min(workers, chunk_size) < 1:
+        raise ValueError('Planning workers and chunk size must be positive')
+    chunks = [queries[i:i+chunk_size] for i in range(0, len(queries), chunk_size)]
+    executor = None
+    if workers == 1:
+        results = (_planning_chunk(chunk, available_keys, max_plies) for chunk in chunks)
+    else:
+        executor = ProcessPoolExecutor(max_workers=workers,
+            mp_context=multiprocessing.get_context('spawn'), initializer=_planning_worker_init,
+            initargs=(available_keys, max_plies))
+        results = executor.map(_planning_worker, chunks)
+    labels, rejected, completed, reported = [], Counter(), 0, 0
+    try:
+        for chunk, (rows, errors) in zip(chunks, results):
+            labels.extend(rows)
+            rejected.update(errors)
+            completed += len(chunk)
+            if progress is not None and (completed - reported >= 500 or completed == len(queries)):
+                progress(completed)
+                reported = completed
+    finally:
+        if executor is not None:
+            executor.shutdown(wait=True, cancel_futures=True)
     return labels, dict(rejected)
 
 
@@ -84,6 +125,8 @@ def main():
     parser.add_argument('--data', default='data/move-quality-selfplay-v2')
     parser.add_argument('--output', default='data/move-planning-v1')
     parser.add_argument('--max-plies', type=int, default=6, choices=[6])
+    parser.add_argument('--workers', type=int, default=1)
+    parser.add_argument('--chunk-size', type=int, default=64)
     args = parser.parse_args()
     source, root = Path(args.data), Path(args.output)
     if root.exists():
@@ -101,9 +144,13 @@ def main():
     queries = load_jsonl(query_path)
     print(json.dumps({'phase': 'full_history_planning', 'source_queries': len(queries)}), flush=True)
     labels, rejected = planning_lessons(queries, {r['feature_key'] for r in base_rows}, args.max_plies,
-                                        progress=lambda count: print(json.dumps({'planned_roots': count}), flush=True))
+        progress=lambda count: print(json.dumps({'planned_roots': count}), flush=True),
+        workers=args.workers, chunk_size=args.chunk_size)
+    print(json.dumps({'phase': 'heldout_isolation', 'labels': len(labels)}), flush=True)
     rows, isolation_rejected = isolate_planning_rows(base_rows, labels)
+    print(json.dumps({'phase': 'verify_splits', 'records': len(rows)}), flush=True)
     split_proof = verify_splits(rows)
+    print(json.dumps({'phase': 'write_artifacts', 'records': len(rows)}), flush=True)
     outputs = []
     for split in ('train', 'validation', 'test'):
         path = root / f'{split}.jsonl'

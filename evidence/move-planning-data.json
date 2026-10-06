@@ -1,0 +1,151 @@
+{
+  "games": {
+    "train": 190,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 21968,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "records": 185144,
+  "by_split_stage": {
+    "train/static_current": 13092,
+    "train/dynamic_current": 10910,
+    "train/static_future": 13092,
+    "train/dynamic_future": 10910,
+    "train/move_quality": 22248,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "validation/move_quality": 192,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492,
+    "test/move_quality": 256,
+    "train/move_planning": 86892,
+    "validation/move_planning": 764,
+    "test/move_planning": 1020
+  },
+  "planning_lessons": 88676,
+  "source_context_rejections": {},
+  "heldout_future_rejections": {},
+  "all_plans_replayed_with_full_history": true,
+  "continuation_after_terminal_forbidden": true,
+  "neural_prose_generated": false,
+  "feature_cache_reusable_from_source": true,
+  "test_used_for_training_or_checkpoint_selection": false,
+  "planning_horizons": {
+    "6": 84786,
+    "5": 1588,
+    "4": 1098,
+    "1": 262,
+    "3": 498,
+    "2": 444
+  },
+  "planning_tasks": {
+    "best_line": 22696,
+    "conditional_line": 65980
+  },
+  "color_derived_planning_labels": 44338,
+  "all_manifest_input_and_output_hashes_read_back": true,
+  "existing_nonplanning_labels_preserved_in_all_splits": true,
+  "all_feature_history_keys_present": true,
+  "feature_contexts": 23420,
+  "expert_feature_shapes": [
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ],
+    [
+      23420,
+      90,
+      512
+    ]
+  ],
+  "feature_cache_manifest_sha256": "a166508105c89f3285613345ec92dcd6533291f495fb8cec11e54bbac5ba0aa1",
+  "source_manifest_sha256": "5a411515d444c32b48903433648b14cfd9cfcb363b59d3ea02f1381f59b233bd",
+  "source_snapshot_manifest_sha256": "6756a7fa65eabc31f28dffdf951ecde8b79b701b242ffb65bd223eb40c287785",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Engine-generated planning labels, no neural prose",
+    "Mirrors are derived, not independent games",
+    "Dataset readiness is not model-quality proof"
+  ]
+}
