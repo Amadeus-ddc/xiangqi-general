@@ -98,6 +98,19 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
 
 `configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。
 
+根据中间模型的非法走法实测，增加一门引擎监督走法课程。新标签来自真实根局面与重新搜索的变化子局面，保持原棋局分割并排除保留集当前及未来局面：
+
+```bash
+python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
+  --replay-data data/research-balanced-v1 --output data/move-quality-v1
+python -m xqgeneral.cache_features --data data/move-quality-v1 \
+  --output data/move-quality-v1/features-16.pt --depths 0 1 2 3 4 5 6 8 9 10 11 12 14 15 17 19
+python -m xqgeneral.sft --recipe configs/move-quality-v1.json \
+  --init DICTIONARY_COURSE_CHECKPOINT.pt --output runs/move-quality-v1/bridge/training
+```
+
+`configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。
+
 ## 原始输出与对弈评测
 
 ```bash
@@ -109,6 +122,19 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 ```
 
 讲解评测使用更高预算、独立执行的皮卡鱼检查推荐走法、变化、评分方向和棋盘事实；中文战略正文仍需单独评审。对弈从固定开局交换红黑，完整保留历史。非法模型走法判负，达到步数上限记为截尾，结果不自动换算 Elo。先用验证集完成开发，最终选择的模型才进入独立测试。
+
+可将已完成引擎评测的原始讲解提交给本地 BF16 教师作盲评，检查事实、战略理由、教学清晰度与要求完成度：
+
+```bash
+python -m xqgeneral.review_explanations prepare \
+  --predictions runs/explanation-validation/judged-predictions.jsonl --output runs/prose-review/queries
+python -m xqgeneral.local_teacher --input runs/prose-review/queries/queries.jsonl \
+  --output runs/prose-review/inference
+python -m xqgeneral.review_explanations collect --queries runs/prose-review/queries/queries.jsonl \
+  --responses runs/prose-review/inference/responses.jsonl --output runs/prose-review/ratings
+```
+
+裁判输入不带检查点身份，保留具体无依据声明和理由。神经裁判与训练汇总教师使用同一基础模型，评分存在相关偏差；它不计为人工评价，也不能替代机械事实和独立走法检查。
 
 ## 原型推理
 

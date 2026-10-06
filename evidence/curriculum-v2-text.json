@@ -1,0 +1,133 @@
+{
+  "courses": [
+    {
+      "mode": "text_lora",
+      "courses": [
+        "static_current"
+      ],
+      "mixture": {
+        "static_current": 1.0
+      },
+      "steps_completed": 4000,
+      "selected_step": 3500,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 270206,
+      "initial_validation_nll": 6.672375137903797,
+      "final_validation_nll": 0.5772773240929219,
+      "zero_memory_validation_nll": 0.5772773240929219,
+      "shuffled_memory_validation_nll": 0.5772773240929219,
+      "trainable_parameters": 12334080,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 17,
+      "peak_allocated_gib": 26.578884601593018,
+      "seconds": 2284.175307295285,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "text_lora",
+      "courses": [
+        "static_current",
+        "dynamic_current"
+      ],
+      "mixture": {
+        "static_current": 0.1,
+        "dynamic_current": 0.9
+      },
+      "steps_completed": 2750,
+      "selected_step": 1750,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 287482,
+      "initial_validation_nll": 2.57021227478981,
+      "final_validation_nll": 0.8685984735584523,
+      "zero_memory_validation_nll": 0.8685984735584523,
+      "shuffled_memory_validation_nll": 0.8685984735584523,
+      "trainable_parameters": 12334080,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 12,
+      "peak_allocated_gib": 28.125008583068848,
+      "seconds": 1611.4957234906033,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "text_lora",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.08,
+        "static_future": 0.86
+      },
+      "steps_completed": 4000,
+      "selected_step": 3500,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 282643,
+      "initial_validation_nll": 0.7865214617522948,
+      "final_validation_nll": 0.6399235174265558,
+      "zero_memory_validation_nll": 0.6399235174265558,
+      "shuffled_memory_validation_nll": 0.6399235174265558,
+      "trainable_parameters": 12334080,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 9,
+      "peak_allocated_gib": 28.910748958587646,
+      "seconds": 2734.1383185544983,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    {
+      "mode": "text_lora",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future",
+        "dynamic_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.06,
+        "static_future": 0.08,
+        "dynamic_future": 0.8
+      },
+      "steps_completed": 3250,
+      "selected_step": 2250,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 335921,
+      "initial_validation_nll": 0.7933380481495909,
+      "final_validation_nll": 0.7011389526688521,
+      "zero_memory_validation_nll": 0.7011389526688521,
+      "shuffled_memory_validation_nll": 0.7011389526688521,
+      "trainable_parameters": 12334080,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 12,
+      "peak_allocated_gib": 30.54301118850708,
+      "seconds": 2108.257923210971,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    }
+  ],
+  "replay_mixtures_verified": true,
+  "evidence_state": "reconstructed_baseline",
+  "source_manifest_sha256": "78a4415e87c913393cdd28feec6c76cd33d192f41ce1309678d24d95b6cfeb21",
+  "outputs": {
+    "runs/research-v2/text_lora/curriculum/dynamic_future/adapter.pt": {
+      "sha256": "32bc63974c2116d8c7dd801bf8ef2bdb57554fa2dbe86e3eea537176f4caa8e7",
+      "bytes": 24776947
+    }
+  }
+}

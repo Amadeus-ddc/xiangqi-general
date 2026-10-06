@@ -1,0 +1,45 @@
+{
+  "games": {
+    "train": 78,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 16304,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "move_lessons": 16830,
+  "by_split": {
+    "train": 16382,
+    "validation": 192,
+    "test": 256
+  },
+  "new_independently_searched_contexts": 7100,
+  "rejected": {},
+  "root_and_answer_positions_checked": true,
+  "neural_prose_generated": false,
+  "original_course_replay_preserved": true,
+  "evidence_state": "reconstructed_baseline",
+  "source_manifest_sha256": "b9c742ee1bd9841b7765e23f538948abee343373c37ae145c519e3532ed585a5",
+  "outputs": {
+    "data/move-quality-v1/train.jsonl": {
+      "sha256": "ec4a012e3df17a265fedee05e4e88a9872ce0cac9b85edf605c55e83e8ae07cb",
+      "bytes": 247747352
+    },
+    "data/move-quality-v1/validation.jsonl": {
+      "sha256": "d05aef7db2c751093b72996163f299c7ea7e9878bcc58757ad7418316168ecc8",
+      "bytes": 56037228
+    },
+    "data/move-quality-v1/test.jsonl": {
+      "sha256": "742c49e6ca95543763c32dcec5345667e131d57b6920bfc6659c8c4b3737dea2",
+      "bytes": 41676314
+    },
+    "data/move-quality-v1/engine-queries.jsonl": {
+      "sha256": "cf06f47cdf4f9a68c0b294ef1a10a198fdcb8c92d8f3bbe6e9f9342e1fa4d0ee",
+      "bytes": 122563561
+    }
+  }
+}

@@ -2,7 +2,7 @@ import json
 from xqgeneral.evaluate_explanations import judgment
 from xqgeneral.evaluate_games import match_summary, play_game
 from xqgeneral.explanations import move_facts
-from xqgeneral.rules import START_FEN
+from xqgeneral.rules import START_FEN, replay
 
 
 class FixedOracle:
@@ -32,3 +32,15 @@ def test_model_error_is_a_forfeit_and_ply_limit_never_becomes_a_draw():
     summary = match_summary([game, censored])
     assert summary['losses'] == 1 and summary['censored'] == 1 and summary['draws'] == 0
     assert summary['elo_estimate'] is None and summary['model_oracle_repairs'] == 0
+
+
+def test_explanation_cannot_continue_after_full_history_repetition():
+    moves = ['b0c2','b9c7','c2b0','c7b9'] * 2
+    fen = replay(START_FEN,moves)[-1]
+    value = {'move':'b0c2','pv':['b0c2'],'candidates':['b0c2'],
+             'facts':move_facts(fen,'b0c2'), 'evaluation':{'type':'cp','value':0,'perspective':'side_to_move'},
+             'explanation':'先出马。'}
+    result = judgment(None,{'fen':fen,'initial_fen':START_FEN,'moves':moves},json.dumps(value),100)
+    assert not result['first_move_legal'] and not result['pv_legal']
+    assert result['terminal_root']['reason'] == 'AXF_repetition_or_move_limit'
+    assert 'move_after_terminal_root' in result['errors']

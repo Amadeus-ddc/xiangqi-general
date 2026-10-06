@@ -1,0 +1,57 @@
+{
+  "mode": "bridge",
+  "courses": [
+    "explanation",
+    "static_current",
+    "dynamic_current",
+    "static_future",
+    "dynamic_future"
+  ],
+  "mixture": {
+    "explanation": 0.9,
+    "static_current": 0.03,
+    "dynamic_current": 0.03,
+    "static_future": 0.02,
+    "dynamic_future": 0.02
+  },
+  "steps_completed": 1408,
+  "selected_step": 896,
+  "world_size": 1,
+  "global_batch_size": 4,
+  "supervised_tokens_seen": 1974027,
+  "initial_validation_nll": 8.556933913092385,
+  "final_validation_nll": 0.6584428620101564,
+  "zero_memory_validation_nll": 9.808333941532744,
+  "shuffled_memory_validation_nll": 0.6992219503607005,
+  "trainable_parameters": 4162388512,
+  "frozen_base_verified": false,
+  "decoder_training": "full",
+  "decoder_parameter_dtype": "torch.float32",
+  "compute_dtype": "torch.bfloat16",
+  "selected_decoder_probe_max_change": 0.00011166278272867203,
+  "frozen_parameter_gradients_verified": true,
+  "nonzero_gradients": true,
+  "generation_examples": 8,
+  "generation_exact_matches": 0,
+  "peak_allocated_gib": 77.59157609939575,
+  "seconds": 3306.2854840364307,
+  "purpose": "Initial Astra explanation SFT with full FP32 decoder parameters, BF16 compute and prior-course replay",
+  "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e",
+  "evidence_state": "reconstructed_baseline",
+  "source_manifest_sha256": "592688a4cdc2b244b910056cc75cdd6ba0186c751595b96d969cf6f7035eae2b",
+  "outputs": {
+    "runs/explanation-v2/bridge/training/adapter.pt": {
+      "sha256": "5cb5423acbff8a14fa2caa0416ae069f5992503520a66bd3e52117836c91cefa",
+      "bytes": 16649774437
+    },
+    "runs/explanation-v2/bridge/training/examples.json": {
+      "sha256": "33ced53db2b56f4145fee4502f57bcb591703fbb0ab29dcab38ee0a1eedc0485",
+      "bytes": 24601
+    },
+    "runs/explanation-v2/bridge/training/training.jsonl": {
+      "sha256": "3bf3c0f715bffc30163d55af5528b2212e41295ff26f265de50c611102abbb89",
+      "bytes": 214545
+    }
+  },
+  "scope": "completed SFT run; raw move legality and prose quality require separate evaluation"
+}

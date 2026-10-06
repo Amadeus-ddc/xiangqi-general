@@ -1,0 +1,26 @@
+{
+  "examples": 1,
+  "seconds": 21.22774186078459,
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "quantization": "none",
+    "inference_dtype": "bfloat16",
+    "parameter_elements_by_dtype": {
+      "torch.bfloat16": 27356728560
+    },
+    "weight_manifest_sha256": "01969d64835c9946e426d0d788e131338623d88573290116edc9f507d69619da",
+    "visible_cuda_devices": 1,
+    "allocated_gib_by_device": [
+      50.9559760093689
+    ]
+  },
+  "neural_teacher_inference_executed": true,
+  "generations_truncated": 0,
+  "semantic_validation": "caller_must_validate_raw_responses",
+  "evidence_state": "reconstructed_baseline",
+  "response_text": "{\n  \"status\": \"ok\",\n  \"language\": \"中文\"\n}",
+  "response_generated_tokens": 20,
+  "source_manifest_sha256": "2d1b531053eed1b551cd71833862b164ae82d77656e2edaea466bca284f8d93b",
+  "scope": "actual full teacher load and simple inference; prose consolidation quality evaluated separately"
+}
