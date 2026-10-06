@@ -83,7 +83,12 @@ and one answer passing the complete contract. These are interim results, not a u
 coaching model or independent test result.
 At 3072 steps, the same raw validation set yielded 79 legal recommendations,
 67 without a large loss, 11 legal principal variations and three complete
-contracts. Prose semantics remain unmeasured. The formal four-course move arm
+contracts. Prose semantics remain unmeasured.
+At 4096 steps, the same set yielded 80 legal recommendations, 62 without a large
+loss, 22 legal principal variations and seven complete contracts. First-move
+quality regressed despite improved contracts; this motivates validation selection
+across moves, planning and complete explanations, while prose semantics remain
+separately unmeasured. The formal four-course move arm
 has also completed 12 rule-constrained matches: one win, ten losses and one draw.
 Strong bridge-model play has not been established.
 The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under

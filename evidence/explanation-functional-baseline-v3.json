@@ -1,0 +1,23 @@
+{
+  "actual_selected_step": 4096,
+  "checkpoint_sha256": "1c5f07b35cf2578b6fc9317116e38932fcbb94ee54b5c04737603ee04ded3632",
+  "raw_move_no_mistake_rate": 0.7083333333333334,
+  "raw_plan_contract_valid_rate": 0.0,
+  "raw_explanation_contract_valid_rate": 0.07291666666666667,
+  "functional_score": 0.31250000000000006,
+  "selection_rule": ".4 * raw_move_no_mistake_rate + .2 * raw_plan_contract_valid_rate + .4 * raw_explanation_contract_valid_rate",
+  "all_three_metrics_same_checkpoint_sha256": true,
+  "all_validation_output_hashes_read_back": true,
+  "raw_no_repairs_or_legal_constraints": true,
+  "independent_test_used": false,
+  "manifests_sha256": {
+    "runs/explanation-v3-4096-functional-baseline/moves/manifest.json": "a9cf82795c59d698299004add5b4efe3ab2c80cf68e42a585c7275c4ff01997b",
+    "runs/explanation-v3-4096-functional-baseline/plans/manifest.json": "507cf9390469654faddeb9ffbb4a5fc7ce890c2a743cf3405937f3b50e554afb",
+    "runs/explanation-v3-after-4096/validation/manifest.json": "54fe0b4af24da217c465520ca939ddb641fe06c6ec52ff8d3e6161843aff5489"
+  },
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Baseline demonstration of three-capability score, not a completed full-SFT checkpoint selection",
+    "Whole explanation contract is a structural check; strategy and strong match play remain unproven"
+  ]
+}

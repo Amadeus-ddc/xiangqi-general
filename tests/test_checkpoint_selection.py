@@ -44,3 +44,20 @@ def test_selection_rejects_test_or_constrained_results_and_tampered_evidence(tmp
     atomic_json(root/'metrics.json', dict(move, no_mistake_rate=1.0))
     with pytest.raises(ValueError, match='output changed'):
         read_validation(root, checkpoint)
+
+
+def test_explanation_selection_can_prefer_complete_answers_over_move_only_quality():
+    common = {'split': 'validation', 'raw_generation': True, 'oracle_repairs': 0, 'examples': 96}
+    move_only = {**common, 'no_mistake_rate': .9}
+    balanced = {**common, 'no_mistake_rate': .8}
+    plan = {**common, 'contract_valid_rate': .8}
+    weak = {**common, 'structured_contract_valid_rate': 0.0}
+    complete = {**common, 'structured_contract_valid_rate': .9}
+    assert functional_score(move_only, plan) > functional_score(balanced, plan)
+    assert functional_score(move_only, plan, weak) < functional_score(balanced, plan, complete)
+    assert functional_score(balanced, plan, complete) == pytest.approx(.84)
+    for bad in [dict(complete, split='test'), dict(complete, raw_generation=False),
+                dict(complete, rule_legal_constraints=True), dict(complete, oracle_repairs=1),
+                dict(complete, structured_contract_valid_rate=float('nan'))]:
+        with pytest.raises(ValueError):
+            functional_score(balanced, plan, bad)
