@@ -1,0 +1,47 @@
+{
+  "games": {
+    "train": 183,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 6657,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "reviewed_train_labels": 768,
+  "revised_train_prose": 61,
+  "by_split": {
+    "train": 6662,
+    "validation": 192,
+    "test": 256
+  },
+  "by_side": {
+    "b": 3331,
+    "w": 3331
+  },
+  "structured_labels_and_histories_preserved": true,
+  "heldout_files_byte_identical": true,
+  "human_rating": false,
+  "training_benefit_measured": false,
+  "prose_only_changes_independently_read_back": 61,
+  "all_output_hashes_read_back": true,
+  "feature_keys_prompts_and_histories_unchanged": true,
+  "expert_features_reused": "data/move-quality-selfplay-v2/features-16.pt",
+  "max_train_tokens": 943,
+  "max_tokens_limit": 1024,
+  "manifest_sha256": "d6b5f09d417acf7f2c9c6f5f68fd2e404452ce868bc3720741a3f85d6b7d736c",
+  "review_manifests_sha256": {
+    "data/old-mirror-prose-reviewed-v1/manifest.json": "85f2229629423a4828e6a7db01a2d4f09578199843e949adbcda6b427deed8fd",
+    "data/old-original-prose-reviewed-v1/manifest.json": "11b9cd8efede5f6d30e9c92e1f7d60f287ca53bbc6c0fd5901abc8849be9f71b"
+  },
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "768 sampled old original/mirrored labels reviewed; remaining old labels were not fully reviewed",
+    "61 revised train labels are not 61 new independent roots",
+    "384 supplemental original selfplay explanations keep their earlier full cross-review",
+    "No measured student improvement or human prose rating"
+  ]
+}

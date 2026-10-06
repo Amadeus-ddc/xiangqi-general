@@ -1,0 +1,36 @@
+{
+  "population_train_originals": 3139,
+  "sample": 384,
+  "sampling": "fixed-seed uniform sample without replacement",
+  "seed": 20261034,
+  "original_accept": 357,
+  "original_revision_requested": 27,
+  "final_revisions_independently_accepted": 27,
+  "first_revision_rejects": 0,
+  "root_independent_rule_replayed_branches": 1123,
+  "root_independent_rule_replayed_plies": 6658,
+  "full_history_and_structure_valid": true,
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "human_rating": false,
+  "source_training_labels_modified": false,
+  "completed_training_benefit_measured": false,
+  "heldout_labels_reviewed": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Sampled neural prose review, not a full-population or human quality rating",
+    "Generic unambiguous piece names alone do not cause rejection; requested revisions include minor score wording",
+    "Existing experiments keep their original data; revised annotations are a separate future input"
+  ],
+  "all_annotation_and_review_hash_bindings_verified": true,
+  "all_output_hashes_read_back": true,
+  "manifest_sha256": "11b9cd8efede5f6d30e9c92e1f7d60f287ca53bbc6c0fd5901abc8849be9f71b",
+  "review_file_sha256": {
+    "data/old-original-prose-review-v1/manifest.json": "3c4de6fec469fd4c117d9e226f20929777e5be2dee466208b95ef57a11610259",
+    "data/old-original-prose-review-v1/review-0.json": "a83a34146a91bffa90ec86b04a0f0f7c7b5450e008a157cf1de695d64e3dc065",
+    "data/old-original-prose-review-v1/correction-review-0.json": "5b28088b0be2ebf8db15254293650524582745cf9d2b068a6521e634c740ed8e",
+    "data/old-original-prose-review-v1/review-1.json": "c2dd104ae88e97dd09e4c37b79f098080fa051634d370f2a83ffb92a9daaee1b",
+    "data/old-original-prose-review-v1/correction-review-1.json": "7921c2dcf6a68975e16b4e82002c263232d4ec842397696740a99fb651a0dc02"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "examples": 32,
+  "seed": 20261035,
+  "population_raw_validation": 96,
+  "actual_checkpoint_step": 4096,
+  "mean_scores": {
+    "factual_correctness": 1.59375,
+    "strategic_reasoning": 1.4375,
+    "clarity": 2.4375,
+    "instruction_adherence": 2.03125
+  },
+  "all_four_dimensions_at_least_four": 0,
+  "reviewer_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "human_rating": false,
+  "all_query_hash_bindings_read_back": true,
+  "raw_answers_repaired": false,
+  "review_output_sha256": {
+    "data/student-prose-review-v1/review-0.json": "5f71fb4a78911bdc0ab65c60bddbea2d237d837722d0105ba0548af652f67f60",
+    "data/student-prose-review-v1/review-1.json": "8ebcb87f088c12fee83029b1aa04745760f27c0d44a4fb24c02fc1334cc5691c"
+  },
+  "source_manifest_sha256": "52c976c665c6e58c31da68529a1b16c467267ca2a39b075ab79986179ce5e484",
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "32 sampled raw validation answers; no human or independent test rating",
+    "Reviewer shares the initial teacher foundation model; correlated bias remains",
+    "Checkpoint identities are absent from packets, but reviewer agents have prior project context",
+    "No calibrated Elo or overall strength claim"
+  ]
+}
