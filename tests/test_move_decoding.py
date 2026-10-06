@@ -1,6 +1,5 @@
 import pytest
 import torch
-from transformers import PrefixConstrainedLogitsProcessor
 from xqgeneral.move_decoding import MoveTokenConstraint, legal_options
 from xqgeneral.rules import START_FEN, replay
 from xqgeneral.evaluate_games import play_game
@@ -16,16 +15,14 @@ class ByteTokenizer:
 def test_legal_tokens_exclude_high_scoring_illegal_move_and_force_completion():
     options = ['a0a1', 'a0b0']
     trie = MoveTokenConstraint(ByteTokenizer(), options)
-    processor = PrefixConstrainedLogitsProcessor(lambda _, ids: trie.allowed(ids[2:].tolist()), 1)
-    prefix = torch.tensor([[255, 255]])
     answer = []
     for _ in range(trie.max_tokens):
-        scores = torch.zeros(1, 256)
-        scores[0, ord('z')] = 100  # An illegal model preference must not win.
-        scores[0, 0] = 50  # EOS is illegal before the entire move is complete.
-        token = int(processor(prefix, scores).argmax(-1)[0])
+        scores = torch.zeros(256)
+        scores[ord('z')] = 100  # An illegal model preference must not win.
+        scores[0] = 50  # EOS is illegal before the entire move is complete.
+        allowed = torch.tensor(trie.allowed(answer))
+        token = int(allowed[scores[allowed].argmax()])
         answer.append(token)
-        prefix = torch.cat([prefix, torch.tensor([[token]])], dim=1)
     assert answer[-1] == 0
     assert bytes(answer[:-1]).decode() in options
     assert trie.allowed([255]) == [0]  # Discarded beam cannot generate another move.
