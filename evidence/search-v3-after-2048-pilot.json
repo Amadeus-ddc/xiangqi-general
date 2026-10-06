@@ -1,0 +1,33 @@
+{
+  "selected_student_step": 2048,
+  "mining": {
+    "processed": 32,
+    "accepted_for_consolidation": 0,
+    "reasons": {
+      "invalid_root_candidates": 31,
+      "recursion_limit": 1
+    },
+    "new_session_counters": {
+      "root_attempts": 50,
+      "recursive_descents": 19,
+      "oracle_candidate_injections": 1
+    },
+    "training_roots_only": true,
+    "heldout_positions_excluded": true,
+    "strict_pv_improvement_required": true,
+    "probability_model": "pinned_Pikafish_material_WDL",
+    "teacher_consolidation_executed": false,
+    "student_generations_preserved": true
+  },
+  "mining_manifest_sha256": "b06ef00aedb2bb29985bdd4fad02d7a59ab22ad8a172ef234d6dc19dc34dfa09",
+  "consolidation_executed": false,
+  "student_distillation_training_executed": false,
+  "validation_or_test_roots_used_for_mining": false,
+  "all_output_hashes_read_back": true,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "32 training-root mining pilot; not a completed training round",
+    "An empty mining result is not successful distillation",
+    "No independent test or human rating"
+  ]
+}

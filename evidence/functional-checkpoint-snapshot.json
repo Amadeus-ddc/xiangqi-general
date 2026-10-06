@@ -1,0 +1,17 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "actual_selected_step": 1500,
+  "trainable_tensor_count": 258,
+  "trainable_parameter_elements": 139920416,
+  "all_parameters_bitwise_equal": true,
+  "optimizer_state_in_adapter": false,
+  "source_checkpoint_sha256": "f5d9e1a2e78175c097c48410fb4e965c3acadf72282ee115a1b82468886dd0f9",
+  "snapshot_checkpoint_sha256": "f5d9e1a2e78175c097c48410fb4e965c3acadf72282ee115a1b82468886dd0f9",
+  "source_manifest_sha256": "9843de300b56c3c195bf208b26beec0e886545c8c801ca854be94ddf0d41ffe2",
+  "CPU_tests_passed": 62,
+  "limits": [
+    "Actual selected checkpoint snapshot and controlled validation gates only",
+    "No functional-selection quality result yet",
+    "No independent test or chess-strength conclusion"
+  ]
+}
