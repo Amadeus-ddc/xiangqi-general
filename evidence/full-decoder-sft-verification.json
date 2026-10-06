@@ -1,0 +1,35 @@
+{
+  "mode": "bridge",
+  "courses": [
+    "explanation"
+  ],
+  "mixture": {
+    "explanation": 1.0
+  },
+  "steps_completed": 2,
+  "selected_step": 2,
+  "world_size": 1,
+  "global_batch_size": 1,
+  "supervised_tokens_seen": 764,
+  "initial_validation_nll": 11.829976504610986,
+  "final_validation_nll": 6.98158114226823,
+  "zero_memory_validation_nll": 3.2794592749212206,
+  "shuffled_memory_validation_nll": 6.98158114226823,
+  "trainable_parameters": 4162388512,
+  "frozen_base_verified": false,
+  "decoder_training": "full",
+  "decoder_parameter_dtype": "torch.float32",
+  "compute_dtype": "torch.bfloat16",
+  "selected_decoder_probe_max_change": 1.998152583837509e-06,
+  "frozen_parameter_gradients_verified": true,
+  "nonzero_gradients": true,
+  "generation_examples": 1,
+  "generation_exact_matches": 0,
+  "peak_allocated_gib": 77.65576410293579,
+  "seconds": 293.99453868716955,
+  "purpose": "Verify full-decoder explanation SFT initializes all bridge and vocabulary weights",
+  "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e",
+  "evidence_state": "reconstructed_baseline",
+  "source_artifact_sha256": "4ea1837efb5ebe6c4dc536ffdb31099a2b35203fc2d907eb064055cde890afa5",
+  "scope": "execution verification only; no model-strength claim"
+}

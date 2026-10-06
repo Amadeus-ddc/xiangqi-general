@@ -69,6 +69,47 @@ python scripts/verify_teacher_weights.py
 
 标注文件每行包含 `id`、真实 `explanation`、`teacher_model`、`reasoning_effort` 和 `backend`。不生成模板替代缺失教师。颜色派生项会记录来源，不计为独立教师调用。完整教师加载与实际蒸馏的完成状态见 `STATUS.md`。
 
+追加训练标注时，`prepare_explanations --exclude-queries` 排除已有上下文；新增批次只增加训练项。教师完成全部标注后，可保留原标签与验证/测试集并合并：
+
+```bash
+python -m xqgeneral.merge_teacher --inputs data/astra-seed-v1 data/astra-additional-v1 \
+  --output data/astra-seed-full-v1
+python -m xqgeneral.collect_teacher --input data/astra-seed-full-v1 \
+  --output data/astra-explanations-full-v1 --color-mirror
+```
+
+## 讲解训练与搜索蒸馏
+
+`configs/explanation-sft.json` 从已完成、哈希核验的最佳课程检查点初始化。讲解训练同时更新桥接块、棋盘词元和完整解码器，使用 FP32 参数、BF16 计算与梯度累积，并保留课程问答回放。验证集只选讲解检查点。全量优化器和检查点较大，需要为运行目录保留磁盘空间。
+
+```bash
+python scripts/freeze_run.py --output runs/explanation-v1/source-run -- \
+  python -m xqgeneral.sft --init COURSE_CHECKPOINT.pt --output runs/explanation-v1/training
+python -m xqgeneral.search_distillation --checkpoint SFT_CHECKPOINT.pt \
+  --output runs/search-v1/mining
+python -m xqgeneral.local_teacher --input runs/search-v1/mining/queries.jsonl \
+  --output runs/search-v1/consolidation
+python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl \
+  --responses runs/search-v1/consolidation/responses.jsonl \
+  --validation-data data/astra-explanations-full-v1 --output data/search-v1
+```
+
+搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
+
+`configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。
+
+## 原始输出与对弈评测
+
+```bash
+python -m xqgeneral.evaluate_explanations --checkpoint CHECKPOINT.pt \
+  --data data/astra-explanations-full-v1 --split validation --limit 96 \
+  --output runs/explanation-validation
+python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
+  --nodes 100 1000 10000 --output runs/matches
+```
+
+讲解评测使用更高预算、独立执行的皮卡鱼检查推荐走法、变化、评分方向和棋盘事实；中文战略正文仍需单独评审。对弈从固定开局交换红黑，完整保留历史。非法模型走法判负，达到步数上限记为截尾，结果不自动换算 Elo。先用验证集完成开发，最终选择的模型才进入独立测试。
+
 ## 原型推理
 
 已有本地首轮检查点时：

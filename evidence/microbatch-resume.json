@@ -1,0 +1,19 @@
+{
+  "parameters_compared": 258,
+  "max_absolute_error": 0.0,
+  "bitwise_equal": true,
+  "tokens_seen": [
+    84,
+    84
+  ],
+  "initial_loss": [
+    11.363096237182617,
+    11.363096237182617
+  ],
+  "micro_batch_size": 1,
+  "global_batch_size": 4,
+  "source_equal": true,
+  "evidence_state": "reconstructed_baseline",
+  "source_artifact_sha256": "dc7f7421948c1bbc207ebd20855f1a7bd2fe0f048f16c71e33d46e08015f29e8",
+  "scope": "execution verification only; no model-strength claim"
+}

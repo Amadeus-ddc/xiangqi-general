@@ -68,6 +68,7 @@ def main():
     parser.add_argument('--nodes', type=int, default=100000)
     parser.add_argument('--seed', type=int, default=20261010)
     parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--exclude-queries', nargs='*', default=[], help='Completed query files whose histories must not be relabeled')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
@@ -76,6 +77,7 @@ def main():
         raise FileExistsError('Completed teacher inputs already exist')
     contract = {'arguments': vars(args), 'engine_sha256': digest(args.executable),
                 'weights_sha256': digest(args.weights),
+                'excluded_queries_sha256': {str(p): digest(p) for p in args.exclude_queries},
                 'data_sha256': {s: digest(Path(args.data) / f'{s}.jsonl') for s in ['train', 'validation', 'test']}}
     contract_path = root / 'preparation.contract.json'
     if contract_path.exists() and json.loads(contract_path.read_text()) != contract:
@@ -84,6 +86,8 @@ def main():
     records = []
     for split, n in [('train', args.train_roots), ('validation', args.validation_roots), ('test', args.test_roots)]:
         records += select_roots(Path(args.data) / f'{split}.jsonl', n, args.seed)
+    excluded = {q['feature_key'] for path in args.exclude_queries for q in load_jsonl(path)}
+    records = [r for r in records if r['feature_key'] not in excluded]
     start = time.monotonic()
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         work = [pool.submit(prepare_shard, records[i::args.workers], args, i) for i in range(args.workers)]

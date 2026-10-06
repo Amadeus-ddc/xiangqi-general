@@ -1,6 +1,7 @@
 """Sequential/replay training with validation selection, resumable state, and DDP."""
 import argparse
 from collections import defaultdict
+from contextlib import nullcontext
 import json
 import math
 import os
@@ -12,11 +13,15 @@ import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
-from .modeling import load_model, load_trainable, trainable_state
-from .rules import prompt
+from .modeling import initialize_trainable, load_model, load_trainable, trainable_state
+from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
+
+
+def model_autocast(device):
+    return torch.autocast('cuda', dtype=torch.bfloat16, enabled=str(device).startswith('cuda'))
 
 
 def atomic_checkpoint(path, value):
@@ -26,15 +31,24 @@ def atomic_checkpoint(path, value):
     partial.replace(path)
 
 
-def messages(record, mode='bridge'):
+def messages(record, mode='bridge', board_text=None):
     text = prompt(record)
-    if mode == 'text_lora':
-        text = f"棋盘FEN：{record['fen']}。" + text
+    if mode == 'text_lora' or board_text is not None:
+        representation = board_text or 'fen'
+        if representation == 'fen':
+            board = f"棋盘FEN：{record['fen']}。"
+        elif representation == 'dictionary':
+            occupied = piece_map(record['fen'])
+            entries = [f'{f}{r}:{piece_name(occupied.get(f"{f}{r}"))}' for r in range(10) for f in 'abcdefghi']
+            board = '棋盘各格：' + ' '.join(entries) + '。'
+        else:
+            raise ValueError('Board text must be fen or dictionary')
+        text = board + text
     return [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': text}]
 
 
-def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=False):
-    text = tokenizer.apply_chat_template(messages(record, mode), tokenize=False, add_generation_prompt=True)
+def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=False, board_text=None):
+    text = tokenizer.apply_chat_template(messages(record, mode, board_text), tokenize=False, add_generation_prompt=True)
     answer = record['answer']
     if board_tokens:
         text, answer = encode_board_text(text), encode_board_text(answer)
@@ -45,8 +59,8 @@ def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=Fal
     return prefix + target, [-100] * len(prefix) + target
 
 
-def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_tokens=False):
-    pairs = [encode_record(tokenizer, r, max_tokens, mode, board_tokens) for r in records]
+def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_tokens=False, board_text=None):
+    pairs = [encode_record(tokenizer, r, max_tokens, mode, board_tokens, board_text) for r in records]
     length = max(len(p[0]) for p in pairs)
     ids, labels, mask = [], [], []
     for inputs, targets in pairs:
@@ -97,9 +111,9 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
     for offset in range(0, len(rows), size):
         batch = rows[offset:offset + size]
         inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'),
-                              config.get('board_tokens', False))
+                              config.get('board_tokens', False), config.get('board_text'))
         tokens = int((inputs['labels'][:, 1:] != -100).sum())
-        with model.board_context(select_features(cache, indices, batch, device, zero, rotate)):
+        with model.board_context(select_features(cache, indices, batch, device, zero, rotate)), model_autocast(device):
             loss = model(**inputs).loss
         weighted += float(loss) * tokens
         count += tokens
@@ -109,15 +123,15 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
 
 
 @torch.no_grad()
-def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False):
+def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None):
     model.eval()
     results = []
     for record in rows:
-        text = tokenizer.apply_chat_template(messages(record, mode), tokenize=False, add_generation_prompt=True)
+        text = tokenizer.apply_chat_template(messages(record, mode, board_text), tokenize=False, add_generation_prompt=True)
         if board_tokens:
             text = encode_board_text(text)
         inputs = tokenizer(text, return_tensors='pt', add_special_tokens=False).to(device)
-        with model.board_context(select_features(cache, indices, [record], device)):
+        with model.board_context(select_features(cache, indices, [record], device)), model_autocast(device):
             tokens = model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
                                          pad_token_id=tokenizer.pad_token_id)
         answer = tokenizer.decode(tokens[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
@@ -133,7 +147,10 @@ def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
             'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
-            'board_tokens', 'expert_feature_depths']
+            'board_tokens', 'expert_feature_depths', 'decoder_training', 'decoder_learning_rate',
+            'token_learning_rate', 'replay_data_paths', 'lr_schedule', 'weight_decay', 'micro_batch_size',
+            'validation_stages', 'validation_examples', 'eval_every', 'warmup_fraction', 'min_steps', 'patience', 'min_delta',
+            'board_text']
     if any(saved.get(k) != requested.get(k) for k in keys):
         raise ValueError('Resume configuration differs; initialize a new experiment instead')
 
@@ -173,7 +190,8 @@ def main():
         raise ValueError('Expert layer contract differs from the cached features')
     indices = {key: i for i, key in enumerate(cache['keys'])}
     data_path = Path(config.get('data_path', 'data'))
-    input_paths = [config['feature_path'], *[data_path / f'{s}.jsonl' for s in ['train', 'validation']]]
+    data_roots = [data_path, *[Path(p) for p in config.get('replay_data_paths', [])]]
+    input_paths = [config['feature_path'], *[p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]]
     if config.get('init_from'):
         input_paths.append(config['init_from'])
     input_hashes = {str(p): digest(p) for p in input_paths} if rank == 0 else None
@@ -182,19 +200,30 @@ def main():
         dist.broadcast_object_list(objects, src=0)
         input_hashes = objects[0]
     mixture = config.get('mixture', {s: 1.0 for s in config['stages']})
-    rows = {s: [r for r in load_jsonl(data_path / f'{s}.jsonl') if r['stage'] in mixture]
+    rows = {s: [r for p in data_roots for r in load_jsonl(p / f'{s}.jsonl') if r['stage'] in mixture]
             for s in ['train', 'validation']}
     if not rows['train'] or not rows['validation']:
         raise ValueError('Training and validation sets must both be nonempty')
     for records in rows.values():
         if any(r['feature_key'] not in indices for r in records):
             raise ValueError('Dataset contains a missing expert history context')
-    validation = random.Random(config['seed']).sample(rows['validation'],
-                   min(config['validation_examples'], len(rows['validation'])))
+    validation_pool = [r for r in rows['validation'] if r['stage'] in config.get('validation_stages', mixture)]
+    if not validation_pool:
+        raise ValueError('Selected validation stages have no examples')
+    validation = random.Random(config['seed']).sample(validation_pool,
+                   min(config['validation_examples'], len(validation_pool)))
     model, tokenizer = load_model(config, cache['features'][0].shape[-1], device)
     pools = sample_groups(rows['train'])
     parameters = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.AdamW(parameters, lr=config['learning_rate'])
+    groups = defaultdict(list)
+    for name, parameter in model.named_parameters():
+        if parameter.requires_grad:
+            group = 'board' if name.endswith('board_weight') else ('bridge' if name.startswith('bridges.') else 'decoder')
+            groups[group].append(parameter)
+    rates = {'bridge': config['learning_rate'], 'decoder': config.get('decoder_learning_rate', config['learning_rate']),
+             'board': config.get('token_learning_rate', config['learning_rate'])}
+    optimizer = torch.optim.AdamW([{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
+                                   for name, values in groups.items()], weight_decay=config.get('weight_decay', 0.01))
     begin, best_loss, best_step, tokens_seen = 0, float('inf'), 0, 0
     resume = None
     if args.resume:
@@ -202,6 +231,8 @@ def main():
         compatible_resume(resume['config'], config)
         if resume.get('input_hashes') != input_hashes:
             raise ValueError('Resume input hashes are missing or changed; initialize a new experiment')
+        if resume.get('code') != execution_code:
+            raise ValueError('Exact resume requires the same preserved execution source')
         if resume['world_size'] != world:
             raise ValueError('Exact optimizer resume requires the same DDP world size')
         load_trainable(model, resume)
@@ -218,9 +249,11 @@ def main():
         source = torch.load(config['init_from'], map_location='cpu', weights_only=True)
         if source['config'].get('mode', 'bridge') != config.get('mode', 'bridge'):
             raise ValueError('Cannot initialize a different model mode')
-        load_trainable(model, source)
-    frozen = next(p for p in model.parameters() if not p.requires_grad)
-    frozen_sample = frozen.detach().flatten()[:1024].clone()
+        initialize_trainable(model, source, config)
+    frozen = [(p, p.detach().flatten()[:1024].clone()) for p in model.parameters() if not p.requires_grad]
+    decoder_probe = next((p for n, p in model.named_parameters()
+                          if n.endswith(('q_proj.weight', 'q_proj.base_layer.weight')) and p.requires_grad), None)
+    decoder_before = decoder_probe.detach().flatten()[:1024].clone() if decoder_probe is not None else None
     wrapped = DistributedDataParallel(model, device_ids=[int(os.environ['LOCAL_RANK'])],
                                        broadcast_buffers=False) if world > 1 else model
     if rank == 0:
@@ -248,28 +281,41 @@ def main():
         wrapped.train()
         records = sample_batch(rows['train'], mixture, rng, config['batch_size'], rank, world, pools)
         inputs = batch_inputs(tokenizer, records, config['max_tokens'], device, config.get('mode', 'bridge'),
-                              config.get('board_tokens', False))
+                              config.get('board_tokens', False), config.get('board_text'))
         local_tokens = (inputs['labels'][:, 1:] != -100).sum().to(dtype=torch.float32)
         total_tokens = local_tokens.clone()
         if world > 1:
             dist.all_reduce(total_tokens)
         warmup = max(1, int(config['steps'] * config.get('warmup_fraction', 0.05)))
-        factor = (step + 1) / warmup if step < warmup else 0.05 + 0.95 * (1 + math.cos(
-            math.pi * (step - warmup) / max(1, config['steps'] - warmup))) / 2
+        schedule = config.get('lr_schedule', 'cosine')
+        if schedule not in {'cosine', 'constant'}:
+            raise ValueError('Unknown learning-rate schedule')
+        factor = (step + 1) / warmup if step < warmup else (1.0 if schedule == 'constant' else
+                 0.05 + 0.95 * (1 + math.cos(math.pi * (step - warmup) / max(1, config['steps'] - warmup))) / 2)
         for group in optimizer.param_groups:
-            group['lr'] = config['learning_rate'] * factor
+            group['lr'] = group.get('base_lr', config['learning_rate']) * factor
         optimizer.zero_grad(set_to_none=True)
-        with model.board_context(select_features(cache, indices, records, device)):
-            raw_loss = wrapped(**inputs).loss
-            loss = raw_loss * local_tokens * world / total_tokens
-            if not torch.isfinite(loss):
-                raise RuntimeError('Non-finite training loss')
-            loss.backward()
+        micro_size = config.get('micro_batch_size', len(records))
+        if micro_size <= 0:
+            raise ValueError('Micro batch size must be positive')
+        weighted = torch.zeros((), device=device)
+        for offset in range(0, len(records), micro_size):
+            batch = records[offset:offset + micro_size]
+            micro_inputs = {k: v[offset:offset + micro_size] if torch.is_tensor(v) else v for k, v in inputs.items()}
+            micro_tokens = (micro_inputs['labels'][:, 1:] != -100).sum()
+            synchronize = offset + micro_size >= len(records)
+            context = wrapped.no_sync() if world > 1 and not synchronize else nullcontext()
+            with context, model.board_context(select_features(cache, indices, batch, device)), model_autocast(device):
+                raw_loss = wrapped(**micro_inputs).loss
+                loss = raw_loss * micro_tokens * world / total_tokens
+                if not torch.isfinite(loss):
+                    raise RuntimeError('Non-finite training loss')
+                loss.backward()
+            weighted += raw_loss.detach() * micro_tokens
         norm = torch.nn.utils.clip_grad_norm_(parameters, 1.0)
         if not torch.isfinite(norm):
             raise RuntimeError('Non-finite gradients')
         optimizer.step()
-        weighted = raw_loss.detach() * local_tokens
         if world > 1:
             dist.all_reduce(weighted)
         value = float(weighted / total_tokens)
@@ -331,7 +377,7 @@ def main():
             dist.destroy_process_group()
         return
     if rank == 0:
-        assert torch.equal(frozen_sample, frozen.detach().flatten()[:1024])
+        assert all(torch.equal(saved, parameter.detach().flatten()[:1024]) for parameter, saved in frozen)
         assert all(p.grad is None for p in model.parameters() if not p.requires_grad)
         load_trainable(model, torch.load(dest / 'adapter.pt', map_location='cpu', weights_only=True))
         after = evaluate(model, tokenizer, validation, cache, indices, config, device)
@@ -339,19 +385,26 @@ def main():
         shuffled = evaluate(model, tokenizer, validation, cache, indices, config, device, rotate=True)
         examples = generate_examples(model, tokenizer, validation[:config.get('generation_examples', 12)], cache,
                                      indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64),
-                                     config.get('board_tokens', False))
+                                     config.get('board_tokens', False), config.get('board_text'))
         atomic_json(dest / 'examples.json', examples)
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
                   'steps_completed': completed, 'selected_step': best_step, 'world_size': world,
                   'global_batch_size': config['batch_size'], 'supervised_tokens_seen': tokens_seen,
                   'initial_validation_nll': initial_loss, 'final_validation_nll': after,
                   'zero_memory_validation_nll': zero, 'shuffled_memory_validation_nll': shuffled,
-                  'trainable_parameters': sum(p.numel() for p in parameters), 'frozen_base_verified': True,
+                  'trainable_parameters': sum(p.numel() for p in parameters),
+                  'frozen_base_verified': config.get('decoder_training', 'frozen') == 'frozen',
+                  'decoder_training': config.get('decoder_training', 'frozen'),
+                  'decoder_parameter_dtype': str(next(model.base.parameters()).dtype),
+                  'compute_dtype': 'torch.bfloat16',
+                  'selected_decoder_probe_max_change': (float((decoder_probe.detach().flatten()[:1024] - decoder_before).abs().max())
+                                                        if decoder_probe is not None else None),
+                  'frozen_parameter_gradients_verified': True,
                   'nonzero_gradients': any(n > 0 for n in norms), 'generation_examples': len(examples),
                   'generation_exact_matches': sum(e['exact_match'] for e in examples),
                   'peak_allocated_gib': torch.cuda.max_memory_allocated(device) / 2**30,
                   'seconds': time.monotonic() - started, 'purpose': config['purpose']}
-        inputs = [data_path / f'{s}.jsonl' for s in ['train', 'validation']]
+        inputs = [p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]
         if config.get('init_from'):
             inputs.append(config['init_from'])
         result['feature_cache_sha256'] = input_hashes[config['feature_path']]

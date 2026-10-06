@@ -1,0 +1,226 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "mode": "bridge",
+  "input_manifest_sha256": "55a9951070fe875d5bb3354aec895813a550557a483d520faa227adf0a67ac5f",
+  "courses": {
+    "dynamic_current": {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current"
+      ],
+      "mixture": {
+        "static_current": 0.1,
+        "dynamic_current": 0.9
+      },
+      "steps_completed": 1750,
+      "selected_step": 750,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 184012,
+      "initial_validation_nll": 2.625711404024153,
+      "final_validation_nll": 0.9080811069136998,
+      "zero_memory_validation_nll": 7.741582299004287,
+      "shuffled_memory_validation_nll": 1.2322379880343894,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 13,
+      "peak_allocated_gib": 22.51363515853882,
+      "seconds": 693.3793510608375,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    "dynamic_future": {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future",
+        "dynamic_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.06,
+        "static_future": 0.08,
+        "dynamic_future": 0.8
+      },
+      "steps_completed": 1750,
+      "selected_step": 750,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 182648,
+      "initial_validation_nll": 0.9695698473305115,
+      "final_validation_nll": 0.8504977535774001,
+      "zero_memory_validation_nll": 9.33735276688097,
+      "shuffled_memory_validation_nll": 0.9562255135448763,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 12,
+      "peak_allocated_gib": 25.308279991149902,
+      "seconds": 803.5367053281516,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    "static_current": {
+      "mode": "bridge",
+      "courses": [
+        "static_current"
+      ],
+      "mixture": {
+        "static_current": 1.0
+      },
+      "steps_completed": 2500,
+      "selected_step": 1500,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 168406,
+      "initial_validation_nll": 8.285418265791082,
+      "final_validation_nll": 0.641162495031508,
+      "zero_memory_validation_nll": 10.397843360900879,
+      "shuffled_memory_validation_nll": 0.8070714383650182,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 15,
+      "peak_allocated_gib": 21.447965621948242,
+      "seconds": 968.2973141316324,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    },
+    "static_future": {
+      "mode": "bridge",
+      "courses": [
+        "static_current",
+        "dynamic_current",
+        "static_future"
+      ],
+      "mixture": {
+        "static_current": 0.06,
+        "dynamic_current": 0.08,
+        "static_future": 0.86
+      },
+      "steps_completed": 1250,
+      "selected_step": 250,
+      "world_size": 1,
+      "global_batch_size": 16,
+      "supervised_tokens_seen": 88239,
+      "initial_validation_nll": 0.8625067700317667,
+      "final_validation_nll": 0.786774007683517,
+      "zero_memory_validation_nll": 15.029947968348404,
+      "shuffled_memory_validation_nll": 0.8571065771022092,
+      "trainable_parameters": 139920416,
+      "frozen_base_verified": true,
+      "nonzero_gradients": true,
+      "generation_examples": 24,
+      "generation_exact_matches": 7,
+      "peak_allocated_gib": 24.56165361404419,
+      "seconds": 573.1221091747284,
+      "purpose": "Validation-driven board-reading improvement: 16 expert layers, dedicated board vocabulary and increased training exposure",
+      "feature_cache_sha256": "494aa2b0cfd0e010ef7784c85a2ea652d0cdc0db1ce34ddaeac4eacab3f6c58e"
+    }
+  },
+  "board_qa_validation": {
+    "examples": 264,
+    "accuracy": 0.4659090909090909,
+    "by_task": {
+      "dynamic_current/captures": {
+        "n": 12,
+        "accuracy": 0.0
+      },
+      "dynamic_current/checks": {
+        "n": 12,
+        "accuracy": 0.3333333333333333
+      },
+      "dynamic_current/illegal": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "dynamic_current/legal": {
+        "n": 12,
+        "accuracy": 1.0
+      },
+      "dynamic_current/moves": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "dynamic_future/captures": {
+        "n": 12,
+        "accuracy": 0.0
+      },
+      "dynamic_future/checks": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "dynamic_future/illegal": {
+        "n": 12,
+        "accuracy": 0.75
+      },
+      "dynamic_future/legal": {
+        "n": 12,
+        "accuracy": 0.9166666666666666
+      },
+      "dynamic_future/moves": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "static_current/count": {
+        "n": 12,
+        "accuracy": 0.9166666666666666
+      },
+      "static_current/empty": {
+        "n": 12,
+        "accuracy": 1.0
+      },
+      "static_current/locate": {
+        "n": 12,
+        "accuracy": 0.5
+      },
+      "static_current/material": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "static_current/piece": {
+        "n": 12,
+        "accuracy": 0.16666666666666666
+      },
+      "static_current/rank": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      },
+      "static_future/count": {
+        "n": 12,
+        "accuracy": 1.0
+      },
+      "static_future/empty": {
+        "n": 12,
+        "accuracy": 0.6666666666666666
+      },
+      "static_future/locate": {
+        "n": 12,
+        "accuracy": 0.16666666666666666
+      },
+      "static_future/material": {
+        "n": 12,
+        "accuracy": 0.5833333333333334
+      },
+      "static_future/piece": {
+        "n": 12,
+        "accuracy": 0.25
+      },
+      "static_future/rank": {
+        "n": 12,
+        "accuracy": 0.08333333333333333
+      }
+    },
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 26.57224571891129,
+    "source_manifest_sha256": "c84a361b56e1dc7d6a27cbf3df77cdf8ae71ad470f45404c76cceba4e7d76dd4"
+  }
+}
