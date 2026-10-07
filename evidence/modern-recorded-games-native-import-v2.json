@@ -1,0 +1,117 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "discovered_game_urls": 910,
+  "candidate_game_pages_examined": 910,
+  "retained_recent_recorded_games": 240,
+  "quarantined_game_pages": 670,
+  "download_failures": 0,
+  "recorded_plies": 18641,
+  "games_by_year": {
+    "2024": 1,
+    "2026": 67,
+    "2025": 172
+  },
+  "requested_source_year_minimum": 2024,
+  "requested_source_year_maximum": 2026,
+  "games_by_split": {
+    "train": 177,
+    "test": 38,
+    "validation": 25
+  },
+  "distinct_normalized_participant_labels": 245,
+  "participant_label_top_20": [
+    [
+      "莫梓健",
+      7
+    ],
+    [
+      "黄蕾蕾",
+      6
+    ],
+    [
+      "吴魏",
+      5
+    ],
+    [
+      "郭凤达",
+      5
+    ],
+    [
+      "苏奕霖",
+      5
+    ],
+    [
+      "杨世哲",
+      5
+    ],
+    [
+      "王子涵",
+      5
+    ],
+    [
+      "李沁",
+      5
+    ],
+    [
+      "吴可欣",
+      5
+    ],
+    [
+      "张婷",
+      5
+    ],
+    [
+      "胡家艺",
+      5
+    ],
+    [
+      "巨龙飞",
+      4
+    ],
+    [
+      "孟繁睿",
+      4
+    ],
+    [
+      "杨思远",
+      4
+    ],
+    [
+      "张学潮",
+      4
+    ],
+    [
+      "许国义",
+      4
+    ],
+    [
+      "王禹博",
+      4
+    ],
+    [
+      "黄光颖",
+      4
+    ],
+    [
+      "尹昇",
+      4
+    ],
+    [
+      "么毅",
+      4
+    ]
+  ],
+  "all_retained_moves_native_legal": true,
+  "full_history_terminal_checks_passed": true,
+  "game_split_assigned_before_questions": true,
+  "site_prose_and_variations_used_for_labels": false,
+  "declared_source_license": "unspecified",
+  "raw_records_or_pages_bundled_with_code": false,
+  "public_redistribution_permission_established": false,
+  "source_authenticity_or_participant_identity_independently_proven": false,
+  "recorded_move_optimality_proven": false,
+  "training_data_or_neural_labels_generated": false,
+  "network_requests_performed": false,
+  "manifest_sha256": "2bbd2d4ca1be96703f5f6ca603e153749aa5100129d2f9c04c3e4f70563f4efd"
+}

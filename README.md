@@ -206,7 +206,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门第 512 步原始 768 题为 51.8%，最差题型 16.4%，独立重算全部历史及答案后仍未达标，继续第一门；见 `evidence/recorded-foundation-clean-first-raw-gate.json`。
+两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024 步正确率为 51.8%／54.0%，最差题型为 16.4%／15.6%，两次均未达标，继续第一门；第二次纠正 64 道、另错 47 道，见 `evidence/recorded-foundation-clean-first-raw-gate.json`、`evidence/recorded-foundation-clean-second-raw-gate.json`。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -232,6 +232,19 @@ python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
 ```
 
 省略 `--limit-records` 才处理全部候选；该选项只供有界执行检查。中断后保留部分产物，在新目录用原固定源码重放，不覆盖旧输出。记录数、重复、署名差异和规则拒收原因以完成清单为准；原始记录及档案不随代码发布。
+
+另一次近期来源收集检查了 910 个实际候选页面，原生导入保留 240 局、18641 个半回合、245 个参赛者名称，源记录年份为 2024—2026。原批次另有 80 局的日期写为 2029 年、赛事却写为 2026 年；这些记录按原文隔离，没有代改日期。独立离线重放、全部保留历史与隔离原因读回已完成；一条原已隔离的重复页面也重归日期异常。见 `evidence/modern-recorded-games-native-import-v2.json`、`evidence/modern-recorded-games-native-readback-v3.json`、`evidence/recorded-source-future-date-audit-v1.json`。新棋谱尚未加入当前课程或与完整档案池去重。重新解析已固定页面时可显式限制来源年份：
+
+```bash
+python scripts/freeze_run.py --output runs/new-recent-reparse/source-run -- \
+  python -m xqgeneral.collect_recorded \
+  --cached-data data/modern-recorded-games-v1 --max-games 1024 \
+  --min-year 2024 --max-year 2026 --seed 20261051 \
+  --output data/new-recent-recorded-games \
+  --public-evidence evidence/new-recent-recorded-games.json
+```
+
+`--max-year` 是源记录年份的可选上限，默认不设上限以保留历史运行方式。检查使用棋谱日期，未提供日期时才按解析合同使用赛事年份；不会用赛事名称改写已有日期。`--cached-data` 校验完成清单和页面哈希，不发新请求，旧页面、失败读回与原始批次保留。上面示例使用已完成的本地缓存，新下载仍须提供公开索引或棋局 URL。
 
 规则课程从实际记录的 1—8 步后续变化出题，保留完整历史和原棋局身份。先隔离此前所有训练／保留局面及未来分支，再合并旧引擎题，新文件保留旧文件的逐字节前缀。完整生产已从选择的 6144 局隔离出 45834 个原始根，新增 2016696 条规则题；合计 3171812 条，训练／验证／测试为 2831004／173272／167536。见 `evidence/recorded-curriculum-human-engine-full-v1.json`；真实小规模执行证据单独保留。两来源去重共 22720 局，一份主线的棋手／赛事声明有冲突且未入选，不能据合法性认定姓名真实。
 

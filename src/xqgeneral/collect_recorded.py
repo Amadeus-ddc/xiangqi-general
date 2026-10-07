@@ -33,6 +33,8 @@ def main():
     parser.add_argument('--cached-data', help='Completed collection to reparse without any new requests')
     parser.add_argument('--max-games', type=int, default=256)
     parser.add_argument('--min-year', type=int, default=2014)
+    parser.add_argument('--max-year', type=int,
+                        help='Optional upper bound on the year declared in the game record')
     parser.add_argument('--delay-seconds', type=float, default=1)
     parser.add_argument('--seed', type=int, default=20261052)
     parser.add_argument('--output', required=True)
@@ -40,6 +42,8 @@ def main():
     args = parser.parse_args()
     if args.max_games < 1 or args.delay_seconds < 1 or not (args.index or args.game or args.cached_data):
         raise ValueError('Provide source URLs, a positive game budget and at least one second between requests')
+    if args.max_year is not None and args.max_year < args.min_year:
+        raise ValueError('Maximum source year must be at least the minimum source year')
     urls = [public_url(value) for value in [*args.index, *args.game]]
     cached, pinned_inputs = {}, []
     if args.cached_data:
@@ -107,7 +111,8 @@ def main():
             raw = fetch(url)
             game = parse_dhtml_game(raw)
             year = recorded_year(game['headers'])
-            if year is None or year < args.min_year:
+            if (year is None or year < args.min_year
+                    or (args.max_year is not None and year > args.max_year)):
                 raise ValueError('Actual game date is outside the requested recent-game range')
             if game['game_id'] in seen:
                 raise ValueError('Duplicate recorded main line')
@@ -141,6 +146,8 @@ def main():
                'retained_recent_recorded_games': len(accepted), 'quarantined_game_pages': len(rejected),
                'download_failures': len(failures), 'recorded_plies': sum(len(g['moves']) for g in accepted),
                'games_by_year': dict(Counter(str(recorded_year(g['headers'])) for g in accepted)),
+               'requested_source_year_minimum': args.min_year,
+               'requested_source_year_maximum': args.max_year,
                'games_by_split': dict(Counter(g['split'] for g in accepted)),
                'distinct_normalized_participant_labels': len({p for g in accepted for p in g['players']}),
                'participant_label_top_20': Counter(p for g in accepted for p in g['players']).most_common(20),

@@ -1,0 +1,46 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "original_native_accepted_games": 320,
+  "additional_future_dated_games_quarantined": 80,
+  "previously_quarantined_future_date_pages_reclassified": 1,
+  "complete_native_future_dated_source_pages": 81,
+  "future_dates_with_conflicting_source_event_year": 81,
+  "all_future_rows_replayed_from_exact_original_bytes": true,
+  "original_source_dates_or_headers_rewritten": false,
+  "source_metadata_independently_authenticated": false,
+  "source_examples": [
+    {
+      "url": "https://www.xiangqiqipu.com/Category/View-58803.html",
+      "content_sha256": "741209fd78552ba9f76a7567c607ff3f7e860bf163b25735ce0787fa3c80df65",
+      "source_date": "2029-09-18 10:00",
+      "source_event": "2026年全国象棋男子甲级联赛"
+    },
+    {
+      "url": "https://www.xiangqiqipu.com/Category/View-58802.html",
+      "content_sha256": "b474de0b6c6222cb23af9711a990236d93cb8d76c1bad309cfa5ca00b67ae650",
+      "source_date": "2029-09-18 10:00",
+      "source_event": "2026年全国象棋男子甲级联赛"
+    },
+    {
+      "url": "https://www.xiangqiqipu.com/Category/View-58801.html",
+      "content_sha256": "5ec29a1e93c5ba70cc3632c1576c8194ea06941c114aaf9fa3140294ca649333",
+      "source_date": "2029-09-18 10:00",
+      "source_event": "2026年全国象棋男子甲级联赛"
+    }
+  ],
+  "changed_previous_quarantine_reasons": [
+    {
+      "url": "https://www.xiangqiqipu.com/Category/View-58765.html",
+      "original_reason": "Duplicate recorded main line",
+      "current_reason": "Actual game date is outside the requested recent-game range",
+      "source_year": 2029,
+      "source_date": "2029-09-18 10:00",
+      "source_event": "2026年全国象棋男子甲级联赛",
+      "content_sha256": "4ab6c4ecb293d1f4bfa02d116f8e05c540f39f6fbbd59ecab4946fe2a91824a5",
+      "canonical_game_id": "recorded-1cb3e1385e58cb661b2fc192bfca1db8cef80489830bc01ecd6733074fd38fdf"
+    }
+  ],
+  "source_date_audit_sha256": "fd16ec7979257ad0f5fee433eb8b0be9d1e95e03f5d24d2e6d76948bda767157",
+  "manifest_sha256": "d6c3e8cacc720260dc73eb79ed98344c144c5ae77db51af2d941f111fa11ed70"
+}

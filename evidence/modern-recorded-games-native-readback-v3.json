@@ -1,0 +1,43 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "bounded_candidate_game_page_budget": 1024,
+  "actual_original_candidate_game_pages": 910,
+  "retained_recent_games": 240,
+  "recorded_plies": 18641,
+  "quarantined_game_pages": 670,
+  "original_download_failures": 0,
+  "offline_new_downloads_performed": false,
+  "games_by_actual_source_record_year": {
+    "2024": 1,
+    "2026": 67,
+    "2025": 172
+  },
+  "games_by_canonical_split": {
+    "train": 177,
+    "test": 38,
+    "validation": 25
+  },
+  "distinct_source_participant_labels": 245,
+  "requested_source_year_minimum": 2024,
+  "requested_source_year_maximum": 2026,
+  "additional_future_dated_games_quarantined": 80,
+  "previously_quarantined_future_date_pages_reclassified": 1,
+  "complete_native_future_dated_source_pages": 81,
+  "future_dates_with_conflicting_source_event_year": 81,
+  "all_accepted_full_native_histories_and_source_facts_match": true,
+  "all_quarantine_reasons_match": true,
+  "all_completed_inputs_outputs_rehashed": true,
+  "completed_offline_replay_reused_from_preserved_previous_attempt": true,
+  "all_in_range_original_game_rows_unchanged": true,
+  "original_sources_or_dates_rewritten": false,
+  "shared_pinned_native_parser_replayed_original_bytes": true,
+  "source_authenticity_or_participant_identities_authenticated": false,
+  "dataset_license_or_redistribution_permission_established": false,
+  "raw_pages_records_or_site_prose_bundled_with_code": false,
+  "site_prose_or_analysis_branches_used_as_neural_labels": false,
+  "combined_archive_pool_cross_source_deduplication_complete": false,
+  "current_foundation_inputs_changed": false,
+  "explanation_training_started": false,
+  "manifest_sha256": "d6c3e8cacc720260dc73eb79ed98344c144c5ae77db51af2d941f111fa11ed70"
+}
