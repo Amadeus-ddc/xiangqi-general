@@ -1,0 +1,29 @@
+{
+  "status": "running",
+  "evidence_state": "reconstructed_baseline",
+  "parent_step": 3584,
+  "parent_sha256": "b9e5c80db6215d2146a68c1c084af3682b2ef403475bcd067317a3559432e587",
+  "training_gpu_indices": [
+    1
+  ],
+  "batch_size": 16,
+  "micro_batch_size": 1,
+  "max_steps": 4355,
+  "last_read_log_step": 171,
+  "initial_checkpoint_is_not_a_trained_final_model": true,
+  "all_observed_losses_and_gradients_finite": true,
+  "readiness_manifest_sha256": "a63788d118eed7266b2923af481077b8fbe72f1509b51473401db026604a1f3e",
+  "training_config_sha256": "0118f916d0f79d5430fd74708f54c5d198721f39123f0995fed98e24a355f858",
+  "execution_manifest_sha256": "d88d5dc71c64fcf47b16bf6d73d87540b2eadc28536d5f5fa42d9e3dd2abce6d",
+  "training_complete": false,
+  "student_improvement_measured": false,
+  "independent_test_used": false,
+  "is_search_distillation": false,
+  "observed_at_utc": "2026-10-07T06:01:28.784722+00:00",
+  "observed_step_records": 171,
+  "actual_initialized_fp32_trainable_parameters": 4162388512,
+  "initial_model_is_not_final_trained_weights": true,
+  "observed_training_sha256": "73dab10391f98922655ac500991deadc2906fe0d9155fddb68a788109acd9f85",
+  "raw_outputs_changed": false,
+  "readback_manifest_sha256": "1c7944a740c4f7a0d553e4f644661c3c1053dea060cf3bc7b10a8b9c3231603a"
+}

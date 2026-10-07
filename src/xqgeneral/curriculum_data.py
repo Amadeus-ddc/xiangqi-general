@@ -1,7 +1,10 @@
 """Seeded, game-disjoint four-course data with difficult negative probes."""
 import argparse
-from collections import Counter
+from collections import Counter, deque
+from concurrent.futures import ProcessPoolExecutor
 import hashlib
+from itertools import islice
+import multiprocessing
 from pathlib import Path
 import random
 from .evidence import atomic_json, history_key, manifest, position_key, write_jsonl
@@ -122,21 +125,55 @@ def make_records(games=80, seed=20261006, plies=64, test_fraction=0.15, root_sam
     return rows
 
 
-def verify_splits(rows):
-    games, roots, future, seen = {}, {}, {}, set()
+def _split_contexts(rows, games, roots):
+    seen = set()
     for row in rows:
         s = row["split"]
         games.setdefault(s, set()).add(row["game_id"])
         roots.setdefault(s, set()).add(position_key(row["fen"]))
-        lines = [row.get('future_moves', []), *row.get('future_branches', [])]
-        key = (s, row['fen'], tuple(tuple(line) for line in lines))
+        lines = tuple(tuple(line) for line in [row.get('future_moves', []),
+                                              *row.get('future_branches', [])])
+        key = (s, row['fen'], lines)
         if key in seen:
             continue
         seen.add(key)
-        positions = future.setdefault(s, set())
-        positions.add(position_key(row["fen"]))
+        yield key
+
+
+def _future_footprints(contexts):
+    future = {}
+    for split, fen, lines in contexts:
+        positions = future.setdefault(split, set())
+        positions.add(position_key(fen))
         for line in lines:
-            positions.update(position_key(fen) for fen in future_fens(row['fen'], tuple(line)))
+            positions.update(position_key(value) for value in future_fens(fen, line))
+    return future
+
+
+def verify_splits(rows, workers=1):
+    """Verify every unique continuation with bounded optional worker processes."""
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Split verification workers must be a positive integer')
+    games, roots, future = {}, {}, {}
+    contexts = _split_contexts(rows, games, roots)
+
+    def collect(result):
+        for split, positions in result.items():
+            future.setdefault(split, set()).update(positions)
+
+    if workers == 1:
+        for context in contexts:
+            collect(_future_footprints([context]))
+    else:
+        with ProcessPoolExecutor(max_workers=workers,
+                mp_context=multiprocessing.get_context('spawn')) as pool:
+            pending = deque()
+            while batch := list(islice(contexts, 128)):
+                pending.append(pool.submit(_future_footprints, batch))
+                if len(pending) >= workers * 2:
+                    collect(pending.popleft().result())
+            for task in pending:
+                collect(task.result())
     splits = sorted(games)
     for i, s in enumerate(splits):
         for t in splits[i + 1:]:

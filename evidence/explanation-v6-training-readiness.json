@@ -1,0 +1,60 @@
+{
+  "games": {
+    "train": 675,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 24009,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "status": "complete",
+  "by_split_stage": {
+    "train/explanation": 8710,
+    "validation/explanation": 192,
+    "test/explanation": 256,
+    "train/selfplay_explanation": 2048,
+    "train/static_current": 13092,
+    "train/dynamic_current": 10910,
+    "train/static_future": 13092,
+    "train/dynamic_future": 10910,
+    "train/move_quality": 22248,
+    "train/move_planning": 86892,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "validation/move_quality": 192,
+    "validation/move_planning": 764,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492,
+    "test/move_quality": 256,
+    "test/move_planning": 1020
+  },
+  "all_feature_keys_available": true,
+  "all_train_validation_tokens_checked": 183834,
+  "maximum_tokens_by_stage": {
+    "explanation": 964,
+    "selfplay_explanation": 964,
+    "static_current": 485,
+    "dynamic_current": 495,
+    "static_future": 514,
+    "dynamic_future": 521,
+    "move_quality": 443,
+    "move_planning": 472
+  },
+  "max_tokens": 1024,
+  "training_global_batch_size": 16,
+  "training_micro_batch_size": 1,
+  "derived_max_steps": 4355,
+  "validation_test_labels_byte_unchanged": true,
+  "all_2048_priority_rows_change_only_stage": true,
+  "independent_test_used_for_training_or_selection": false,
+  "student_improvement_measured": false,
+  "no_search_distillation": true
+}
