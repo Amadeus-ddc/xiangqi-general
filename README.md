@@ -206,7 +206,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048 步正确率为 51.8%／54.0%／61.2%／67.4%，最差题型为 16.4%／15.6%／14.1%／21.9%，四次均未达标。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-fourth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%，六次均未达标；最新整行识别为 48.4%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-sixth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -346,6 +346,19 @@ python -m xqgeneral.recorded_coach_prose collect \
 审查 JSON 记录 `reviewer_model`、`reasoning_effort`、`backend`、`reviewer_agent`、`input_packet_sha256`、`human_rating: false`、`source_labels_modified: false` 及 `results`。每条决定包含 `id`、`reviewed_annotation_sha256`、`verdict`、具体中文 `reason` 和 `issues`；接受项不能残留问题，逐条审查者不能是该正文作者。继续审查可以保留多个决定文件，但同一正文的接受／拒收冲突不能被忽略。
 
 拒收后由已授权教师真实修订，另存与原包棋盘／事实完全相同的修订包，仅替换 `teacher_annotation`、其哈希和真实作者身份。新标注含 `corrected_from_annotation_sha256` 与 `correction_review_sha256`，绑定准确被拒原文及拒收文件；修订仍须由另一位审查者接受。把修订包加入 `resolve --repair-packets FILE...`，并把原决定及修订决定都传入 `--reviews`。收集会重新核验完整接受链及整个原查询批次，保留原始分割和全部未来变化。任何未完成、未复核或被篡改的输入均拒收；这些入口只准备数据，SFT 仍须等待四门课程达标。
+
+`prepare-repairs` 从已完成复核包和固定的实际审查 JSON 准备拒收项，支持多个 `--prepared` 分片目录。它逐字节保存拒收快照、重新检查原生历史与事实，并按原作者输出修订查询及计划；没有生成或接受新正文。输入须已完成或先固定快照，运行中改变会拒收。修订祖先使用输出快照的哈希；后续 `resolve --reviews` 也须包含这些快照，并保留后续完整决定与修订接受意见。
+
+```bash
+python -m xqgeneral.recorded_coach_prose prepare-repairs \
+  --prepared data/new-recorded-coach-prose-review \
+  --reviews data/new-recorded-coach-prose-review/review-0.json \
+    data/new-recorded-coach-prose-review/review-1.json \
+    data/new-recorded-coach-prose-review/review-2.json \
+  --output data/new-recorded-coach-repair-queries --workers 8
+```
+
+实际固定前缀的 856 条神经审查决定包含 52 条拒收（训练 40、测试 12）；全部修订查询已通过串行／八 CPU CLI 和原生准备结果对照，仅输出引用路径不同，见 `evidence/recorded-coach-repair-portable-real-v1.json`。这证明拒收准备与祖先保留，不证明完成修订、全文语义接受或学生收益。
 
 全部 2496 条原文及三个完整复核包已准备完成，核验原查询身份、顺序和精确正文，并由准备入口逐条检查完整历史、结构答案变化及正文合同；见 `evidence/recorded-coach-full-authoring-review-preparation-v1.json`。三位 Astra Low 审查者分别检查另一位作者的 832 条，分配及进度入口在 `runs/astra-recorded-coach-prose-review-v1/`；全量语义接受和训练标签收集尚未完成。原文、拒收意见和后续修订分别保留。
 

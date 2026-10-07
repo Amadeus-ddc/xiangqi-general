@@ -5,7 +5,7 @@ import pytest
 
 from xqgeneral.evidence import atomic_json, digest, history_key, load_jsonl, manifest, write_jsonl
 from xqgeneral.explanations import line_facts, move_facts, parse_explanation
-from xqgeneral.recorded_coach_prose import (collect_reviewed, prepare_review, resolve_review,
+from xqgeneral.recorded_coach_prose import (collect_reviewed, prepare_repairs, prepare_review, resolve_review,
                                           resolved_packets, review_packet)
 from xqgeneral.revise_prose import annotation_hash, TEACHER
 from xqgeneral.rules import START_FEN, legal_moves, piece_map, piece_name, play, side
@@ -201,6 +201,91 @@ def test_recorded_teacher_requires_substantive_chinese_prose(tmp_path):
         review_packet(q, {'id': q['id'], 'explanation': '中' + 'English text ' * 20, **TEACHER}, '/root/author')
 
 
+def test_repair_preparation_preserves_rejection_bytes_and_resolves_exact_ancestry(tmp_path):
+    source, prepared, docs = prepare_with_decisions(tmp_path)
+    packets_path = prepared / 'review-0.jsonl'; packet = load_jsonl(packets_path)[0]
+    decisions(docs[0], packets_path, {packet['id']: 'reject'})
+    output = tmp_path / 'repair-inputs'; summary = prepare_repairs([prepared], docs, output)
+    assert summary['prepared_rejected_original_annotations'] == 1
+    assert summary['prepared_original_packet_scope'] == 3
+    assert not summary['teacher_repairs_or_acceptances_generated']
+    query = load_jsonl(output / 'repair-queries-0.jsonl')[0]
+    assert query['original_packet'] == packet
+    snapshot = output / 'original-review-0-snapshot.json'
+    assert snapshot.read_bytes() == docs[0].read_bytes()
+    assert query['correction_review_sha256'] == digest(snapshot) == digest(docs[0])
+    assert query['corrected_from_annotation_sha256'] == packet['reviewed_annotation_sha256']
+    assert 'future_moves' not in query['original_packet'] and 'recorded_source_headers' not in query['original_packet']
+    repair = copy.deepcopy(query['original_packet'])
+    repair['teacher_annotation'].update(explanation=PROSE + '此处是受控合同修订，保留准确的拒收祖先。',
+        corrected_from_annotation_sha256=query['corrected_from_annotation_sha256'],
+        correction_review_sha256=query['correction_review_sha256'])
+    repair['reviewed_annotation_sha256'] = annotation_hash(repair['teacher_annotation'])
+    repairs = tmp_path / 'repaired.jsonl'; write_jsonl(repairs, [repair])
+    acceptance = decisions(tmp_path / 'repair-accepted.json', repairs)
+    snapshots = sorted(output.glob('original-review-*-snapshot.json'))
+    with pytest.raises(ValueError, match='independently accepted'):
+        resolved_packets(prepared, snapshots, [repairs])
+    resolved = tmp_path / 'resolved'; resolve_review(prepared, [*snapshots, acceptance], [repairs], resolved)
+    assert collect_reviewed(*source, [resolved], tmp_path / 'collected')['original_teacher_annotations'] == 3
+
+
+@pytest.mark.parametrize('problem', ['self_review', 'wrong_annotation_hash', 'wrong_packet_hash', 'empty_rejection_issues'])
+def test_repair_preparation_rejects_unbound_or_unactionable_neural_decisions(tmp_path, problem):
+    _, prepared, docs = prepare_with_decisions(tmp_path)
+    packets_path = prepared / 'review-0.jsonl'; packet = load_jsonl(packets_path)[0]
+    decisions(docs[0], packets_path, {packet['id']: 'reject'})
+    doc = json.loads(docs[0].read_text())
+    if problem == 'self_review':doc['reviewer_agent'] = packet['teacher_author_agent']
+    if problem == 'wrong_annotation_hash':doc['results'][0]['reviewed_annotation_sha256'] = 'wrong'
+    if problem == 'wrong_packet_hash':doc['input_packet_sha256'] = 'wrong'
+    if problem == 'empty_rejection_issues':doc['results'][0]['issues'] = [' ']
+    atomic_json(docs[0], doc)
+    output = tmp_path / 'not-created'
+    with pytest.raises(ValueError):prepare_repairs([prepared], docs, output)
+    assert not output.exists()
+
+
+def test_repair_preparation_recomputes_facts_even_if_a_packet_is_rebound(tmp_path):
+    _, prepared, docs = prepare_with_decisions(tmp_path)
+    path = prepared / 'review-0.jsonl'; packet = load_jsonl(path)[0]
+    packet['board']['e0'] = '虚构棋子'; write_jsonl(path, [packet])
+    proof = json.loads((prepared / 'manifest.json').read_text())
+    proof['outputs'][str(path)] = {'sha256': digest(path), 'bytes': path.stat().st_size}
+    atomic_json(prepared / 'manifest.json', proof)
+    decisions(docs[0], path, {packet['id']: 'reject'})
+    output = tmp_path / 'not-created'
+    with pytest.raises(ValueError, match='native board or line facts'):
+        prepare_repairs([prepared], docs, output)
+    assert not output.exists()
+
+
+def test_repair_preparation_does_not_turn_accepted_prose_into_repair_labels(tmp_path):
+    _, prepared, docs = prepare_with_decisions(tmp_path)
+    output = tmp_path / 'not-created'
+    with pytest.raises(ValueError, match='No independently rejected'):
+        prepare_repairs([prepared], docs, output)
+    assert not output.exists()
+    with pytest.raises(ValueError, match='repeat original'):
+        prepare_repairs([prepared, prepared], docs, output)
+    assert not output.exists()
+
+
+def test_serial_and_spawned_repair_preparation_preserve_native_queries_and_review_bytes(tmp_path):
+    _, prepared, docs = prepare_with_decisions(tmp_path)
+    for doc in docs:
+        packet_path = next(p for p in prepared.glob('review-*.jsonl') if digest(p) == json.loads(doc.read_text())['input_packet_sha256'])
+        packet = load_jsonl(packet_path)[0]; decisions(doc, packet_path, {packet['id']: 'reject'})
+    a, b = tmp_path / 'repair-serial', tmp_path / 'repair-parallel'
+    assert prepare_repairs([prepared], docs, a) == prepare_repairs([prepared], docs, b, workers=2)
+    for path in a.glob('original-review-*-snapshot.json'):
+        assert path.read_bytes() == (b / path.name).read_bytes()
+    for path in a.glob('repair-queries-*.jsonl'):
+        left = path.read_text().replace(str(a), '<OUTPUT>')
+        right = (b / path.name).read_text().replace(str(b), '<OUTPUT>')
+        assert left == right
+
+
 def test_serial_and_spawned_review_preparation_and_collection_preserve_bytes(tmp_path):
     source, prepared, docs = prepare_with_decisions(tmp_path)
     parallel = tmp_path / 'parallel-prepared'; prepare_review(*source, parallel, workers=2)
@@ -213,12 +298,13 @@ def test_serial_and_spawned_review_preparation_and_collection_preserve_bytes(tmp
         assert (a / f'{split}.jsonl').read_bytes() == (b / f'{split}.jsonl').read_bytes()
 
 
-@pytest.mark.parametrize('phase', ['prepare', 'collect'])
+@pytest.mark.parametrize('phase', ['prepare', 'collect', 'prepare-repairs'])
 def test_inputs_changed_during_native_processing_refuse_before_writing(tmp_path, monkeypatch, phase):
     from xqgeneral import recorded_coach_prose as pipeline
     source, prepared, docs = prepare_with_decisions(tmp_path)
     resolved = tmp_path / 'resolved'; resolve_review(prepared, docs, [], resolved)
-    name = 'review_packet_item' if phase == 'prepare' else 'reviewed_label_item'
+    name = {'prepare': 'review_packet_item', 'collect': 'reviewed_label_item',
+            'prepare-repairs': 'repair_query_item'}[phase]
     original = getattr(pipeline, name)
     target = source[0] / 'shards/annotations-0.jsonl' if phase == 'prepare' else docs[0]
     def mutate_after_processing(item):
@@ -227,7 +313,11 @@ def test_inputs_changed_during_native_processing_refuse_before_writing(tmp_path,
         return result
     monkeypatch.setattr(pipeline, name, mutate_after_processing)
     output = tmp_path / 'not-created'
+    if phase == 'prepare-repairs':
+        path = prepared / 'review-0.jsonl'; packet = load_jsonl(path)[0]
+        decisions(docs[0], path, {packet['id']: 'reject'})
     with pytest.raises(ValueError, match='bound input changed'):
         if phase == 'prepare':prepare_review(*source, output)
-        else:collect_reviewed(*source, [resolved], output)
+        elif phase == 'collect':collect_reviewed(*source, [resolved], output)
+        else:prepare_repairs([prepared], docs, output)
     assert not output.exists()

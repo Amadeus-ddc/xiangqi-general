@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_frozen_independent_neural_decisions": 856,
+  "actual_rejected_original_annotations": 52,
+  "rejected_originals_by_split": {
+    "test": 12,
+    "train": 40
+  },
+  "actual_original_packet_scope": 2496,
+  "serial_and_eight_cpu_cli_outputs_match_except_output_reference_paths": true,
+  "all_original_rejection_snapshots_byte_exact": true,
+  "all_52_query_payloads_equal_completed_original_native_preparation": true,
+  "full_histories_native_boards_move_facts_and_answer_lines_checked": true,
+  "all_completed_producer_artifacts_freshly_rehashed": true,
+  "frozen_module_sha256": "286b8563b9cb2b6b082e8b3db6a5bb5701605fa8219580a2b6efbc41ee343b5c",
+  "actual_teacher_repairs_generated": 0,
+  "full_semantic_acceptance_completed": false,
+  "human_rating": false,
+  "student_training_started": false,
+  "current_foundation_inputs_changed": false,
+  "student_benefit_measured": false,
+  "manifest_sha256": "ba751e537333d3114086fd914f1ff419a2ac6b228bb62f0e76810af752aa8747"
+}
