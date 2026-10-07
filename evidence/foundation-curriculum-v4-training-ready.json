@@ -1,0 +1,70 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 49836,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "train_validation_tokens_checked": 1144132,
+  "extra_validation_format_encodings": 29568,
+  "maximum_tokens_by_stage": {
+    "static_current": 487,
+    "dynamic_current": 499,
+    "static_future": 514,
+    "dynamic_future": 528
+  },
+  "token_limit": 768,
+  "records_by_split_stage": {
+    "train/static_current": 308004,
+    "train/dynamic_current": 256670,
+    "train/static_future": 308004,
+    "train/dynamic_future": 256670,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492
+  },
+  "actual_history_keys_checked": 52506,
+  "all_feature_keys_available": true,
+  "all_unique_root_histories_natively_replayed": true,
+  "native_history_feature_keys_checked": true,
+  "main_guard_present": true,
+  "duplicate_label_ids": 0,
+  "heldout_files_byte_unchanged": true,
+  "source_recipe_sha256": "a96d27a373af21437f71916efbdcd4c7c0001f5c20e010aebc505ba086b3a603",
+  "native_split_workers": 16,
+  "actual_cache_keys": 78236,
+  "actual_cache_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "independent_test_used_for_training_or_selection": false,
+  "actual_student_training_started": false,
+  "student_improvement_measured": false
+}

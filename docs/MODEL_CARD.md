@@ -470,8 +470,12 @@ sampled from existing completed searches, with horizons up to eight plies and th
 question paraphrases. Each task uses one paraphrase; canonical native answers
 and mirrored lineage are preserved. Mirrors and paraphrases do not create new
 independent games or searches. Finite-budget engine labels are fallible chess
-supervision; rule targets are recomputed on the requested board. Fresh full
-history, feature-key, future-isolation and token-length preflight is required.
+supervision; rule targets are recomputed on the requested board. Full preflight
+has now completed: 1144132 train/validation encodings, 29568 additional validation
+question-format checks, 52506 natively replayed history keys, and all future split
+footprints. The longest encoding is 528 tokens under the 768-token limit. The
+preflight completion snapshot is `evidence/foundation-curriculum-v4-training-ready.json`.
+These checks establish input readiness; their snapshot precedes actual training.
 
 `configs/foundation-curriculum-v4.json` preserves the completed v3 bridge,
 dictionary input and architecture, resets the optimizer per course, and uses
@@ -480,10 +484,16 @@ resumed execution was independently checked: all weights, optimizer/RNG states
 and step losses agree. This tiny four-update fixture is not a completed course.
 Each new stage assesses 128 raw validation answers per introduced task; both
 stage accuracy and worst-task accuracy must meet the declared targets before
-advancement. NLL alone cannot advance a course. The queued recipe and frozen
-preparation/training commands are recorded in
-`evidence/foundation-curriculum-v4-queue.json`; no new curriculum gain or
-independent-test result is claimed.
+advancement. NLL alone cannot advance a course. The first static-current course
+is now actually training on GPUs 0 and 2. A frozen prefix of 84 updates, the
+two actual DDP workers, source/config identity, and finite losses/gradients were
+independently checked; see `evidence/foundation-curriculum-v4-training-start.json`.
+Full preparation readback and additional native-answer sampling continue separately.
+The first raw QA gate is scheduled at update 512. Live logs and unchanged resume commands are in
+`runs/curriculum-expanded-v4/static_current/training/` and
+`runs/curriculum-expanded-v4-launch-v2/plan.json`. The recipe is recorded in
+`evidence/foundation-curriculum-v4-queue.json`; no completed new course, curriculum
+gain or independent-test result is claimed.
 
 An additional fixed 64-root training-only engine audit (32 per color) repeats all
 archived 100K-node best moves. Raising the requested budget to 1M nodes preserves
