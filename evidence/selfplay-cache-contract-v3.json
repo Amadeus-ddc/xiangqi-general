@@ -1,0 +1,39 @@
+{
+  "feature_roots": 78236,
+  "layers": 16,
+  "depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "feature_shape_by_layer": [
+    78236,
+    90,
+    512
+  ],
+  "stored_dtype": "torch.float16",
+  "old_feature_keys": 23420,
+  "all_old_keys_preserved": true,
+  "all_requested_feature_keys_exactly_present": true,
+  "cache_sha256": "e621209bf4e342eaa7d5765a41ce57c88ce54dc7860cdbb8b17df063a61bb353",
+  "cache_bytes": 115370410864,
+  "all_manifest_inputs_outputs_read_back": true,
+  "heldout_move_files_byte_identical": true,
+  "full_foundation_token_preflight_complete": false,
+  "test_labels_used_only_for_identity_and_isolation": true,
+  "student_improvement_measured": false,
+  "evidence_state": "reconstructed_baseline"
+}
