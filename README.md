@@ -169,6 +169,8 @@ python -m xqgeneral.selfplay_grounding --data data/move-quality-selfplay-v3 \
 
 每个原始根局面生成当前静态、当前动态、未来静态和未来动态问题，并生成颜色派生项。未来前缀从引擎最佳变化中抽取一至六步，保留初始局面与完整历史；历史已终局的根局面和未来局面都拒收。原始根局面按双方平衡采样，派生项不算新独立棋局。已有课程及其验证、测试标签保持原样，所有新问题的根局面、所问未来变化和镜像排除保留局面。
 
+扩充时可指定 `--max-future-plies 8 --question-formats 3 --split-workers 16`：从实际存在的合法变化中抽取最多八步，每道题选择一种提问方式，镜像使用同一方式，答案仍为原生规则计算的规范结果。改写不增加独立根数，也不把题目重复三遍。默认六步和原提问方式保持兼容。有限节点搜索的最佳着法是引擎监督；规则题的答案根据所问棋盘重新计算。自对弈的步数截尾不能当成和棋，完整历史与保留变化仍须检查。
+
 并行生成按查询顺序返回，预取数量有界，各查询使用固定独立随机种子；相同参数的单进程与多进程生成保持标签一致。这个数据集只有规则问答，不生成神经讲解或重新搜索。训练前还须检查词元长度和完成的特征缓存，数据生成本身不证明模型改善。长任务用冻结源码在 tmux 内运行，并选择新输出目录。
 
 可在另一个 tmux 会话中，按实际走法与变化结果持续选检查点：
@@ -186,7 +188,16 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 基础课程补训可指定 `--qa-data DATASET --qa-per-task 12`，在同一检查点上加入 264 道原始棋盘问答，覆盖四门课程的全部 22 类题，以 `0.4 × 走法无明显失误率 + 0.2 × 规划合同通过率 + 0.4 × 平衡问答正确率` 选模。各类题数量必须相等，独立测试、引擎代答、强制合法输出和变动证据均拒收；此选项与讲解选模互斥。类别指标与全部原回答分别保存，问答分数不能替代正文审查或对弈。
 
-`configs/selfplay-foundation-v3.json` 是后续实战规则补训配置：90% 四门问答、5% 走法与 5% 多步规划。回放目录只保留走法和规划项，避免重复采样旧规则题；先在两组已完成规划训练的全部候选上评测规则问答，再按同份权重的问答、走法和规划分数选择初始化；使用新优化器、FP32 可训练参数、32 条全局批量及 4 条微批量。真实双 H20 连续／恢复训练已验证全部参数、优化器及随机状态逐位一致；待条件满足后使用 GPU 0、2 训练，GPU 3 选模。正式讲解已完成并释放 GPU 3，精确命令分别见 `runs/selfplay-foundation-v3/{bridge,functional-selection-gpu3}/plan.json`。桥接与棋盘词元学习率分别为 `1e-4` 和 `1e-5`，最多 24000 步，至少 6000 步后允许按验证损失提前停止。811684 条混合记录、全部特征及 799424 条训练/验证编码已完成预检；独立读回重新核验 115GB 缓存、原样回放和全部未来分割，见 `evidence/selfplay-foundation-training-readback.json`。当前仍等待两组规划父模型完成；这是自适应补训，尚未证明收益。
+原 `configs/selfplay-foundation-v3.json` 混合补训等待任务已在开始训练前保留并撤换。其 811684 条混合记录及 799424 条训练／验证编码的预检证据仍保留，不能覆盖新扩充数据。课程训练量复核见 `evidence/paper-foundation-volume-audit.json`：本地旧四门实际共 5750 步、92000 次样本呈现；论文配置上限为 240000 步、有效批量 256，且允许早停，不能当成全部实际完成步数或独立样本数。
+
+当前顺序补训采用 `configs/foundation-curriculum-v4.json`：原始根请求量提高到 24576，保留旧桥接结构及棋盘字典，逐门重置优化器，双卡全局批量 256／微批量 4。四门上限为 50000／60000／30000／100000 步，回放比例与桥接学习率参照论文配置；实际步数由验证决定。每 512 步固定真实最新权重，对已引入课程的每类题评测 128 条原始回答；各门总正确率和最差题型必须同时达标，NLL 下降不能独自允许进入下一门。测试集不参与训练或选模。单卡评测与双卡续训按顺序执行，保持同卡数优化器恢复。
+
+```bash
+python scripts/freeze_run.py --output runs/foundation-curriculum/source-run -- \
+  python -m xqgeneral.gated_curriculum --config configs/foundation-curriculum-v4.json
+```
+
+先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation/`、`runs/curriculum-expanded-v4-launch/`，精确命令和恢复方法见各自 `plan.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

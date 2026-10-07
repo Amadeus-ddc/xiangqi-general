@@ -1,0 +1,113 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "paper_source": "https://arxiv.org/html/2610.03695v1",
+  "paper_sections": [
+    "3.2",
+    "A.1 Tables 7-8",
+    "A.2 Tables 9-10",
+    "B.2 Tables 12-13"
+  ],
+  "comparison": [
+    {
+      "stage": "static_current",
+      "paper_configured_steps": 50000,
+      "paper_effective_batch": 256,
+      "paper_configured_sample_presentations": 12800000,
+      "paper_bridge_learning_rate": 0.0001,
+      "actual_local_steps": 1500,
+      "actual_local_effective_batch": 16,
+      "actual_local_sample_presentations": 24000,
+      "local_selected_step": 1125,
+      "local_supervised_tokens_seen": 101213
+    },
+    {
+      "stage": "dynamic_current",
+      "paper_configured_steps": 60000,
+      "paper_effective_batch": 256,
+      "paper_configured_sample_presentations": 15360000,
+      "paper_bridge_learning_rate": 8e-05,
+      "actual_local_steps": 1375,
+      "actual_local_effective_batch": 16,
+      "actual_local_sample_presentations": 22000,
+      "local_selected_step": 875,
+      "local_supervised_tokens_seen": 145387
+    },
+    {
+      "stage": "static_future",
+      "paper_configured_steps": 30000,
+      "paper_effective_batch": 256,
+      "paper_configured_sample_presentations": 7680000,
+      "paper_bridge_learning_rate": 7.5e-05,
+      "actual_local_steps": 1500,
+      "actual_local_effective_batch": 16,
+      "actual_local_sample_presentations": 24000,
+      "local_selected_step": 1125,
+      "local_supervised_tokens_seen": 105744
+    },
+    {
+      "stage": "dynamic_future",
+      "paper_configured_steps": 100000,
+      "paper_effective_batch": 256,
+      "paper_configured_sample_presentations": 25600000,
+      "paper_bridge_learning_rate": 0.0002,
+      "actual_local_steps": 1375,
+      "actual_local_effective_batch": 16,
+      "actual_local_sample_presentations": 22000,
+      "local_selected_step": 875,
+      "local_supervised_tokens_seen": 143988
+    }
+  ],
+  "paper_configured_foundation_steps": 240000,
+  "paper_configured_foundation_sample_presentations": 61440000,
+  "actual_local_foundation_steps": 5750,
+  "actual_local_foundation_sample_presentations": 92000,
+  "paper_configured_to_actual_local_presentations_ratio": 667.8260869565217,
+  "paper_foundation_early_stopping": true,
+  "paper_actual_per_stage_steps_disclosed_separately": false,
+  "paper_foundation_unique_sample_counts_disclosed": false,
+  "presentation_counts_are_not_unique_examples": true,
+  "all_actual_local_step_logs_and_configured_batches_checked": true,
+  "actual_local_raw_qa_accuracy": 0.7386363636363636,
+  "actual_local_current_capture_accuracy": 0.08333333333333333,
+  "actual_local_future_capture_accuracy": 0.0,
+  "paper_initial_explanation_sft": {
+    "training_examples": 8402,
+    "validation_examples": 200,
+    "epochs": 4,
+    "steps": 2100,
+    "effective_batch_size": 16,
+    "maximum_sequence_length": 2048,
+    "sample_presentations": 33600
+  },
+  "paper_each_search_distillation_iteration": {
+    "training_examples_range": [
+      150000,
+      285000
+    ],
+    "maximum_steps": 30000,
+    "effective_batch_size": 32,
+    "maximum_sequence_length": 2048,
+    "configured_sample_presentations_upper_bound": 960000,
+    "iterations": 7,
+    "all_per_iteration_actual_example_counts_disclosed": false
+  },
+  "old_queued_mixed_foundation": {
+    "steps": 24000,
+    "effective_batch_size": 32,
+    "sample_presentations_upper_bound": 768000,
+    "fraction_of_paper_configured_foundation_presentations": 0.0125,
+    "only_rule_qa_mixture_fraction": 0.9,
+    "actual_training_started": false
+  },
+  "volume_causal_effect_isolated": false,
+  "independent_test_used": false,
+  "new_student_training_gain_claimed": false,
+  "limits": [
+    "Paper budgets permit early stopping; configured exposure is not an assertion of actual completed paper steps",
+    "Local executed exposures include discarded post-selection updates; final stage initialization preserves selected checkpoints",
+    "Chess game, expert, decoder, questions and data distributions differ; this is an exposure audit, not a matched causal experiment",
+    "Foundation data preparation, explanation updates and repeated mixed replay do not substitute for mastered raw rule/state-tracking capability"
+  ],
+  "readback_manifest_sha256": "af39671522c612c500afd67301647ffc42e7276e830738fb40e3116cd1b0526e"
+}
