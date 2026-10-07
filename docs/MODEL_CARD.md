@@ -201,8 +201,16 @@ cover 98 of those revisions; the other 269 genuine revisions are now authored
 and bind their exact rejected ancestors. All 269 now have genuine independent
 acceptances. The remaining 3698-item bundle has 3429 unchanged accepts and 269
 accepted revisions, disjoint from both prior bundles. All 5510 selected annotations
-and their exact rejection-to-acceptance chains were read back. New dataset
-assembly and token preflight remain in progress.
+and their exact rejection-to-acceptance chains were read back. Fresh dataset
+`data/astra-explanations-full-v6` now applies all 367 prose revisions and retains
+6662/192/256 rows. All 6662 train records preserve their prompts, full histories,
+feature keys and structured labels; the added review provenance binds the exact
+original annotation and independent acceptance chain. Held-out files remain byte
+identical. All train rows pass the 1024-token preflight, with a maximum of 943.
+Dataset hashes, all 5510 review ancestries and every row contract were read back;
+see `evidence/reviewed-prose-dataset-v6.json`. Active runs keep their frozen older
+inputs. The new 2048 selfplay seed annotations are not included, and student
+improvement from this version remains unmeasured.
 Source training labels and archived runs are preserved; these neural judgments
 are neither human ratings nor evidence of student improvement.
 
