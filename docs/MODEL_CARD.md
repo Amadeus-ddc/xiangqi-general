@@ -198,8 +198,11 @@ for revision. Exact source annotation, decision, final-review and continuation
 prefix hashes were checked. Reviewers were explicitly configured as Astra Low;
 backend identity has no independent attestation. Previously resolved bundles
 cover 98 of those revisions; the other 269 genuine revisions are now authored
-and bind their exact rejected ancestors. Their prepared review inputs preserve
-structured labels and full histories, but independent acceptance remains pending.
+and bind their exact rejected ancestors. All 269 now have genuine independent
+acceptances. The remaining 3698-item bundle has 3429 unchanged accepts and 269
+accepted revisions, disjoint from both prior bundles. All 5510 selected annotations
+and their exact rejection-to-acceptance chains were read back. New dataset
+assembly and token preflight remain in progress.
 Source training labels and archived runs are preserved; these neural judgments
 are neither human ratings nor evidence of student improvement.
 
@@ -212,8 +215,8 @@ review. Further repair and review remain separate from student-quality evidence.
 A further nonoverlapping 1280-item reviewed range is resolved: 1212 unchanged
 texts and 68 genuine revisions independently accepted. Both bundles verify
 exact ancestry and final acceptance for 1812 items in total. Source training
-labels remain unchanged; remaining revision acceptance and measured student
-benefit are pending.
+labels used by active runs remain unchanged. A third disjoint resolved bundle
+completes all 5510 remaining old annotations; measured student benefit is pending.
 
 The early-initialization planning run at step 4000 has 177/192 legal raw moves,
 152/192 non-mistake moves and 21/96 complete planning contracts, compared with
@@ -276,10 +279,12 @@ input/output hashes verified. The configured Astra Low subagent has actually
 authored the first two 683-item shards, totaling 1366 original annotations.
 Exact IDs, teacher identity, structured-label binding and all preparation hashes
 were checked. The first shard has completed independent individual semantic
-review: 670 originals accepted and 13 requiring revision, with exact annotation
-hashes and genuine inherited prefixes verified. Second-shard review and
-third-shard authorship continue. All rejections require genuine correction and
-independent acceptance before use; this does not establish completed 2048-item
+review: 670 originals accepted and all 13 genuine revisions independently
+accepted, with exact annotation hashes, inherited prefixes and complete revision
+ancestry verified. Second-shard review and
+third-shard authorship continue. The resolved first shard preserves all originals
+and rejections. Remaining rejections require correction and independent
+acceptance before use; this does not establish completed 2048-item
 annotation, new training, distillation or student benefit.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded

@@ -1,0 +1,14 @@
+{
+  "resolved_genuine_original_teacher_items": 683,
+  "accepted_unchanged_prose": 670,
+  "corrected_and_independently_accepted_prose": 13,
+  "all_original_rejections_and_exact_revision_ancestry_preserved": true,
+  "source_labels_modified": false,
+  "whole_2048_teacher_review_complete": false,
+  "human_rating": false,
+  "student_training_benefit_measured": false,
+  "test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "all_exact_revision_acceptance_chains_verified": true,
+  "bundle_manifest_sha256": "b108a66e180b320e3ec1d2099f10bc4f0aa8d03034a213da21fa8a5805b39f83"
+}

@@ -1,0 +1,25 @@
+{
+  "resolved_remaining_review_items": 3698,
+  "accepted_unchanged_prose": 3429,
+  "corrected_and_independently_accepted_prose": 269,
+  "first_revision_acceptances": 269,
+  "originals_and_all_rejections_preserved": true,
+  "source_labels_modified": false,
+  "overlap_with_previous_resolved_items": 0,
+  "complete_old_reviewed_items_in_three_bundles": 5510,
+  "full_old_prose_review_complete": true,
+  "whole_dataset_error_rate_estimated": false,
+  "human_rating": false,
+  "test_used": false,
+  "student_training_benefit_measured": false,
+  "reviewer_agent": "/root/astra_selfplay_reviewer_0c",
+  "correction_author_agents": [
+    "/root/astra_full_reviewer_1d",
+    "/root/astra_full_repair_author_1"
+  ],
+  "independent_revision_review_sha256": "f5ec1bb330d4e948f457bb7f294af4e5a957494a22d2f04b351bb328a6aa5262",
+  "model_identity_evidence": "Explicit configured Astra Low subagents; no independent backend attestation",
+  "evidence_state": "reconstructed_baseline",
+  "all_revision_ancestries_and_exact_acceptances_verified": true,
+  "bundle_manifest_sha256": "0d0a89218a810c191e43cd7d31932242f5b4a19340de42f6d268355aec349b54"
+}

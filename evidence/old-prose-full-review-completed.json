@@ -43,11 +43,14 @@
   "model_identity_evidence": "Explicit configured Astra Low subagents with preserved genuine continuation prefixes; no independent backend identity attestation",
   "limits": [
     "Independent neural prose review is not human evaluation",
-    "Remaining rejected prose must be genuinely revised and independently accepted before dataset use",
+    "Accepted revisions still require fresh dataset assembly and token preflight before a new training run",
     "No measured student improvement follows from completed review"
   ],
   "remaining_correction_annotation_sha256": "acc98285b0209734501bf8d6bada4bfec1f471aa3c4d3daddc1d55ee917958ca",
-  "remaining_revision_independent_acceptance_complete": false,
+  "remaining_revision_independent_acceptance_complete": true,
   "remaining_review_input_sha256": "a544030daddd7c6877776ef7912fa575f6dd38d660206d7ebe40f981b7546ca6",
-  "all_269_revision_identity_and_exact_rejected_ancestor_bindings_verified": true
+  "all_269_revision_identity_and_exact_rejected_ancestor_bindings_verified": true,
+  "remaining_independent_acceptance_sha256": "f5ec1bb330d4e948f457bb7f294af4e5a957494a22d2f04b351bb328a6aa5262",
+  "remaining_resolved_bundle_manifest_sha256": "0d0a89218a810c191e43cd7d31932242f5b4a19340de42f6d268355aec349b54",
+  "all_three_disjoint_resolved_bundles_cover_5510_items": true
 }
