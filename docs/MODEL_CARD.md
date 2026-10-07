@@ -248,6 +248,12 @@ illegal and one continues after termination. Training and final selection
 remain in progress; prose semantics, complete games and independent test
 strength are not measured by this result.
 
+At actual formal planning step 6000, the same raw validation yields 177/192
+legal moves, 164/192 non-mistake moves and 32/96 complete plans, for a score
+of 0.6458. Actual weights, FP32 parameter count, training identity and all raw
+artifact hashes were read back; see `evidence/move-planning-v2-interim-6000.json`.
+Training and final selection remain incomplete.
+
 The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
 raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
 contracts. All three evaluations bind the same real weights and verified raw
@@ -259,6 +265,14 @@ explanation contracts remain only 2/96. Its three-capability score rises from
 raw artifacts were verified. These are interim validation results; prose
 semantics and full-game strength are unmeasured and the model cannot yet serve
 as a reliable coach.
+
+At actual formal full-decoder step 6144, raw validation has 170/192 legal moves,
+149/192 non-mistake moves and 16/96 complete plans. Its 96 explanations contain
+86 legal recommendations, 77 non-mistake recommendations, 21 legal main PVs and
+6 complete contracts. The score is 0.3688; complete contracts improve while move
+quality declines from step 4096. Exact weights and all raw artifacts were read
+back; see `evidence/explanation-v4-after-6144.json`. This interim result does
+not measure prose semantics, complete-game strength or independent-test quality.
 
 The expanded warm-initialization full-decoder run completed 6656 steps and
 selected actual step 4608 by validation NLL (0.5271). All outputs, selected
@@ -292,6 +306,29 @@ were independently read back; see
 prose-semantic, game-strength and independent-test evidence remain pending.
 The interim scores and completed training do not establish overall improvement
 or a reliable coach.
+
+The actual completed step 3584 has 168/192 legal raw moves, 154/192 non-mistake
+moves and 22/96 complete plans. The 96 explanations contain 83 legal and 75
+non-mistake recommendations, 18 legal main PVs and only 7 complete contracts.
+Its score is 0.3958 versus the parent's 0.3375. Actual weights, FP32 parameter
+count, training identity and all raw artifacts were read back; see
+`evidence/explanation-v5-after-3584.json`. Final capability selection is separate
+from this completed-step validation; reliable teaching and full-game strength
+remain unproven.
+
+A read-only audit of the preserved early step-3072 search replayed all 117
+generated child records with complete history and ran 123 real 100K-node
+Pikafish queries. Of 86 legal recommendations, 43 satisfy both the recommended
+move quality and evaluation-error thresholds; only one of these has a legal
+full main PV. There are only two legal full main PVs overall. Two of 40 visited
+roots have all child move/evaluation checks passing, but no root has all child
+main PVs legal, including the prefixes consumed by the existing six-ply target.
+The extra full-schema predicate is stricter than the paper's child checks and
+rejects eligible move/evaluation answers. This audit also measures substantive
+continuation errors; it does not establish valid target yield under a changed
+contract or a causal effect on final strength. All original responses, metrics
+and acceptance contracts remain unchanged, with no new labels, consolidation
+or valid distillation round. See `evidence/search-child-quality-audit-v1.json`.
 
 The larger self-play search produced 27408 new independent queries and exactly
 preserved all 11348 old query records. Old records were regrouped by split; an

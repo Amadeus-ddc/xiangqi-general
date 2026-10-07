@@ -1,0 +1,51 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "archived_roots": 128,
+  "archived_trace_sha256": "ef729c16d5082100aacd058380414e4a47c76939fc424600637dcf0ba1efb111",
+  "counts": {
+    "generated_children": 117,
+    "legal_recommendations": 86,
+    "first_candidate_matches": 86,
+    "full_main_pv_native_legal": 2,
+    "consumed_main_pv_native_legal": 4,
+    "recommended_moves_without_mistake": 64,
+    "calibrated_model_evaluations": 54,
+    "quality_pass": 43,
+    "quality_pass_over_original_schema": 43,
+    "full_pv_quality_pass": 1,
+    "full_pv_quality_pass_over_original_schema": 1,
+    "consumed_pv_quality_pass": 1,
+    "consumed_pv_quality_pass_over_original_schema": 1,
+    "terminal_children": 1
+  },
+  "visited_root_counts": {
+    "visited_roots_with_children": 40,
+    "all_children_quality_pass": 2,
+    "all_children_full_pv_quality_pass": 0,
+    "all_children_consumed_pv_quality_pass": 0
+  },
+  "actual_engine_queries": 123,
+  "judge_nodes_per_query": 100000,
+  "full_history_replayed": true,
+  "new_model_generation": false,
+  "raw_student_outputs_changed": false,
+  "acceptance_contract_changed": false,
+  "teacher_consolidation_executed": false,
+  "valid_distillation_rounds": 0,
+  "limits": [
+    "Quality diagnostic on the same archived student outputs only",
+    "Quality-pass children alone are not legal isolated improved training targets",
+    "Root improvement and heldout target isolation are not re-certified by this audit",
+    "No measured effect on final strength and no newly generated training labels"
+  ],
+  "audit_manifest_sha256": "be4558a7a1593dc9f46175e2cffef1c8792d21f8a0ed2567c8511d5a658c0363",
+  "audit_verification_sha256": "dbd709e31fb8733b510add4424e6eb500808ab7cbe09de5686874b517b3e0389",
+  "raw_children_sha256": "7df58bec0be2e9d3f023a291f9b81403f5ae244364d6e332336965db09c1b9e6",
+  "engine_queries_sha256": "7748021c82b821e5be702cc80c890e8b1d788a2d5afb80a1668cb629e1ffd419",
+  "root_readback_of_all_artifact_hashes_and_counts": true,
+  "paper_contract_reference": "https://arxiv.org/html/2610.03695v1",
+  "paper_contract_section": "Appendix B.1 and Algorithm 1",
+  "local_extra_child_predicate": "Complete schema, main PV, unused branch PVs, move facts and prose-coordinate checks precede move/evaluation quality",
+  "original_full_schema_valid_children": 1
+}

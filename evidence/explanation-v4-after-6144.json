@@ -1,0 +1,38 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "step": 6144,
+  "checkpoint_sha256": "c94dcb43d50ad67aae91f8d8124b75da2b53a369b04fe178bac74c8891647275",
+  "actual_fp32_trainable_parameters": 4162388512,
+  "actual_checkpoint_step_and_training_contract_verified": true,
+  "same_actual_checkpoint_for_all_capabilities": true,
+  "all_evaluation_outputs_read_back": true,
+  "move_examples": 192,
+  "raw_move_legal": 170,
+  "raw_move_no_mistake": 149,
+  "planning_examples": 96,
+  "raw_full_planning_contracts": 16,
+  "functional_score": 0.36875,
+  "evaluation_manifest_sha256": {
+    "moves": "8cf06b7e6735760ba4c5b0da8e8d52d2062e0677a0da9ae57d1f4e4b1f4fd32a",
+    "plans": "6200815065fbd170b77428a27f56ac4a958e697624c34356996f6e0b91728bcf",
+    "explanations": "7146b01bdd41dc19b18023596fe461182c5637889bf0052e27ba18ce1908657a"
+  },
+  "judge_nodes_per_position": 1000000,
+  "independent_test_used": false,
+  "raw_generation": true,
+  "oracle_repairs": 0,
+  "prose_semantic_rating": "unmeasured",
+  "training_complete": false,
+  "capability_selection_complete": false,
+  "limits": [
+    "Interim raw validation, not a final selected coach",
+    "No measured complete-game strength or semantic teaching quality",
+    "Original and color-derived examples are not independent games"
+  ],
+  "explanation_examples": 96,
+  "raw_explanation_first_move_legal": 86,
+  "raw_explanation_first_move_no_mistake": 77,
+  "raw_explanation_legal_pv": 21,
+  "raw_full_explanation_contracts": 6,
+  "complete_explanation_contract_remains_weak": true
+}
