@@ -1,0 +1,133 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "results": {
+    "2000": {
+      "actual_step": 2000,
+      "checkpoint_sha256": "8012ff52cd28d6f02e902f9af6fc126833f07861d3f83c8e3619302218ca3eb2",
+      "raw_moves": {
+        "examples": 192,
+        "format_valid_rate": 0.9947916666666666,
+        "legal_rate": 0.8229166666666666,
+        "no_mistake_rate": 0.734375,
+        "teacher_best_move_exact_rate": 0.375,
+        "legal_scored_moves": 158,
+        "mean_expected_score_loss_conditional": 0.050936708860759496,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 167.43135444447398
+      },
+      "raw_plans": {
+        "examples": 96,
+        "format_valid_rate": 1.0,
+        "full_line_legal_rate": 0.10416666666666667,
+        "conditional_first_move_matches_rate": 1.0,
+        "length_sufficient_rate": 0.10416666666666667,
+        "contract_valid_rate": 0.10416666666666667,
+        "line_lengths": {
+          "6": 96
+        },
+        "errors": {
+          "illegal_move": 86
+        },
+        "quality_plies_attempted": 253,
+        "legal_scored_quality_plies": 167,
+        "quality_ply_no_mistake_rate_all_attempted": 0.45454545454545453,
+        "mean_expected_score_loss_conditional": 0.16161077844311378,
+        "teacher_line_exact_rate": 0.0,
+        "forced_root_excluded_from_quality": true,
+        "full_history_termination_checked": true,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "split": "validation",
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 247.2280531162396
+      },
+      "functional_score": 0.4822916666666667,
+      "move_manifest_sha256": "2eaf61ed9753eae2e404e440065727d06f47c1e7574bb0484f2f8ef190dd0992",
+      "plan_manifest_sha256": "67c50c5f419f7dd15188c37f6ef129d75955e179958558ca5b871dad2127c676"
+    },
+    "4000": {
+      "actual_step": 4000,
+      "checkpoint_sha256": "eed76bbc629a96851d7272598944457172fd6ed8e590f3e374046785fcfd6387",
+      "raw_moves": {
+        "examples": 192,
+        "format_valid_rate": 1.0,
+        "legal_rate": 0.921875,
+        "no_mistake_rate": 0.7916666666666666,
+        "teacher_best_move_exact_rate": 0.3854166666666667,
+        "legal_scored_moves": 177,
+        "mean_expected_score_loss_conditional": 0.08067231638418079,
+        "terminal_roots": 0,
+        "original_examples": 96,
+        "color_derived_examples": 96,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "score_model": "pinned_Pikafish_material_WDL",
+        "split": "validation",
+        "memory": "normal",
+        "decoding": "raw",
+        "rule_legal_constraints": false,
+        "legality_is_imposed_by_decoding": false,
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 175.082708068192
+      },
+      "raw_plans": {
+        "examples": 96,
+        "format_valid_rate": 1.0,
+        "full_line_legal_rate": 0.21875,
+        "conditional_first_move_matches_rate": 1.0,
+        "length_sufficient_rate": 0.21875,
+        "contract_valid_rate": 0.21875,
+        "line_lengths": {
+          "6": 96
+        },
+        "errors": {
+          "illegal_move": 74,
+          "move_after_terminal": 1
+        },
+        "quality_plies_attempted": 295,
+        "legal_scored_quality_plies": 220,
+        "quality_ply_no_mistake_rate_all_attempted": 0.535593220338983,
+        "mean_expected_score_loss_conditional": 0.16292727272727273,
+        "teacher_line_exact_rate": 0.0,
+        "forced_root_excluded_from_quality": true,
+        "full_history_termination_checked": true,
+        "raw_generation": true,
+        "oracle_repairs": 0,
+        "split": "validation",
+        "judge_nodes_per_position": 1000000,
+        "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+        "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+        "seconds": 278.4235702874139
+      },
+      "functional_score": 0.5625,
+      "move_manifest_sha256": "ebad949eada9763faf546544a3fbc159edb38d81eca22ebf2c99e1e3539dbfbd",
+      "plan_manifest_sha256": "7fdb59386efdb315642f3a56b8506e99bbae25102f39dad27f991745173ab10c"
+    }
+  },
+  "same_validation_counts_and_judge_budget": true,
+  "all_raw_output_hashes_read_back": true,
+  "actual_checkpoint_steps_and_hashes_verified": true,
+  "test_used": false,
+  "training_complete": false,
+  "limits": [
+    "Interim validation of actual candidates; no final model selection or strong-play claim",
+    "Prose semantics and complete-game strength not evaluated here"
+  ]
+}
