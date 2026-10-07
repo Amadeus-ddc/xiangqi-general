@@ -609,9 +609,9 @@ to 1155116 preserved engine questions, totaling 3171812 records with
 2831004/173272/167536 train/validation/test rows. Production generation verifies
 complete root/future isolation and exact old-file byte prefixes. See
 `evidence/recorded-curriculum-human-engine-full-v1.json`. Augmentation and request
-variants do not increase independent game/root counts. Production cache generation
-is complete; full token/native-history preflight and independent readback remain
-prerequisites for training.
+variants do not increase independent game/root counts. Production cache generation,
+full token/native-history preflight and independent readback have now completed;
+fresh production course training has started as recorded below.
 
 The incremental expert cache has a four-GPU real fixture and independent
 recomputation of all eight new histories at all 16 depths, within declared FP16
@@ -627,7 +627,8 @@ all previous keys/features/WDL bitwise; original caches and course files remain
 unchanged. See `evidence/recorded-foundation-expert-cache-full-v1.json`. This is
 completed extraction/merge evidence; the eight-history independent expert
 recomputation above does not cover every production feature. Full course preflight
-and independent readback remain pending, and student improvement is unmeasured.
+and independent readback are now complete; the earlier cache-generation snapshot
+retains its original pending flags. Student improvement is unmeasured.
 
 Bounded, ordered parallel native history preparation was independently exercised
 on 90 actual recorded roots with four GPUs. All 183 merged keys, 16 feature
@@ -645,7 +646,7 @@ rehashed against pinned project download ETags at revision
 `cdbee75f17c01a7cc42f958dc650907174af0554`. This readback uses archived pinned
 download metadata, not a new remote identity query; see
 `evidence/recorded-foundation-base-asset-identity.json`. Fresh production training
-waits for full corpus/cache/source readback and the validated GitHub milestone;
+has passed full corpus/cache/source readback and the validated GitHub milestone;
 no old trained bridge or SFT weights initialize the new foundation.
 
 The reusable `foundation_readback` CLI has completed on the actual 3963-row,
@@ -655,6 +656,33 @@ isolation, every old feature layer/WDL value, complete preflight artifact hashes
 and pinned base-asset hashes pass readback. See
 `evidence/recorded-foundation-source-readback-real-v1.json`. This read-only fixture
 does not replace the separate frozen full-production readback or train a student.
+
+Full production preflight and its frozen independent readback have now completed.
+All 3004276 train/validation rows and 346544 alternate validation requests were
+encoded, with per-course maximum lengths of 122/134/149/163 tokens. All 144174
+question histories were natively replayed and cached; 1408 native answer samples
+cover both source cohorts and all 22 task groups. Every one of the 45834 recorded
+roots matches its original source prefix and maximum future; both colors of all
+maximum futures exclude reserved old/new holdout footprints. All 78236 old cache
+keys, feature layers and WDL values are bitwise preserved. See
+`evidence/recorded-foundation-full-training-ready.json` and
+`evidence/recorded-foundation-full-training-readback.json`. These establish
+preparation integrity, not complete label accuracy or stronger student play.
+
+The actual fresh static-current production run has begun, with its step-0 weights
+pinned and read back: 258 FP32 trainable tensors and 139920416 parameters, no
+course/SFT initialization and no literal board text. Its first 20 optimizer
+updates have finite positive gradient norms; training loss changes from 7.5131
+to 5.8944, while initial validation NLL is 8.0673. The retained bridge attention
+and feed-forward gate parameters start at 1.0 in this implementation. Four owned
+training processes have ranks/local CUDA ranks 0--3 on the four-H20 inventory,
+with global batch 256 and microbatch 4. NVML host PIDs cannot be matched directly
+to container PIDs; this evidence explicitly relies on owned rank metadata and
+the unchanged numerical-contract code, not NVML ownership attribution. Optimizer
+checkpoint world-size readback remains pending. See
+`evidence/recorded-foundation-clean-startup-twenty-updates.json`. The first raw
+mastery gate is at step 512; no new course has completed, and explanation SFT,
+search-distillation training and final teaching/playing strength remain unproven.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
