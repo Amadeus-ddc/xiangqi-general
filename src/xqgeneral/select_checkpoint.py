@@ -12,7 +12,35 @@ import uuid
 from .evidence import atomic_json, digest, manifest
 
 
-def functional_score(move, plan, explanation=None):
+def qa_selection_accuracy(qa):
+    if (qa.get('split') != 'validation' or qa.get('raw_generation') is not True or
+            qa.get('oracle_used') is not False or qa.get('oracle_repairs', 0) != 0 or
+            qa.get('legality_is_imposed_by_decoding', False) or qa.get('rule_legal_constraints', False)):
+        raise ValueError('Board QA selection requires raw validation without oracle answers')
+    groups = qa.get('by_task', {})
+    expected = {f'{stage}/{task}' for stage in ['static_current', 'static_future']
+                for task in ['piece', 'count', 'locate', 'empty', 'material', 'rank']}
+    expected.update(f'{stage}/{task}' for stage in ['dynamic_current', 'dynamic_future']
+                    for task in ['legal', 'illegal', 'moves', 'captures', 'checks'])
+    if set(groups) != expected:
+        raise ValueError('Board QA selection must cover all 22 tasks in the four courses')
+    counts = [g.get('n') for g in groups.values()]
+    values = [g.get('accuracy') for g in groups.values()]
+    if (any(type(n) is not int or n < 1 for n in counts) or len(set(counts)) != 1 or
+            sum(counts) != qa.get('examples') or
+            any(type(v) not in (float, int) or not math.isfinite(v) or not 0 <= v <= 1 for v in values)):
+        raise ValueError('Board QA selection requires balanced, nonempty task groups')
+    accuracy = sum(values) / len(values)
+    reported = qa.get('accuracy')
+    if (type(reported) not in (float, int) or not math.isfinite(reported) or
+            not math.isclose(reported, accuracy, rel_tol=0, abs_tol=1e-12)):
+        raise ValueError('Board QA accuracy differs from balanced task evidence')
+    return accuracy
+
+
+def functional_score(move, plan, explanation=None, qa=None):
+    if explanation is not None and qa is not None:
+        raise ValueError('Choose either explanation or foundation QA selection')
     for result in [move, plan, *([explanation] if explanation is not None else [])]:
         if (result.get('split') != 'validation' or result.get('raw_generation') is not True or
                 result.get('oracle_repairs') != 0 or result.get('examples', 0) < 1):
@@ -26,6 +54,8 @@ def functional_score(move, plan, explanation=None):
         raise ValueError('Invalid functional quality metric')
     if explanation is not None:
         return .4 * values[0] + .2 * values[1] + .4 * values[2]
+    if qa is not None:
+        return .4 * values[0] + .2 * values[1] + .4 * qa_selection_accuracy(qa)
     return .6 * values[0] + .4 * values[1]
 
 
@@ -85,14 +115,18 @@ def main():
     parser.add_argument('--data', default='data/move-planning-v1')
     parser.add_argument('--features', default='data/move-quality-selfplay-v2/features-16.pt')
     parser.add_argument('--explanation-data', help='Also select by complete raw explanation contracts on this validation set')
+    parser.add_argument('--qa-data', help='Also select by balanced raw board QA across all four courses')
+    parser.add_argument('--qa-per-task', type=int, default=12)
     parser.add_argument('--every', type=int, default=2000)
     parser.add_argument('--nodes', type=int, default=1000000)
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--timeout-hours', type=float, default=12)
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
-    if min(args.every, args.nodes, args.workers, args.timeout_hours) <= 0:
+    if min(args.every, args.nodes, args.workers, args.timeout_hours, args.qa_per_task) <= 0:
         raise ValueError('Selection budgets must be positive')
+    if args.explanation_data and args.qa_data:
+        raise ValueError('Choose either explanation or foundation QA selection')
     training, output = Path(args.training), Path(args.output)
     if (output / 'manifest.json').exists():
         raise FileExistsError('Completed selection exists; use a fresh output')
@@ -101,6 +135,8 @@ def main():
     evaluation_inputs = [Path(args.data) / 'validation.jsonl', args.features]
     if args.explanation_data:
         evaluation_inputs.append(Path(args.explanation_data) / 'validation.jsonl')
+    if args.qa_data:
+        evaluation_inputs.append(Path(args.qa_data) / 'validation.jsonl')
     evaluation_hashes = {str(p): digest(p) for p in evaluation_inputs}
     results = json.loads((output / 'progress.json').read_text()) if (output / 'progress.json').exists() else []
     for row in results:
@@ -115,8 +151,13 @@ def main():
             if digest(root / 'explanations/manifest.json') != row['explanation_manifest_sha256']:
                 raise ValueError('Saved explanation candidate evidence changed')
             explanation = read_validation(root / 'explanations', checkpoint)
+        qa = None
+        if args.qa_data:
+            if digest(root / 'qa/manifest.json') != row['qa_manifest_sha256']:
+                raise ValueError('Saved board QA candidate evidence changed')
+            qa = read_validation(root / 'qa', checkpoint)
         if functional_score(read_validation(root / 'moves', checkpoint),
-                            read_validation(root / 'plans', checkpoint), explanation) != row['functional_score']:
+                            read_validation(root / 'plans', checkpoint), explanation, qa) != row['functional_score']:
             raise ValueError('Saved functional score differs from verified evidence')
     seen = {r['step'] for r in results}
     best = max(results, key=lambda r: r['functional_score']) if results else None
@@ -146,10 +187,15 @@ def main():
                 subprocess.run([sys.executable, '-u', '-m', 'xqgeneral.' + module, '--checkpoint', str(checkpoint),
                     '--data', data, '--features', args.features, '--split', 'validation', '--limit', str(limit),
                     '--nodes', str(args.nodes), '--workers', str(args.workers), '--output', str(dest)], check=True)
+        if args.qa_data and not (root / 'qa/manifest.json').exists():
+            subprocess.run([sys.executable, '-u', '-m', 'xqgeneral.evaluate_qa', '--checkpoint', str(checkpoint),
+                '--data', args.qa_data, '--features', args.features, '--split', 'validation',
+                '--per-task', str(args.qa_per_task), '--output', str(root / 'qa')], check=True)
         move, plan = [read_validation(root / name, checkpoint) for name in ['moves', 'plans']]
         explanation = read_validation(root / 'explanations', checkpoint) if args.explanation_data else None
+        qa = read_validation(root / 'qa', checkpoint) if args.qa_data else None
         row = {'step': step, 'checkpoint': str(checkpoint), 'checkpoint_sha256': digest(checkpoint),
-               'functional_score': functional_score(move, plan, explanation),
+               'functional_score': functional_score(move, plan, explanation, qa),
                'raw_move_no_mistake_rate': move['no_mistake_rate'],
                'raw_move_legal_rate': move['legal_rate'], 'raw_plan_contract_valid_rate': plan['contract_valid_rate'],
                'move_manifest_sha256': digest(root / 'moves/manifest.json'),
@@ -159,6 +205,9 @@ def main():
                        raw_explanation_first_move_no_mistake_rate=explanation['first_move_no_mistake_rate'],
                        raw_explanation_pv_legal_rate=explanation['pv_legal_rate'],
                        explanation_manifest_sha256=digest(root / 'explanations/manifest.json'))
+        if qa is not None:
+            row.update(raw_board_qa_accuracy=qa_selection_accuracy(qa), raw_board_qa_by_task=qa['by_task'],
+                       qa_manifest_sha256=digest(root / 'qa/manifest.json'))
         results.append(row); seen.add(step)
         if best is None or row['functional_score'] > best['functional_score']:
             best = row
@@ -193,6 +242,8 @@ def main():
     summary = {'candidates': results, 'selected': best, 'selection_split': 'validation',
                'selection_rule': ('0.4 * raw_move_no_mistake_rate + 0.2 * raw_plan_contract_valid_rate + '
                                   '0.4 * raw_explanation_contract_valid_rate' if args.explanation_data else
+                                  '0.4 * raw_move_no_mistake_rate + 0.2 * raw_plan_contract_valid_rate + '
+                                  '0.4 * raw_board_qa_accuracy' if args.qa_data else
                                   '0.6 * raw_move_no_mistake_rate + 0.4 * raw_plan_contract_valid_rate'),
                'NLL_training_selection_preserved': True, 'independent_test_used': False,
                'strong_play_or_explanation_quality_established': False}

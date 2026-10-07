@@ -1,0 +1,172 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "checkpoint_sha256": "f5d9e1a2e78175c097c48410fb4e965c3acadf72282ee115a1b82468886dd0f9",
+  "raw_generation": true,
+  "oracle_repairs": 0,
+  "selection_split": "validation",
+  "independent_test_used": false,
+  "all_evaluation_output_hashes_read_back": true,
+  "metrics": {
+    "moves": {
+      "examples": 192,
+      "format_valid_rate": 1.0,
+      "legal_rate": 0.8697916666666666,
+      "no_mistake_rate": 0.7708333333333334,
+      "teacher_best_move_exact_rate": 0.328125,
+      "legal_scored_moves": 167,
+      "mean_expected_score_loss_conditional": 0.06452694610778444,
+      "terminal_roots": 0,
+      "original_examples": 96,
+      "color_derived_examples": 96,
+      "raw_generation": true,
+      "oracle_repairs": 0,
+      "score_model": "pinned_Pikafish_material_WDL",
+      "split": "validation",
+      "memory": "normal",
+      "judge_nodes_per_position": 1000000,
+      "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+      "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+      "seconds": 113.64129019901156
+    },
+    "plans": {
+      "examples": 96,
+      "format_valid_rate": 1.0,
+      "full_line_legal_rate": 0.875,
+      "conditional_first_move_matches_rate": 0.4583333333333333,
+      "length_sufficient_rate": 0.0,
+      "contract_valid_rate": 0.0,
+      "line_lengths": {
+        "1": 95,
+        "6": 1
+      },
+      "errors": {
+        "conditional_first_move_mismatch": 52,
+        "illegal_move": 12,
+        "shorter_than_reference_horizon": 84
+      },
+      "quality_plies_attempted": 29,
+      "legal_scored_quality_plies": 27,
+      "quality_ply_no_mistake_rate_all_attempted": 0.7241379310344828,
+      "mean_expected_score_loss_conditional": 0.09112962962962963,
+      "teacher_line_exact_rate": 0.0,
+      "forced_root_excluded_from_quality": true,
+      "full_history_termination_checked": true,
+      "raw_generation": true,
+      "oracle_repairs": 0,
+      "split": "validation",
+      "judge_nodes_per_position": 1000000,
+      "engine_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+      "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29",
+      "seconds": 105.24761717766523
+    },
+    "qa": {
+      "examples": 264,
+      "accuracy": 0.6893939393939394,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 12,
+          "accuracy": 0.16666666666666666
+        },
+        "dynamic_current/checks": {
+          "n": 12,
+          "accuracy": 0.3333333333333333
+        },
+        "dynamic_current/illegal": {
+          "n": 12,
+          "accuracy": 0.75
+        },
+        "dynamic_current/legal": {
+          "n": 12,
+          "accuracy": 0.9166666666666666
+        },
+        "dynamic_current/moves": {
+          "n": 12,
+          "accuracy": 0.4166666666666667
+        },
+        "dynamic_future/captures": {
+          "n": 12,
+          "accuracy": 0.0
+        },
+        "dynamic_future/checks": {
+          "n": 12,
+          "accuracy": 0.5833333333333334
+        },
+        "dynamic_future/illegal": {
+          "n": 12,
+          "accuracy": 0.75
+        },
+        "dynamic_future/legal": {
+          "n": 12,
+          "accuracy": 0.9166666666666666
+        },
+        "dynamic_future/moves": {
+          "n": 12,
+          "accuracy": 0.25
+        },
+        "static_current/count": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_current/empty": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_current/material": {
+          "n": 12,
+          "accuracy": 0.3333333333333333
+        },
+        "static_current/piece": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_future/count": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_future/empty": {
+          "n": 12,
+          "accuracy": 0.9166666666666666
+        },
+        "static_future/locate": {
+          "n": 12,
+          "accuracy": 1.0
+        },
+        "static_future/material": {
+          "n": 12,
+          "accuracy": 0.4166666666666667
+        },
+        "static_future/piece": {
+          "n": 12,
+          "accuracy": 0.8333333333333334
+        },
+        "static_future/rank": {
+          "n": 12,
+          "accuracy": 0.5833333333333334
+        }
+      },
+      "raw_generation": true,
+      "oracle_used": false,
+      "split": "validation",
+      "seconds": 73.62449527811259
+    }
+  },
+  "functional_score": 0.5840909090909091,
+  "selection_rule": "0.4 raw move NMR + 0.2 full plan contract + 0.4 balanced raw board QA",
+  "evaluation_manifest_sha256": {
+    "moves": "94a90a3933f929ab9e1513495103d9dbef9872f5d46f79f2d79bb294bcbf1216",
+    "plans": "ccef01f5d7a0629d93018f315e6b06a60330baee23b84d7c799b4cf63de5ba25",
+    "qa": "16ba1365cfe23c7d852246e1d121feadb205faf2c8b358c854d716fa2c876d04"
+  },
+  "limits": [
+    "Completed warm move parent baseline, not completed new foundation training or selection",
+    "No strong-play, neural-prose or independent-test claim"
+  ]
+}

@@ -3,7 +3,7 @@ import pytest
 import torch
 
 from xqgeneral.evidence import atomic_json, digest, manifest
-from xqgeneral.select_checkpoint import functional_score, read_validation, snapshot_checkpoint
+from xqgeneral.select_checkpoint import functional_score, qa_selection_accuracy, read_validation, snapshot_checkpoint
 
 
 def test_atomic_checkpoint_snapshot_omits_optimizer_and_survives_source_replacement(tmp_path):
@@ -61,3 +61,30 @@ def test_explanation_selection_can_prefer_complete_answers_over_move_only_qualit
                 dict(complete, structured_contract_valid_rate=float('nan'))]:
         with pytest.raises(ValueError):
             functional_score(balanced, plan, bad)
+
+
+def test_foundation_selection_checks_balanced_qa_evidence_and_retains_move_quality():
+    common = {'split': 'validation', 'raw_generation': True, 'oracle_repairs': 0, 'examples': 96}
+    move = {**common, 'no_mistake_rate': .8}
+    plan = {**common, 'contract_valid_rate': .5}
+    groups = {f'{stage}/{task}': {'n': 12, 'accuracy': .9}
+              for stage in ['static_current', 'static_future']
+              for task in ['piece', 'count', 'locate', 'empty', 'material', 'rank']}
+    groups.update({f'{stage}/{task}': {'n': 12, 'accuracy': .9}
+                   for stage in ['dynamic_current', 'dynamic_future']
+                   for task in ['legal', 'illegal', 'moves', 'captures', 'checks']})
+    qa = {'split': 'validation', 'raw_generation': True, 'oracle_used': False,
+          'examples': 264, 'accuracy': .9, 'by_task': groups}
+    assert qa_selection_accuracy(qa) == pytest.approx(.9)
+    assert functional_score(move, plan, qa=qa) == pytest.approx(.78)
+    weaker_qa = dict(qa, accuracy=.5, by_task={k: dict(v, accuracy=.5) for k, v in groups.items()})
+    assert functional_score(move, plan, qa=qa) > functional_score(move, plan, qa=weaker_qa)
+    for bad in [dict(qa, split='test'), dict(qa, oracle_used=True), dict(qa, raw_generation=False),
+                dict(qa, rule_legal_constraints=True), dict(qa, examples=0), dict(qa, accuracy=float('nan')),
+                dict(qa, by_task={k: v for k, v in groups.items() if not k.startswith('dynamic_future/')}),
+                dict(qa, by_task={**groups, 'static_current/piece': {'n': 11, 'accuracy': .9}}),
+                dict(qa, accuracy=.99)]:
+        with pytest.raises(ValueError):
+            functional_score(move, plan, qa=bad)
+    with pytest.raises(ValueError, match='either'):
+        functional_score(move, plan, {**common, 'structured_contract_valid_rate': .8}, qa)
