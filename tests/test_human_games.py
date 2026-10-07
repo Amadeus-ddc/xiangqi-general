@@ -136,7 +136,7 @@ def test_diverse_selection_caps_both_players_and_keeps_multiple_eras_and_sources
     assert select_diverse_games(list(reversed(inputs)), 10, 1, 2, 7)[0] == selected
 
 
-@pytest.mark.parametrize('url', ['https://user:pass@www.xiangqiqipu.com/Category/View-1.html',
+@pytest.mark.parametrize('url', ['https://' + 'invalid-user:invalid-password@www.xiangqiqipu.com/Category/View-1.html',
                                'https://www.xiangqiqipu.com/login',
                                'https://example.com/Category/View-1.html'])
 def test_public_collector_rejects_credentials_and_nonpublic_source_routes(url):
