@@ -1,0 +1,61 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_recorded_roots": 40,
+  "actual_engine_fact_queries": 40,
+  "queries_by_split": {
+    "train": 24,
+    "validation": 8,
+    "test": 8
+  },
+  "queries_by_split_and_side": {
+    "train/w": 12,
+    "train/b": 12,
+    "validation/b": 4,
+    "validation/w": 4,
+    "test/b": 4,
+    "test/w": 4
+  },
+  "queries_by_source_kind": {
+    "published_recorded_match": 25,
+    "recorded_human_match": 15
+  },
+  "actual_engine_candidate_counts": {
+    "3": 37,
+    "1": 1,
+    "2": 2
+  },
+  "recorded_next_move_matches_engine_first_choice": 21,
+  "recorded_move_disagreement_is_not_a_proven_mistake": true,
+  "requested_nodes_per_actual_query": 100000,
+  "rejected_engine_queries": 0,
+  "all_missing_queries_explained_by_reproduced_engine_rejections": true,
+  "all_engine_results_reparsed_from_actual_raw_output": true,
+  "all_verified_board_move_and_line_facts_recomputed": true,
+  "actual_queries_with_native_full_history_forecasts": 40,
+  "native_full_history_forecast_rejected_queries": 0,
+  "original_game_splits_preserved": true,
+  "all_completed_artifacts_freshly_rehashed": true,
+  "selected_query_forecast_split_verification": {
+    "games": {
+      "train": 24,
+      "validation": 8,
+      "test": 8
+    },
+    "roots": {
+      "train": 24,
+      "validation": 8,
+      "test": 8
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "full_current_course_and_prior_data_forecast_isolation_pending": true,
+  "shared_pinned_engine_result_parser_and_native_rules_used": true,
+  "teacher_annotations_generated": false,
+  "recorded_move_optimality_proven": false,
+  "source_metadata_or_participant_identities_authenticated": false,
+  "new_sft_labels_or_training_generated": false,
+  "current_foundation_inputs_changed": false,
+  "manifest_sha256": "7be2e6ad564faac3130fe0888700fe9579badd96e42dc2a2fa010196e1413d38"
+}

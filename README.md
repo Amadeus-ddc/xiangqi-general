@@ -206,7 +206,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024 步正确率为 51.8%／54.0%，最差题型为 16.4%／15.6%，两次均未达标，继续第一门；第二次纠正 64 道、另错 47 道，见 `evidence/recorded-foundation-clean-first-raw-gate.json`、`evidence/recorded-foundation-clean-second-raw-gate.json`。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048 步正确率为 51.8%／54.0%／61.2%／67.4%，最差题型为 16.4%／15.6%／14.1%／21.9%，四次均未达标。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-fourth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -220,7 +220,7 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
-另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。两档案各 64 局的实际串行／四 CPU 结果一致，见 `evidence/bundled-recorded-games-real-fixture-v1.json`；八 CPU 全量导入正在 `runs/additional-recorded-games-native-import-v1/` 执行，新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
+另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。八 CPU 全量生产已完成：81711 个新主线、6246714 个半回合、46826 条重复及 12977 条隔离，见 `evidence/additional-recorded-games-native-import-v1.json`；全部候选的第二入口原生复演正在 `runs/additional-recorded-games-independent-readback-v1/` 执行。此前各 64 局的实际串行／四 CPU 结果仍只是有界检查。新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
 
 ```bash
 python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
@@ -233,7 +233,7 @@ python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
 
 省略 `--limit-records` 才处理全部候选；该选项只供有界执行检查。中断后保留部分产物，在新目录用原固定源码重放，不覆盖旧输出。记录数、重复、署名差异和规则拒收原因以完成清单为准；原始记录及档案不随代码发布。
 
-另一次近期来源收集检查了 910 个实际候选页面，原生导入保留 240 局、18641 个半回合、245 个参赛者名称，源记录年份为 2024—2026。原批次另有 80 局的日期写为 2029 年、赛事却写为 2026 年；这些记录按原文隔离，没有代改日期。独立离线重放、全部保留历史与隔离原因读回已完成；一条原已隔离的重复页面也重归日期异常。见 `evidence/modern-recorded-games-native-import-v2.json`、`evidence/modern-recorded-games-native-readback-v3.json`、`evidence/recorded-source-future-date-audit-v1.json`。新棋谱尚未加入当前课程或与完整档案池去重。重新解析已固定页面时可显式限制来源年份：
+另一次近期来源收集检查了 910 个实际候选页面，原生导入保留 240 局、18641 个半回合、245 个参赛者名称，源记录年份为 2024—2026。原批次另有 80 局的日期写为 2029 年、赛事却写为 2026 年；这些记录按原文隔离，没有代改日期。独立离线重放、全部保留历史与隔离原因读回已完成；一条原已隔离的重复页面也重归日期异常。见 `evidence/modern-recorded-games-native-import-v2.json`、`evidence/modern-recorded-games-native-readback-v3.json`、`evidence/recorded-source-future-date-audit-v1.json`。与完整档案及旧池去重后，这 240 局无额外重复；四来源共 104671 局、8139774 个半回合、约 846MB 棋谱 JSONL，见 `evidence/recorded-dataset-paper-capacity-v2.json`。训练分割的人类／公开实战候选为 83726 局，按论文每局最多六个位置，宽松上限为 502356 个位置，尚不足其七轮互异人类棋局预算；根／变化筛选和真实性检查还会减小容量，新增档案的独立全量复演仍待完成。新棋谱尚未加入当前课程。重新解析已固定页面时可显式限制来源年份：
 
 ```bash
 python scripts/freeze_run.py --output runs/new-recent-reparse/source-run -- \
@@ -287,6 +287,39 @@ python -m xqgeneral.foundation_readback \
 ```
 
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
+
+实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理正在撰写原始正文，检查 `runs/astra-recorded-coach-authoring-v1/plan.json`，不把部分标注当完整 SFT 数据。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
+
+```bash
+python -m xqgeneral.recorded_coach curate \
+  --data data/research-human-engine-v1 \
+  --source-readback runs/recorded-foundation-full-readback-v2/manifest.json \
+  --prior-labels data/astra-explanations-full-v7 --output data/new-coach-roots \
+  --train-roots 3072 --validation-roots 288 --test-roots 384 --workers 8
+python -m xqgeneral.prepare_explanations --data data/new-coach-roots \
+  --output data/new-coach-candidates --train-roots 3072 \
+  --validation-roots 288 --test-roots 384 --workers 8 --nodes 100000
+python -m xqgeneral.recorded_coach_readback \
+  --roots data/new-coach-roots --queries data/new-coach-candidates \
+  --output runs/new-coach-native-readback --workers 8
+python -m xqgeneral.recorded_coach footprints \
+  --data data/research-human-engine-v1 \
+  --source-readback runs/recorded-foundation-full-readback-v2/manifest.json \
+  --prior-labels data/astra-explanations-full-v7 \
+  --output runs/new-coach-footprints --workers 8
+python -m xqgeneral.recorded_coach isolate \
+  --queries data/new-coach-candidates \
+  --query-readback runs/new-coach-native-readback/manifest.json \
+  --footprints runs/new-coach-footprints/manifest.json \
+  --output data/new-coach-seed --workers 8
+python -m xqgeneral.recorded_coach_isolation_readback \
+  --selected data/new-coach-seed --candidates data/new-coach-candidates \
+  --native-readback runs/new-coach-native-readback/manifest.json \
+  --footprints runs/new-coach-footprints/manifest.json \
+  --output runs/new-coach-isolation-readback --workers 8
+```
+
+候选原生审计完成不等于跨分割隔离通过；若配额不足则拒收，不降低隔离标准。颜色对应只作几何保留，未生成镜像标注或重算评分。正文只依据学生可见局面和核验候选，不借未认证的棋手／赛事／实际后续作事实，不把有限搜索分数转换成人类真实胜率。标注仍须逐条语义复核，且四门新课程全部达标后才允许讲解 SFT。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

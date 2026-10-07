@@ -1,0 +1,54 @@
+{
+  "actual_candidate_engine_queries": 3740,
+  "selected_original_teacher_queries": 2496,
+  "by_split": {
+    "test": 256,
+    "train": 2048,
+    "validation": 192
+  },
+  "by_split_and_side": {
+    "test/b": 128,
+    "test/w": 128,
+    "train/b": 1024,
+    "train/w": 1024,
+    "validation/b": 96,
+    "validation/w": 96
+  },
+  "by_source_kind": {
+    "recorded_human_match": 2432,
+    "published_recorded_match": 64
+  },
+  "distinct_normalized_source_participant_labels": 1583,
+  "distinct_source_games": 2496,
+  "maximum_original_roots_per_game": 1,
+  "selection_seed": 20261054,
+  "qualified_candidate_counts": {
+    "train": 3041,
+    "validation": 278,
+    "test": 375
+  },
+  "isolation_quarantine_by_reason": {
+    "reserved_other_split_root_or_forecast": 46,
+    "new_selected_other_split_forecast": 2
+  },
+  "all_source_queries_copied_without_rewriting": true,
+  "all_selected_forecasts_complete_native_history_replayed": true,
+  "all_current_course_and_prior_label_root_and_answer_pv_footprints_protected": true,
+  "new_query_root_and_forecast_game_split_overlap": 0,
+  "color_counterpart_geometry_reserved_but_no_derived_queries_created": true,
+  "game_splits_preserved_before_teacher_annotation": true,
+  "independent_test_used_for_isolation_only_not_checkpoint_or_quality_selection": true,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "teacher_model_contract": "gpt-6-astra",
+  "reasoning_effort_contract": "low",
+  "teacher_backend_contract": "codex_subagent_authorized_by_user",
+  "teacher_annotations_generated": false,
+  "neural_explanation_labels_or_training_generated": false,
+  "source_metadata_or_participant_identities_authenticated": false,
+  "current_foundation_inputs_changed": false,
+  "serial_runtime_and_eight_cpu_portable_full_selected_queries_and_shards_byte_identical": true,
+  "portable_source_manifest_sha256": "831f42f77f4d93dcb345050da6c0459b0a84ebef5c69995838132f050e1a0c09",
+  "runtime_source_manifest_sha256": "82a5f534b16859d57872775a0878e103f6637efaf4a57a2715ed874f647bdefc",
+  "manifest_sha256": "49474a752e5d38bd76b39b77326393a1eeeca9b8f1ee429c031c3a07d67bb375"
+}

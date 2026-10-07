@@ -1,0 +1,38 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_recorded_roots": 40,
+  "by_split": {
+    "train": 24,
+    "validation": 8,
+    "test": 8
+  },
+  "both_sides_balanced": true,
+  "all_original_native_histories_and_recorded_futures_checked": true,
+  "completed_portable_manifest_all_inputs_outputs_freshly_rehashed": true,
+  "output_files": {
+    "train": {
+      "records": 24,
+      "sha256": "4144206aa2d9fb03c10c96a5d3a7e2be692c3ff655ac708c5243eead951be827",
+      "bytes": 139741
+    },
+    "validation": {
+      "records": 8,
+      "sha256": "9d355fbcdf75a8ae950157fa363f7be7b9ca8e8dcc3627880cb73874933f1345",
+      "bytes": 44952
+    },
+    "test": {
+      "records": 8,
+      "sha256": "f7200434e5fa72e4501bd6046eddc6b41eed8943eefc5da36562393398663d6f",
+      "bytes": 50097
+    }
+  },
+  "fixture_is_full_teacher_batch": false,
+  "neural_annotations_or_sft_generated": false,
+  "source_identity_authenticated": false,
+  "current_foundation_inputs_changed": false,
+  "module_sha256": "62dcb4972e7829d51032c6d4082838a9dbfe78dea01d6b5703ef58d86a7b8aa9",
+  "runtime_and_portable_eight_cpu_curator_original_files_byte_identical": true,
+  "verification_description_corrected_from_v1": "Both actual producers used eight workers; serial equivalence is separately covered by module tests, not asserted for these two production artifacts.",
+  "manifest_sha256": "0b2c98d6342998478c8c02400e7fb25863be6779d87f78f32957020eff334d8d"
+}
