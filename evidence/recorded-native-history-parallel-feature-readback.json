@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_recorded_roots": 90,
+  "native_recorded_color_histories": 180,
+  "total_cache_keys": 183,
+  "cpu_history_workers": 4,
+  "actual_gpu_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "native_history_key_order_and_all_16_feature_levels_and_wdl_bitwise_equal_serial_path": true,
+  "bounded_prefetch_chunks_per_worker": 2,
+  "production_or_student_training_complete": false,
+  "readback_manifest_sha256": "0060d9a25385fa5195c08576614742fba2646447a32e3beb27e929459cbae95b"
+}

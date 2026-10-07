@@ -590,14 +590,27 @@ branches are excluded from neural labels. See
 `evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
 This is not a paper-scale seven-iteration corpus or a trained teaching model.
 
+Cross-source canonical deduplication gives 22720 unique mainlines. One identical
+45-ply mainline has conflicting player/event/date attribution between the two
+sources; neither attribution has been independently authenticated. It was not
+selected for the current course corpus and contributes no rule roots. Preserve
+both inputs and do not use disputed attribution as a neural teaching fact. See
+`evidence/recorded-source-metadata-conflict-audit.json`.
+
 A real recorded-course integration fixture selects 45 recent games, 90 original
 roots and 180 roots including color counterparts. It adds 3960 native rule
 questions to three real engine questions and verifies game/root/future isolation
 against all reserved prior training and holdout footprints. It covers one through
 eight recorded future plies, three request variants and all 22 course task groups.
-See `evidence/recorded-curriculum-real-fixture-v1.json`. The separate production
-build targets 6144 diverse games and at most eight original roots per game;
-its full question/cache/token preflight is still pending.
+See `evidence/recorded-curriculum-real-fixture-v1.json`. The complete production
+build selects 6144 diverse games; 6118 contribute 45834 isolated original roots
+and 91668 roots with native color counterparts. It adds 2016696 rule questions
+to 1155116 preserved engine questions, totaling 3171812 records with
+2831004/173272/167536 train/validation/test rows. Production generation verifies
+complete root/future isolation and exact old-file byte prefixes. See
+`evidence/recorded-curriculum-human-engine-full-v1.json`. Augmentation and request
+variants do not increase independent game/root counts. The complete production
+cache/token preflight and independent readback remain prerequisites for training.
 
 The incremental expert cache has a four-GPU real fixture and independent
 recomputation of all eight new histories at all 16 depths, within declared FP16
@@ -608,6 +621,25 @@ waiter remain archived. The corrected cache builder leaves course files and old
 caches unchanged. See `evidence/recorded-expert-cache-extension-real-fixture-v2.json`.
 This proves the extractor/merge path on the fixture, not a complete production
 cache or student improvement.
+
+Bounded, ordered parallel native history preparation was independently exercised
+on 90 actual recorded roots with four GPUs. All 183 merged keys, 16 feature
+layers and WDL values are bitwise identical to the serial real fixture; see
+`evidence/recorded-native-history-parallel-feature-readback.json`. The reusable
+full preflight has also completed on the separate 3963-row/183-key integration
+fixture: 3346 train/validation encodings, 1058 alternate validation requests,
+complete native history/future isolation and 23 native answer checks. See
+`evidence/recorded-foundation-full-preflight-real-fixture-v2.json`. Four legacy
+independent-test terminal probes are preserved and checked by native rules;
+they never enter training, validation sampling or the 22-task course gates.
+
+All 11 actual Qwen base assets, including three untouched weight shards, were
+rehashed against pinned project download ETags at revision
+`cdbee75f17c01a7cc42f958dc650907174af0554`. This readback uses archived pinned
+download metadata, not a new remote identity query; see
+`evidence/recorded-foundation-base-asset-identity.json`. Fresh production training
+waits for full corpus/cache/source readback and the validated GitHub milestone;
+no old trained bridge or SFT weights initialize the new foundation.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and

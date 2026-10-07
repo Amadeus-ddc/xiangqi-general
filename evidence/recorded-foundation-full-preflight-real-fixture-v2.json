@@ -1,0 +1,117 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "total_rule_records": 3963,
+  "records_by_split_stage": {
+    "train/static_current": 769,
+    "train/dynamic_current": 640,
+    "train/static_future": 768,
+    "train/dynamic_future": 640,
+    "validation/static_current": 145,
+    "validation/dynamic_current": 120,
+    "validation/static_future": 144,
+    "validation/dynamic_future": 120,
+    "test/static_current": 169,
+    "test/dynamic_current": 140,
+    "test/static_future": 168,
+    "test/dynamic_future": 140
+  },
+  "records_by_source_kind": {
+    "previous_engine_or_seeded_rules": 3,
+    "published_recorded_match": 3960
+  },
+  "actual_future_horizons": {
+    "7": 154,
+    "2": 440,
+    "3": 396,
+    "4": 66,
+    "8": 198,
+    "6": 286,
+    "5": 88,
+    "1": 352
+  },
+  "train_validation_records_tokenized": 3346,
+  "extra_validation_format_encodings": 1058,
+  "maximum_tokens_by_stage": {
+    "static_current": 110,
+    "dynamic_current": 130,
+    "static_future": 135,
+    "dynamic_future": 153
+  },
+  "source_data_sha256": {
+    "data/recorded-curriculum-fixture-v1/train.jsonl": "bb30e1929a206e7af4b8722d23a8e617594059805251754867d461e909ce1843",
+    "data/recorded-curriculum-fixture-v1/validation.jsonl": "92afd317a72d74117c3e3802af228296b335bc87f2cc1e41e57247bce0530126",
+    "data/recorded-curriculum-fixture-v1/test.jsonl": "0b1beda0aaa89391defe0d8f2907c49148cf23b190bf63ac8dfdbd7b654ca704"
+  },
+  "source_recipe_sha256": "ed143213caede422c86a6097742b3e5a71e8d1a5bfb581bf0e3ad0d6d3821ade",
+  "actual_unique_histories_natively_replayed": 183,
+  "all_question_history_keys_cached": true,
+  "cache_keys": 183,
+  "cache_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "cache_sha256": "2d0110c267cac773593742aac2cc2d7fcdb97a165bd146d343dfa57e0c7177bc",
+  "native_answer_samples": 23,
+  "native_answer_samples_by_source_and_task": {
+    "previous_engine_or_seeded/static_current/piece": 1,
+    "recorded/dynamic_current/captures": 1,
+    "recorded/dynamic_current/checks": 1,
+    "recorded/dynamic_current/illegal": 1,
+    "recorded/dynamic_current/legal": 1,
+    "recorded/dynamic_current/moves": 1,
+    "recorded/dynamic_future/captures": 1,
+    "recorded/dynamic_future/checks": 1,
+    "recorded/dynamic_future/illegal": 1,
+    "recorded/dynamic_future/legal": 1,
+    "recorded/dynamic_future/moves": 1,
+    "recorded/static_current/count": 1,
+    "recorded/static_current/empty": 1,
+    "recorded/static_current/locate": 1,
+    "recorded/static_current/material": 1,
+    "recorded/static_current/piece": 1,
+    "recorded/static_current/rank": 1,
+    "recorded/static_future/count": 1,
+    "recorded/static_future/empty": 1,
+    "recorded/static_future/locate": 1,
+    "recorded/static_future/material": 1,
+    "recorded/static_future/piece": 1,
+    "recorded/static_future/rank": 1
+  },
+  "native_sample_is_not_full_label_accuracy": true,
+  "split_verification": {
+    "games": {
+      "train": 33,
+      "validation": 7,
+      "test": 8
+    },
+    "roots": {
+      "train": 129,
+      "validation": 25,
+      "test": 29
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "previous_engine_file_bytes_preserved_as_prefix": true,
+  "decoder_literal_board_text": null,
+  "fresh_bridge_and_token_initialization_required": true,
+  "independent_test_used_for_training_or_selection": false,
+  "actual_student_training_started": false,
+  "student_improvement_measured": false,
+  "readback_manifest_sha256": "1f7abccd9a44a2e86e23ed5bed5c94582972df9d5610c1c0a1721e88df02ee28"
+}

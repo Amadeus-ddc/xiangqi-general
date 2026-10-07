@@ -1,0 +1,183 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_unique_recorded_games": 22720,
+  "duplicate_source_game_records": 1,
+  "selected_recorded_games_before_root_isolation": 6144,
+  "selected_game_participant_cap": 256,
+  "selected_source_event_group_cap": 128,
+  "event_grouping_is_source_metadata_heuristic": true,
+  "modern_decade_sampling_weight": 3,
+  "selected_games_by_source_kind": {
+    "published_recorded_match": 92,
+    "recorded_computer_match": 22,
+    "recorded_human_computer_match": 21,
+    "recorded_human_match": 6009
+  },
+  "selected_games_by_recorded_year": {
+    "2019": 24,
+    "2021": 48,
+    "2020": 17,
+    "None": 794,
+    "2008": 223,
+    "2006": 164,
+    "2005": 245,
+    "1905": 3,
+    "1919": 1,
+    "1933": 2,
+    "1954": 30,
+    "1952": 27,
+    "1956": 108,
+    "1964": 55,
+    "1960": 41,
+    "1975": 57,
+    "1979": 73,
+    "1978": 72,
+    "1985": 275,
+    "1986": 79,
+    "1989": 61,
+    "1993": 104,
+    "1997": 96,
+    "1996": 48,
+    "2002": 189,
+    "2001": 343,
+    "2007": 165,
+    "2003": 211,
+    "2009": 392,
+    "2004": 282,
+    "2010": 398,
+    "2011": 58,
+    "2013": 7,
+    "2022": 2,
+    "1957": 24,
+    "1962": 38,
+    "1977": 35,
+    "1976": 31,
+    "1984": 94,
+    "1982": 41,
+    "1998": 103,
+    "1990": 76,
+    "1958": 25,
+    "1959": 20,
+    "1961": 6,
+    "1965": 29,
+    "1987": 75,
+    "1992": 80,
+    "2000": 149,
+    "2012": 49,
+    "1955": 32,
+    "1963": 30,
+    "1995": 52,
+    "1974": 19,
+    "1951": 9,
+    "1973": 17,
+    "1991": 84,
+    "1999": 116,
+    "1988": 72,
+    "1983": 51,
+    "1981": 17,
+    "1994": 21,
+    "2023": 1,
+    "1966": 18,
+    "1953": 11,
+    "1950": 9,
+    "1980": 15,
+    "1972": 1
+  },
+  "distinct_normalized_participant_labels": 2675,
+  "participant_identity_independently_verified": false,
+  "games_contributing_isolated_roots_by_split": {
+    "validation": 639,
+    "test": 631,
+    "train": 4848
+  },
+  "original_recorded_roots_by_split": {
+    "validation": 3602,
+    "test": 3558,
+    "train": 38674
+  },
+  "original_root_sides": {
+    "b": 22659,
+    "w": 23175
+  },
+  "original_recorded_roots": 45834,
+  "augmented_recorded_roots": 91668,
+  "maximum_recorded_future_horizon_capacity": {
+    "8": 40647,
+    "5": 670,
+    "6": 690,
+    "1": 878,
+    "7": 659,
+    "3": 807,
+    "2": 759,
+    "4": 724
+  },
+  "actual_future_question_horizons": {
+    "1": 158598,
+    "2": 136488,
+    "8": 111078,
+    "5": 119746,
+    "3": 133320,
+    "6": 114906,
+    "4": 120978,
+    "7": 113234
+  },
+  "question_formats": {
+    "0": 672700,
+    "2": 671032,
+    "1": 672964
+  },
+  "base_engine_question_counts": {
+    "train": 1129348,
+    "validation": 14784,
+    "test": 10984
+  },
+  "added_recorded_question_counts": {
+    "validation": 158488,
+    "test": 156552,
+    "train": 1701656
+  },
+  "added_recorded_questions": 2016696,
+  "counts": {
+    "train": 2831004,
+    "validation": 173272,
+    "test": 167536
+  },
+  "stages": {
+    "static_current": 550008,
+    "dynamic_current": 458340,
+    "static_future": 550008,
+    "dynamic_future": 458340
+  },
+  "root_or_future_exclusions": {
+    "heldout_root_or_recorded_future": 57787,
+    "duplicate_full_history_root": 1147,
+    "new_heldout_overlaps_prior_training": 21
+  },
+  "diversity_exclusions": {
+    "participant_cap": 1145
+  },
+  "new_human_validation_test_overlap_prior_training": 0,
+  "game_split_assigned_before_questions": true,
+  "split_verification": {
+    "games": {
+      "train": 5538,
+      "validation": 663,
+      "test": 649
+    },
+    "roots": {
+      "train": 126150,
+      "validation": 7876,
+      "test": 7616
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "base_file_bytes_preserved_as_prefixes": true,
+  "old_experiments_modified": false,
+  "recorded_moves_used_as_best_move_labels": false,
+  "site_prose_used_as_neural_labels": false,
+  "feature_cache_and_token_preflight_complete": false,
+  "new_curriculum_training_executed": false,
+  "manifest_sha256": "d1ed1d46b2cff8c170e31535f25e49b909964e9999f8befc709bb222f6bbcf2a"
+}

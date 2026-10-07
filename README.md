@@ -218,7 +218,7 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
-规则课程从实际记录的 1—8 步后续变化出题，保留完整历史和原棋局身份。先隔离此前所有训练／保留局面及未来分支，再合并旧引擎题，新文件保留旧文件的逐字节前缀。正式数据计划使用 6144 局、每局最多 8 根；实际小规模执行证据见 `evidence/recorded-curriculum-real-fixture-v1.json`，完整生产仍在准备。
+规则课程从实际记录的 1—8 步后续变化出题，保留完整历史和原棋局身份。先隔离此前所有训练／保留局面及未来分支，再合并旧引擎题，新文件保留旧文件的逐字节前缀。完整生产已从选择的 6144 局隔离出 45834 个原始根，新增 2016696 条规则题；合计 3171812 条，训练／验证／测试为 2831004／173272／167536。见 `evidence/recorded-curriculum-human-engine-full-v1.json`；真实小规模执行证据单独保留。两来源去重共 22720 局，一份主线的棋手／赛事声明有冲突且未入选，不能据合法性认定姓名真实。
 
 ```bash
 python -m xqgeneral.recorded_curriculum \
@@ -231,12 +231,23 @@ python -m xqgeneral.recorded_curriculum \
 python -m xqgeneral.extend_features \
   --roots data/new-recorded-engine-courses/recorded-roots.jsonl \
   --runtime runs/new-recorded-feature-extension \
-  --output data/new-recorded-engine-courses/features-16.pt --gpu-indices 0 1 2 3
+  --output data/new-recorded-engine-courses/features-16.pt --gpu-indices 0 1 2 3 \
+  --history-workers 16
 ```
 
-特征扩展核验旧专家权重及编码器身份、原缓存哈希、分片键互斥、旧键及数值逐位保留，颜色镜像按原生完整着法回放以保持正确历史键；课程文件不会被缓存程序改写。真实四 GPU 小样本及专家重新计算见 `evidence/recorded-expert-cache-extension-real-fixture-v2.json`。
+特征扩展核验旧专家权重及编码器身份、原缓存哈希、分片键互斥、旧键及数值逐位保留，颜色镜像按原生完整着法回放以保持正确历史键；课程文件不会被缓存程序改写。真实四 GPU 小样本及专家重新计算见 `evidence/recorded-expert-cache-extension-real-fixture-v2.json`。CPU 历史准备保序、有界并行，真实 183 键缓存与串行结果逐位相同，见 `evidence/recorded-native-history-parallel-feature-readback.json`。
 
-长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备的命令与检查方式在 `runs/recorded-curriculum-full-v1/plan.json`，新缓存任务在 `runs/recorded-expert-cache-full-v2/plan.json`。中断保留输出、另建目录；生产数据、词元、完整历史与特征缓存预检通过后才能启动正式课程。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
+全量预检逐条核验数据哈希、特征键及任务合同，编码全部训练／验证及两种验收改写，原生复演所有唯一根历史、抽样重算两来源全部题型答案，并重新检查全部未来隔离和旧引擎文件字节前缀。四条历史独立测试终局探针保留，不能混入训练／验证。真实 3963 条执行检查已完成，见 `evidence/recorded-foundation-full-preflight-real-fixture-v2.json`；生产预检完成状态见 `STATUS.md`。使用新输出目录执行：
+
+```bash
+python -m xqgeneral.foundation_preflight \
+  --config configs/foundation-human-engine-clean-v2.json \
+  --output runs/new-recorded-foundation-preflight --workers 16 \
+  --answer-samples-per-task 32 \
+  --public-evidence evidence/new-recorded-foundation-training-ready.json
+```
+
+长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

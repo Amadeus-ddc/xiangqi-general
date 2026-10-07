@@ -1,0 +1,57 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "cross_source_duplicate_canonical_records": 1,
+  "metadata_conflicts": [
+    {
+      "game_id": "recorded-17eae5cf71f50f5dbc1e8b540df551360dc2bcba000b77cdc06842499fc38788",
+      "canonical_plies": 45,
+      "moves_and_initial_fen_identical": true,
+      "source_metadata": [
+        {
+          "headers": {
+            "Event": "巨豐杯第三屆全國象棋大師冠軍賽 第三輪 北京張強先和河北閻文清",
+            "Date": "2000年4月13日",
+            "Red": "北京張強",
+            "Black": "河北閻文清",
+            "Result": "1/2-1/2"
+          },
+          "source": {
+            "repository": "Yvonne761/Chinese-Chess-Practical-Dataset",
+            "revision": "368a47a947773dd8692c026e286dd19b6277b993",
+            "paths": [
+              "Dataset/對局/大師對局/以賽事分類/各地杯賽/00004734.pgn"
+            ],
+            "blob_sha1": "5d4c2a42d3564a8eb89b4abca94814e6fa377a06",
+            "content_sha256": "96c065f6179563cd076e4194801366be9fd911899f0b43b55b07ac28877e4b56",
+            "declared_license": "CC-BY-4.0",
+            "category": "recorded_human_match",
+            "source_authenticity_independently_proven": false
+          }
+        },
+        {
+          "headers": {
+            "Event": "2019年第八届“碧桂园杯”全国象棋冠军邀请赛",
+            "Date": "2019-??-??",
+            "Red": "徐天红",
+            "Black": "汪洋",
+            "Result": "1/2-1/2"
+          },
+          "source": {
+            "url": "https://www.xiangqiqipu.com/Category/View-23161.html",
+            "content_sha256": "2084a37da27b6f41fce40601db49b3675ac12d7808a547da8c5ca53f87b50f07",
+            "declared_license": "unspecified",
+            "public_redistribution_permission_established": false,
+            "source_authenticity_independently_proven": false
+          }
+        }
+      ],
+      "selected_in_current_corpus": false,
+      "original_rule_roots": 0
+    }
+  ],
+  "source_metadata_independently_authenticated": false,
+  "matching_legal_mainline_is_not_proof_of_players_or_event": true,
+  "policy": "Preserve both source inputs; canonical split deduplicates identical full mainlines. Do not use disputed player/date/event attribution as neural teaching facts. Native rule labels remain board-grounded; no source move is assumed optimal.",
+  "manifest_sha256": "799e14dbe81c49abcadfa4578e0bc28744fd8af8ee88282275d8671762a29bdc"
+}
