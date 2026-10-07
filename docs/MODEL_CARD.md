@@ -196,6 +196,17 @@ All exact rejection, ancestry and final-acceptance hashes were verified. The
 bundle preserves originals and has not changed the current training dataset;
 this prefix does not estimate an overall error rate or complete the 5510-item
 review. Further repair and review remain separate from student-quality evidence.
+A further nonoverlapping 1280-item reviewed range is resolved: 1212 unchanged
+texts and 68 genuine revisions independently accepted. Both bundles verify
+exact ancestry and final acceptance for 1812 items in total. Source training
+labels remain unchanged; full review and measured student benefit are pending.
+
+The early-initialization planning run at step 4000 has 177/192 legal raw moves,
+152/192 non-mistake moves and 21/96 complete planning contracts, compared with
+158/141/10 at step 2000. Its two-capability score rises from 0.4823 to 0.5625.
+Weights and raw outputs were verified; 74 plans remain illegal and one continues
+after a full-history terminal position. This is interim validation without
+final selection, game strength or prose-semantic evidence.
 
 The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
 raw moves, 9/96 complete planning contracts and only 2/96 complete explanation

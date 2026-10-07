@@ -1,0 +1,21 @@
+{
+  "resolved_reviewed_prefix_items": 1280,
+  "accepted_unchanged_prose": 1212,
+  "corrected_and_independently_accepted_prose": 68,
+  "first_revision_acceptances": 68,
+  "originals_and_all_rejections_preserved": true,
+  "source_labels_modified": false,
+  "overlap_with_previous_532_resolved_items": 0,
+  "full_old_prose_review_complete": false,
+  "whole_dataset_error_rate_estimated": false,
+  "neural_review_not_human_rating": true,
+  "human_rating": false,
+  "test_used": false,
+  "student_training_benefit_measured": false,
+  "reviewer_agent": "/root/astra_full_reviewer_1",
+  "correction_author_agent": "/root/astra_full_reviewer_0",
+  "model_identity_evidence": "explicit Astra Low subagent configuration; no independent backend attestation",
+  "evidence_state": "reconstructed_baseline",
+  "all_revision_ancestries_and_exact_acceptances_verified": true,
+  "bundle_manifest_sha256": "ea0e5e65acfb6d87a4568f01bc965c327aa8080524d611ca4ec7acd5393d9def"
+}
