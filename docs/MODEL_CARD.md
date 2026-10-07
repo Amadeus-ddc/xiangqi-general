@@ -688,6 +688,32 @@ run. SFT remains conditional on all four new course gates. Explanations must not
 use unauthenticated player/event metadata or hidden recorded futures as facts,
 nor turn finite search scores into actual human win probabilities.
 
+The portable footprint interface has now executed on all 3171812 course rows
+and 9158 prior explanation labels. Its complete game/root/forecast sets are
+byte-identical to the preserved original run, including both recorded futures
+and structured-answer PVs. All twelve declared artifacts were freshly rehashed
+after completion; see `evidence/recorded-coach-portable-full-footprints-v1.json`.
+This does not repeat complete-history terminal adjudication or load/recompute
+the full expert feature cache.
+
+`recorded_coach_prose` freezes only complete authored shards bound to the original
+query-isolation audit. Neural decisions bind exact annotation/packet hashes and
+require a reviewer distinct from that annotation's author. Rejected revisions
+must retain their exact rejected ancestry and receive independent acceptance;
+conflicting verdicts cannot directly pass. Collection requires accepted coverage
+of the entire original query batch, preserving game splits, histories, recorded
+futures and all structured-answer continuations without mirrored labels or
+student training. Fifteen focused contract tests pass. Actual preparation of
+four genuine existing Astra annotations produces identical serial/four-CPU
+review packets and refuses unreviewed prose and an incomplete full-batch shard.
+See `evidence/recorded-coach-prose-real-preparation-v2.json`. A failed runtime
+driver without a spawn main guard is preserved; its native four-query isolation
+observer completed, and a corrected fresh driver then passed preparation.
+The full 2496-item authoring, independent semantic review and label collection
+are still incomplete. Contract checks and these four preparation examples do
+not establish corpus-wide teaching quality, backend identity attestation, human
+ratings, student benefit or any completed SFT/distillation round.
+
 The original two-source canonical deduplication gives 22720 unique mainlines. One identical
 45-ply mainline has conflicting player/event/date attribution between the two
 sources; neither attribution has been independently authenticated. It was not

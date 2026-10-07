@@ -321,6 +321,32 @@ python -m xqgeneral.recorded_coach_isolation_readback \
 
 候选原生审计完成不等于跨分割隔离通过；若配额不足则拒收，不降低隔离标准。颜色对应只作几何保留，未生成镜像标注或重算评分。正文只依据学生可见局面和核验候选，不借未认证的棋手／赛事／实际后续作事实，不把有限搜索分数转换成人类真实胜率。标注仍须逐条语义复核，且四门新课程全部达标后才允许讲解 SFT。
 
+可复用足迹入口另已实际处理全部 3171812 条课程及 9158 条旧讲解，与原流程的完整足迹文件逐字节一致，见 `evidence/recorded-coach-portable-full-footprints-v1.json`。作者完成一片后，可用 `recorded_coach_prose prepare --shard N` 冻结该片的复核输入；省略 `--shard` 要求三片全部完成。它核验作者进度、原查询及隔离证明，加入变化每步的前后棋盘，隐藏未认证的姓名／赛事／日期和实际棋谱后续。4 条真实标注的单／四 CPU 复核包对照及实际拒收检查见 `evidence/recorded-coach-prose-real-preparation-v2.json`，不能据此宣称全批已复核。
+
+```bash
+python -m xqgeneral.recorded_coach_prose prepare \
+  --queries data/astra-recorded-coach-seed-portable-v1 \
+  --isolation runs/recorded-coach-selected-query-independent-readback-v2/readback/manifest.json \
+  --author-plan runs/astra-recorded-coach-authoring-v1/plan.json \
+  --output data/new-recorded-coach-prose-review --workers 8
+python -m xqgeneral.recorded_coach_prose resolve \
+  --prepared data/new-recorded-coach-prose-review \
+  --reviews data/new-recorded-coach-prose-review/review-0.json \
+    data/new-recorded-coach-prose-review/review-1.json \
+    data/new-recorded-coach-prose-review/review-2.json \
+  --output data/new-recorded-coach-prose-resolved
+python -m xqgeneral.recorded_coach_prose collect \
+  --queries data/astra-recorded-coach-seed-portable-v1 \
+  --isolation runs/recorded-coach-selected-query-independent-readback-v2/readback/manifest.json \
+  --author-plan runs/astra-recorded-coach-authoring-v1/plan.json \
+  --reviews data/new-recorded-coach-prose-resolved \
+  --output data/new-reviewed-recorded-coach-labels --workers 8
+```
+
+审查 JSON 记录 `reviewer_model`、`reasoning_effort`、`backend`、`reviewer_agent`、`input_packet_sha256`、`human_rating: false`、`source_labels_modified: false` 及 `results`。每条决定包含 `id`、`reviewed_annotation_sha256`、`verdict`、具体中文 `reason` 和 `issues`；接受项不能残留问题，逐条审查者不能是该正文作者。继续审查可以保留多个决定文件，但同一正文的接受／拒收冲突不能被忽略。
+
+拒收后由已授权教师真实修订，另存与原包棋盘／事实完全相同的修订包，仅替换 `teacher_annotation`、其哈希和真实作者身份。新标注含 `corrected_from_annotation_sha256` 与 `correction_review_sha256`，绑定准确被拒原文及拒收文件；修订仍须由另一位审查者接受。把修订包加入 `resolve --repair-packets FILE...`，并把原决定及修订决定都传入 `--reviews`。收集会重新核验完整接受链及整个原查询批次，保留原始分割和全部未来变化。任何未完成、未复核或被篡改的输入均拒收；这些入口只准备数据，SFT 仍须等待四门课程达标。
+
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
 `configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。 两个规划训练与最终选模已完成并读回；v1 选择第 10000 步，v2 选择第 11500 步，完整规划合同分别为 33/96 和 37/96，见 `evidence/move-planning-completed-readback-v1.json`。这些指标不证明完整棋力或可靠正文。
