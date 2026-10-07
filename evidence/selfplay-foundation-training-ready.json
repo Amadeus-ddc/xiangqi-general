@@ -1,0 +1,30 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 74740,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "all_feature_keys_available": true,
+  "train_validation_tokens_checked": 799424,
+  "maximum_tokens_by_stage": {
+    "static_current": 485,
+    "dynamic_current": 495,
+    "static_future": 514,
+    "dynamic_future": 521,
+    "move_quality": 443,
+    "move_planning": 472
+  },
+  "token_limit": 768,
+  "recipe_sha256": "bc5a7bff6fc75812260db259d800523ccab1626dd3ef04b4469ccddadf13c21a",
+  "heldout_rule_files_byte_unchanged": true,
+  "independent_test_used_for_training_or_selection": false,
+  "student_improvement_measured": false,
+  "evidence_state": "reconstructed_baseline"
+}

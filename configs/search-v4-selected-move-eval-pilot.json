@@ -1,0 +1,19 @@
+{
+  "checkpoint": "runs/search-v4-selected-move-eval-v1/initialization/adapter.pt",
+  "selected_step": 9216,
+  "checkpoint_sha256": "f91898a7533778f982c4617e4848b0dc1c7286c6650fca976eec68aa82671368",
+  "training_roots": "data/astra-selfplay-seed-v3/train.queries.jsonl",
+  "root_labels": "data/astra-explanations-full-v7",
+  "reserved_data": ["data/research-balanced-v1", "data/move-planning-selfplay-v3", "data/astra-explanations-full-v7"],
+  "prepared_data": "data/search-v4-selected-move-eval-roots-v1",
+  "feature_path": "data/move-quality-selfplay-v3/features-16.pt",
+  "child_contract": "move_eval",
+  "limit": 64,
+  "nodes": 100000,
+  "max_depth": 5,
+  "seed": 20261043,
+  "output": "runs/search-v4-selected-move-eval-v1",
+  "consolidated_output": "data/search-v4-selected-move-eval-consolidated-v1",
+  "teacher_max_new_tokens": 1536,
+  "purpose": "Train-only pilot on the completed formal capability-selected model; raw move/evaluation child acceptance, native validation of every used target line, and conditional real full-BF16 neural consolidation. Multiple differences from older pilots prevent attributing yield to the child predicate alone."
+}

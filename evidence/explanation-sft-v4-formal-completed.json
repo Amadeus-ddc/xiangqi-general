@@ -1,0 +1,27 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "steps_completed": 9216,
+  "nll_selected_step": 6144,
+  "selected_checkpoint_sha256": "c94dcb43d50ad67aae91f8d8124b75da2b53a369b04fe178bac74c8891647275",
+  "latest_checkpoint_sha256": "f5745d5903e5b7883c6a1f05f6c91cf85bd2657a00528aca4e822db573cf3a79",
+  "training_manifest_sha256": "9f0dd0b7e94adb7a3602cdbcea03559416abed47756b86a19432a5790d3f60f2",
+  "actual_fp32_trainable_parameters": 4162388512,
+  "all_step_records_and_input_output_hashes_read_back": true,
+  "original_frozen_execution_source_read_back": true,
+  "initial_validation_nll": 10.696363118235352,
+  "final_validation_nll": 0.5235772123645085,
+  "actual_decoder_probe_change_against_official_base": 0.00031025265343487263,
+  "supervised_tokens_seen": 9640198,
+  "global_batch_size": 4,
+  "training_loss_normalization": "example",
+  "world_size": 1,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coach_proven": false,
+  "limits": [
+    "Completed formal experiment retains its original v2 explanation inputs",
+    "Loss selection is separate from raw validation capability selection",
+    "Completion does not establish reliable prose, match strength, or independent-test accuracy"
+  ],
+  "readback_manifest_sha256": "35a4140133a88c66c21ae51e185367cede6e7ab0c776e9ad69c650cafab88b11"
+}
