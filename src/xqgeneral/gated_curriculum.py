@@ -30,6 +30,8 @@ def validate_recipe(recipe):
     world = recipe.get('ddp_world_size', 1)
     if type(recipe.get('ddp_find_unused_parameters', False)) is not bool:
         raise ValueError('ddp_find_unused_parameters must be a boolean')
+    if type(recipe.get('feature_cache_mmap', False)) is not bool:
+        raise ValueError('feature_cache_mmap must be a boolean')
     if (type(world) is not int or world < 1 or type(recipe['batch_size']) is not int or
             recipe['batch_size'] < 1 or recipe['batch_size'] % world):
         raise ValueError('Global batch size must be divisible by the positive DDP world size')

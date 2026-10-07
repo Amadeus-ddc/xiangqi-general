@@ -555,31 +555,59 @@ The paper's SC, DC, SF and DF sequence is itself bridge adaptation; there is no
 separately trained, course-free bridge checkpoint. All four raw QA gates must
 pass in order before explanation SFT inherits the final course weights. Data
 collection and annotation may precede this dependency. The production recipe is
-`configs/foundation-human-engine-clean-v1.json` and still awaits complete new-data
-preflight. A real four-H20 fixture with global batch 256/microbatch 4 verifies
+`configs/foundation-human-engine-clean-v2.json` and still awaits complete new-data
+preflight. The decoder receives no literal FEN or 90-square dictionary: the board
+is read through expert memory. Earlier dictionary recipes remain separate
+comparisons. A real four-H20 fixture with global batch 256/microbatch 4 verifies
 139920416 FP32 trainable parameters, frozen decoder, nonzero gradients, and
 bitwise equality of continuous four-step versus 2+2 resumed weights, optimizer,
 RNG states and step logs. It enables `ddp_find_unused_parameters` to keep the
 same-world reduction contract stable; switching this flag on resume is rejected.
-See `evidence/four-gpu-clean-foundation-resume.json`. Earlier failed fixtures are
-preserved; the four-update check does not prove learned foundation skills.
+Mapped cache loading and streamed JSONL loading also preserve exact numerical
+results against their earlier materialized-loading fixtures. Inference honors
+the same cache setting. See `evidence/four-gpu-clean-latent-streamed-resume-v2.json`
+and `evidence/four-gpu-clean-foundation-mmap-resume.json`. Earlier failed fixtures
+are preserved; the four-update check does not prove learned foundation skills.
 
 Source-verified recorded games are being added for coaching-relevant positions,
 without assuming recorded moves are optimal or source metadata is authentic.
-The initial native-verified set contains 512 unique games and 43612 recorded
-plies, with splits assigned before generating questions. The pinned CCPD tree
+The complete CCPD import contains 22628 canonical unique games and 1867475
+recorded plies: 22585 source-declared human, 22 computer and 21 human-computer
+matches. Its pre-question game splits contain 18068/2286/2274 games. See
+`evidence/recorded-games-ccpd-native-import-v3.json`; the initial 512-game import
+is a preserved historical subset. The pinned CCPD tree
 has 53685 human-category PGN files, 167 computer-category files and 41
 human-computer files before deduplication; duplicate files are not unique games.
-The broader all-player import still runs. A bounded recent collection has completed
+A bounded recent collection has completed
 93 games and 6989 plies from 2019--2023 with 18 participant labels; see
 `evidence/recent-recorded-games-native-import-v2.json`. Its original 46 accepted
 lines are preserved, and a confirmed source draw enum accounts for the expansion;
-source moves/results were not repaired. Participant/team aliases, both-player caps, exact-event
-caps, source kind, decade and result are used in later sampling; label counts
+source moves/results were not repaired. Participant/team aliases, both-player caps,
+source event-group caps, source kind, decade and result are used in later sampling;
+event grouping is a metadata heuristic and label counts
 are not independently verified person counts. Original prose and website analysis
 branches are excluded from neural labels. See
 `evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
 This is not a paper-scale seven-iteration corpus or a trained teaching model.
+
+A real recorded-course integration fixture selects 45 recent games, 90 original
+roots and 180 roots including color counterparts. It adds 3960 native rule
+questions to three real engine questions and verifies game/root/future isolation
+against all reserved prior training and holdout footprints. It covers one through
+eight recorded future plies, three request variants and all 22 course task groups.
+See `evidence/recorded-curriculum-real-fixture-v1.json`. The separate production
+build targets 6144 diverse games and at most eight original roots per game;
+its full question/cache/token preflight is still pending.
+
+The incremental expert cache has a four-GPU real fixture and independent
+recomputation of all eight new histories at all 16 depths, within declared FP16
+storage tolerances. Three real old-cache cutouts remain bitwise identical. Color
+counterparts use native replay: naïve per-FEN mirrors have different fullmove
+counters and full-history keys. The first failing fixture and stopped production
+waiter remain archived. The corrected cache builder leaves course files and old
+caches unchanged. See `evidence/recorded-expert-cache-extension-real-fixture-v2.json`.
+This proves the extractor/merge path on the fixture, not a complete production
+cache or student improvement.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and

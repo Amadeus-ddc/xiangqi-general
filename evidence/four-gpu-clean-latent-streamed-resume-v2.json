@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_gpu_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "world_size": 4,
+  "feature_cache_mmap": true,
+  "decoder_board_text": null,
+  "board_state_is_expert_memory_only": true,
+  "ddp_find_unused_parameters": true,
+  "steps": 4,
+  "interruption_step": 2,
+  "global_batch_size": 256,
+  "micro_batch_size": 4,
+  "loss_normalization": "example",
+  "course_or_sft_checkpoint_loaded": false,
+  "fresh_bridge_and_board_token_initialization": true,
+  "trainable_parameters": 139920416,
+  "trainable_tensors": 258,
+  "fp32_trainable_parameters": true,
+  "same_world_weights_optimizer_random_states_and_step_logs_bitwise_equal": true,
+  "frozen_decoder_and_nonzero_gradients_verified": true,
+  "supervised_tokens": 5788,
+  "fixture_rows": {
+    "train": 24,
+    "validation": 12
+  },
+  "feature_keys": 6,
+  "streamed_jsonl_loading": true,
+  "streamed_vs_previous_materialized_loading_bitwise_equal": true,
+  "human_game_data_used_in_this_fixture": false,
+  "independent_test_used": false,
+  "full_curriculum_or_student_improvement_proven": false,
+  "initial_validation_nll": 7.637236324516502,
+  "final_validation_nll": 3.6246525242521956,
+  "readback_manifest_sha256": "446e1d3d5dc346b6665a55d9537ccd6cd5af93ee67d0a89f23724525de1b877c"
+}

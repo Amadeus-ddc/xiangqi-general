@@ -13,7 +13,10 @@ class Predictor:
         torch.set_num_threads(4)
         self.device = device
         self.model, self.tokenizer, self.config = load_checkpoint(checkpoint, device)
-        self.cache = torch.load(feature_cache, map_location='cpu', weights_only=True) if feature_cache else None
+        cache_mmap = self.config.get('feature_cache_mmap', False)
+        if type(cache_mmap) is not bool:
+            raise ValueError('feature_cache_mmap must be a boolean')
+        self.cache = torch.load(feature_cache, map_location='cpu', weights_only=True, mmap=cache_mmap) if feature_cache else None
         self.indices = {k: i for i, k in enumerate(self.cache['keys'])} if self.cache else {}
         self.expert = FrozenPx0(weights).to(device) if self.config.get('mode', 'bridge') == 'bridge' else None
 

@@ -1,0 +1,178 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_revision": "368a47a947773dd8692c026e286dd19b6277b993",
+  "declared_source_license": "CC-BY-4.0",
+  "candidate_games_natively_examined": 37461,
+  "retained_unique_recorded_games": 22628,
+  "quarantined_games": 3462,
+  "duplicate_games": 11371,
+  "valid_games_omitted_for_retained_budget": 0,
+  "games_by_split": {
+    "validation": 2286,
+    "train": 18068,
+    "test": 2274
+  },
+  "distinct_normalized_participant_labels": 4749,
+  "participant_identity_independently_verified": false,
+  "games_by_source_kind": {
+    "recorded_human_match": 22585,
+    "recorded_computer_match": 22,
+    "recorded_human_computer_match": 21
+  },
+  "games_by_year": {
+    "2013": 7,
+    "2012": 52,
+    "2011": 68,
+    "2010": 408,
+    "2009": 1084,
+    "2008": 568,
+    "2007": 475,
+    "2006": 489,
+    "2005": 669,
+    "2004": 803,
+    "2003": 597,
+    "2002": 637,
+    "2001": 1023,
+    "2000": 467,
+    "1999": 829,
+    "1998": 716,
+    "1997": 785,
+    "1996": 462,
+    "1995": 468,
+    "1994": 248,
+    "1993": 796,
+    "1992": 533,
+    "1991": 597,
+    "1990": 565,
+    "1989": 270,
+    "1988": 244,
+    "1987": 263,
+    "1986": 292,
+    "1985": 794,
+    "1984": 338,
+    "1983": 196,
+    "1982": 191,
+    "1981": 121,
+    "1980": 78,
+    "1979": 91,
+    "1978": 86,
+    "1977": 50,
+    "1976": 40,
+    "1975": 65,
+    "1974": 22,
+    "1973": 25,
+    "1972": 2,
+    "1966": 23,
+    "1965": 31,
+    "1964": 62,
+    "1963": 32,
+    "1962": 45,
+    "1961": 8,
+    "1960": 49,
+    "1959": 20,
+    "1958": 25,
+    "1957": 25,
+    "1956": 111,
+    "1955": 38,
+    "1954": 32,
+    "1953": 11,
+    "1952": 28,
+    "1951": 9,
+    "1950": 9,
+    "1933": 2,
+    "1919": 1,
+    "1905": 3,
+    "None": 5550
+  },
+  "recorded_plies": 1867475,
+  "all_retained_moves_native_legal": true,
+  "full_history_terminal_checks_passed": true,
+  "game_split_assigned_before_questions": true,
+  "human_move_optimality_proven": false,
+  "source_authenticity_independently_proven": false,
+  "training_data_or_neural_labels_generated": false,
+  "participant_label_top_20": [
+    [
+      "许银川",
+      1180
+    ],
+    [
+      "吕钦",
+      1146
+    ],
+    [
+      "胡荣华",
+      997
+    ],
+    [
+      "赵国荣",
+      846
+    ],
+    [
+      "上海胡荣华",
+      757
+    ],
+    [
+      "广东吕钦",
+      731
+    ],
+    [
+      "李来群",
+      626
+    ],
+    [
+      "柳大华",
+      593
+    ],
+    [
+      "黑龙江赵国荣",
+      507
+    ],
+    [
+      "徐天红",
+      470
+    ],
+    [
+      "陶汉明",
+      387
+    ],
+    [
+      "广东许银川",
+      377
+    ],
+    [
+      "湖北柳大华",
+      377
+    ],
+    [
+      "河北李来群",
+      362
+    ],
+    [
+      "于幼华",
+      332
+    ],
+    [
+      "江蘇徐天红",
+      327
+    ],
+    [
+      "洪智",
+      296
+    ],
+    [
+      "杨官璘",
+      284
+    ],
+    [
+      "刘殿中",
+      273
+    ],
+    [
+      "卜凤波",
+      226
+    ]
+  ],
+  "manifest_sha256": "ffc5d10ec475ccec271bf68d5800804ed4d582c3f7bba2cc3a7aa4735a17462f"
+}

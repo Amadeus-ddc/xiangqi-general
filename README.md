@@ -190,21 +190,21 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 原 `configs/selfplay-foundation-v3.json` 混合补训等待任务已在开始训练前保留并撤换。其 811684 条混合记录及 799424 条训练／验证编码的预检证据仍保留，不能覆盖新扩充数据。课程训练量复核见 `evidence/paper-foundation-volume-audit.json`：本地旧四门实际共 5750 步、92000 次样本呈现；论文配置上限为 240000 步、有效批量 256，且允许早停，不能当成全部实际完成步数或独立样本数。
 
-主线现在改为 `configs/foundation-human-engine-clean-v1.json`：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备。
+主线现在改为 `configs/foundation-human-engine-clean-v2.json`：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。解码器不再直接读取完整 FEN 或 90 格字典，棋盘状态通过专家特征进入桥接。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备；旧字典配方保留作对照。
 
 旧 v4 继承旧四门权重，首门实际更新 210 步后按用户要求停止，未到首次问答验收；原数据、源码、特征和日志保留。其 1155116 条规则题的完整历史、未来隔离、特征及原生答案抽样已再次读回，见 `evidence/foundation-curriculum-v4-training-readback.json`。这些引擎来源题将与经过规则检查的多样真实棋谱合并，合并后重新预检，不改写旧实验输入。
 
 新训练计划使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。正式启动须等待新增棋谱、全部未来分割、词元与特征缓存预检完成。
 
-四卡新初始化的连续四步与二加二恢复已经逐位核验，见 `evidence/four-gpu-clean-foundation-resume.json`。该配置使用 `ddp_find_unused_parameters: true` 保持同卡恢复的归约合同；切换这个设置不能恢复旧优化器。可用以下命令复查真实训练输出；这是执行检查，未完成课程：
+四卡无棋盘字典的新初始化、映射缓存及逐行数据读取，连续四步与二加二恢复已经逐位核验，见 `evidence/four-gpu-clean-latent-streamed-resume-v2.json`。该配置使用 `ddp_find_unused_parameters: true` 保持同卡恢复的归约合同；切换这个设置或 `feature_cache_mmap` 不能恢复旧优化器。逐行读取保留全部源字段、文件顺序与随机抽样结果。可用以下命令复查真实训练输出；这是执行检查，未完成课程：
 
 ```bash
 .venv/bin/python scripts/verify_exact_resume.py \
-  --continuous runs/four-gpu-clean-resume-v4/continuous \
-  --resumed runs/four-gpu-clean-resume-v4/resumed
+  --continuous runs/four-gpu-clean-latent-resume-v2/continuous \
+  --resumed runs/four-gpu-clean-latent-resume-v2/resumed
 ```
 
-真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 首批 512 局已通过，见 `evidence/human-master-games-native-import-v2.json`；全库多棋手导入仍在进行；近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。后续训练抽样使用双方棋手与赛事上限，同时覆盖年代、来源和胜负；镜像及改写不增加真实棋局数。
+真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -218,7 +218,25 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
-长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。当前全库导入的命令与检查方式在 `runs/recorded-games-ccpd-v3-import/plan.json`，近期棋谱采集在 `runs/recent-recorded-games-import-v1/plan.json`。中断保留输出、另建目录；未完成的数据不启动正式课程。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
+规则课程从实际记录的 1—8 步后续变化出题，保留完整历史和原棋局身份。先隔离此前所有训练／保留局面及未来分支，再合并旧引擎题，新文件保留旧文件的逐字节前缀。正式数据计划使用 6144 局、每局最多 8 根；实际小规模执行证据见 `evidence/recorded-curriculum-real-fixture-v1.json`，完整生产仍在准备。
+
+```bash
+python -m xqgeneral.recorded_curriculum \
+  --games data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+  --footprints runs/recorded-curriculum-reserved-footprints-v1 \
+  --base-data data/research-selfplay-v2 --game-budget 6144 --roots-per-game 8 \
+  --participant-cap 256 --event-cap 128 --modern-weight 3 \
+  --output data/new-recorded-engine-courses \
+  --public-evidence evidence/new-recorded-engine-courses.json
+python -m xqgeneral.extend_features \
+  --roots data/new-recorded-engine-courses/recorded-roots.jsonl \
+  --runtime runs/new-recorded-feature-extension \
+  --output data/new-recorded-engine-courses/features-16.pt --gpu-indices 0 1 2 3
+```
+
+特征扩展核验旧专家权重及编码器身份、原缓存哈希、分片键互斥、旧键及数值逐位保留，颜色镜像按原生完整着法回放以保持正确历史键；课程文件不会被缓存程序改写。真实四 GPU 小样本及专家重新计算见 `evidence/recorded-expert-cache-extension-real-fixture-v2.json`。
+
+长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备的命令与检查方式在 `runs/recorded-curriculum-full-v1/plan.json`，新缓存任务在 `runs/recorded-expert-cache-full-v2/plan.json`。中断保留输出、另建目录；生产数据、词元、完整历史与特征缓存预检通过后才能启动正式课程。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

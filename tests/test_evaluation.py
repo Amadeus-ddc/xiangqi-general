@@ -1,4 +1,6 @@
 import json
+import pytest
+import torch
 from xqgeneral.evaluate_explanations import judgment
 from xqgeneral.evaluate_games import match_summary, play_game
 from xqgeneral.explanations import move_facts
@@ -56,3 +58,20 @@ def test_match_opponent_needs_only_a_legal_move_at_the_fixed_budget():
     game = play_game(None, Oracle(), ('initial', []), 'black', 100, 1)
     assert game['status'] == 'censored' and game['moves'] == ['b0c2']
     assert game['turns'][0]['oracle']['requested_nodes'] == 100
+
+
+def test_predictor_mapped_and_copied_caches_keep_identical_features(tmp_path, monkeypatch):
+    from xqgeneral import inference
+    path = tmp_path / 'features.pt'
+    original = {'keys': ['a', 'b'], 'features': [torch.arange(12).reshape(2, 2, 3).half()]}
+    torch.save(original, path)
+    for mapped in [False, True]:
+        monkeypatch.setattr(inference, 'load_checkpoint',
+                            lambda *args: (None, None, {'mode': 'text_lora', 'feature_cache_mmap': mapped}))
+        predictor = inference.Predictor('unused', device='cpu', feature_cache=path)
+        assert predictor.indices == {'a': 0, 'b': 1}
+        assert torch.equal(predictor.cache['features'][0], original['features'][0])
+    monkeypatch.setattr(inference, 'load_checkpoint',
+                        lambda *args: (None, None, {'mode': 'text_lora', 'feature_cache_mmap': 'yes'}))
+    with pytest.raises(ValueError, match='boolean'):
+        inference.Predictor('unused', device='cpu', feature_cache=path)
