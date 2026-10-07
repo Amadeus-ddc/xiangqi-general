@@ -1,0 +1,52 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 74740,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "records": 451236,
+  "by_split_stage": {
+    "train/static_current": 13092,
+    "train/dynamic_current": 10910,
+    "train/static_future": 13092,
+    "train/dynamic_future": 10910,
+    "train/move_quality": 77064,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "validation/move_quality": 192,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492,
+    "test/move_quality": 256,
+    "train/move_planning": 298168,
+    "validation/move_planning": 764,
+    "test/move_planning": 1020
+  },
+  "planning_lessons": 299952,
+  "source_context_rejections": {},
+  "heldout_future_rejections": {},
+  "all_plans_replayed_with_full_history": true,
+  "continuation_after_terminal_forbidden": true,
+  "neural_prose_generated": false,
+  "feature_cache_reusable_from_source": true,
+  "test_used_for_training_or_checkpoint_selection": false,
+  "all_output_hashes_read_back": true,
+  "heldout_files_byte_identical_to_original_planning": true,
+  "dataset_manifest_sha256": "67962d77eaeb024fd2c425d68d2a4b6e3322695108dfa8a84c3020133cd19192",
+  "student_training_benefit_measured": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Independently searched six-ply lessons, not neural prose or search distillation",
+    "Feature-cache and token-length preflight remain required before new training"
+  ]
+}
