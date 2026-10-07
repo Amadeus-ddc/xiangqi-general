@@ -1,0 +1,50 @@
+{
+  "games": {
+    "train": 668,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 8698,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "by_split": {
+    "train": 8710,
+    "validation": 192,
+    "test": 256
+  },
+  "by_train_side": {
+    "b": 4355,
+    "w": 4355
+  },
+  "new_genuine_original_teacher_annotations": 2048,
+  "new_unchanged_independent_acceptances": 2003,
+  "new_corrected_independent_acceptances": 45,
+  "all2048_exact_independent_neural_acceptance_chains_verified": true,
+  "all6662_prior_train_records_and_byte_prefix_preserved": true,
+  "heldout_files_byte_identical": true,
+  "new_color_mirrors_generated": false,
+  "feature_keys_checked_all_splits": 9158,
+  "all_feature_keys_available": true,
+  "feature_cache_path": "data/move-quality-selfplay-v3/features-16.pt",
+  "feature_cache_sha256": "e621209bf4e342eaa7d5765a41ce57c88ce54dc7860cdbb8b17df063a61bb353",
+  "train_tokenized_records": 8710,
+  "max_train_tokens": 964,
+  "token_limit": 1024,
+  "raw_source_annotations_preserved": true,
+  "active_training_inputs_modified": false,
+  "human_rating": false,
+  "independent_test_used_for_training_or_selection": false,
+  "student_training_benefit_measured": false,
+  "valid_search_distillation_rounds": 0,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Neural semantic review, not human rating or independent backend attestation",
+    "New seed annotations are not a search-distillation iteration",
+    "No measured student improvement or strong-play claim"
+  ],
+  "dataset_manifest_sha256": "a9f621fad80251ce69de9b248beb49e4e0c82f37fe7fffcbc97d7db688c14b21"
+}
