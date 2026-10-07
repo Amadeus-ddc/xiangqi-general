@@ -681,8 +681,17 @@ complete-history terminal adjudication. The first observer's tuple/list contract
 failure is preserved; the corrected observer completed, with completed artifacts
 freshly rehashed. See `evidence/recorded-coach-selected-query-independent-readback-v2.json`.
 Counterpart geometry is reserved without derived queries or score recomputation.
-Three explicitly authorized Astra Low authors are now writing original prose;
-full annotation, independent semantic review and collection remain incomplete.
+Three explicitly authorized Astra Low authors have completed all 2496 original
+annotations (832 each; 2048/192/256 train/validation/test). Identity readback
+binds query IDs, order, exact prose and author fields. Preparation checks every
+teacher contract, Chinese/coordinate references, complete past and structured
+answer line; all complete review packets and declared artifacts are hash-bound.
+Recorded futures and unauthenticated identity metadata are hidden from reviewers.
+See `evidence/recorded-coach-full-authoring-review-preparation-v1.json`.
+Three authorized Astra Low reviewers are each reviewing another author's 832
+annotations. Full semantic acceptance, rejected-prose repairs and collection
+remain incomplete; cross-review does not provide independent backend attestation
+or human ratings.
 These preparations are not teacher accuracy, student benefit or a completed SFT
 run. SFT remains conditional on all four new course gates. Explanations must not
 use unauthenticated player/event metadata or hidden recorded futures as facts,
@@ -709,8 +718,8 @@ review packets and refuses unreviewed prose and an incomplete full-batch shard.
 See `evidence/recorded-coach-prose-real-preparation-v2.json`. A failed runtime
 driver without a spawn main guard is preserved; its native four-query isolation
 observer completed, and a corrected fresh driver then passed preparation.
-The full 2496-item authoring, independent semantic review and label collection
-are still incomplete. Contract checks and these four preparation examples do
+Full independent semantic acceptance and label collection remain incomplete.
+Contract checks and these four preparation examples do
 not establish corpus-wide teaching quality, backend identity attestation, human
 ratings, student benefit or any completed SFT/distillation round.
 
@@ -718,9 +727,10 @@ A frozen authored prefix contains 1672 actual annotations (560/552/560 from
 the three writers; 1416 train and 256 test). All pass the teacher contract,
 Chinese length, coordinate references, complete past and structured answer-line
 mechanical checks. Fourteen declared artifacts were freshly rehashed. See
-`evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`. This leaves
-full 2496-item authoring and independent semantic acceptance incomplete; no
-prose was rewritten, training labels collected or student training started.
+`evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`. This proof
+only covers the captured prefix and does not establish independent semantic
+acceptance; no prose was rewritten, training labels collected or student
+training started by that audit.
 
 Cache-header inventory covers all 2496 original coaching contexts and their
 4992 native original/color histories in the current 169904-key, sixteen-layer
