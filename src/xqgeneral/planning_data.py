@@ -106,14 +106,49 @@ def planning_lessons(queries, available_keys, max_plies=6, progress=None, worker
     return labels, dict(rejected)
 
 
-def isolate_planning_rows(base_rows, labels):
+def _position_signature(row):
+    return (row['fen'], tuple(row.get('future_moves', [])),
+            tuple(tuple(line) for line in row.get('future_branches', [])))
+
+
+def _isolation_positions(signatures):
+    return [context_positions({'fen': fen, 'future_moves': moves,
+                               'future_branches': branches})
+            for fen, moves, branches in signatures]
+
+
+def isolate_planning_rows(base_rows, labels, workers=1, chunk_size=256, progress=None):
+    if min(workers, chunk_size) < 1:
+        raise ValueError('Isolation workers and chunk size must be positive')
+    combined = [*base_rows, *labels]
+    positions = None
+    if workers > 1:
+        # Keep heldout-first validation order; workers need only future context,
+        # not prompts, answers or the complete source-game histories.
+        ordered = [r for r in combined if r['split'] in {'validation', 'test'}]
+        ordered.extend(r for r in combined if r['split'] == 'train')
+        signatures = list(dict.fromkeys(_position_signature(r) for r in ordered))
+        chunks = [signatures[i:i+chunk_size] for i in range(0, len(signatures), chunk_size)]
+        positions, completed, reported = {}, 0, 0
+        with ProcessPoolExecutor(max_workers=workers,
+                mp_context=multiprocessing.get_context('spawn')) as executor:
+            for chunk, result in zip(chunks, executor.map(_isolation_positions, chunks)):
+                positions.update(zip(chunk, result))
+                completed += len(chunk)
+                if progress is not None and (completed - reported >= 500 or completed == len(signatures)):
+                    progress(completed)
+                    reported = completed
+
+    def row_positions(row):
+        return context_positions(row) if positions is None else positions[_position_signature(row)]
+
     heldout = set()
-    for row in [*base_rows, *labels]:
+    for row in combined:
         if row['split'] in {'validation', 'test'}:
-            heldout.update(context_positions(row))
+            heldout.update(row_positions(row))
     rows, rejected = [], Counter()
-    for row in [*base_rows, *labels]:
-        if row['split'] == 'train' and context_positions(row) & heldout:
+    for row in combined:
+        if row['split'] == 'train' and row_positions(row) & heldout:
             rejected[row['stage']] += 1
             continue
         rows.append(row)
@@ -127,6 +162,8 @@ def main():
     parser.add_argument('--max-plies', type=int, default=6, choices=[6])
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--chunk-size', type=int, default=64)
+    parser.add_argument('--isolation-workers', type=int, default=1,
+                        help='Separate process budget for heldout/future isolation')
     args = parser.parse_args()
     source, root = Path(args.data), Path(args.output)
     if root.exists():
@@ -147,7 +184,9 @@ def main():
         progress=lambda count: print(json.dumps({'planned_roots': count}), flush=True),
         workers=args.workers, chunk_size=args.chunk_size)
     print(json.dumps({'phase': 'heldout_isolation', 'labels': len(labels)}), flush=True)
-    rows, isolation_rejected = isolate_planning_rows(base_rows, labels)
+    rows, isolation_rejected = isolate_planning_rows(base_rows, labels,
+        workers=args.isolation_workers,
+        progress=lambda count: print(json.dumps({'isolated_contexts': count}), flush=True))
     print(json.dumps({'phase': 'verify_splits', 'records': len(rows)}), flush=True)
     split_proof = verify_splits(rows)
     print(json.dumps({'phase': 'write_artifacts', 'records': len(rows)}), flush=True)

@@ -67,7 +67,40 @@ def test_parallel_planning_is_byte_identical_including_terminal_rejections():
 def test_isolation_includes_nonprincipal_branch_futures():
     row = dict(query()['record'], stage='move_planning', future_moves=['h0g2'],
                future_branches=[['b0c2', 'b9c7']])
-    target = play(play(START_FEN, 'b0c2'), 'b9c7')
-    heldout = dict(row, split='validation', game_id='validation-game', fen=target,
+    heldout = dict(query(['b0c2', 'b9c7'], split='validation')['record'],
+                   stage='move_planning', task_type='best_line', question='', answer='',
                    future_moves=[], future_branches=[])
     assert isolate_planning_rows([heldout], [row]) == ([heldout], {'move_planning': 1})
+
+
+def test_parallel_isolation_preserves_bytes_order_counts_and_mirrored_branch_futures():
+    import json
+    row = dict(query()['record'], stage='move_planning', task_type='best_line',
+               question='', answer='h0g2', future_moves=['h0g2'],
+               future_branches=[['b0c2', 'b9c7']])
+    mirror = mirrored_qa(row)
+    heldout = dict(query(['b0c2', 'b9c7'], split='validation')['record'],
+                   stage='move_planning', task_type='best_line', question='', answer='',
+                   future_moves=[], future_branches=[])
+    mirror_target = mirrored_qa(heldout)
+    mirror_target.update(split='test', game_id='test-game')
+    control = dict(query(['h0g2'])['record'], stage='move_quality', future_moves=['a9a8'])
+    overlapping = dict(row, stage='move_quality')
+    base = [control, heldout, overlapping, mirror_target, dict(control, id='duplicate')]
+    serial = isolate_planning_rows(base, [row, mirror])
+    progress = []
+    parallel = isolate_planning_rows(base, [row, mirror], workers=2, chunk_size=1,
+                                     progress=progress.append)
+    assert serial == ([control, heldout, mirror_target, base[-1]],
+                      {'move_quality': 1, 'move_planning': 2})
+    assert json.dumps(serial, ensure_ascii=False) == json.dumps(parallel, ensure_ascii=False)
+    assert progress and progress[-1] == 5
+
+
+def test_parallel_isolation_propagates_illegal_future_instead_of_keeping_it():
+    row = dict(query()['record'], stage='move_planning', future_branches=[['a0a0']])
+    for workers in [1, 2]:
+        with pytest.raises(ValueError, match='Illegal move a0a0'):
+            isolate_planning_rows([], [row], workers=workers, chunk_size=1)
+    with pytest.raises(ValueError, match='must be positive'):
+        isolate_planning_rows([], [], workers=0)

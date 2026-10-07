@@ -145,7 +145,7 @@ python -m xqgeneral.policy_data --input data/astra-seed-full-v1 \
 
 ```bash
 python -m xqgeneral.planning_data --data data/move-quality-selfplay-v2 \
-  --workers 8 --chunk-size 64 --output data/move-planning-v1
+  --workers 8 --chunk-size 64 --isolation-workers 8 --output data/move-planning-v1
 python scripts/freeze_run.py --output runs/move-planning-v1/source-run -- \
   python -m xqgeneral.sft --recipe configs/move-planning-v1.json \
   --init WARM_MOVE_CHECKPOINT.pt --output runs/move-planning-v1/bridge/training
@@ -154,7 +154,7 @@ python -m xqgeneral.evaluate_plans --checkpoint PLAN_CHECKPOINT.pt \
   --split validation --output runs/planning-validation
 ```
 
-生成器默认单进程；`--workers 8` 保持输入与标签顺序，`--chunk-size` 控制任务批次。分割检查覆盖全部未来分支；颜色镜像也转换分支走法。只在新输出目录运行，生成、隔离、校验和写盘会分别报告进度。
+生成和隔离默认单进程；`--workers 8` 并行生成标签，`--chunk-size` 控制生成批次，`--isolation-workers 8` 并行复演隔离所需的当前与未来局面。隔离进程只接收局面与变化，重复上下文共用结果；标签顺序和拒收计数保持一致。分割检查覆盖全部未来分支；颜色镜像也转换分支走法。只在新输出目录运行，生成、隔离、校验和写盘会分别报告进度。
 
 规划评测保留原始序列，分别检查整条合法性、条件首着、参考长度和逐步走法损失。指定候选的首着不计入最优选招指标，后续每步独立搜索；终局后续着仍是错误。短答案不会因前缀合法就通过长度合同。课程的有效训练配置由 `sft` 入口计算步数；改配置须新建实验。
 
