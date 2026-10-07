@@ -1,0 +1,51 @@
+{
+  "games": {
+    "train": 183,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 6657,
+    "validation": 192,
+    "test": 256
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "reviewed_train_labels": 5510,
+  "revised_train_prose": 367,
+  "by_split": {
+    "train": 6662,
+    "validation": 192,
+    "test": 256
+  },
+  "by_side": {
+    "b": 3331,
+    "w": 3331
+  },
+  "structured_labels_and_histories_preserved": true,
+  "heldout_files_byte_identical": true,
+  "human_rating": false,
+  "training_benefit_measured": false,
+  "prose_only_changes_independently_read_back": 367,
+  "all_output_hashes_read_back": true,
+  "feature_keys_prompts_and_histories_unchanged": true,
+  "expert_features_reused": "data/move-quality-selfplay-v2/features-16.pt",
+  "max_train_tokens": 943,
+  "max_tokens_limit": 1024,
+  "manifest_sha256": "d6aed282ca5a63a8f80af4741e7ba93a2bbdaae916110b5e96219f2601dece3d",
+  "review_manifests_sha256": {
+    "data/old-prose-repair-prefix-reviewed-v1/manifest.json": "18d90b5cf99f83c79826156d6c4958a99124ae8dfacbfa5dcf14f95006758aed",
+    "data/old-prose-repair-prefix-reviewed-v2/manifest.json": "ea0e5e65acfb6d87a4568f01bc965c327aa8080524d611ca4ec7acd5393d9def",
+    "data/old-prose-remaining-reviewed-v1/manifest.json": "0d0a89218a810c191e43cd7d31932242f5b4a19340de42f6d268355aec349b54"
+  },
+  "evidence_state": "reconstructed_baseline",
+  "active_training_inputs_modified": false,
+  "independent_test_used_for_training_or_selection": false,
+  "student_training_benefit_measured": false,
+  "limits": [
+    "All5510 remaining old annotations genuinely reviewed and all367 revisions independently accepted; originals and mirrors are not new independent games",
+    "Previously reviewed768 old labels and384 reviewed supplemental original selfplay labels retain their existing proof and prose",
+    "No new2048 selfplay teacher annotations included",
+    "No measured student improvement or human prose rating"
+  ]
+}
