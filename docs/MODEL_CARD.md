@@ -462,8 +462,11 @@ limit, not a disclosed unique-example count or an assertion of actual updates.
 See `evidence/paper-foundation-volume-audit.json`. Data, game and architecture
 differences remain; volume has not been isolated as a causal explanation.
 
-Expanded native-rule generation is running with 24576 balanced original roots
-sampled from existing completed searches, horizons up to eight plies and three
+Expanded native-rule generation completed 1081344 new questions from 24576
+balanced original roots across 612 training games, with 1155116 total records.
+All hashes were read back, heldout bytes are unchanged, and game/future split
+overlap is zero; see `evidence/selfplay-grounding-expanded-v2.json`. Roots are
+sampled from existing completed searches, with horizons up to eight plies and three
 question paraphrases. Each task uses one paraphrase; canonical native answers
 and mirrored lineage are preserved. Mirrors and paraphrases do not create new
 independent games or searches. Finite-budget engine labels are fallible chess
@@ -481,6 +484,18 @@ advancement. NLL alone cannot advance a course. The queued recipe and frozen
 preparation/training commands are recorded in
 `evidence/foundation-curriculum-v4-queue.json`; no new curriculum gain or
 independent-test result is claimed.
+
+An additional fixed 64-root training-only engine audit (32 per color) repeats all
+archived 100K-node best moves. Raising the requested budget to 1M nodes preserves
+39 choices and changes 25. Deeper unrestricted and original-move-restricted
+searches show no sampled loss of at least 0.10 in engine expected score; mean
+positive loss is 0.0020234 and maximum is 0.04. Fifteen negative raw differences
+are retained: equal budgets are allocated differently in restricted searches.
+Every raw engine answer, actual node range, sample identity, history, probability
+and hash was independently read back. Mate search may finish before exhausting
+the requested budget. This same-engine finite-search sample is not an independent
+solver, corpus-wide error estimate, absolute optimum or human win probability;
+original labels remain unchanged. See `evidence/engine-search-depth-audit-v1.json`.
 
 Search mining now optionally accepts a child on its raw recommended move and
 calibrated evaluation (`--child-contract move_eval`). The original full output
