@@ -1,0 +1,107 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_unique_recorded_games": 93,
+  "duplicate_source_game_records": 0,
+  "selected_recorded_games_before_root_isolation": 45,
+  "selected_game_participant_cap": 8,
+  "selected_exact_event_cap": 16,
+  "modern_decade_sampling_weight": 3,
+  "selected_games_by_source_kind": {
+    "published_recorded_match": 45
+  },
+  "selected_games_by_recorded_year": {
+    "2019": 19,
+    "2021": 16,
+    "2020": 10
+  },
+  "distinct_normalized_participant_labels": 17,
+  "participant_identity_independently_verified": false,
+  "games_contributing_isolated_roots_by_split": {
+    "validation": 6,
+    "test": 7,
+    "train": 32
+  },
+  "original_recorded_roots_by_split": {
+    "validation": 12,
+    "test": 14,
+    "train": 64
+  },
+  "original_root_sides": {
+    "b": 50,
+    "w": 40
+  },
+  "original_recorded_roots": 90,
+  "augmented_recorded_roots": 180,
+  "maximum_recorded_future_horizon_capacity": {
+    "8": 89,
+    "6": 1
+  },
+  "actual_future_question_horizons": {
+    "1": 352,
+    "2": 440,
+    "3": 396,
+    "6": 286,
+    "7": 154,
+    "8": 198,
+    "5": 88,
+    "4": 66
+  },
+  "question_formats": {
+    "0": 1260,
+    "2": 1442,
+    "1": 1258
+  },
+  "base_engine_question_counts": {
+    "train": 1,
+    "validation": 1,
+    "test": 1
+  },
+  "added_recorded_question_counts": {
+    "validation": 528,
+    "test": 616,
+    "train": 2816
+  },
+  "added_recorded_questions": 3960,
+  "counts": {
+    "train": 2817,
+    "validation": 529,
+    "test": 617
+  },
+  "stages": {
+    "static_current": 1080,
+    "dynamic_current": 900,
+    "static_future": 1080,
+    "dynamic_future": 900
+  },
+  "root_or_future_exclusions": {
+    "heldout_root_or_recorded_future": 2
+  },
+  "diversity_exclusions": {
+    "participant_cap": 31,
+    "event_cap": 17
+  },
+  "new_human_validation_test_overlap_prior_training": 0,
+  "game_split_assigned_before_questions": true,
+  "split_verification": {
+    "games": {
+      "train": 33,
+      "validation": 7,
+      "test": 8
+    },
+    "roots": {
+      "train": 129,
+      "validation": 25,
+      "test": 29
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "base_file_bytes_preserved_as_prefixes": true,
+  "old_experiments_modified": false,
+  "recorded_moves_used_as_best_move_labels": false,
+  "site_prose_used_as_neural_labels": false,
+  "feature_cache_and_token_preflight_complete": false,
+  "new_curriculum_training_executed": false,
+  "manifest_sha256": "c7dc1bb8565ef9fe23346c034461c7207defb3c905433dd181c0a3166b077fab"
+}

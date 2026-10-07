@@ -13,7 +13,7 @@ import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 from torch.nn import functional as F
-from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
+from .evidence import atomic_json, code_identity, digest, manifest
 from .modeling import initialize_trainable, load_model, load_trainable, trainable_state
 from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
@@ -112,6 +112,19 @@ def sample_groups(rows):
     return dict(pools)
 
 
+def load_training_rows(paths, stages):
+    """Keep selected records in file order without materializing whole JSONL text."""
+    rows = []
+    for path in paths:
+        with Path(path).open() as handle:
+            for line in handle:
+                if line.strip():
+                    row = json.loads(line)
+                    if row['stage'] in stages:
+                        rows.append(row)
+    return rows
+
+
 def sample_batch(rows, mixture, rng, global_batch_size, rank=0, world=1, pools=None):
     if global_batch_size % world:
         raise ValueError('Global batch size must be divisible by world size')
@@ -178,6 +191,8 @@ def compatible_resume(saved, requested):
         raise ValueError('Resume trainable precision differs; initialize a new experiment instead')
     if saved.get('ddp_find_unused_parameters', False) != requested.get('ddp_find_unused_parameters', False):
         raise ValueError('Resume distributed reduction contract differs')
+    if saved.get('feature_cache_mmap', False) != requested.get('feature_cache_mmap', False):
+        raise ValueError('Resume feature-cache loading contract differs')
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
             'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
             'board_tokens', 'expert_feature_depths', 'decoder_training', 'decoder_learning_rate',
@@ -220,7 +235,10 @@ def main():
     rng = random.Random(config['seed'])
     started = time.monotonic()
     execution_code = code_identity()
-    cache = torch.load(config['feature_path'], map_location='cpu', weights_only=True)
+    cache_mmap = config.get('feature_cache_mmap', False)
+    if type(cache_mmap) is not bool:
+        raise ValueError('feature_cache_mmap must be a boolean')
+    cache = torch.load(config['feature_path'], map_location='cpu', weights_only=True, mmap=cache_mmap)
     if len(cache['features']) != len(config['decoder_bridge_positions']):
         raise ValueError('Cached expert levels do not match bridge positions')
     if config.get('expert_feature_depths') and list(cache['depths']) != config['expert_feature_depths']:
@@ -237,7 +255,7 @@ def main():
         dist.broadcast_object_list(objects, src=0)
         input_hashes = objects[0]
     mixture = config.get('mixture', {s: 1.0 for s in config['stages']})
-    rows = {s: [r for p in data_roots for r in load_jsonl(p / f'{s}.jsonl') if r['stage'] in mixture]
+    rows = {s: load_training_rows([p / f'{s}.jsonl' for p in data_roots], mixture)
             for s in ['train', 'validation']}
     if not rows['train'] or not rows['validation']:
         raise ValueError('Training and validation sets must both be nonempty')

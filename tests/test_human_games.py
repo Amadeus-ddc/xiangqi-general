@@ -1,6 +1,6 @@
 import pytest
 from xqgeneral.human_games import assigned_split, parse_dhtml_game, parse_game, recorded_year, resolve_move
-from xqgeneral.recorded_sources import participant_label, select_diverse_games, source_kind
+from xqgeneral.recorded_sources import event_group, participant_label, select_diverse_games, source_kind
 from xqgeneral.collect_recorded import public_url
 from xqgeneral.rules import START_FEN, play
 
@@ -142,3 +142,15 @@ def test_diverse_selection_caps_both_players_and_keeps_multiple_eras_and_sources
 def test_public_collector_rejects_credentials_and_nonpublic_source_routes(url):
     with pytest.raises(ValueError):
         public_url(url)
+
+
+def test_layout_and_round_suffixes_do_not_evade_a_tournament_cap():
+    def game(identity, event):
+        return {'game_id': identity, 'players': [identity + 'red', identity + 'black'],
+                'headers': {'Event': event, 'Date': '1984-01-01'},
+                'source_kind': 'recorded_human_match', 'declared_result': '1-0'}
+    first = game('a', '1984年全国象棋团体赛 中炮过河车对屏风马')
+    second = game('b', '1984年全国象棋团体赛 第三轮')
+    assert event_group(first) == event_group(second)
+    selected, rejected = select_diverse_games([first, second], 2, 2, 1, 7)
+    assert len(selected) == 1 and rejected['event_cap'] == 1

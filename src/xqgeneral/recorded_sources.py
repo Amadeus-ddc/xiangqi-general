@@ -15,6 +15,8 @@ from .human_games import pgn_headers, recorded_year
 NAME_CHARS = str.maketrans(dict(zip(
     '許銀鄭趙呂欽胡榮華蔣孫劉陳吳貴臨徐紅於漢馬來張鳳國義歐陽謝馮駿廣東龍楊羅黃軍偉譚鋒趙興',
     '许银郑赵吕钦胡荣华蒋孙刘陈吴贵临徐红于汉马来张凤国义欧阳谢冯骏广东龙杨罗黄军伟谭锋赵兴')))
+NAME_CHARS.update(str.maketrans(dict(zip('蘇臺灣雲麗徵陸韜曉繼錦歡劍瑋強慶雙',
+                                       '苏台湾云丽征陆韬晓继锦欢剑玮强庆双'))))
 KNOWN_NAMES = set('王天一 许银川 郑惟桐 赵鑫鑫 蒋川 吕钦 洪智 胡荣华 孙勇征 柳大华 '
                   '赵国荣 李来群 徐天红 陶汉明 于幼华 杨官璘 刘殿中 卜凤波 徐超 谢靖 '
                   '王斌 汪洋 孟辰 李少庚 郑一泓 陈泓盛 李翰林 陈寒峰 赵剑 景学义 '
@@ -53,9 +55,20 @@ def source_kind(path):
     return None
 
 
-def select_diverse_games(games, budget, participant_cap, event_cap, seed):
+def event_group(game):
+    """Group declared event titles conservatively, without asserting authenticity."""
+    value = unicodedata.normalize('NFKC', game['headers'].get('Event', '')).translate(NAME_CHARS).strip()
+    words = value.split()
+    # These PGNs often append a layout or the round/players to a tournament title.
+    # Only a supplied first component containing an event marker is shortened.
+    if words and re.search(r'[赛賽杯]', words[0]):
+        value = words[0]
+    return f"{recorded_year(game['headers']) or 'unknown'}/{value or '(unspecified)'}"
+
+
+def select_diverse_games(games, budget, participant_cap, event_cap, seed, modern_weight=1):
     """Choose unique games with explicit caps on both participants and exact events."""
-    if min(budget, participant_cap, event_cap) < 1:
+    if min(budget, participant_cap, event_cap, modern_weight) < 1:
         raise ValueError('Positive diversity budgets are required')
     # Interleave source kind and decade before filling; neither famous names nor wins
     # receive privileged slots. The stable hash resolves ties without input-order bias.
@@ -69,9 +82,11 @@ def select_diverse_games(games, budget, participant_cap, event_cap, seed):
         pool.sort(key=lambda g: hashlib.sha256(f"{seed}/{g['game_id']}".encode()).hexdigest())
     participants, events, seen, accepted, rejected = Counter(), Counter(), set(), [], Counter()
     offsets = Counter()
+    group_order = [group for group in sorted(pools)
+                   for _ in range(modern_weight if group[1] >= 2000 else 1)]
     while len(accepted) < budget:
         progressed = False
-        for group in sorted(pools):
+        for group in group_order:
             pool = pools[group]
             while offsets[group] < len(pool):
                 progressed = True
@@ -79,7 +94,7 @@ def select_diverse_games(games, budget, participant_cap, event_cap, seed):
                 offsets[group] += 1
                 identity = game['game_id']
                 people = set(game['players'])
-                event = unicodedata.normalize('NFKC', game['headers'].get('Event', '')).translate(NAME_CHARS).strip() or '(unspecified)'
+                event = event_group(game)
                 if identity in seen:
                     rejected['duplicate_game'] += 1
                     continue

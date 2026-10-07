@@ -1,0 +1,112 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_gpu_indices_extraction": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "actual_gpu_index_readback": 0,
+  "source_recorded_roots": 4,
+  "new_full_histories_including_color_counterparts": 8,
+  "preserved_base_cutout_keys": 3,
+  "all_history_keys_natively_replayed": true,
+  "mirror_fullmove_counters_match_native_replay": true,
+  "naive_mirror_history_key_route_rejected": true,
+  "preserved_base_keys_features_wdl_bitwise_equal": true,
+  "all_new_histories_recomputed_with_pinned_frozen_expert": true,
+  "full_16_feature_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "feature_compute_dtype": "float32",
+  "feature_storage_dtype": "float16",
+  "feature_tolerance_atol": 0.002,
+  "feature_tolerance_rtol": 0.002,
+  "layer_max_absolute_errors": [
+    {
+      "depth": 0,
+      "max_absolute_error": 0.0009751319885253906
+    },
+    {
+      "depth": 1,
+      "max_absolute_error": 0.0009541511535644531
+    },
+    {
+      "depth": 2,
+      "max_absolute_error": 0.0004881620407104492
+    },
+    {
+      "depth": 3,
+      "max_absolute_error": 0.0005757808685302734
+    },
+    {
+      "depth": 4,
+      "max_absolute_error": 0.0004878044128417969
+    },
+    {
+      "depth": 5,
+      "max_absolute_error": 0.0005135536193847656
+    },
+    {
+      "depth": 6,
+      "max_absolute_error": 0.0009608268737792969
+    },
+    {
+      "depth": 8,
+      "max_absolute_error": 0.0005285739898681641
+    },
+    {
+      "depth": 9,
+      "max_absolute_error": 0.0004881620407104492
+    },
+    {
+      "depth": 10,
+      "max_absolute_error": 0.0005428791046142578
+    },
+    {
+      "depth": 11,
+      "max_absolute_error": 0.0008022785186767578
+    },
+    {
+      "depth": 12,
+      "max_absolute_error": 0.0004885196685791016
+    },
+    {
+      "depth": 14,
+      "max_absolute_error": 0.0004881620407104492
+    },
+    {
+      "depth": 15,
+      "max_absolute_error": 0.0004889965057373047
+    },
+    {
+      "depth": 17,
+      "max_absolute_error": 0.0004876852035522461
+    },
+    {
+      "depth": 19,
+      "max_absolute_error": 0.00048828125
+    }
+  ],
+  "wdl_max_absolute_error": 2.980232238769531e-07,
+  "immutable_course_dataset_files": true,
+  "full_production_cache_complete": false,
+  "student_training_executed": false,
+  "readback_manifest_sha256": "138af5fcf9d51c5bd65ab16bc768342fc4f4dfc6ba282255ecaacbfa02154a75"
+}

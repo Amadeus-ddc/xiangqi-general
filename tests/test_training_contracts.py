@@ -1,7 +1,8 @@
+import json
 import random
 import pytest
 import torch
-from xqgeneral.training import batch_inputs, compatible_resume, sample_batch
+from xqgeneral.training import batch_inputs, compatible_resume, load_training_rows, sample_batch
 
 
 class Tokenizer:
@@ -53,3 +54,25 @@ def test_resume_rejects_changed_distributed_reduction_contract():
     compatible_resume({}, {'ddp_find_unused_parameters': False})
     with pytest.raises(ValueError, match='Resume distributed'):
         compatible_resume({}, {'ddp_find_unused_parameters': True})
+
+
+def test_resume_rejects_changed_feature_cache_loading_contract():
+    compatible_resume({}, {'feature_cache_mmap': False})
+    with pytest.raises(ValueError, match='feature-cache loading'):
+        compatible_resume({}, {'feature_cache_mmap': True})
+
+
+def test_streamed_training_inputs_preserve_records_order_and_sample_sequence(tmp_path):
+    paths, original = [], []
+    for index in range(2):
+        path = tmp_path / f'{index}.jsonl'
+        rows = [{'id': f'{index}/{i}', 'stage': stage, 'task_type': str(i % 2),
+                 'history': ['preserved-source-history'], 'source': {'identity': i}}
+                for i in range(9) for stage in ['old', 'new', 'excluded']]
+        path.write_text('\n' + ''.join(json.dumps(row) + '\n' for row in rows))
+        paths.append(path)
+        original.extend(row for row in rows if row['stage'] != 'excluded')
+    actual = load_training_rows(paths, {'old': 0.1, 'new': 0.9})
+    assert actual == original
+    assert sample_batch(actual, {'old': 0.1, 'new': 0.9}, random.Random(41), 256) == \
+        sample_batch(original, {'old': 0.1, 'new': 0.9}, random.Random(41), 256)
