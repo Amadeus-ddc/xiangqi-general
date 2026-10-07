@@ -1,0 +1,38 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "actual_planning_query_roots": 256,
+  "actual_labels": 1968,
+  "sampled_base_train_rows": 4096,
+  "all_source_heldout_rows": 26216,
+  "generation_rejected": {},
+  "variants": {
+    "preserved_serial": {
+      "seconds": 77.27670128643513,
+      "retained_rows": 32280,
+      "rejected": {},
+      "output_sha256": "dc9b4b2f69eda94011d97a9ee37dd5ac83ea308abaf2ddda20067ab0cbea6aa9"
+    },
+    "new_serial": {
+      "seconds": 77.56570184230804,
+      "retained_rows": 32280,
+      "rejected": {},
+      "output_sha256": "dc9b4b2f69eda94011d97a9ee37dd5ac83ea308abaf2ddda20067ab0cbea6aa9"
+    },
+    "parallel8": {
+      "seconds": 15.037546177394688,
+      "retained_rows": 32280,
+      "rejected": {},
+      "output_sha256": "dc9b4b2f69eda94011d97a9ee37dd5ac83ea308abaf2ddda20067ab0cbea6aa9"
+    }
+  },
+  "preserved_serial_new_serial_and_parallel_rows_byte_identical": true,
+  "rejection_counts_identical": true,
+  "old_active_full_run_modified": false,
+  "full_dataset_speedup_measured": false,
+  "neural_prose_generated": false,
+  "student_benefit_measured": false,
+  "limits": [
+    "Bounded CPU sample timing, not full dataset throughput",
+    "No neural labels, training improvement or checkpoint selection"
+  ]
+}
