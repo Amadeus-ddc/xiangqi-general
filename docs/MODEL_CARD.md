@@ -233,6 +233,13 @@ Weights and raw outputs were verified; 74 plans remain illegal and one continues
 after a full-history terminal position. This is interim validation without
 final selection, game strength or prose-semantic evidence.
 
+At actual warm planning step 6000, the same validation inputs and judge budget
+yield 171/192 legal raw moves, 153/192 non-mistake moves and 28/96 complete plans.
+The two-capability score reaches 0.5948, while raw legality falls from step 4000.
+Actual FP32 parameter count, training identity and all raw artifact hashes were
+read back; see `evidence/move-planning-v1-interim-6000.json`. Planning remains
+weak, and training, final selection, game strength and prose quality are pending.
+
 The formal-initialization planning run at step 4000 has 170/192 legal raw moves,
 160/192 non-mistake moves and 30/96 complete plans, compared with 165/152/17
 at step 2000. Its two-capability score rises from 0.5458 to 0.6250. Actual steps,
@@ -266,6 +273,19 @@ is 0.3375. The actual 4.162-billion FP32 trainable parameters, step, weight hash
 and all raw artifacts were read back. Training is complete, but this is not a
 final capability-selected coach or prose-semantic, game-strength or independent
 test result.
+
+The reviewed-data continuation from that parent, with a reset optimizer and
+61 accepted prose revisions, has actual step-2048 raw validation of 164/192
+legal and 141/192 non-mistake moves, 19/96 complete plans, and 81/96 legal
+explanation recommendations, 67/96 non-mistake recommendations, 19/96 legal PVs
+and 4/96 complete explanation contracts. Its score is 0.3500 versus the parent's
+0.3375, but raw move quality and complete explanation count decline. Actual
+4.162-billion FP32 parameters, training identity, identical validation inputs
+and all raw artifact hashes were read back; see
+`evidence/explanation-v5-after-2048.json`. This run retains its frozen v5 inputs
+and has not incorporated v6's additional 367 revisions. It is interim validation
+without completed selection, prose-semantic, game-strength or independent-test
+evidence, and does not establish an overall improvement or a reliable coach.
 
 The larger self-play search produced 27408 new independent queries and exactly
 preserved all 11348 old query records. Old records were regrouped by split; an
