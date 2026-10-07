@@ -1,0 +1,76 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_collections": [
+    {
+      "source": "data/recorded-games-ccpd-v3",
+      "canonical_records": 22628,
+      "recorded_plies": 1867475
+    },
+    {
+      "source": "data/recent-recorded-games-v2",
+      "canonical_records": 93,
+      "recorded_plies": 6989
+    }
+  ],
+  "cross_source_duplicate_records": 1,
+  "unique_recorded_games": 22720,
+  "unique_recorded_plies": 1874419,
+  "games_by_source_declared_kind": {
+    "recorded_human_match": 22585,
+    "recorded_computer_match": 22,
+    "recorded_human_computer_match": 21,
+    "published_recorded_match": 92
+  },
+  "source_games_by_split": {
+    "validation": 2299,
+    "train": 18134,
+    "test": 2287
+  },
+  "human_or_published_games_before_independent_identity_authentication": 22677,
+  "human_or_published_training_games": 18103,
+  "source_authenticity_or_participant_identity_independently_proven": false,
+  "selected_games_before_root_isolation": 6144,
+  "recorded_games_contributing_current_course_roots": 6118,
+  "original_recorded_roots": 45834,
+  "recorded_roots_with_native_color_counterparts": 91668,
+  "added_recorded_rule_questions": 2016696,
+  "preserved_engine_rule_questions": 1155116,
+  "total_rule_questions": 3171812,
+  "rule_questions_by_split": {
+    "train": 2831004,
+    "validation": 173272,
+    "test": 167536
+  },
+  "recorded_rule_questions_per_original_root": 44,
+  "corpus_file_sizes_bytes": {
+    "train.jsonl": 17958336456,
+    "validation.jsonl": 1059759384,
+    "test.jsonl": 1035798738,
+    "features-16.pt": 250548260661
+  },
+  "all_three_rule_jsonl_bytes": 20053894578,
+  "completed_production_preflight_reference": "evidence/recorded-foundation-full-training-ready.json",
+  "size_observation_rehashes_full_feature_cache": false,
+  "paper_source": "https://arxiv.org/html/2610.03695v1",
+  "paper_foundation_unique_games_or_questions_disclosed": false,
+  "paper_configured_foundation_updates_upper_bound": 240000,
+  "paper_foundation_effective_batch": 256,
+  "paper_configured_foundation_sample_presentations_upper_bound": 61440000,
+  "paper_foundation_allows_early_stopping": true,
+  "paper_human_positions_per_search_iteration": 210000,
+  "paper_maximum_positions_per_human_game": 6,
+  "paper_search_iterations": 7,
+  "paper_games_disjoint_across_search_iterations": true,
+  "inferred_minimum_human_games_per_paper_search_iteration": 35000,
+  "inferred_minimum_human_games_for_seven_paper_search_iterations": 245000,
+  "generous_candidate_human_positions_at_paper_six_per_game_cap": 136062,
+  "training_only_candidate_human_positions_at_paper_six_per_game_cap": 108618,
+  "inferred_current_game_pool_covers_paper_seven_iteration_human_budget": false,
+  "game_minimums_are_arithmetic_bounds_not_paper_reported_game_counts": true,
+  "qa_rows_are_not_independent_positions_or_explanation_labels": true,
+  "mirroring_rephrasing_and_repeated_updates_do_not_add_independent_games": true,
+  "rule_data_volume_alone_proves_course_mastery_or_strong_coaching": false,
+  "current_training_inputs_or_recipe_modified": false,
+  "manifest_sha256": "0c05b4bf0859c170b02d3858f89abd1781e8c92ae8a52760a0ed077f1cdc6e30"
+}

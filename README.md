@@ -206,6 +206,8 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
+两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`；四门基础能力仍等待原始问答验收。
+
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
   --revision 368a47a947773dd8692c026e286dd19b6277b993 \

@@ -590,6 +590,21 @@ branches are excluded from neural labels. See
 `evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
 This is not a paper-scale seven-iteration corpus or a trained teaching model.
 
+The capacity audit rehashes and counts both actual canonical-game files:
+22720 unique mainlines and 1874419 plies after one cross-source duplicate.
+There are 18103 training-split human/published-match candidates, whose identities
+have not been independently authenticated. The paper samples 210000 human
+positions per search iteration, at most six per game, with disjoint games across
+seven iterations. This implies a minimum of 35000 games per iteration and
+245000 over seven; these are arithmetic lower bounds, not paper-reported game
+totals. Our training candidates provide at most 108618 positions under that cap.
+The paper does not disclose unique foundation-corpus sizes. Current course JSONL
+files total 20053894578 bytes; the expert cache is separately 250548260661 bytes.
+Each original recorded root yields 44 rule questions across task groups and native
+color counterparts; these are neither independent roots nor explanation labels.
+See `evidence/recorded-dataset-paper-capacity.json`. Data volume does not establish
+mastery or coaching quality, and the audit does not change live training inputs.
+
 Cross-source canonical deduplication gives 22720 unique mainlines. One identical
 45-ply mainline has conflicting player/event/date attribution between the two
 sources; neither attribution has been independently authenticated. It was not
@@ -678,11 +693,20 @@ and feed-forward gate parameters start at 1.0 in this implementation. Four owned
 training processes have ranks/local CUDA ranks 0--3 on the four-H20 inventory,
 with global batch 256 and microbatch 4. NVML host PIDs cannot be matched directly
 to container PIDs; this evidence explicitly relies on owned rank metadata and
-the unchanged numerical-contract code, not NVML ownership attribution. Optimizer
-checkpoint world-size readback remains pending. See
+the unchanged numerical-contract code, not NVML ownership attribution. See
 `evidence/recorded-foundation-clean-startup-twenty-updates.json`. The first raw
 mastery gate is at step 512; no new course has completed, and explanation SFT,
 search-distillation training and final teaching/playing strength remain unproven.
+
+The actual first optimizer checkpoint at step 256 has now been pinned and read
+back against the actual zero-step model. All 258 trainable tensors changed;
+139920416 weight elements and their Adam moments are finite FP32, and all 258
+Adam states record step 256. The checkpoint records world size four, all four
+CUDA RNG states, CPU/Python RNG state, unchanged input hashes and frozen code.
+Initial/step-256 validation NLL is 8.0673/1.0133, and all first 256 gradient norms
+are finite and positive. This CPU-only observer does not restart training or
+load CUDA, and does not establish raw QA mastery or stronger play. See
+`evidence/recorded-foundation-clean-first-optimizer.json`.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
