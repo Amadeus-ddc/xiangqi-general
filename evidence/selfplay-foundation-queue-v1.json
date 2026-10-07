@@ -1,0 +1,38 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "runs": [
+    {
+      "part": "preparation",
+      "session": "xqgeneral-selfplay-foundation-preparation",
+      "run_sha256": "832777785b9cdcea9cf0a08d1ff49a1bc730380bfa646b46d96c74c5acd1d11b",
+      "source_revision": "9f159e6d353fe121ad100feec27727850c5b0c29",
+      "source_manifest_sha256": "814012e5c188f69ef81b9d5526a16415ce7e9a002774160ab34961dbaaad90a1",
+      "recipe_sha256": "bc5a7bff6fc75812260db259d800523ccab1626dd3ef04b4469ccddadf13c21a",
+      "log": "runs/selfplay-foundation-v1/preparation/log.txt",
+      "status": "waiting_for_required_complete_inputs_or_parent"
+    },
+    {
+      "part": "bridge",
+      "session": "xqgeneral-selfplay-foundation-v1-bridge",
+      "run_sha256": "8ee3237db22536eb3e3cfd1da1d736561879f5c7d9163a2f02b422c731d4eb12",
+      "source_revision": "9f159e6d353fe121ad100feec27727850c5b0c29",
+      "source_manifest_sha256": "814012e5c188f69ef81b9d5526a16415ce7e9a002774160ab34961dbaaad90a1",
+      "recipe_sha256": "bc5a7bff6fc75812260db259d800523ccab1626dd3ef04b4469ccddadf13c21a",
+      "log": "runs/selfplay-foundation-v1/bridge/log.txt",
+      "status": "waiting_for_required_complete_inputs_or_parent"
+    },
+    {
+      "part": "functional-selection",
+      "session": "xqgeneral-selfplay-foundation-functional-selection",
+      "run_sha256": "2de722f19d8853133cd90ca7b522a628c92619c661bbf095e5dcc723f9209bc2",
+      "source_revision": "9f159e6d353fe121ad100feec27727850c5b0c29",
+      "source_manifest_sha256": "814012e5c188f69ef81b9d5526a16415ce7e9a002774160ab34961dbaaad90a1",
+      "recipe_sha256": "bc5a7bff6fc75812260db259d800523ccab1626dd3ef04b4469ccddadf13c21a",
+      "log": "runs/selfplay-foundation-v1/functional-selection/log.txt",
+      "status": "waiting_for_required_complete_inputs_or_parent"
+    }
+  ],
+  "training_started": false,
+  "student_improvement_measured": false,
+  "test_used": false
+}

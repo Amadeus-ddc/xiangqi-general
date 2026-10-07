@@ -169,6 +169,14 @@ training uses a new run and optimizer, with three raw capabilities selecting
 checkpoints and prose quality assessed separately.
 Shared-base-model review is not a human assessment or student-quality proof.
 
+A completed warm move parent was evaluated on all 22 board-QA task groups,
+with 12 validation questions each. Its raw QA accuracy is 68.9%, including
+2/12 current captures and 0/12 future captures; its full planning contract
+rate is zero. An optional foundation selector combines balanced raw QA, raw
+move quality and complete plans from the same checkpoint. New self-play
+foundation training is queued behind verified data and a completed selected
+parent. This is not evidence of improved strength or explanation quality.
+
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the
