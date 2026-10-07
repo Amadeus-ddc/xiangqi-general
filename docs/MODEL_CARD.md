@@ -184,6 +184,14 @@ or strong-play evidence. The next foundation run waits for both planning
 experiments to finish, then compares all their real candidates using QA, moves
 and complete plans before choosing its parent. No independent test is used.
 
+Native replay independently recomputed all 24 formal step-2000 capture targets;
+all match and none crosses a historical terminal position. Ignoring answer order
+still yields 1/12 current and 2/12 future exact capture sets. Both groups omit
+captures on nine items, and contain illegal or legal non-capturing extra moves.
+Decoded answers use at most 20 text tokens against a 384-token budget. This is
+an error audit on fixed validation examples; raw answers and metrics are retained
+and no population or single-cause conclusion follows.
+
 Grounded review inputs cover all remaining 5510 old train prose annotations,
 including originals and mirrors. Fresh reviewers are configured through
 `spawn_agent` as Astra Low; backend identity has no independent attestation.
@@ -227,6 +235,14 @@ selected actual step 4608 by validation NLL (0.5271). All outputs, selected
 checkpoint step and FP32 trainable parameter count were read back and verified.
 Completed training and low loss do not establish strong play or reliable
 teaching; a new reviewed-data continuation uses a separate optimizer.
+
+Its actual NLL-selected step 4608 now has complete raw three-capability validation:
+167/192 legal and 150/192 non-mistake moves, zero complete plans out of 96, and
+17/96 legal main variations with 6/96 complete explanation contracts. Its score
+is 0.3375. The actual 4.162-billion FP32 trainable parameters, step, weight hash
+and all raw artifacts were read back. Training is complete, but this is not a
+final capability-selected coach or prose-semantic, game-strength or independent
+test result.
 
 The larger self-play search produced 27408 new independent queries and exactly
 preserved all 11348 old query records. Old records were regrouped by split; an
