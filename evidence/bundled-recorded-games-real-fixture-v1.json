@@ -1,0 +1,39 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_archives_exercised": 2,
+  "actual_first_records_per_archive": 64,
+  "actual_source_records_per_execution": 128,
+  "prior_unique_games_read_back": 22720,
+  "serial_parallel_workers": [
+    1,
+    4
+  ],
+  "all_native_histories_and_source_record_bytes_match": true,
+  "all_fixture_inputs_outputs_and_prior_game_outputs_rehashed": true,
+  "source_archive_members_read_in_place_without_extraction": true,
+  "source_provenance_does_not_inherit_ccpd_identity_or_license": true,
+  "record_budget_limited": true,
+  "complete_new_archive_native_import": false,
+  "current_training_recipe_or_inputs_modified": false,
+  "source_authenticity_or_participant_identities_authenticated": false,
+  "archive_counts": [
+    {
+      "archive": "dpxq-99813games.zip",
+      "candidate_records_natively_examined": 64,
+      "new_unique_recorded_games": 4,
+      "duplicate_records": 54,
+      "quarantined_records": 6,
+      "duplicate_records_with_differing_attribution": 54
+    },
+    {
+      "archive": "wxf-41743games.zip",
+      "candidate_records_natively_examined": 64,
+      "new_unique_recorded_games": 33,
+      "duplicate_records": 27,
+      "quarantined_records": 4,
+      "duplicate_records_with_differing_attribution": 27
+    }
+  ],
+  "manifest_sha256": "caf1b1233f22fe831cabe495b89c0a341d29fbcd320e34390063673f323da4aa"
+}

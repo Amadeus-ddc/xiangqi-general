@@ -1,0 +1,55 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "repository": "v-azhu/alphazetacchess",
+  "revision": "0d550401ea9b0c8542e01843ce03a708326692ff",
+  "primary_collection_reference": "https://github.com/CGLemon/chinese-chess-PGN",
+  "downloaded_files": [
+    {
+      "name": "dpxq-99813games.zip",
+      "bytes": 24499306,
+      "sha256": "9e50e0310aeb7e7960e4b187d5702cfeafe3cabade684c7a3842526179885575",
+      "git_blob_sha1": "03eb45e1973c479301f0ec41a9cf2d7e857157aa",
+      "pinned_git_blob_and_bytes_verified": true
+    },
+    {
+      "name": "readme.txt",
+      "bytes": 708,
+      "sha256": "680dee5f5b9dd663ec531764a1eff3211b478c1f8be91604b847787ac81f2468",
+      "git_blob_sha1": "3af90eea5431ace91ff12674185244b6b716100d",
+      "pinned_git_blob_and_bytes_verified": true
+    },
+    {
+      "name": "wxf-41743games.zip",
+      "bytes": 10344238,
+      "sha256": "bb356e319b727ec249356d700c150cecb2f8729a37468d3c1c43911b0532cde8",
+      "git_blob_sha1": "c17c6a5f6261b1f1fdf162d171d90c75f245cef7",
+      "pinned_git_blob_and_bytes_verified": true
+    }
+  ],
+  "raw_downloaded_bytes": 34844252,
+  "actual_raw_game_header_count": 141514,
+  "source_declared_total_game_count": 141556,
+  "archive_header_counts": [
+    {
+      "archive": "dpxq-99813games.zip",
+      "raw_game_header_count": 99771,
+      "source_declared_game_count": 99813,
+      "source_year_2014_or_later": 34189
+    },
+    {
+      "archive": "wxf-41743games.zip",
+      "raw_game_header_count": 41743,
+      "source_declared_game_count": 41743,
+      "source_year_2014_or_later": 0
+    }
+  ],
+  "all_archives_and_inventory_inputs_outputs_rehashed": true,
+  "complete_native_import_and_cross_source_deduplication": false,
+  "source_authenticity_or_participant_identities_authenticated": false,
+  "dataset_license_or_redistribution_permission_established": false,
+  "raw_records_or_archives_bundled_with_code": false,
+  "current_training_recipe_or_inputs_modified": false,
+  "acquisition_manifest_sha256": "9ac29ad4c5d11ad88a32f6e8fcb0d6de66ba1df9667bd417cab93e8534f3cb99",
+  "header_inventory_manifest_sha256": "e4ac6b90d2f1b048f5fa519db3316426c21d6fa4e9829e82041cc09557038dfe"
+}

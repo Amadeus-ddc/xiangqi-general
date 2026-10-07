@@ -590,6 +590,25 @@ branches are excluded from neural labels. See
 `evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
 This is not a paper-scale seven-iteration corpus or a trained teaching model.
 
+Two additional public PGN archives are pinned to the mirror revision
+`0d550401ea9b0c8542e01843ce03a708326692ff`; their actual bytes match the Git blob
+identities. Actual Game-header counts are 99771 and 41743, totaling 141514,
+versus the source-declared 141556. These are raw candidate headers, not independent
+validated games. Native full-history replay and cross-source deduplication are
+running with eight CPU workers in a fresh dataset. The importer streams ZIP
+members, preserves record ordinal/byte hashes and source attribution differences,
+quarantines illegal or post-terminal play, and assigns the original canonical
+split seed before any questions. It does not inherit CCPD identity or license.
+Both actual archive prefixes of 64 records were processed with one and four
+workers: all accepted histories, quarantine results and source facts match;
+37 new games, 81 duplicates and ten rejected records were found across the two
+prefixes. This bounded fixture does not estimate whole-corpus yield. See
+`evidence/additional-recorded-source-acquisition-v1.json` and
+`evidence/bundled-recorded-games-real-fixture-v1.json`. Source authenticity,
+participant identities and redistribution permissions remain unestablished;
+raw/derived records remain excluded from releases, and live foundation inputs
+are unchanged.
+
 The capacity audit rehashes and counts both actual canonical-game files:
 22720 unique mainlines and 1874419 plies after one cross-source duplicate.
 There are 18103 training-split human/published-match candidates, whose identities
@@ -707,6 +726,20 @@ Initial/step-256 validation NLL is 8.0673/1.0133, and all first 256 gradient nor
 are finite and positive. This CPU-only observer does not restart training or
 load CUDA, and does not establish raw QA mastery or stronger play. See
 `evidence/recorded-foundation-clean-first-optimizer.json`.
+
+The first static-current raw gate at step 512 has completed on 768 validation
+questions, 128 for each of six tasks across three request formats. Accuracy is
+0.518229; minimum task accuracy is 0.1640625, so the gate rejects course advancement.
+Count/empty/locate/material/piece/rank accuracies are
+0.8828125/0.6484375/0.296875/0.578125/0.5390625/0.1640625. An independent CPU reader
+recomputes every sampled native history/answer, question format and correctness;
+the pinned checkpoint, validation file and raw outputs are freshly rehashed.
+The feature hash matches the previously completed full preflight and actual
+producer manifest; that reader does not rehash the entire 250GB cache again.
+First-course training continues toward its next gate; no new course, explanation
+SFT or search-distillation round has completed. See
+`evidence/recorded-foundation-clean-first-raw-gate.json`. The source cohorts have
+unequal sample counts and are not a causal comparison of human and engine data.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
