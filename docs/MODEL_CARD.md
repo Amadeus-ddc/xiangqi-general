@@ -173,16 +173,16 @@ A completed warm move parent was evaluated on all 22 board-QA task groups,
 with 12 validation questions each. Its raw QA accuracy is 68.9%, including
 2/12 current captures and 0/12 future captures; its full planning contract
 rate is zero. An optional foundation selector combines balanced raw QA, raw
-move quality and complete plans from the same checkpoint. New self-play
-foundation training is queued behind verified data and a completed selected
-parent. This is not evidence of improved strength or explanation quality.
+move quality and complete plans from the same checkpoint. The original mixed
+foundation queue has been superseded before any training by sequential raw-QA
+gated courses, described below. This is not evidence of improved strength or explanation quality.
 
 At actual planning step 2000, warm/formal initialization yields 141/152
 non-mistake raw moves out of 192, 10/17 complete plans out of 96, and
 69.7%/74.2% balanced raw board QA. Neither has reliable capture enumeration
-or strong-play evidence. The next foundation run waits for both planning
-experiments to finish, then compares all their real candidates using QA, moves
-and complete plans before choosing its parent. No independent test is used.
+or strong-play evidence. The planned comparison of completed planning parents
+was superseded by the foundation-volume review and expanded course recipe below.
+No independent test is used.
 
 Native replay independently recomputed all 24 formal step-2000 capture targets;
 all match and none crosses a historical terminal position. Ignoring answer order
@@ -388,7 +388,7 @@ and heldout isolation checks passed. Old planning validation/test files are byte
 identical, and every nonplanning record is preserved: 125068/14976/11240 for
 train/validation/test. All hashes and actual counts were independently read back;
 see `evidence/move-planning-selfplay-data-v3.json`. Feature/token preflight and the independent readback are now complete;
-foundation training still requires completed planning parents. These are engine labels, with no neural
+the original mixed foundation queue was superseded before training. These are engine labels, with no neural
 prose, valid search-distillation round or measured student improvement.
 
 All 2048 new original initial-teacher annotations are now genuinely authored,
@@ -424,7 +424,7 @@ All states and output hashes were independently read back; see
 fixture does not prove a completed course, full-decoder or cross-world resume,
 or improved strength. The unstarted v2 foundation waiters were preserved and
 replaced by v3: two-GPU training and an unchanged
-global-batch, data and parent-scoring recipe. Full readiness is now verified; it still waits for completed planning parents. Its unstarted GPU 1 selector was subsequently
+global-batch, data and parent-scoring recipe. Full readiness was verified; v3 was subsequently superseded before training by the expanded sequential courses. Its unstarted GPU 1 selector was previously
 preserved and moved to GPU 3; formal full SFT has now released that GPU;
 GPU 1 now runs the reviewed v7 continuation. No foundation training was stopped.
 
@@ -453,6 +453,34 @@ the entire corpus: the source preflight performed that complete encoding.
 See `evidence/selfplay-foundation-training-ready.json` and
 `evidence/selfplay-foundation-training-readback.json`. These checks establish
 input readiness, with no foundation training gain or independent-test claim.
+
+Foundation volume was audited against actual logs and the paper's configured
+budgets: local v3 executed 5750 updates at global batch 16 (92000 sample
+presentations); the paper allows 50000/60000/30000/100000 updates at effective
+batch 256 with early stopping. Its 61.44M configured presentations are an upper
+limit, not a disclosed unique-example count or an assertion of actual updates.
+See `evidence/paper-foundation-volume-audit.json`. Data, game and architecture
+differences remain; volume has not been isolated as a causal explanation.
+
+Expanded native-rule generation is running with 24576 balanced original roots
+sampled from existing completed searches, horizons up to eight plies and three
+question paraphrases. Each task uses one paraphrase; canonical native answers
+and mirrored lineage are preserved. Mirrors and paraphrases do not create new
+independent games or searches. Finite-budget engine labels are fallible chess
+supervision; rule targets are recomputed on the requested board. Fresh full
+history, feature-key, future-isolation and token-length preflight is required.
+
+`configs/foundation-curriculum-v4.json` preserves the completed v3 bridge,
+dictionary input and architecture, resets the optimizer per course, and uses
+two GPUs with global batch 256/microbatch 4. Actual global-256 continuous and
+resumed execution was independently checked: all weights, optimizer/RNG states
+and step losses agree. This tiny four-update fixture is not a completed course.
+Each new stage assesses 128 raw validation answers per introduced task; both
+stage accuracy and worst-task accuracy must meet the declared targets before
+advancement. NLL alone cannot advance a course. The queued recipe and frozen
+preparation/training commands are recorded in
+`evidence/foundation-curriculum-v4-queue.json`; no new curriculum gain or
+independent-test result is claimed.
 
 Search mining now optionally accepts a child on its raw recommended move and
 calibrated evaluation (`--child-contract move_eval`). The original full output

@@ -14,12 +14,69 @@ from .engine_selfplay import context_positions
 from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, write_jsonl
 from .planning_data import planning_label
 from .policy_data import heldout_contract
-from .rules import adjudicate, play, replay
+from .rules import adjudicate, piece_name, play, replay
 from .symmetry import mirror_fen, mirror_move, mirrored_qa
 
 
-def grounding_pair(query, rng, reserved=frozenset(), available_keys=None):
+def question_variant(row, variant):
+    """Vary the request while preserving the native answer and output contract."""
+    if variant not in (0, 1, 2):
+        raise ValueError('Question variant must be zero, one or two')
+    if variant == 0:
+        return row['question']
+    fields, task = row['query'], row['task_type']
+    index = variant - 1
+    list_format = '按坐标字典序用空格分隔，没有则回答无。'
+    move_format = '按走法字典序用空格分隔，没有则回答无。'
+    if task in {'piece', 'empty'}:
+        square = fields['square']
+        choices = (f'请识别 {square} 格的棋子，只输出棋子名称，空格输出空。',
+                   f'读取 {square}：这里是哪枚棋子？只回答棋子名称，未占用则回答空。')
+    elif task in {'count', 'locate'}:
+        name = piece_name(fields['symbol'])
+        choices = ((f'统计棋盘上的{name}数量，只输出一个整数。',
+                    f'{name}的总数是多少？只用数字回答。') if task == 'count' else
+                   (f'找出每个{name}的坐标，' + list_format,
+                    f'哪些格被{name}占用？' + list_format))
+    elif task == 'material':
+        side = '红' if fields['red'] else '黑'
+        values = '按车9马4炮4仕士2相象2兵卒1帅将0计，'
+        choices = (values + f'求{side}方所有棋子的分值之和，只输出整数。',
+                   values + f'{side}方的子力合计多少？只用数字回答。')
+    elif task == 'rank':
+        rank = fields['rank']
+        choices = (f'第{rank}行有哪些棋子？以坐标:棋子名表示，' + list_format,
+                   f'读取第{rank}行全部占用格，以坐标:棋子名表示，' + list_format)
+    elif task in {'legal', 'illegal'}:
+        move = fields['move']
+        choices = (f'请判定行棋方能否走 {move}，只输出合法或不合法。',
+                   f'依象棋规则检验 {move}，只回答合法或不合法。')
+    elif task == 'moves':
+        square = fields['source']
+        choices = (f'从 {square} 出发可以合法走哪些着法？' + move_format,
+                   f'枚举 {square} 上棋子的合法着法，' + move_format)
+    elif task == 'captures':
+        choices = ('行棋方能合法吃子的着法有哪些？' + move_format,
+                   '找出所有走后能吃掉对方棋子的合法着法，' + move_format)
+    elif task == 'checks':
+        choices = ('行棋方哪些合法着法会将军？' + move_format,
+                   '枚举走后将军的全部合法着法，' + move_format)
+    elif task == 'terminal':
+        choices = ('行棋方存在合法着法吗？只回答有或无。',
+                   '请判断是否还有合法着法，只输出有或无。')
+    else:
+        raise ValueError(f'Unsupported rule question type: {task}')
+    prefix = f"依次走 {' '.join(row['future_moves'])} 后，" if row['future_moves'] else ''
+    return prefix + choices[index]
+
+
+def grounding_pair(query, rng, reserved=frozenset(), available_keys=None,
+                   max_future_plies=6, question_formats=1):
     """Return original/mirrored questions only for nonterminal, isolated histories."""
+    if type(max_future_plies) is not int or not 1 <= max_future_plies <= 8:
+        raise ValueError('Future horizon must be an integer between one and eight')
+    if question_formats not in (1, 3):
+        raise ValueError('Question formats must be one or three')
     source = query['record']
     if source['split'] != 'train':
         raise ValueError('Supplementary grounding queries must belong to training games')
@@ -31,7 +88,7 @@ def grounding_pair(query, rng, reserved=frozenset(), available_keys=None):
         return [], 'terminal_root'
     oracle = query['oracle']
     best = next(c for c in oracle['candidates'] if c['move'] == oracle['best_move'])
-    plan = planning_label(query, best)
+    plan = planning_label(query, best, max_plies=max_future_plies)
     future, past, prefixes = source['fen'], list(source['moves']), []
     for move in plan['future_moves']:
         future = play(future, move)
@@ -68,6 +125,19 @@ def grounding_pair(query, rng, reserved=frozenset(), available_keys=None):
         return [], 'root_missing_from_verified_policy_data'
     if any(context_positions(row) & reserved for row in rows):
         return [], 'heldout_root_or_future'
+    if question_formats == 3:
+        variants, identities = {}, {}
+        for row in rows:
+            parent = row.get('augmentation_parent')
+            variant = variants[parent] if parent else rng.randrange(3)
+            original_id = row['id']
+            variants[original_id] = variant
+            row['question'] = question_variant(row, variant)
+            row['question_variant'] = variant
+            row['id'] = hashlib.sha256(f'{original_id}/question-format-{variant}'.encode()).hexdigest()[:20]
+            identities[original_id] = row['id']
+            if parent:
+                row['augmentation_parent'] = identities[parent]
     return rows, None
 
 
@@ -75,27 +145,32 @@ def _sample_seed(seed, query):
     return int(hashlib.sha256(f"{seed}/{query['feature_key']}".encode()).hexdigest(), 16)
 
 
-def _worker_init(reserved, available, seed):
-    global _reserved, _available, _seed
+def _worker_init(reserved, available, seed, max_future_plies, question_formats):
+    global _reserved, _available, _seed, _max_future_plies, _question_formats
     _reserved, _available, _seed = reserved, available, seed
+    _max_future_plies, _question_formats = max_future_plies, question_formats
 
 
 def _worker(chunk):
-    return [grounding_pair(q, random.Random(_sample_seed(_seed, q)), _reserved, _available)
+    return [grounding_pair(q, random.Random(_sample_seed(_seed, q)), _reserved, _available,
+                           _max_future_plies, _question_formats)
             for q in chunk]
 
 
-def grounding_candidates(queries, reserved, available, seed, workers=1, chunk_size=16):
+def grounding_candidates(queries, reserved, available, seed, workers=1, chunk_size=16,
+                         max_future_plies=6, question_formats=1):
     """Preserve query order with bounded parallel work; callers may stop early."""
     if min(workers, chunk_size) < 1:
         raise ValueError('Grounding workers and chunk size must be positive')
     if workers == 1:
         for query in queries:
-            pair, reason = grounding_pair(query, random.Random(_sample_seed(seed, query)), reserved, available)
+            pair, reason = grounding_pair(query, random.Random(_sample_seed(seed, query)), reserved, available,
+                                          max_future_plies, question_formats)
             yield query, pair, reason
         return
     executor = ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'),
-                                   initializer=_worker_init, initargs=(reserved, available, seed))
+                                   initializer=_worker_init,
+                                   initargs=(reserved, available, seed, max_future_plies, question_formats))
     chunks = iter(queries[i:i + chunk_size] for i in range(0, len(queries), chunk_size))
     pending = deque()
     try:
@@ -124,6 +199,9 @@ def main():
     parser.add_argument('--seed', type=int, default=20261039)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--chunk-size', type=int, default=16)
+    parser.add_argument('--max-future-plies', type=int, choices=range(1, 9), default=6)
+    parser.add_argument('--question-formats', type=int, choices=[1, 3], default=1)
+    parser.add_argument('--split-workers', type=int, default=1)
     parser.add_argument('--output', default='data/research-selfplay-v1')
     args = parser.parse_args()
     if args.train_roots < 2 or args.train_roots % 2:
@@ -154,7 +232,8 @@ def main():
     rows, counts, rejected, roots, games = [], Counter(), Counter(), set(), set()
     if any(q['record']['game_id'] in heldout_games for q in queries):
         raise ValueError('Supplementary grounding query belongs to a held-out game')
-    candidates = grounding_candidates(queries, reserved, available, args.seed, args.workers, args.chunk_size)
+    candidates = grounding_candidates(queries, reserved, available, args.seed, args.workers, args.chunk_size,
+                                      args.max_future_plies, args.question_formats)
     try:
         for query, pair, reason in candidates:
             record = query['record']
@@ -177,7 +256,7 @@ def main():
     if len(roots) != args.train_roots:
         raise ValueError(f'Insufficient isolated roots: {dict(counts)}')
     records = [*base_rows, *rows]
-    split_proof = verify_splits(records)
+    split_proof = verify_splits(records, workers=args.split_workers)
     outputs = []
     for split in ['train', 'validation', 'test']:
         path = output / f'{split}.jsonl'
@@ -189,6 +268,11 @@ def main():
     summary = {**split_proof, 'new_original_training_roots': len(roots),
                'new_training_games': len(games), 'original_roots_by_side': dict(counts),
                'new_rule_question_records': len(rows), 'records': len(records),
+               'new_future_horizons': dict(Counter(len(r['future_moves']) for r in rows
+                                                    if 'future' in r['stage'] and
+                                                    'augmentation_parent' not in r)),
+               'question_variants': dict(Counter(r.get('question_variant', 0) for r in rows)),
+               'question_formats_do_not_duplicate_roots_or_answers': True,
                'by_split_stage': dict(Counter(f"{r['split']}/{r['stage']}" for r in records)),
                'rejected': dict(rejected), 'original_course_rows_preserved': True,
                'heldout_course_rows_preserved': True, 'all_queried_futures_and_mirrors_isolated': True,

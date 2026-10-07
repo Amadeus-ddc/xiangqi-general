@@ -1,0 +1,74 @@
+{
+  "status": "queued",
+  "evidence_state": "reconstructed_baseline",
+  "recipe_sha256": "a96d27a373af21437f71916efbdcd4c7c0001f5c20e010aebc505ba086b3a603",
+  "requested_original_roots": 24576,
+  "roots_sampled_from_completed_searches": true,
+  "new_engine_games_or_searches": 0,
+  "maximum_future_plies": 8,
+  "question_formats": 3,
+  "mirrors_and_question_variants_are_derived_examples": true,
+  "four_course_maximum_steps": [
+    50000,
+    60000,
+    30000,
+    100000
+  ],
+  "maximum_steps_are_configured_limits_not_completed_updates": true,
+  "global_batch_size": 256,
+  "micro_batch_size": 4,
+  "actual_visible_gpus": [
+    0,
+    2
+  ],
+  "raw_qa_examples_per_task": 128,
+  "raw_qa_targets": {
+    "static_current": {
+      "accuracy": 0.99,
+      "minimum_task_accuracy": 0.95
+    },
+    "dynamic_current": {
+      "accuracy": 0.98,
+      "minimum_task_accuracy": 0.95
+    },
+    "static_future": {
+      "accuracy": 0.98,
+      "minimum_task_accuracy": 0.95
+    },
+    "dynamic_future": {
+      "accuracy": 0.97,
+      "minimum_task_accuracy": 0.95
+    }
+  },
+  "raw_qa_gates_cover_all_introduced_courses": true,
+  "nll_alone_does_not_advance_courses": true,
+  "initialization": "Preserved completed v3 bridge; new optimizer at each course",
+  "dictionary_input_and_architecture_retained": true,
+  "original_mixed_v3_waiters_superseded_before_training": true,
+  "full_fresh_data_preflight_required": true,
+  "expanded_data_generation_started": true,
+  "new_curriculum_training_started": false,
+  "new_student_gain_measured": false,
+  "independent_test_used_for_training_or_selection": false,
+  "frozen_jobs": {
+    "selfplay-grounding-expanded-v2": {
+      "plan_sha256": "772596160b611db0b84e5b89c08e3a6999315c9feff936c2644ec04f4dd288d2",
+      "run_script_sha256": "738740759b5e041ad74b69434cfd9031ae02d7dc98492dca32794929f3c6cd85",
+      "source_manifest_sha256": "a920fb35d77f6adc71f2fc79e094d270ac443c69c814da1aafe4ebff32066881",
+      "session": "xqgeneral-selfplay-grounding-expanded-v2"
+    },
+    "curriculum-expanded-v4-preparation": {
+      "plan_sha256": "250700de74e5c5054623e49621bb058be54bdeb22ab0be707098fb4293e08bb2",
+      "run_script_sha256": "d959068df2ebfae6539e1a7477eb68031c61c28c760201e2e1fa9b0d0684a357",
+      "source_manifest_sha256": "8bb8cf7ee14b77d87555422359f1aba80243060c8576d51bb08720dca3b5610c",
+      "session": "xqgeneral-curriculum-expanded-v4-preparation"
+    },
+    "curriculum-expanded-v4-launch": {
+      "plan_sha256": "fff51dd613dda43e149ab39490346ac0df577f7366b62fc7a30dc4045f09aec4",
+      "run_script_sha256": "e573cf85835cfbdc4afe622e61b228c6e031bb66b759b7cdd8a19fb82591c559",
+      "source_manifest_sha256": "a91d03f7ad89b9f9450475c31c40987c47194c33d6bb2ca1e6b2c092b32e3205",
+      "session": "xqgeneral-curriculum-expanded-v4"
+    }
+  },
+  "global256_resume_readback_manifest_sha256": "7f4e168e42822cd95f7455e84e98db609031cfb61e645146a859c333ad07f2d8"
+}

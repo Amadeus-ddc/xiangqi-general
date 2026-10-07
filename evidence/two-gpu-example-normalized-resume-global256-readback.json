@@ -1,0 +1,15 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "world_size": 2,
+  "global_batch_size": 256,
+  "micro_batch_size": 4,
+  "actual_contiguous_updates": 4,
+  "interruption_step": 2,
+  "all_actual_weights_optimizer_rng_and_step_losses_bitwise_equal": true,
+  "all_input_output_and_preserved_source_hashes_read_back": true,
+  "frozen_decoder_and_nonzero_gradients_verified": true,
+  "source_manifest_sha256": "5606e9f9fa2c15d8a93ce41976d2a9d3734122ce48fc73ce49abc6f9bf14e724",
+  "full_curriculum_improvement_claimed": false,
+  "independent_test_used": false
+}
