@@ -190,14 +190,14 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 原 `configs/selfplay-foundation-v3.json` 混合补训等待任务已在开始训练前保留并撤换。其 811684 条混合记录及 799424 条训练／验证编码的预检证据仍保留，不能覆盖新扩充数据。课程训练量复核见 `evidence/paper-foundation-volume-audit.json`：本地旧四门实际共 5750 步、92000 次样本呈现；论文配置上限为 240000 步、有效批量 256，且允许早停，不能当成全部实际完成步数或独立样本数。
 
-当前顺序补训采用 `configs/foundation-curriculum-v4.json`：已完成 24576 个平衡原始根、612 个训练棋局的 1081344 道新增规则题，合计 1155116 条，完整预检进行中，见 `evidence/selfplay-grounding-expanded-v2.json`。保留旧桥接结构及棋盘字典，逐门重置优化器，双卡全局批量 256／微批量 4。四门上限为 50000／60000／30000／100000 步，回放比例与桥接学习率参照论文配置；实际步数由验证决定。每 512 步固定真实最新权重，对已引入课程的每类题评测 128 条原始回答；各门总正确率和最差题型必须同时达标，NLL 下降不能独自允许进入下一门。测试集不参与训练或选模。单卡评测与双卡续训按顺序执行，保持同卡数优化器恢复。
+当前顺序补训采用 `configs/foundation-curriculum-v4.json`：已完成 24576 个平衡原始根、612 个训练棋局的 1081344 道新增规则题，合计 1155116 条，完整预检已通过，首门 `static_current` 正在实际训练。生成、预检和实际训练启动证据分别见 `evidence/selfplay-grounding-expanded-v2.json`、`evidence/foundation-curriculum-v4-training-ready.json`、`evidence/foundation-curriculum-v4-training-start.json`。保留旧桥接结构及棋盘字典，逐门重置优化器，双卡全局批量 256／微批量 4。四门上限为 50000／60000／30000／100000 步，回放比例与桥接学习率参照论文配置；实际步数由验证决定。每 512 步固定真实最新权重，对已引入课程的每类题评测 128 条原始回答；各门总正确率和最差题型必须同时达标，NLL 下降不能独自允许进入下一门。测试集不参与训练或选模。单卡评测与双卡续训按顺序执行，保持同卡数优化器恢复。
 
 ```bash
 python scripts/freeze_run.py --output runs/foundation-curriculum/source-run -- \
   python -m xqgeneral.gated_curriculum --config configs/foundation-curriculum-v4.json
 ```
 
-先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation-v2/`、`runs/curriculum-expanded-v4-launch-v2/`，精确命令和恢复方法见各自 `plan.json`。预检与等待器已加入多进程入口保护，原失败记录保留，见 `evidence/foundation-curriculum-v4-preflight-restart.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
+先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation-v2/`、`runs/curriculum-expanded-v4-launch-v2/`，精确命令和恢复方法见各自 `plan.json`；首门训练日志在 `runs/curriculum-expanded-v4/static_current/training/training.jsonl`，首次原始问答验收安排在第 512 步。预检与等待器已加入多进程入口保护，原失败记录保留，见 `evidence/foundation-curriculum-v4-preflight-restart.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

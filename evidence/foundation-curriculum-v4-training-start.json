@@ -1,0 +1,42 @@
+{
+  "status": "running",
+  "evidence_state": "reconstructed_baseline",
+  "observed_at_utc": "2026-10-07T10:34:49.859859+00:00",
+  "active_course": "static_current",
+  "actual_student_training_started": true,
+  "last_observed_update": 84,
+  "observed_update_records": 84,
+  "actual_ddp_ranks": [
+    0,
+    1
+  ],
+  "actual_training_gpu_indices": [
+    0,
+    2
+  ],
+  "global_batch_size": 256,
+  "micro_batch_size": 4,
+  "observed_supervised_tokens": 72325,
+  "all_observed_losses_and_gradients_finite": true,
+  "frozen_training_source_and_config_rechecked": true,
+  "source_preflight_manifest_sha256": "0111cb82677fbc1d6824c0e0108ff4a309fc586d45ba003e75248fe9cd5e3e35",
+  "training_config_sha256": "1619c937f22d20a08452246a256b2feec2357955ed5ac503e5b3162d964c7c46",
+  "execution_sha256": "89dddef770f28e90227ff73801a777abb5898bb60e2a10961ed7da43c4b45815",
+  "observed_training_prefix_sha256": "4283cfb213d9f0b1aa59b30093e2e184a2c3f63fa6b64871a1a1231a148c2ff7",
+  "logged_learning_rate_group": "board_tokens",
+  "logged_learning_rate_is_one_tenth_of_bridge_rate": true,
+  "actual_configured_bridge_learning_rate": 0.0001,
+  "actual_configured_token_learning_rate": 1e-05,
+  "actual_warmup_updates": 2500,
+  "raw_qa_gate_complete": false,
+  "first_raw_qa_gate_update": 512,
+  "four_courses_completed": false,
+  "student_improvement_measured": false,
+  "independent_test_used": false,
+  "is_search_distillation": false,
+  "limits": [
+    "A timestamped training prefix does not establish course completion or model quality",
+    "Full preparation readback and additional native-label sampling run separately"
+  ],
+  "readback_manifest_sha256": "4e253b3075c033d9e2a7d9ee4911ed59a28e3b54846337758c6031e9ba393188"
+}
