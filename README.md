@@ -247,6 +247,17 @@ python -m xqgeneral.foundation_preflight \
   --public-evidence evidence/new-recorded-foundation-training-ready.json
 ```
 
+完成预检后，可用独立读回入口重新核验全部预检产物、固定基座、原始棋谱前缀和最大未来、完整镜像历史键、旧／新保留足迹及旧专家缓存逐位保留。输入须是已完成的预检及固定基座身份清单；它只读取数据，不训练或选择模型。真实 3963 条执行及读回见 `evidence/recorded-foundation-source-readback-real-v1.json`。
+
+```bash
+python -m xqgeneral.foundation_readback \
+  --config configs/foundation-human-engine-clean-v2.json \
+  --preflight runs/new-recorded-foundation-preflight \
+  --base-proof runs/recorded-foundation-qwen-base-identity-v1/manifest.json \
+  --output runs/new-recorded-foundation-readback \
+  --public-evidence evidence/new-recorded-foundation-readback.json
+```
+
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
