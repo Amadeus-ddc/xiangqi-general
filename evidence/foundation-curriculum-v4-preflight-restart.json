@@ -1,0 +1,47 @@
+{
+  "status": "repair_verified_preflight_running",
+  "evidence_state": "reconstructed_baseline",
+  "reason": "Original full preflight lacked a multiprocessing main guard; spawn workers reran tokenization",
+  "original_preflight_complete": false,
+  "original_training_started": false,
+  "exact_owned_processes_stopped": 23,
+  "original_artifacts_preserved": true,
+  "model_recipe_unchanged": true,
+  "model_recipe_sha256": "a96d27a373af21437f71916efbdcd4c7c0001f5c20e010aebc505ba086b3a603",
+  "new_preflight": "runs/curriculum-expanded-v4-preparation-v2",
+  "new_launcher": "runs/curriculum-expanded-v4-launch-v2",
+  "new_sessions": [
+    "xqgeneral-curriculum-expanded-v4-preparation-v2",
+    "xqgeneral-curriculum-expanded-v4-v2"
+  ],
+  "spawn_name_import_checks": [
+    {
+      "status": "complete",
+      "script_sha256": "36e37841a5d66ff15e12a854cf2c43b2e0554339afecd7a43660e2038ebf6477",
+      "spawn_name_import_executed": true,
+      "runtime_outputs_created_on_import": false
+    },
+    {
+      "status": "complete",
+      "script_sha256": "b4b3d9d15c073ea0d93c4b2239759a132eb2e52002a1dbd0953fa76037979f11",
+      "spawn_name_import_executed": true,
+      "runtime_outputs_created_on_import": false
+    }
+  ],
+  "current_preflight_complete": false,
+  "student_improvement_measured": false,
+  "independent_test_used_for_training_or_selection": false,
+  "resume": "Use each new plan.json command in tmux with its recorded device environment",
+  "evidence_sha256": {
+    "runs/curriculum-expanded-v4-preparation/superseded-multiprocessing-guard-incident.json": "dd1b836477d7bdc001cbd4dc0606a8bea0a7bded749bbbc45dcb700577bdff67",
+    "runs/curriculum-expanded-v4-launch/superseded-multiprocessing-guard-incident.json": "90bdddb87914b828d00e6c71dd3ecf19dbb80f015811d33018ade1c76824c780",
+    "runs/curriculum-expanded-v4-preparation-v2/plan.json": "93a250eff97b2059d2557834bdf9fbae3db42ed8aec716810bd09a8fedd579e7",
+    "runs/curriculum-expanded-v4-preparation-v2/run.py": "36e37841a5d66ff15e12a854cf2c43b2e0554339afecd7a43660e2038ebf6477",
+    "runs/curriculum-expanded-v4-preparation-v2/entry-guard-check.json": "950c7afb4693a058c7d3ecf4282cea0136df73cf952a186e666bf78275dc9659",
+    "runs/curriculum-expanded-v4-preparation-v2/source-run/source-manifest.json": "2543eab8917153d92dfb28b98cd5e053b83bc25f0ba497a9d4f84320099caac6",
+    "runs/curriculum-expanded-v4-launch-v2/plan.json": "24284d1a99d1d4c892e39b225fe7475b680939c6a48f90e2ed1a714d4b2cbd12",
+    "runs/curriculum-expanded-v4-launch-v2/run.py": "b4b3d9d15c073ea0d93c4b2239759a132eb2e52002a1dbd0953fa76037979f11",
+    "runs/curriculum-expanded-v4-launch-v2/entry-guard-check.json": "81ae5a69ee96fe7105e4c2fef8f58b3e1d5ea515e4594d286e790e35adcead93",
+    "runs/curriculum-expanded-v4-launch-v2/source-run/source-manifest.json": "2543eab8917153d92dfb28b98cd5e053b83bc25f0ba497a9d4f84320099caac6"
+  }
+}

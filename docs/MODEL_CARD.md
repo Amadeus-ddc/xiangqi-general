@@ -501,15 +501,28 @@ Search mining now optionally accepts a child on its raw recommended move and
 calibrated evaluation (`--child-contract move_eval`). The original full output
 and its structural errors remain in the trace; the default `full` predicate
 is preserved. Unused defective facts and lines are excluded from the teacher
-packet, with the actual used PV, original unverified prose and separate full
-and move/evaluation verification supplied explicitly. Every reachable raw
+packet, with the actual used PV, native notation and separate full
+and move/evaluation verification supplied explicitly. Unverified student prose
+remains in the raw trace and is omitted from the consolidation packet. Every reachable raw
 prefix is checked for reserved positions, and every final used target line
 remains subject to native full-history legality, termination, heldout isolation
-and strict improvement. Ten new focused cases pass within 101 CPU tests.
+and strict improvement. The current CPU suite has 129 passing tests.
 The fixed completed formal-model pilot in
 `configs/search-v4-selected-move-eval-pilot.json` does not isolate the effect
-of this predicate, and successful fixtures do not establish real label yield
-or a completed trained distillation round.
+of this predicate. It processed 64 training roots and mined one structurally
+valid improvement. The original teacher prose contained nine incorrect move
+names and is ineligible for training. A genuine full BF16 regeneration passed
+notation checks but failed independent Astra Low semantic review; the second
+regeneration passed that review. Root oracle scores and reversed child estimates
+are now explicitly distinguished. Move-name checks require adjacent matching
+coordinates, and arbitrary strategic prose still needs separate review.
+Future mining archives every successful unrestricted and restricted oracle query.
+Some original forced-query raw answers are missing; new repeats are separately
+recorded evidence, not recovered originals. See
+`evidence/search-v4-selected-move-eval-pilot.json` and
+`evidence/search-v4-grounded-prose-retry.json`. One accepted teacher example
+does not establish teacher accuracy, student improvement, human rating or a
+completed trained distillation round; the trained-round count remains zero.
 
 The formal full-decoder explanation experiment has now actually completed
 9216 steps and 9640198 supervised tokens, with loss-selected step 6144 kept

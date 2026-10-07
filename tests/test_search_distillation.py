@@ -7,6 +7,32 @@ from xqgeneral.evidence import history_key, position_key
 from xqgeneral.search_distillation import SearchMiner, descend, first_divergence, root_evaluation
 
 
+def test_forced_move_quality_query_is_preserved_before_cached_reuse(tmp_path):
+    class Oracle:
+        def analyze(self, fen, nodes, initial_fen, moves, searchmoves=None):
+            move = searchmoves[0] if searchmoves else 'b0c2'
+            return {'best_move':move, 'requested_nodes':nodes,
+                    'candidates':[{'move':move, 'score_type':'cp', 'score':0, 'wdl':[0,1000,0]}],
+                    'raw_output':[f'info depth 1 score cp 0 wdl 0 1000 0 nodes {nodes} pv {move}',
+                                  f'bestmove {move}']}
+
+    path = tmp_path / 'oracle.jsonl'
+    def preserve(item):
+        with path.open('a') as handle:
+            handle.write(json.dumps(item) + '\n')
+
+    row = root_record()
+    miner = SearchMiner(None, Oracle(), set(), record_oracle_query=preserve)
+    root = miner.analyze(row)
+    # This move is absent from root MultiPV; its probability needs another actual search.
+    assert miner.move_probability(row, 'a0a1', root) == 0.5
+    assert miner.move_probability(row, 'a0a1', root) == 0.5
+    saved = [json.loads(line) for line in path.read_text().splitlines()]
+    assert [q['searchmoves'] for q in saved] == [[], ['a0a1']]
+    assert all(q['record']['moves'] == row['moves'] for q in saved)
+    assert saved[1]['response']['raw_output'][-1] == 'bestmove a0a1'
+
+
 def test_pv_divergence_uses_the_actual_mover_after_the_shared_prefix():
     result = first_divergence(START_FEN, ['b0c2', 'b9c7'], ['b0c2', 'h9g7'])
     assert result == (play(START_FEN, 'b0c2'), 'b9c7', 'h9g7', ['b0c2'])
@@ -152,7 +178,9 @@ def test_move_eval_contract_does_not_silently_correct_original_child_facts():
     assert child['verification']['errors'] == ['incorrect_move_facts']
     packet = json.loads(query['messages'][1]['content'])
     source = next(item for item in packet['child_analyses'] if item['move'] == child['move'])
-    assert source['unverified_explanation'] == child['analysis']['explanation']
+    assert 'unverified_explanation' not in source
+    assert packet['unverified_child_prose_omitted']
+    assert child['analysis']['explanation'] == json.loads(child['raw'])['explanation']
     assert source['full_output_verification'] == child['verification']
 
 

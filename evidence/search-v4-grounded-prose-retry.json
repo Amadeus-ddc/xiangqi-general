@@ -1,0 +1,89 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "original_mined_train_roots": 64,
+  "original_structural_collector_acceptances": 1,
+  "original_prose_eligible_after_native_check": 0,
+  "first_grounded_retry_semantically_accepted": false,
+  "second_grounded_retry_semantically_accepted": true,
+  "current_eligible_training_examples_after_checks": 1,
+  "neural_reviewer": {
+    "requested_model": "GPT-6-Astra",
+    "requested_reasoning_effort": "low",
+    "backend": "codex_subagent",
+    "reviewer_role": "neural_annotation_reviewer",
+    "human_rating": false
+  },
+  "review_input_hashes_verified": true,
+  "genuine_full_bf16_teacher_parameters": 27356728560,
+  "teacher_weight_manifest_sha256": "01969d64835c9946e426d0d788e131338623d88573290116edc9f507d69619da",
+  "teacher_quantization": "none",
+  "original_structured_target_fields_changed": false,
+  "all_eighteen_branch_facts_recomputed": true,
+  "explicit_prose_move_check": {
+    "valid": true,
+    "errors": [],
+    "coordinate_mentions": [
+      "e2c0",
+      "g8g0",
+      "f0e1",
+      "d9c7",
+      "c0e2",
+      "c7b5",
+      "i6g5",
+      "c0c2",
+      "f0e1"
+    ],
+    "chinese_notation_mentions": [
+      "相五退七",
+      "炮7进8",
+      "仕四进五",
+      "马4进3",
+      "相七进五",
+      "马3进2",
+      "马一退三",
+      "车3退2",
+      "仕四进五"
+    ]
+  },
+  "repeated_child_quality_checks": [
+    {
+      "root_candidate": "e2c0",
+      "recommended_child_move": "g8g0",
+      "repeated_child_move_loss": 0,
+      "repeated_child_evaluation_error": 0.0
+    },
+    {
+      "root_candidate": "i6g5",
+      "recommended_child_move": "c0c2",
+      "repeated_child_move_loss": 0,
+      "repeated_child_evaluation_error": 0.0030000000000000027
+    },
+    {
+      "root_candidate": "f0e1",
+      "recommended_child_move": "c0c2",
+      "repeated_child_move_loss": 0,
+      "repeated_child_evaluation_error": 0.0030000000000000027
+    }
+  ],
+  "new_oracle_query_records": 3,
+  "new_forced_query_records": 0,
+  "all_new_raw_oracle_responses_reparsed": true,
+  "original_forced_raw_evidence_gap_remains": true,
+  "new_repeats_are_separate_evidence": true,
+  "student_distillation_training_executed": false,
+  "valid_distillation_rounds": 0,
+  "strategic_prose_human_rating": false,
+  "independent_test_used_for_training_or_selection": false,
+  "limits": [
+    "One accepted teacher example is not general teacher accuracy or student improvement",
+    "Astra neural review is not human rating or an independent chess engine",
+    "Old forced raw responses cannot be recovered by new repeats",
+    "Original and new search use the same finite-budget engine"
+  ],
+  "readback_manifest_sha256": "d5ba616bb5e9195affe4b9b6c6c4493b6d65057f7dce50af672d05df8900c73f",
+  "independent_root_repeat_query_records": 2,
+  "independent_root_repeat_forced_query_records": 1,
+  "root_repeat_readback_manifest_sha256": "a4133a08c694d7cb8d98f5877c78a5e671286fba41cc409fcd5a9368d0b9194e",
+  "old_root_forced_query_keys_without_archived_raw": 119
+}

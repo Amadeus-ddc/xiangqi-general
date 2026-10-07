@@ -106,7 +106,7 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
   --validation-data data/astra-explanations-full-v1 --output data/search-v1
 ```
 
-搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。新模式仅向汇总教师提供实际使用的变化、评分、未经事实保证的原正文及核验结果，不传入未使用的事实和分支。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
+搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。汇总教师接收实际使用的变化、逐步事实、原生记谱与核验结果；学生原始正文保留在轨迹中，未经语义保证的正文不传给汇总教师。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。根评分与子分析反号后的分支估计标明来源；中文记谱须紧邻对应坐标并通过原生规则核验。机械着法检查不能替代战略语义复核。后续挖掘逐次保存所有成功的自由和指定着法搜索，包括完整历史与原始引擎回答；旧轨迹缺失的回答仍按缺失记录。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
 
 `configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。
 
@@ -197,7 +197,7 @@ python scripts/freeze_run.py --output runs/foundation-curriculum/source-run -- \
   python -m xqgeneral.gated_curriculum --config configs/foundation-curriculum-v4.json
 ```
 
-先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation/`、`runs/curriculum-expanded-v4-launch/`，精确命令和恢复方法见各自 `plan.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
+先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation-v2/`、`runs/curriculum-expanded-v4-launch-v2/`，精确命令和恢复方法见各自 `plan.json`。预检与等待器已加入多进程入口保护，原失败记录保留，见 `evidence/foundation-curriculum-v4-preflight-restart.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
