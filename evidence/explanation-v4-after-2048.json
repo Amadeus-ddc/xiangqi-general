@@ -1,0 +1,37 @@
+{
+  "step": 2048,
+  "checkpoint_sha256": "bdc9dd2199d3dd0f71ce07f106e094fe95f4de3c53fe084ba4fc530a4deb6a87",
+  "move_examples": 192,
+  "raw_move_legal": 167,
+  "raw_move_no_mistake": 154,
+  "raw_move_no_mistake_rate": 0.8020833333333334,
+  "planning_examples": 96,
+  "raw_full_planning_contracts": 9,
+  "raw_full_planning_contract_valid_rate": 0.09375,
+  "explanation_examples": 96,
+  "raw_explanation_first_move_legal": 84,
+  "raw_explanation_first_move_no_mistake": 72,
+  "raw_explanation_legal_pv": 9,
+  "raw_full_explanation_contracts": 2,
+  "raw_full_explanation_contract_valid_rate": 0.020833333333333332,
+  "functional_score": 0.3479166666666667,
+  "judge_nodes_per_position": 1000000,
+  "evaluation_manifest_sha256": {
+    "moves": "cce949fe261800ef3e878e2e307d09a68e1c9b2b038676655835d6037fb2f501",
+    "plans": "6b4db1621f4e6f4414383dc04ed9655bd1de5c8551dba0f3e701b46653ac20cf",
+    "explanations": "03c5883737db6d051cdbb56d1b6481b8107bc26f44cc90171df0e7892f80ab67"
+  },
+  "same_actual_checkpoint_for_all_capabilities": true,
+  "all_evaluation_outputs_read_back": true,
+  "independent_test_used": false,
+  "raw_generation": true,
+  "oracle_repairs": 0,
+  "prose_semantic_rating": "unmeasured",
+  "training_complete": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Interim validation, not a final trained model or strong coach proof",
+    "Different initialization histories prevent single-factor comparisons",
+    "Contract success does not establish semantic teaching quality"
+  ]
+}

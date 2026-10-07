@@ -190,6 +190,36 @@ including originals and mirrors. Fresh reviewers are configured through
 Individual neural decisions are in progress, not a completed full review or
 training improvement. Source labels and archived runs are preserved.
 
+The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
+raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
+contracts. All three evaluations bind the same real weights and verified raw
+outputs. This is interim validation; prose semantics remain unmeasured and the
+model cannot yet serve as a reliable coach.
+
+The expanded warm-initialization full-decoder run completed 6656 steps and
+selected actual step 4608 by validation NLL (0.5271). All outputs, selected
+checkpoint step and FP32 trainable parameter count were read back and verified.
+Completed training and low loss do not establish strong play or reliable
+teaching; a new reviewed-data continuation uses a separate optimizer.
+
+The larger self-play search produced 27408 new independent queries and exactly
+preserved all 11348 old query records. Old records were regrouped by split; an
+incorrect global-order assertion failed after successful label generation.
+A separate verified continuation caches features without repeating searches.
+Validation/test bytes are unchanged, and query availability does not establish
+student strength or complete feature-cache readiness.
+
+Four-course self-play grounding generated 360448 new rule questions from 8192
+original train roots (4096 per color, 499 games). All output hashes and unchanged
+heldout bytes were read back. Full-dataset token and feature preflight is still
+required, and generated rule labels do not prove neural training gains.
+
+New initial-teacher inputs contain 2048 isolated train roots from 485 self-play
+games, balanced across both colors, with full-history candidate replay and all
+input/output hashes verified. Authorized Astra Low generation has started;
+prepared packets do not count as neural annotations or distillation, and the
+new prose requires independent review before training.
+
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the

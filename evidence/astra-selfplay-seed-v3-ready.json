@@ -1,0 +1,31 @@
+{
+  "train_queries": 2048,
+  "by_side": {
+    "w": 1024,
+    "b": 1024
+  },
+  "train_games": 485,
+  "rejected": {
+    "incomplete_or_terminal_candidates": 277
+  },
+  "initial_teacher": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "all_future_branches_replayed_with_full_history": true,
+  "heldout_branch_overlap": 0,
+  "existing_query_overlap": 0,
+  "new_engine_searches": 0,
+  "source": "completed independent selfplay searches",
+  "neural_annotations_generated": false,
+  "is_search_distillation": false,
+  "validation_and_test_labels_changed": false,
+  "manifest_sha256": "11ef03d7700038745691b3bc334cf8b95de5a5ab59ab70629546439a6b275dd6",
+  "packet_items": {
+    "0": 683,
+    "1": 683,
+    "2": 682
+  },
+  "all_manifest_inputs_outputs_read_back": true,
+  "test_used": false,
+  "source_labels_modified": false,
+  "model_identity_evidence": "explicit Astra Low subagent configuration, no independent backend attestation"
+}
