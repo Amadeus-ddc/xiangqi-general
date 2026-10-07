@@ -1,0 +1,53 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "sampled_train_only_original_roots": 64,
+  "by_side": {
+    "w": 32,
+    "b": 32
+  },
+  "valid_depth_comparisons": 64,
+  "rejected": 0,
+  "source_move_reproduced_at_100k": 64,
+  "source_move_matches_1m": 39,
+  "source_moves_without_10pct_engine_loss": 64,
+  "mean_engine_expected_score_loss": 0.0020234374999999966,
+  "maximum_engine_expected_score_loss": 0.039999999999999925,
+  "negative_raw_expected_score_deltas": 15,
+  "actual_1m_root_depth_median": 21.0,
+  "actual_requested_search_nodes": [
+    100000,
+    1000000
+  ],
+  "threads_per_engine": 1,
+  "full_history_native_replay_verified": true,
+  "original_training_labels_modified": false,
+  "neural_generation_or_student_training": false,
+  "independent_test_used": false,
+  "limits": [
+    "Same-engine finite-budget consistency audit, not an independent solver or absolute best-move proof",
+    "64 sampled train roots do not establish corpus-wide error rates",
+    "Forced-move and unrestricted searches allocate the same budget differently",
+    "Engine expected score is not measured human winning probability"
+  ],
+  "all_input_output_and_frozen_source_hashes_read_back": true,
+  "all_actual_raw_engine_answers_reparsed": true,
+  "all_probabilities_and_summary_recomputed": true,
+  "fixed_train_sample_identity_reproduced": true,
+  "fixed_sampling_seed": 20261047,
+  "actual_search_node_ranges": {
+    "repeated_100k": {
+      "minimum": 53492,
+      "maximum": 100157
+    },
+    "deeper_1m": {
+      "minimum": 53492,
+      "maximum": 1000684
+    },
+    "forced_source_move_1m": {
+      "minimum": 246,
+      "maximum": 1000661
+    }
+  },
+  "source_manifest_sha256": "4267f035968fb6a88291467af4f876675a1c292a9d95d21dd80930630af06055"
+}

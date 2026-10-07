@@ -1,0 +1,79 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 49836,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "new_original_training_roots": 24576,
+  "new_training_games": 612,
+  "original_roots_by_side": {
+    "b": 12288,
+    "w": 12288
+  },
+  "new_rule_question_records": 1081344,
+  "records": 1155116,
+  "new_future_horizons": {
+    "2": 35662,
+    "8": 30624,
+    "4": 33319,
+    "1": 36993,
+    "5": 33792,
+    "6": 32373,
+    "3": 35024,
+    "7": 32549
+  },
+  "question_variants": {
+    "1": 360446,
+    "2": 360084,
+    "0": 360814
+  },
+  "question_formats_do_not_duplicate_roots_or_answers": true,
+  "by_split_stage": {
+    "train/static_current": 308004,
+    "train/dynamic_current": 256670,
+    "train/static_future": 308004,
+    "train/dynamic_future": 256670,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492
+  },
+  "rejected": {
+    "no_nonterminal_future": 123
+  },
+  "original_course_rows_preserved": true,
+  "heldout_course_rows_preserved": true,
+  "all_queried_futures_and_mirrors_isolated": true,
+  "historical_terminal_roots_and_futures_forbidden": true,
+  "feature_keys_reusable_from_source": true,
+  "neural_prose_generated": false,
+  "new_engine_searches": 0,
+  "student_training_executed": false,
+  "independent_test_used_for_training_or_selection": false,
+  "all_input_output_hashes_read_back": true,
+  "heldout_files_byte_identical_to_original_courses": true,
+  "dataset_manifest_sha256": "4f18af43dd5783375927e515d8d9750920bf07f342a384535c44dc1d561fb612",
+  "original_roots_are_sampled_from_existing_independent_searches": true,
+  "root_count_is_not_new_engine_games_or_new_searches": true,
+  "maximum_requested_future_plies": 8,
+  "question_formats": 3,
+  "native_answers_and_output_format_unchanged": true,
+  "student_training_benefit_measured": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Question paraphrases and color mirrors are derived examples",
+    "Per-root engine search remains finite-budget supervision",
+    "Expanded inputs require a fresh full token/cache preflight before training"
+  ]
+}
