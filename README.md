@@ -206,7 +206,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`；四门基础能力仍等待原始问答验收。
+两来源去重为 22720 局、约 187 万个半回合；当前 317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量。按论文蒸馏的每局取样限制，现有独立棋局不足以覆盖其七轮人类来源预算，详见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门第 512 步原始 768 题为 51.8%，最差题型 16.4%，独立重算全部历史及答案后仍未达标，继续第一门；见 `evidence/recorded-foundation-clean-first-raw-gate.json`。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -219,6 +219,19 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --output data/new-recorded-games \
   --public-evidence evidence/new-recorded-games-import.json
 ```
+
+另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。两档案各 64 局的实际串行／四 CPU 结果一致，见 `evidence/bundled-recorded-games-real-fixture-v1.json`；八 CPU 全量导入正在 `runs/additional-recorded-games-native-import-v1/` 执行，新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
+
+```bash
+python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
+  python -m xqgeneral.bundled_games \
+  --acquisition runs/additional-recorded-source-acquisition-v1/manifest.json \
+  --previous-data data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+  --workers 8 --seed 20261051 --output data/new-bundled-recorded-games \
+  --public-evidence evidence/new-bundled-recorded-games.json
+```
+
+省略 `--limit-records` 才处理全部候选；该选项只供有界执行检查。中断后保留部分产物，在新目录用原固定源码重放，不覆盖旧输出。记录数、重复、署名差异和规则拒收原因以完成清单为准；原始记录及档案不随代码发布。
 
 规则课程从实际记录的 1—8 步后续变化出题，保留完整历史和原棋局身份。先隔离此前所有训练／保留局面及未来分支，再合并旧引擎题，新文件保留旧文件的逐字节前缀。完整生产已从选择的 6144 局隔离出 45834 个原始根，新增 2016696 条规则题；合计 3171812 条，训练／验证／测试为 2831004／173272／167536。见 `evidence/recorded-curriculum-human-engine-full-v1.json`；真实小规模执行证据单独保留。两来源去重共 22720 局，一份主线的棋手／赛事声明有冲突且未入选，不能据合法性认定姓名真实。
 
