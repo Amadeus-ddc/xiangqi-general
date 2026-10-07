@@ -190,22 +190,43 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 原 `configs/selfplay-foundation-v3.json` 混合补训等待任务已在开始训练前保留并撤换。其 811684 条混合记录及 799424 条训练／验证编码的预检证据仍保留，不能覆盖新扩充数据。课程训练量复核见 `evidence/paper-foundation-volume-audit.json`：本地旧四门实际共 5750 步、92000 次样本呈现；论文配置上限为 240000 步、有效批量 256，且允许早停，不能当成全部实际完成步数或独立样本数。
 
-当前顺序补训采用 `configs/foundation-curriculum-v4.json`：已完成 24576 个平衡原始根、612 个训练棋局的 1081344 道新增规则题，合计 1155116 条，完整预检已通过，首门 `static_current` 正在实际训练。生成、预检和实际训练启动证据分别见 `evidence/selfplay-grounding-expanded-v2.json`、`evidence/foundation-curriculum-v4-training-ready.json`、`evidence/foundation-curriculum-v4-training-start.json`。保留旧桥接结构及棋盘字典，逐门重置优化器，双卡全局批量 256／微批量 4。四门上限为 50000／60000／30000／100000 步，回放比例与桥接学习率参照论文配置；实际步数由验证决定。每 512 步固定真实最新权重，对已引入课程的每类题评测 128 条原始回答；各门总正确率和最差题型必须同时达标，NLL 下降不能独自允许进入下一门。测试集不参与训练或选模。单卡评测与双卡续训按顺序执行，保持同卡数优化器恢复。
+主线现在改为 `configs/foundation-human-engine-clean-v1.json`：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备。
+
+旧 v4 继承旧四门权重，首门实际更新 210 步后按用户要求停止，未到首次问答验收；原数据、源码、特征和日志保留。其 1155116 条规则题的完整历史、未来隔离、特征及原生答案抽样已再次读回，见 `evidence/foundation-curriculum-v4-training-readback.json`。这些引擎来源题将与经过规则检查的多样真实棋谱合并，合并后重新预检，不改写旧实验输入。
+
+新训练计划使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。正式启动须等待新增棋谱、全部未来分割、词元与特征缓存预检完成。
+
+四卡新初始化的连续四步与二加二恢复已经逐位核验，见 `evidence/four-gpu-clean-foundation-resume.json`。该配置使用 `ddp_find_unused_parameters: true` 保持同卡恢复的归约合同；切换这个设置不能恢复旧优化器。可用以下命令复查真实训练输出；这是执行检查，未完成课程：
 
 ```bash
-python scripts/freeze_run.py --output runs/foundation-curriculum/source-run -- \
-  python -m xqgeneral.gated_curriculum --config configs/foundation-curriculum-v4.json
+.venv/bin/python scripts/verify_exact_resume.py \
+  --continuous runs/four-gpu-clean-resume-v4/continuous \
+  --resumed runs/four-gpu-clean-resume-v4/resumed
 ```
 
-先完成新数据的完整历史、未来分割、特征键和全部训练／验证词元预检，再在 tmux 内运行。当前生成、预检与训练守卫分别在 `runs/selfplay-grounding-expanded-v2/`、`runs/curriculum-expanded-v4-preparation-v2/`、`runs/curriculum-expanded-v4-launch-v2/`，精确命令和恢复方法见各自 `plan.json`；首门训练日志在 `runs/curriculum-expanded-v4/static_current/training/training.jsonl`，首次原始问答验收安排在第 512 步。预检与等待器已加入多进程入口保护，原失败记录保留，见 `evidence/foundation-curriculum-v4-preflight-restart.json`。全局 256 的真实双卡连续／恢复检查及独立读回已通过；完整新课程还未证明学生收益，见 `evidence/foundation-curriculum-v4-queue.json`。
+真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 首批 512 局已通过，见 `evidence/human-master-games-native-import-v2.json`；全库多棋手导入仍在进行；近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。后续训练抽样使用双方棋手与赛事上限，同时覆盖年代、来源和胜负；镜像及改写不增加真实棋局数。
+
+```bash
+python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
+  --revision 368a47a947773dd8692c026e286dd19b6277b993 \
+  --output runs/new-recorded-source-catalogue
+python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
+  --revision 368a47a947773dd8692c026e286dd19b6277b993 \
+  --candidates runs/new-recorded-source-catalogue/candidates.json \
+  --max-games 60000 --workers 32 --seed 20261051 \
+  --output data/new-recorded-games \
+  --public-evidence evidence/new-recorded-games-import.json
+```
+
+长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。当前全库导入的命令与检查方式在 `runs/recorded-games-ccpd-v3-import/plan.json`，近期棋谱采集在 `runs/recent-recorded-games-import-v1/plan.json`。中断保留输出、另建目录；未完成的数据不启动正式课程。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
-`configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。
+`configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。 两个规划训练与最终选模已完成并读回；v1 选择第 10000 步，v2 选择第 11500 步，完整规划合同分别为 33/96 和 37/96，见 `evidence/move-planning-completed-readback-v1.json`。这些指标不证明完整棋力或可靠正文。
 
 `configs/explanation-sft-v5.json` 继续已完成的全量讲解模型，使用审查后数据、新优化器与 15% 规划回放。45% 主讲解池已包含 384 条实战原始讲解，另以 15% 重采样这些条目；它们不是新的独立标注。该实验已训练 3584 步，最终能力选模在三个真实候选中选择第 3584 步，NLL 第 512 步另存。全部权重与原始能力产物已读回，初始化导出保留原权重。输入固定为当时的 v5 数据；正文语义、完整对弈和独立测试仍须验证，见 `STATUS.md`。
 
-`configs/explanation-sft-v6.json` 从上述能力选定模型继续全量训练，使用新优化器、全部复核后的 v7 讲解与全局批量 16／微批量 1。50% 主讲解池包含 8710 条训练项，另以 15% 重采样其中新增的 2048 条实战原始讲解；这些回放不是新增独立标签。20% 走法、10% 规划及合计 5% 四门问答维持旧能力。196350 条混合记录通过棋局与全部未来局面隔离，183834 条训练／验证编码和全部特征键通过预检。实际预算为最多 4355 步，GPU 1 已开始训练，GPU 3 每 1024 步及完成时按实际原始能力选模；正式讲解已完成并释放该卡。冻结命令和续跑入口见 `runs/explanation-v6-reviewed-selfplay/{preparation,bridge,functional-selection-gpu3}/plan.json`。多项训练条件同时改变；这轮补训尚未证明学生收益，也不计作搜索蒸馏。
+旧 `configs/explanation-sft-v6.json` 从 v5 继续训练已复核 v7 讲解，已按用户要求停止，不自动续跑。最后记录更新 1878，最新可恢复优化器步数 1536；第 1024 步原始能力分数 0.3875，父模型为 0.395833，未显示收益。真实祖先停在旧第二门课程，并非新的四门完成模型。其输入、权重和中途评测保留，见 `evidence/explanation-v6-interim-1024.json`、`evidence/foundation-clean-route-switch.json`。后续主线 SFT 必须从新四门全部验收后的权重开始；尚无已训练的搜索蒸馏轮次。
 
 大型预检可调用 `verify_splits(rows, workers=N)` 并行检查全部唯一未来分支；默认 `workers=1` 保持单进程接口。预取限制为每个进程两批，跨棋局归属在去重前登记，子进程的非法未来错误向主进程传播。真实 1152 条规划上下文的串行／八进程结果一致，该样本耗时由 25.81 秒降至 6.04 秒；完整数据准备的加速尚未测量，见 `evidence/parallel-split-verification.json`。
 

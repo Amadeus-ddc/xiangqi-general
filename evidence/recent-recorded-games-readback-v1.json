@@ -1,0 +1,16 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "games_reparsed": 93,
+  "recorded_plies_reparsed": 6989,
+  "complete_source_input_output_hashes_rechecked": true,
+  "all_game_mainlines_full_history_and_native_results_recomputed": true,
+  "canonical_game_identity_and_prequestion_split_rechecked": true,
+  "old_46_valid_game_lines_and_histories_unchanged": true,
+  "source_game_dates_not_publication_dates": true,
+  "same_pinned_rule_implementation": true,
+  "source_authenticity_or_participant_identity_independently_proven": false,
+  "independent_test_used_for_training_or_model_selection": false,
+  "student_or_teacher_neural_inference_performed": false,
+  "readback_manifest_sha256": "5d2cbcb20bd7573c38a8f6a1a0cf4e9fedb6908365ac808f919175dc84afae0a"
+}

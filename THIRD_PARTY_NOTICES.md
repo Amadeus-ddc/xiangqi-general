@@ -16,8 +16,15 @@ copyright notices when distributing these sources.
 | Px0 network weights | https://github.com/official-pikafish/pxzero-networks | Weight redistribution permission is not established by the code license; not bundled |
 | Pikafish NNUE weights | https://github.com/official-pikafish/Pikafish | Obtain via the upstream engine; not bundled |
 | pyffish | https://github.com/fairy-stockfish/Fairy-Stockfish | GPL-3.0; pinned to 0.0.90 |
+| CCPD recorded games | https://github.com/Yvonne761/Chinese-Chess-Practical-Dataset | Source declares CC-BY-4.0 at pinned revision `368a47a947773dd8692c026e286dd19b6277b993`; preserve attribution and local `SOURCE_LICENSE`; raw and derived records are excluded from the code release |
+| Recent public recorded games | https://www.xiangqiqipu.com | Source license/redistribution permission is unspecified; local factual main lines and source hashes only, no site prose or analysis branches used as labels; records and pages are not bundled |
 
 This project is an independent Chinese-chess adaptation, not an official Queen
 release or reproduction of the published Western-chess checkpoint. Checkpoint
 distribution must retain the base-model notices and separately establish rights
 for any included expert or NNUE assets. The source release contains no weights.
+
+Recorded-game categories and participant names are source assertions, not independent
+authenticity or identity verification. Native legal replay does not establish move
+optimality or rights to publish a trained checkpoint. Dataset notices do not change
+the separate base, expert and checkpoint distribution review.

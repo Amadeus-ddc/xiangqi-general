@@ -47,3 +47,9 @@ def test_resume_rejects_optimizer_or_data_contract_changes():
     compatible_resume(config, dict(config))
     with pytest.raises(ValueError, match='Resume'):
         compatible_resume(config, dict(config, data_path='changed'))
+
+
+def test_resume_rejects_changed_distributed_reduction_contract():
+    compatible_resume({}, {'ddp_find_unused_parameters': False})
+    with pytest.raises(ValueError, match='Resume distributed'):
+        compatible_resume({}, {'ddp_find_unused_parameters': True})

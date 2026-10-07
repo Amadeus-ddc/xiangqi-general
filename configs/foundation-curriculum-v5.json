@@ -1,0 +1,139 @@
+{
+  "model_path": "models/qwen3-4b",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "feature_path": "data/research-human-engine-v1/features-16.pt",
+  "data_path": "data/research-human-engine-v1",
+  "expert_feature_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "decoder_bridge_positions": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30
+  ],
+  "bridge_width": 768,
+  "board_tokens": true,
+  "lora_rank": 16,
+  "batch_size": 256,
+  "learning_rate": 0.0001,
+  "seed": 20261045,
+  "max_tokens": 768,
+  "validation_examples": 264,
+  "generation_examples": 0,
+  "max_new_tokens": 384,
+  "eval_every": 256,
+  "patience": 4,
+  "course_mixtures": [
+    {
+      "static_current": 1
+    },
+    {
+      "static_current": 0.1,
+      "dynamic_current": 0.9
+    },
+    {
+      "static_current": 0.06,
+      "dynamic_current": 0.08,
+      "static_future": 0.86
+    },
+    {
+      "static_current": 0.06,
+      "dynamic_current": 0.06,
+      "static_future": 0.08,
+      "dynamic_future": 0.8
+    }
+  ],
+  "output": "runs/curriculum-expanded-v5-clean",
+  "board_text": "dictionary",
+  "micro_batch_size": 4,
+  "mode": "bridge",
+  "decoder_training": "frozen",
+  "trainable_parameter_dtype": "float32",
+  "ddp_world_size": 4,
+  "loss_normalization": "example",
+  "deterministic_training": true,
+  "weight_decay": 0.1,
+  "lr_schedule": "cosine",
+  "warmup_fraction": 0.05,
+  "eval_batch_size": 4,
+  "purpose": "Clean four-course bridge training from pretrained expert and base LM with freshly initialized bridge and board tokens; source-verified human-game positions and expanded engine data; all four raw QA gates must pass before explanation SFT; no inherited course or SFT weights",
+  "course_budgets": [
+    {
+      "steps": 50000,
+      "minimum_steps": 512,
+      "qa_every": 512,
+      "learning_rate": 0.0001
+    },
+    {
+      "steps": 60000,
+      "minimum_steps": 512,
+      "qa_every": 512,
+      "learning_rate": 0.00008
+    },
+    {
+      "steps": 30000,
+      "minimum_steps": 512,
+      "qa_every": 512,
+      "learning_rate": 0.000075
+    },
+    {
+      "steps": 100000,
+      "minimum_steps": 512,
+      "qa_every": 512,
+      "learning_rate": 0.0002
+    }
+  ],
+  "raw_qa_gates": {
+    "per_task": 128,
+    "question_formats": 3,
+    "batch_size": 8,
+    "max_new_tokens": 384,
+    "seed": 20261046,
+    "targets": {
+      "static_current": {
+        "accuracy": 0.99,
+        "minimum_task_accuracy": 0.95
+      },
+      "dynamic_current": {
+        "accuracy": 0.98,
+        "minimum_task_accuracy": 0.95
+      },
+      "static_future": {
+        "accuracy": 0.98,
+        "minimum_task_accuracy": 0.95
+      },
+      "dynamic_future": {
+        "accuracy": 0.97,
+        "minimum_task_accuracy": 0.95
+      }
+    }
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "arms": [
+    {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "arm": "v1",
+      "training_steps": 12000,
+      "global_batch_size": 16,
+      "sample_presentations": 192000,
+      "supervised_tokens_seen": 1657848,
+      "nll_selected_step_preserved": 10000,
+      "capability_selected_step": 10000,
+      "checkpoint_sha256": "1b04dd747ed0963d5a39052fe5b99d93584e1f21755c8b58696983e5dd79d921",
+      "initial_checkpoint_sha256": "f5d9e1a2e78175c097c48410fb4e965c3acadf72282ee115a1b82468886dd0f9",
+      "actual_fp32_trainable_parameters": 139920416,
+      "changed_trainable_tensors_against_parent": 258,
+      "all_training_step_records_and_optimizer_update_counts_rechecked": true,
+      "all_input_output_and_frozen_source_hashes_read_back": true,
+      "all_candidates_and_raw_evaluation_records_read_back": true,
+      "all_raw_engine_answers_reparsed_and_native_judgments_recomputed": true,
+      "capability_candidates": [
+        {
+          "step": 2000,
+          "score": 0.4822916666666667,
+          "moves_legal": 158,
+          "moves_no_mistake": 141,
+          "plans_structural_contract_valid": 10,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.45454545454545453
+        },
+        {
+          "step": 4000,
+          "score": 0.5625,
+          "moves_legal": 177,
+          "moves_no_mistake": 152,
+          "plans_structural_contract_valid": 21,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.535593220338983
+        },
+        {
+          "step": 6000,
+          "score": 0.5947916666666666,
+          "moves_legal": 171,
+          "moves_no_mistake": 153,
+          "plans_structural_contract_valid": 28,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5809248554913294
+        },
+        {
+          "step": 8000,
+          "score": 0.6145833333333333,
+          "moves_legal": 172,
+          "moves_no_mistake": 158,
+          "plans_structural_contract_valid": 29,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5922865013774105
+        },
+        {
+          "step": 10000,
+          "score": 0.615625,
+          "moves_legal": 168,
+          "moves_no_mistake": 153,
+          "plans_structural_contract_valid": 33,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5889212827988338
+        },
+        {
+          "step": 12000,
+          "score": 0.5979166666666667,
+          "moves_legal": 169,
+          "moves_no_mistake": 154,
+          "plans_structural_contract_valid": 28,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5840978593272171
+        }
+      ],
+      "selected_metrics": {
+        "step": 10000,
+        "score": 0.615625,
+        "moves_legal": 168,
+        "moves_no_mistake": 153,
+        "plans_structural_contract_valid": 33,
+        "planning_quality_ply_no_mistake_rate_all_attempted": 0.5889212827988338
+      },
+      "unchanged_selected_weights_hardlinked": true,
+      "selection_split": "validation",
+      "independent_test_used": false,
+      "new_inference_or_engine_search_executed": false,
+      "strong_play_or_reliable_prose_established": false,
+      "limits": [
+        "Planning structural contracts establish legality, conditional first move and sufficient length; quality is reported separately",
+        "Selection reuses validation and is not independent-test generalization",
+        "Different initialization and early stopping prevent an isolated foundation-volume causal conclusion"
+      ]
+    },
+    {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "arm": "v2",
+      "training_steps": 11500,
+      "global_batch_size": 16,
+      "sample_presentations": 184000,
+      "supervised_tokens_seen": 1590055,
+      "nll_selected_step_preserved": 8500,
+      "capability_selected_step": 11500,
+      "checkpoint_sha256": "6ab52e9a3e9d4f524bdfb547aba15c34aa474c8493e1eaeb575e8c4cc0b6f647",
+      "initial_checkpoint_sha256": "09d3fe245dae17331a89ae964540ff8b07f074c05d993af756853a378fe8ce05",
+      "actual_fp32_trainable_parameters": 139920416,
+      "changed_trainable_tensors_against_parent": 258,
+      "all_training_step_records_and_optimizer_update_counts_rechecked": true,
+      "all_input_output_and_frozen_source_hashes_read_back": true,
+      "all_candidates_and_raw_evaluation_records_read_back": true,
+      "all_raw_engine_answers_reparsed_and_native_judgments_recomputed": true,
+      "capability_candidates": [
+        {
+          "step": 2000,
+          "score": 0.5458333333333333,
+          "moves_legal": 165,
+          "moves_no_mistake": 152,
+          "plans_structural_contract_valid": 17,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5016949152542373
+        },
+        {
+          "step": 4000,
+          "score": 0.625,
+          "moves_legal": 170,
+          "moves_no_mistake": 160,
+          "plans_structural_contract_valid": 30,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5753424657534246
+        },
+        {
+          "step": 6000,
+          "score": 0.6458333333333333,
+          "moves_legal": 177,
+          "moves_no_mistake": 164,
+          "plans_structural_contract_valid": 32,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5446927374301676
+        },
+        {
+          "step": 8000,
+          "score": 0.6416666666666667,
+          "moves_legal": 176,
+          "moves_no_mistake": 160,
+          "plans_structural_contract_valid": 34,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.6143250688705234
+        },
+        {
+          "step": 10000,
+          "score": 0.6572916666666667,
+          "moves_legal": 178,
+          "moves_no_mistake": 165,
+          "plans_structural_contract_valid": 34,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5851648351648352
+        },
+        {
+          "step": 11500,
+          "score": 0.6697916666666667,
+          "moves_legal": 179,
+          "moves_no_mistake": 165,
+          "plans_structural_contract_valid": 37,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.6121372031662269
+        },
+        {
+          "step": 8500,
+          "score": 0.584375,
+          "moves_legal": 175,
+          "moves_no_mistake": 159,
+          "plans_structural_contract_valid": 21,
+          "planning_quality_ply_no_mistake_rate_all_attempted": 0.5596330275229358
+        }
+      ],
+      "selected_metrics": {
+        "step": 11500,
+        "score": 0.6697916666666667,
+        "moves_legal": 179,
+        "moves_no_mistake": 165,
+        "plans_structural_contract_valid": 37,
+        "planning_quality_ply_no_mistake_rate_all_attempted": 0.6121372031662269
+      },
+      "unchanged_selected_weights_hardlinked": true,
+      "selection_split": "validation",
+      "independent_test_used": false,
+      "new_inference_or_engine_search_executed": false,
+      "strong_play_or_reliable_prose_established": false,
+      "limits": [
+        "Planning structural contracts establish legality, conditional first move and sufficient length; quality is reported separately",
+        "Selection reuses validation and is not independent-test generalization",
+        "Different initialization and early stopping prevent an isolated foundation-volume causal conclusion"
+      ]
+    }
+  ],
+  "configured_training_fields_that_differ": [
+    "init_from",
+    "output",
+    "purpose"
+  ],
+  "preserved_engine_answers_reparsed": {
+    "free": 6603,
+    "forced": 2943
+  },
+  "matched_validation_data_and_sampling": true,
+  "independent_test_used": false,
+  "strong_play_or_reliable_chinese_teaching_proven": false,
+  "readback_manifest_sha256": "9da91ed1eda5968eec228f7ba41288bcc917e1fdb24032bcc419dfe402f08ffb"
+}

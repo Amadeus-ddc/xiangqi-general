@@ -1,0 +1,108 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "discovered_game_urls": 310,
+  "candidate_game_pages_examined": 256,
+  "retained_recent_recorded_games": 46,
+  "quarantined_game_pages": 210,
+  "download_failures": 0,
+  "recorded_plies": 3816,
+  "games_by_year": {
+    "2023": 1,
+    "2022": 1,
+    "2021": 20,
+    "2020": 10,
+    "2019": 14
+  },
+  "games_by_split": {
+    "validation": 5,
+    "test": 7,
+    "train": 34
+  },
+  "distinct_normalized_participant_labels": 18,
+  "participant_label_top_20": [
+    [
+      "王天一",
+      14
+    ],
+    [
+      "许银川",
+      9
+    ],
+    [
+      "蒋川",
+      7
+    ],
+    [
+      "赵国荣",
+      7
+    ],
+    [
+      "赵鑫鑫",
+      6
+    ],
+    [
+      "郑惟桐",
+      6
+    ],
+    [
+      "汪洋",
+      6
+    ],
+    [
+      "洪智",
+      6
+    ],
+    [
+      "吕钦",
+      6
+    ],
+    [
+      "徐天红",
+      6
+    ],
+    [
+      "孙勇征",
+      5
+    ],
+    [
+      "徐超",
+      5
+    ],
+    [
+      "于幼华",
+      3
+    ],
+    [
+      "谢靖",
+      2
+    ],
+    [
+      "黎德志",
+      1
+    ],
+    [
+      "陶汉明",
+      1
+    ],
+    [
+      "王廓",
+      1
+    ],
+    [
+      "柳大华",
+      1
+    ]
+  ],
+  "all_retained_moves_native_legal": true,
+  "full_history_terminal_checks_passed": true,
+  "game_split_assigned_before_questions": true,
+  "site_prose_and_variations_used_for_labels": false,
+  "declared_source_license": "unspecified",
+  "raw_records_or_pages_bundled_with_code": false,
+  "public_redistribution_permission_established": false,
+  "source_authenticity_or_participant_identity_independently_proven": false,
+  "recorded_move_optimality_proven": false,
+  "training_data_or_neural_labels_generated": false,
+  "manifest_sha256": "56d3ddb520f34df467822c412cb18817576439e7598ad5b7bfd07176e42a1b54"
+}

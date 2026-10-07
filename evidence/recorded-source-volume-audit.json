@@ -1,0 +1,53 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_repository": "Yvonne761/Chinese-Chess-Practical-Dataset",
+  "source_revision": "368a47a947773dd8692c026e286dd19b6277b993",
+  "pgn_file_counts_before_deduplication": {
+    "human_matches": 53685,
+    "computer_matches": 167,
+    "human_computer_matches": 41,
+    "other_opening_midgame_endgame_puzzle_records": 4575
+  },
+  "unique_full_match_source_blobs": 42881,
+  "header_eligible_full_match_candidates": 37461,
+  "header_or_participant_metadata_rejected": 5420,
+  "candidate_source_kind_counts": {
+    "recorded_human_match": 37405,
+    "recorded_human_computer_match": 26,
+    "recorded_computer_match": 30
+  },
+  "all_candidates_native_verified": false,
+  "initial_native_verified_human_games": 512,
+  "initial_native_verified_recorded_plies": 43612,
+  "existing_rule_qa_rows": 1155116,
+  "existing_original_engine_roots": 24576,
+  "paper_source": "https://arxiv.org/html/2610.03695v1",
+  "paper_course_unique_example_count_disclosed": false,
+  "paper_curriculum_configured_steps": [
+    50000,
+    60000,
+    30000,
+    100000
+  ],
+  "paper_effective_batch": 256,
+  "paper_configured_curriculum_example_presentations": 61440000,
+  "paper_early_stopping_enabled": true,
+  "paper_per_distillation_iteration": {
+    "human_root_positions": 210000,
+    "max_roots_per_human_game": 6,
+    "puzzle_root_positions": 115000,
+    "student_engine_games": 6250,
+    "student_engine_root_positions_range": [
+      50000,
+      100000
+    ],
+    "human_games_disjoint_between_iterations": true
+  },
+  "paper_training_distillation_iterations": 7,
+  "paper_equivalent_all_iteration_corpus_established": false,
+  "unique_games_positions_questions_presentations_are_distinct": true,
+  "mirrors_and_question_rephrasings_are_not_new_games": true,
+  "raw_game_bytes_are_not_neural_explanation_labels": true,
+  "catalogue_manifest_sha256": "f355c2a007ad992b4221321454392ee860f1de31ab3dec22f2a6f16e24452e8b"
+}
