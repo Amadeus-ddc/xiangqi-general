@@ -596,9 +596,14 @@ identities. Actual Game-header counts are 99771 and 41743, totaling 141514,
 versus the source-declared 141556. These are raw candidate headers, not independent
 validated games. The full eight-CPU producer has completed native full-history
 replay and cross-source deduplication: 81711 new unique mainlines, 6246714 plies,
-46826 duplicate records and 12977 quarantined records. The separate observer is
-still replaying every original candidate; producer completion is not independent
-observer completion. See `evidence/additional-recorded-games-native-import-v1.json`.
+46826 duplicate records and 12977 quarantined records. The separate observer has now replayed all 141514 original candidates and
+matched every retained canonical history/split, original byte hash/ordinal,
+duplicate attribution and quarantine reason. All 15 declared artifacts and
+53 executed frozen source files were freshly checked after completion. See
+`evidence/additional-recorded-games-native-import-v1.json` and
+`evidence/additional-recorded-games-independent-readback-v1.json`. The observer
+uses the shared pinned segmentation/native parser contracts; this is a second
+complete execution, not an independent rules implementation.
 The importer streams ZIP
 members, preserves record ordinal/byte hashes and source attribution differences,
 quarantines illegal or post-terminal play, and assigns the original canonical
@@ -654,9 +659,9 @@ matches. Their generous six-position capacity upper bound is 502356 positions,
 at most two complete paper-sized human-source iterations; source authentication,
 root/forecast quality and terminal filtering are not deducted from this bound.
 The published-match category does not prove that every game was human play.
-The additional archive's full independent native replay is still running;
-this size audit rehashes immutable canonical files but does not replay all their
-histories again. See `evidence/recorded-dataset-paper-capacity-v2.json`.
+The additional archive's full independent native replay subsequently completed
+in a separate run. The size audit retains its original completion snapshot; it
+rehashes immutable canonical files but does not replay all their histories again. See `evidence/recorded-dataset-paper-capacity-v2.json`.
 
 Original recorded-game coaching queries are prepared separately from course
 training. A side-balanced 3744-root batch produced 3740 engine fact queries;
@@ -688,10 +693,15 @@ teacher contract, Chinese/coordinate references, complete past and structured
 answer line; all complete review packets and declared artifacts are hash-bound.
 Recorded futures and unauthenticated identity metadata are hidden from reviewers.
 See `evidence/recorded-coach-full-authoring-review-preparation-v1.json`.
-Three authorized Astra Low reviewers are each reviewing another author's 832
-annotations. Full semantic acceptance, rejected-prose repairs and collection
-remain incomplete; cross-review does not provide independent backend attestation
-or human ratings.
+Three authorized Astra Low reviewers have each completed another author's 832
+original annotations: 2363 unchanged originals were accepted and 133 rejected.
+Readback checks complete ordered coverage, exact annotation/packet hashes and
+foreign reviewer contracts; see
+`evidence/recorded-coach-complete-original-cross-review-v1.json`. Rejections
+require genuine changed prose and independent acceptance before collection.
+Acceptance of every final body, repairs and collection remain incomplete.
+Cross-review is a neural opinion and provides neither independent backend
+attestation nor human ratings.
 These preparations are not teacher accuracy, student benefit or a completed SFT
 run. SFT remains conditional on all four new course gates. Explanations must not
 use unauthenticated player/event metadata or hidden recorded futures as facts,
