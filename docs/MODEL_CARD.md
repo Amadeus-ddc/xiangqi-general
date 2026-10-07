@@ -609,8 +609,9 @@ to 1155116 preserved engine questions, totaling 3171812 records with
 2831004/173272/167536 train/validation/test rows. Production generation verifies
 complete root/future isolation and exact old-file byte prefixes. See
 `evidence/recorded-curriculum-human-engine-full-v1.json`. Augmentation and request
-variants do not increase independent game/root counts. The complete production
-cache/token preflight and independent readback remain prerequisites for training.
+variants do not increase independent game/root counts. Production cache generation
+is complete; full token/native-history preflight and independent readback remain
+prerequisites for training.
 
 The incremental expert cache has a four-GPU real fixture and independent
 recomputation of all eight new histories at all 16 depths, within declared FP16
@@ -619,8 +620,14 @@ counterparts use native replay: naïve per-FEN mirrors have different fullmove
 counters and full-history keys. The first failing fixture and stopped production
 waiter remain archived. The corrected cache builder leaves course files and old
 caches unchanged. See `evidence/recorded-expert-cache-extension-real-fixture-v2.json`.
-This proves the extractor/merge path on the fixture, not a complete production
-cache or student improvement.
+The separate four-H20 production extraction and merge have now completed:
+91668 new histories extend 78236 preserved keys to 169904 keys, 16 FP16 feature
+layers and FP32 WDL values, totaling 250548260661 bytes. Producer checks preserve
+all previous keys/features/WDL bitwise; original caches and course files remain
+unchanged. See `evidence/recorded-foundation-expert-cache-full-v1.json`. This is
+completed extraction/merge evidence; the eight-history independent expert
+recomputation above does not cover every production feature. Full course preflight
+and independent readback remain pending, and student improvement is unmeasured.
 
 Bounded, ordered parallel native history preparation was independently exercised
 on 90 actual recorded roots with four GPUs. All 183 merged keys, 16 feature
@@ -640,6 +647,14 @@ download metadata, not a new remote identity query; see
 `evidence/recorded-foundation-base-asset-identity.json`. Fresh production training
 waits for full corpus/cache/source readback and the validated GitHub milestone;
 no old trained bridge or SFT weights initialize the new foundation.
+
+The reusable `foundation_readback` CLI has completed on the actual 3963-row,
+183-history fixture. All 90 original recorded roots from 45 games match their
+source prefixes and maximum futures; native color keys, prior/new holdout
+isolation, every old feature layer/WDL value, complete preflight artifact hashes,
+and pinned base-asset hashes pass readback. See
+`evidence/recorded-foundation-source-readback-real-v1.json`. This read-only fixture
+does not replace the separate frozen full-production readback or train a student.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and

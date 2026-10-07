@@ -1,0 +1,127 @@
+{
+  "base_roots": 78236,
+  "new_roots": 91668,
+  "roots": 169904,
+  "depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "feature_shapes": [
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ],
+    [
+      169904,
+      90,
+      512
+    ]
+  ],
+  "expert_sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c",
+  "base_keys_features_and_wdl_bitwise_preserved": true,
+  "recorded_color_counterparts_included": true,
+  "dataset_files_modified": false,
+  "stored_feature_dtype": "float16",
+  "extraction_compute_dtype": "float32",
+  "gpu_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "student_training_executed": false,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_cache_bytes": 250548260661,
+  "actual_cache_sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+  "cache_extension_manifest_sha256": "3b97c34ead51a94bb06ad772edea42d37a3a67bb76e813b7a78ca527a8130a5f",
+  "verification_scope": "Completed cache generation and producer merge checks; independent source/course preflight and full readback are pending.",
+  "full_course_preflight_complete": false,
+  "independent_full_cache_readback_complete": false,
+  "student_improvement_measured": false
+}

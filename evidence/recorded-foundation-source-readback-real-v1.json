@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "total_rule_records": 3963,
+  "records_by_split": {
+    "train": 2817,
+    "validation": 529,
+    "test": 617
+  },
+  "train_validation_records_tokenized": 3346,
+  "extra_validation_format_encodings": 1058,
+  "maximum_tokens_by_stage": {
+    "static_current": 110,
+    "dynamic_current": 130,
+    "static_future": 135,
+    "dynamic_future": 153
+  },
+  "actual_cached_full_histories": 183,
+  "actual_question_full_histories": 183,
+  "actual_previous_cached_histories_bitwise_preserved": 3,
+  "all_preflight_input_output_hashes_read_back": true,
+  "official_base_assets_match_pinned_cached_download_hashes": true,
+  "official_remote_independently_requeried": false,
+  "decoder_literal_board_text": null,
+  "course_or_sft_checkpoint_loaded": false,
+  "student_training_performed_by_readback": false,
+  "student_improvement_measured": false,
+  "roots_by_split": {
+    "validation": 12,
+    "test": 14,
+    "train": 64
+  },
+  "games_contributing_roots": 45,
+  "roots_by_source_kind": {
+    "published_recorded_match": 90
+  },
+  "all_original_source_prefixes_and_futures_match": true,
+  "native_color_history_keys_match_question_contexts": true,
+  "new_holdout_overlap_prior_training_and_holdouts": 0,
+  "new_train_overlap_old_and_new_holdouts": 0,
+  "manifest_sha256": "5536ac25cbf048a9a2d696cda6d086bef1d5bd1c2de8e65237e68186ef25bf2d"
+}
