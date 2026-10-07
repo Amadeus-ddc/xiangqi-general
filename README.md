@@ -194,7 +194,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 旧 v4 继承旧四门权重，首门实际更新 210 步后按用户要求停止，未到首次问答验收；原数据、源码、特征和日志保留。其 1155116 条规则题的完整历史、未来隔离、特征及原生答案抽样已再次读回，见 `evidence/foundation-curriculum-v4-training-readback.json`。这些引擎来源题将与经过规则检查的多样真实棋谱合并，合并后重新预检，不改写旧实验输入。
 
-新训练计划使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。正式启动须等待新增棋谱、全部未来分割、词元与特征缓存预检完成。
+新训练使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。新增棋谱、全部未来分割、词元、特征及独立读回均已完成，第一门已开始更新，实际步数见 `runs/curriculum-human-engine-clean-v2/static_current/training/training.jsonl`。
 
 四卡无棋盘字典的新初始化、映射缓存及逐行数据读取，连续四步与二加二恢复已经逐位核验，见 `evidence/four-gpu-clean-latent-streamed-resume-v2.json`。该配置使用 `ddp_find_unused_parameters: true` 保持同卡恢复的归约合同；切换这个设置或 `feature_cache_mmap` 不能恢复旧优化器。逐行读取保留全部源字段、文件顺序与随机抽样结果。可用以下命令复查真实训练输出；这是执行检查，未完成课程：
 
@@ -237,7 +237,7 @@ python -m xqgeneral.extend_features \
 
 特征扩展核验旧专家权重及编码器身份、原缓存哈希、分片键互斥、旧键及数值逐位保留，颜色镜像按原生完整着法回放以保持正确历史键；课程文件不会被缓存程序改写。真实四 GPU 小样本及专家重新计算见 `evidence/recorded-expert-cache-extension-real-fixture-v2.json`。CPU 历史准备保序、有界并行，真实 183 键缓存与串行结果逐位相同，见 `evidence/recorded-native-history-parallel-feature-readback.json`。
 
-全量预检逐条核验数据哈希、特征键及任务合同，编码全部训练／验证及两种验收改写，原生复演所有唯一根历史、抽样重算两来源全部题型答案，并重新检查全部未来隔离和旧引擎文件字节前缀。四条历史独立测试终局探针保留，不能混入训练／验证。真实 3963 条执行检查已完成，见 `evidence/recorded-foundation-full-preflight-real-fixture-v2.json`；生产预检完成状态见 `STATUS.md`。使用新输出目录执行：
+全量预检逐条核验数据哈希、特征键及任务合同，编码全部训练／验证及两种验收改写，原生复演所有唯一根历史、抽样重算两来源全部题型答案，并重新检查全部未来隔离和旧引擎文件字节前缀。四条历史独立测试终局探针保留，不能混入训练／验证。完整 3171812 条课程已完成预检及独立读回，见 `evidence/recorded-foundation-full-training-ready.json`、`evidence/recorded-foundation-full-training-readback.json`；早期 3963 条执行检查另保留。第一门正式模型及首次 20 次更新读回见 `evidence/recorded-foundation-clean-startup-twenty-updates.json`，这尚不是课程完成或棋力证明。使用新输出目录执行：
 
 ```bash
 python -m xqgeneral.foundation_preflight \

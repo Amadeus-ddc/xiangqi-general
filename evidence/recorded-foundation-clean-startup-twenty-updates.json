@@ -1,0 +1,59 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "course": "static_current",
+  "actual_optimizer_updates_read_back": 20,
+  "initial_checkpoint_selected_step": 0,
+  "initial_trainable_tensors": 258,
+  "initial_trainable_parameters": 139920416,
+  "all_initial_trainable_tensors_fp32_and_finite": true,
+  "fresh_bridge_attention_and_ff_gate_values": [
+    1.0
+  ],
+  "initial_validation_nll": 8.06728894662247,
+  "first_update_loss": 7.513108253479004,
+  "twentieth_update_loss": 5.894376277923584,
+  "all_twenty_raw_gradient_norms_positive_and_finite": true,
+  "actual_owned_training_rank_metadata": [
+    {
+      "pid": 3972250,
+      "rank": 0,
+      "local_cuda_rank": 0,
+      "world_size": 4,
+      "cuda_visible_devices": "0,1,2,3"
+    },
+    {
+      "pid": 3972251,
+      "rank": 1,
+      "local_cuda_rank": 1,
+      "world_size": 4,
+      "cuda_visible_devices": "0,1,2,3"
+    },
+    {
+      "pid": 3972252,
+      "rank": 2,
+      "local_cuda_rank": 2,
+      "world_size": 4,
+      "cuda_visible_devices": "0,1,2,3"
+    },
+    {
+      "pid": 3972253,
+      "rank": 3,
+      "local_cuda_rank": 3,
+      "world_size": 4,
+      "cuda_visible_devices": "0,1,2,3"
+    }
+  ],
+  "physical_four_h20_inventory_verified": true,
+  "nvml_pid_namespace_matching_available": false,
+  "optimizer_checkpoint_world_size_verified": false,
+  "actual_training_inputs_match_completed_production_preflight": true,
+  "critical_training_module_hashes_match_four_gpu_numerical_fixture_contract": true,
+  "old_course_or_sft_checkpoint_used": false,
+  "decoder_literal_board_text": null,
+  "independent_test_used_for_training_or_selection": false,
+  "completed_new_courses": 0,
+  "trained_search_distillation_rounds": 0,
+  "raw_course_mastery_or_student_strength_measured": false,
+  "manifest_sha256": "5961822a3f988fc95db718e523961fa59f70047f15fd7bb22e4d4286b7bd2861"
+}
