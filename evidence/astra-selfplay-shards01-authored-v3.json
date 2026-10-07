@@ -33,5 +33,7 @@
   "first_shard_all_decision_hashes_and_transparent_inherited_prefix_verified": true,
   "first_shard_genuine_corrections_authored": 13,
   "first_shard_correction_sha256": "8dd17bb1bfefeb52ec73c84fdf9e4d7dd30c9728a4999f9ad6860d8c7c970cab",
-  "first_shard_revision_independent_acceptance_complete": false
+  "first_shard_revision_independent_acceptance_complete": true,
+  "first_shard_independent_correction_review_sha256": "9ce4b4f38f7b10673bc7b365fe25783cdc55a6f6b28f274f15aae09352394de7",
+  "first_shard_resolved_bundle_manifest_sha256": "b108a66e180b320e3ec1d2099f10bc4f0aa8d03034a213da21fa8a5805b39f83"
 }
