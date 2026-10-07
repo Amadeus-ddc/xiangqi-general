@@ -303,8 +303,8 @@ NLL changes from 0.527066 to 0.525724, with 3514677 supervised tokens and actual
 decoder updates. All step records, source, input/output hashes and FP32 weights
 were independently read back; see
 `evidence/explanation-sft-v5-reviewed-completed.json`. Final capability selection
-is now complete; prose-semantic, game-strength and independent-test evidence
-remain pending.
+is now complete, with the neural prose sample review below also complete.
+Human teaching ratings, game-strength and independent-test evidence remain pending.
 The interim scores and completed training do not establish overall improvement
 or a reliable coach.
 
@@ -322,6 +322,23 @@ preserved, and an immutable initialization export hardlinks the unchanged
 selected weights. See `evidence/explanation-v5-functional-selection.json` and
 `evidence/explanation-v5-functional-selection-readback.json`. Reliable teaching
 and full-game strength remain unproven.
+
+A fixed-seed uniform sample of 32 original step-3584 validation explanations has
+complete grounded neural review with the full unquantized BF16 Qwen3.8-27B
+(27356728560 actual BF16 parameters). All packets recompute from original raw
+student outputs, and all responses and artifact hashes were independently read
+back. Mean factual/strategic/clarity/adherence scores are
+1.46875/1.78125/2.59375/2.0625 out of five. All 32 ratings identify unsupported
+claims; none scores at least four in every dimension. One response was truncated
+at both 1536 and 3072 tokens due to repetitive text; a genuine concise-output
+retry retains the same scoring rubric, evidence and student packet, with the
+other 31 raw reviewer responses unchanged. Both failed attempts are preserved.
+A native rule crosscheck also catches the reviewer calling the h0 red horse a
+red rook, although the student's recommended cannon capture is illegal. These
+are sample neural ratings, not objective correctness rates, human assessments,
+matched training gains or estimates of overall reviewer accuracy. The reviewer
+shares the consolidation foundation model; native student checks remain separate.
+See `evidence/explanation-v5-selected-grounded-review.json`.
 
 A separate full-decoder continuation now actually trains on all 8710 reviewed
 v7 train explanations, with a reset optimizer, global batch 16 and microbatch 1.
