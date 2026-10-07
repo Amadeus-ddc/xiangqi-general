@@ -1,0 +1,28 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete",
+  "steps_completed": 3584,
+  "nll_selected_step": 512,
+  "selected_checkpoint_sha256": "39d92cca5492448fded357542335dc773ec7a2d23f56427f326663458786e24b",
+  "latest_checkpoint_sha256": "04c4421892a345d8971e229e8b15d34e7d3c2c571d125230fdc1375a0491ef88",
+  "training_manifest_sha256": "9dc1c3d0e0a3b612e9b33cd7d19eef167896764cfe4625153460fe978389f10b",
+  "actual_trainable_parameters": 4162388512,
+  "all_selected_parameters_float32": true,
+  "all3584_step_records_and_input_output_hashes_read_back": true,
+  "initial_validation_nll": 0.5270656362522554,
+  "final_validation_nll": 0.525724027052315,
+  "actual_selected_decoder_probe_change": 5.140621215105057e-05,
+  "supervised_tokens_seen": 3514677,
+  "global_batch_size": 4,
+  "training_loss_normalization": "example",
+  "world_size": 1,
+  "peak_allocated_gib": 79.81619453430176,
+  "retained_frozen_v5_data": true,
+  "v6_or_v7_revisions_incorporated": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coach_proven": false,
+  "limits": [
+    "Completed training, with loss-based checkpoint recorded separately from capability selection",
+    "No completed prose-semantic, game-strength or independent-test evidence for this run"
+  ]
+}

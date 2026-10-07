@@ -283,9 +283,15 @@ and 4/96 complete explanation contracts. Its score is 0.3500 versus the parent's
 4.162-billion FP32 parameters, training identity, identical validation inputs
 and all raw artifact hashes were read back; see
 `evidence/explanation-v5-after-2048.json`. This run retains its frozen v5 inputs
-and has not incorporated v6's additional 367 revisions. It is interim validation
-without completed selection, prose-semantic, game-strength or independent-test
-evidence, and does not establish an overall improvement or a reliable coach.
+and has not incorporated v6's additional 367 revisions or v7's new 2048 items.
+Training completed 3584 steps, with loss-based step 512 recorded separately:
+NLL changes from 0.527066 to 0.525724, with 3514677 supervised tokens and actual
+decoder updates. All step records, source, input/output hashes and FP32 weights
+were independently read back; see
+`evidence/explanation-sft-v5-reviewed-completed.json`. Final capability selection,
+prose-semantic, game-strength and independent-test evidence remain pending.
+The interim scores and completed training do not establish overall improvement
+or a reliable coach.
 
 The larger self-play search produced 27408 new independent queries and exactly
 preserved all 11348 old query records. Old records were regrouped by split; an
@@ -324,10 +330,26 @@ second revision in shard 1. The disjoint bundles cover all 2048 items: 2003
 unchanged texts and 45 revisions. All exact original, rejection, ancestry and
 final-acceptance hashes, and all 45 actual prose changes against the original
 author files, were read back. Original annotations remain preserved. Fresh v7
-dataset assembly and full feature/token preflight are running separately;
-active training keeps its frozen older inputs. These are initial seed
-annotations, without completed search distillation, student benefit or human
-teaching ratings.
+assembly and full feature/token preflight completed: 8710/192/256 rows, 4355
+train items per color, with every old v6 record and train byte prefix preserved.
+All 2048 new rows match original queries and exact accepted annotations;
+heldout files remain byte identical. All 9158 feature keys and the actual 115GB
+cache hash were independently read back. All 8710 train rows pass the 1024-token
+limit with a maximum of 964; see `evidence/reviewed-selfplay-teacher-data-v3.json`.
+Existing runs retain their frozen older inputs. These seed annotations have no
+completed search distillation, measured student benefit or human teaching ratings.
+
+Actual two-H20 frozen-decoder bridge execution verifies global batch 32,
+microbatch 4 and example-normalized loss. Continuous four steps and a 2+2-step
+resume have bitwise-identical 258 trainable tensors (139920416 FP32 parameters),
+optimizer and random states, and per-step losses, gradients and token counts.
+All states and output hashes were independently read back; see
+`evidence/two-gpu-example-normalized-resume.json`. The 24-train/12-val execution
+fixture does not prove a completed course, full-decoder or cross-world resume,
+or improved strength. The unstarted v2 foundation waiters were preserved and
+replaced by v3: two-GPU training, GPU 1 capability selection and an unchanged
+global-batch, data and parent-scoring recipe. It still waits for full readiness
+and completed planning parents.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
