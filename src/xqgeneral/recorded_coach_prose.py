@@ -6,16 +6,18 @@ the entire original query batch; it never starts student training.
 """
 import argparse
 from collections import Counter, defaultdict
+import hashlib
 import json
 from pathlib import Path
 import re
 
 from .collect_teacher import assemble_label
 from .curriculum_data import verify_splits
-from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
-from .explanations import continuation_positions, line_facts, parse_explanation
+from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, write_jsonl
+from .explanations import continuation_positions, line_facts, move_facts, parse_explanation
 from .recorded_coach import checked_manifest, check_artifacts, ordered_native_map, SPLITS
 from .revise_prose import annotation_hash, TEACHER
+from .rules import adjudicate, piece_map, piece_name, replay, side
 
 
 def source_batch(root, isolation, author_plan):
@@ -150,6 +152,136 @@ def prepare_review(root, isolation, author_plan, output, shard=None, workers=1):
     return summary
 
 
+def validated_review_decisions(review_paths, packet_files):
+    decisions, documents, review_digests = defaultdict(list), [], set()
+    for path in map(Path, review_paths):
+        raw = path.read_bytes()
+        document, doc_sha = json.loads(raw), hashlib.sha256(raw).hexdigest()
+        if (doc_sha in review_digests or document.get('reviewer_model') != TEACHER['teacher_model'] or
+                any(document.get(k) != TEACHER[k] for k in ('reasoning_effort', 'backend')) or
+                document.get('human_rating') is not False or document.get('source_labels_modified') is not False or
+                document.get('input_packet_sha256') not in packet_files or not document.get('results')):
+            raise ValueError('Independent neural decisions must bind an actual immutable packet file')
+        review_digests.add(doc_sha); seen = set()
+        packets = packet_files[document['input_packet_sha256']]
+        for decision in document['results']:
+            identity = decision['id']; packet = packets.get(identity, {})
+            actor = decision.get('reviewer_agent', document.get('reviewer_agent'))
+            if (identity in seen or identity not in packets or
+                    decision.get('reviewed_annotation_sha256') != packet.get('reviewed_annotation_sha256') or
+                    decision.get('verdict') not in {'accept', 'reject'} or
+                    not isinstance(decision.get('reason'), str) or not decision['reason'].strip() or
+                    not isinstance(decision.get('issues'), list) or
+                    any(not isinstance(x, str) for x in decision['issues']) or
+                    (decision['verdict'] == 'accept' and decision['issues']) or
+                    any(k in decision and decision[k] != expected for k, expected in
+                        {'reviewer_model': TEACHER['teacher_model'], 'reasoning_effort': TEACHER['reasoning_effort'],
+                         'backend': TEACHER['backend'], 'human_rating': False}.items()) or
+                    not isinstance(actor, str) or not actor or actor == packet.get('teacher_author_agent')):
+                raise ValueError('Review decision must independently bind its exact annotation and verdict')
+            seen.add(identity)
+            decisions[(identity, decision['reviewed_annotation_sha256'])].append((doc_sha, decision['verdict']))
+        documents.append((path, raw, doc_sha, document))
+    return decisions, documents
+
+
+def repair_query_item(item):
+    query, packet, decision, review_sha, review_path = item
+    row, facts = query['record'], query['verified_facts']
+    history = replay(row['initial_fen'], row['moves'])
+    if (history != row['history'] or history[-1] != row['fen'] or
+            history_key(history) != query['feature_key'] or query['feature_key'] != row['feature_key'] or
+            adjudicate(row['initial_fen'], row['moves'])['ended']):
+        raise ValueError('Repair query differs from its original nonterminal full history')
+    expected = {'side_to_move': side(row['fen']), 'recommended': query['oracle']['best_move'],
+                'board': {s: piece_name(p) for s, p in sorted(piece_map(row['fen']).items())},
+                'move_facts': move_facts(row['fen'], query['oracle']['best_move'])}
+    if (any(facts.get(k) != v for k, v in expected.items()) or
+            review_packet(query, packet['teacher_annotation'], packet['teacher_author_agent']) != packet):
+        raise ValueError('Repair packet differs from original query and native board or line facts')
+    return {'id': packet['id'], 'original_packet': packet, 'rejection': decision,
+            'corrected_from_annotation_sha256': packet['reviewed_annotation_sha256'],
+            'correction_review_sha256': review_sha, 'immutable_rejection_document': review_path}
+
+
+def prepare_repairs(prepared_roots, review_paths, output, workers=1):
+    """Prepare rejected originals only; never manufacture revisions or acceptance."""
+    output = Path(output)
+    if output.exists():
+        raise FileExistsError('Preserve repair queries and review snapshots; use a fresh output')
+    if not prepared_roots or not review_paths:
+        raise ValueError('Prepared original packets and actual independent reviews are required')
+    inputs, bindings, originals, packet_files, source_config = [], {}, {}, {}, None
+    for root in map(Path, prepared_roots):
+        path = root / 'manifest.json'; proof = checked_manifest(path)
+        if proof['status'] != 'complete' or proof['kind'] != 'recorded_coach_prose_review_inputs':
+            raise ValueError('Completed original recorded-game prose review preparation is required')
+        config = {k: proof['config'][k] for k in ('queries', 'isolation', 'author_plan')}
+        if source_config is not None and config != source_config:
+            raise ValueError('Repair preparations must share one qualified original query batch')
+        source_config = config; inputs.append(path)
+        bindings.update({p: v['sha256'] for group in ('inputs', 'outputs') for p, v in proof[group].items()})
+        for name in proof['outputs']:
+            if Path(name).suffix != '.jsonl':
+                continue
+            packets = load_jsonl(name); by_id = {p['id']: p for p in packets}
+            if not packets or len(by_id) != len(packets) or set(by_id) & set(originals):
+                raise ValueError('Repair preparations repeat original annotation IDs')
+            originals.update(by_id); packet_files[digest(name)] = by_id; inputs.append(Path(name))
+    queries, agents, source_inputs = source_batch(source_config['queries'],
+        source_config['isolation'], source_config['author_plan'])
+    by_query = {q['id']: q for q in queries}; authored = {}
+    for index in range(3):
+        _, annotations, actor, paths = authored_shard(source_config['queries'], index, agents)
+        authored.update({a['id']: (a, actor) for a in annotations}); source_inputs.extend(paths)
+    for identity, packet in originals.items():
+        annotation, actor = authored.get(identity, ({}, None))
+        if (packet['teacher_annotation'] != annotation or packet.get('teacher_author_agent') != actor or
+                packet.get('reviewed_annotation_sha256') != annotation_hash(annotation)):
+            raise ValueError('Repair preparation changes its exact original authored annotation')
+    inputs.extend([*source_inputs, *map(Path, review_paths)]); bindings.update(input_bindings(inputs))
+    _, documents = validated_review_decisions(review_paths, packet_files)
+    rejected, outputs = {}, []
+    for index, (_, _, sha, document) in enumerate(documents):
+        snapshot = output / f'original-review-{index}-snapshot.json'
+        for decision in document['results']:
+            if decision['verdict'] != 'reject':
+                continue
+            if not any(issue.strip() for issue in decision['issues']):
+                raise ValueError('A rejected repair query requires actionable review issues')
+            identity = decision['id']
+            rejected.setdefault(identity, (by_query[identity], originals[identity], decision, sha, str(snapshot)))
+    if not rejected:
+        raise ValueError('No independently rejected original annotations require repair')
+    rows = list(ordered_native_map(repair_query_item, (rejected[k] for k in originals if k in rejected), workers))
+    require_unchanged(bindings)
+    for index, (_, raw, _, _) in enumerate(documents):
+        snapshot = output / f'original-review-{index}-snapshot.json'
+        snapshot.parent.mkdir(parents=True, exist_ok=True); snapshot.write_bytes(raw); outputs.append(snapshot)
+    assignments = []
+    for index, actor in enumerate(sorted({r['original_packet']['teacher_author_agent'] for r in rows})):
+        batch = [r for r in rows if r['original_packet']['teacher_author_agent'] == actor]
+        path = output / f'repair-queries-{index}.jsonl'; write_jsonl(path, batch); outputs.append(path)
+        assignments.append({'teacher_author_agent': actor, 'repair_queries': str(path),
+                            'repair_queries_sha256': digest(path), 'expected_repair_annotations': len(batch)})
+    plan = output / 'repair-plan.json'
+    atomic_json(plan, {'status': 'ready_for_authorized_teacher_repair', 'teacher': TEACHER,
+                      'assignments': assignments, 'teacher_repairs_started': False,
+                      'all_final_revisions_require_foreign_acceptance': True})
+    outputs.append(plan)
+    summary = {'prepared_rejected_original_annotations': len(rows), 'prepared_original_packet_scope': len(originals),
+               'captured_actual_neural_decisions': sum(len(d['results']) for _, _, _, d in documents),
+               'by_split': dict(Counter(by_query[r['id']]['record']['split'] for r in rows)),
+               'review_snapshots_byte_exact_and_revision_ancestry_bound': True,
+               'rejected_full_histories_native_board_and_answer_lines_checked': True,
+               'full_semantic_review_completed': False, 'teacher_repairs_or_acceptances_generated': False,
+               'human_rating': False, 'student_training_started': False}
+    atomic_json(output / 'manifest.json', manifest('recorded_coach_rejected_prose_repair_queries',
+        {'prepared': list(map(str, prepared_roots)), 'reviews': list(map(str, review_paths)), 'workers': workers},
+        [Path(__file__), *inputs], outputs, summary))
+    return summary
+
+
 def resolved_packets(prepared, review_paths, repair_packet_paths=()):
     prepared = Path(prepared)
     proof = checked_manifest(prepared / 'manifest.json')
@@ -185,33 +317,7 @@ def resolved_packets(prepared, review_paths, repair_packet_paths=()):
         if not packets or sha in packet_files:
             raise ValueError('Review packet files must be nonempty and distinct')
         packet_files[sha] = by_id
-    decisions, review_digests = defaultdict(list), set()
-    for path in map(Path, review_paths):
-        document, doc_sha = json.loads(path.read_text()), digest(path)
-        if (doc_sha in review_digests or document.get('reviewer_model') != TEACHER['teacher_model'] or
-                any(document.get(k) != TEACHER[k] for k in ('reasoning_effort', 'backend')) or
-                document.get('human_rating') is not False or document.get('source_labels_modified') is not False or
-                document.get('input_packet_sha256') not in packet_files or not document.get('results')):
-            raise ValueError('Independent neural decisions must bind an actual immutable packet file')
-        review_digests.add(doc_sha); seen = set()
-        packets = packet_files[document['input_packet_sha256']]
-        for decision in document['results']:
-            identity = decision['id']; packet = packets.get(identity, {})
-            actor = decision.get('reviewer_agent', document.get('reviewer_agent'))
-            if (identity in seen or identity not in packets or
-                    decision.get('reviewed_annotation_sha256') != packet.get('reviewed_annotation_sha256') or
-                    decision.get('verdict') not in {'accept', 'reject'} or
-                    not isinstance(decision.get('reason'), str) or not decision['reason'].strip() or
-                    not isinstance(decision.get('issues'), list) or
-                    any(not isinstance(x, str) for x in decision['issues']) or
-                    (decision['verdict'] == 'accept' and decision['issues']) or
-                    any(k in decision and decision[k] != expected for k, expected in
-                        {'reviewer_model': TEACHER['teacher_model'], 'reasoning_effort': TEACHER['reasoning_effort'],
-                         'backend': TEACHER['backend'], 'human_rating': False}.items()) or
-                    not isinstance(actor, str) or not actor or actor == packet.get('teacher_author_agent')):
-                raise ValueError('Review decision must independently bind its exact annotation and verdict')
-            seen.add(identity)
-            decisions[(identity, decision['reviewed_annotation_sha256'])].append((doc_sha, decision['verdict']))
+    decisions, _ = validated_review_decisions(review_paths, packet_files)
     selected = []
     for packet in originals:
         identity, original_sha = packet['id'], packet['reviewed_annotation_sha256']
@@ -342,13 +448,19 @@ def main():
     resolve.add_argument('--prepared', required=True)
     resolve.add_argument('--reviews', nargs='+', required=True)
     resolve.add_argument('--repair-packets', nargs='*', default=[])
-    for action in (prepare, collect, resolve):
+    repairs = actions.add_parser('prepare-repairs')
+    repairs.add_argument('--prepared', nargs='+', required=True)
+    repairs.add_argument('--reviews', nargs='+', required=True)
+    repairs.add_argument('--workers', type=int, default=1)
+    for action in (prepare, collect, resolve, repairs):
         action.add_argument('--output', required=True)
     args = parser.parse_args()
     if args.action == 'prepare':
         summary = prepare_review(args.queries, args.isolation, args.author_plan, args.output, args.shard, args.workers)
     elif args.action == 'resolve':
         summary = resolve_review(args.prepared, args.reviews, args.repair_packets, args.output)
+    elif args.action == 'prepare-repairs':
+        summary = prepare_repairs(args.prepared, args.reviews, args.output, args.workers)
     else:
         summary = collect_reviewed(args.queries, args.isolation, args.author_plan, args.reviews, args.output, args.workers)
     print(json.dumps(summary, ensure_ascii=False), flush=True)

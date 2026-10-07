@@ -712,7 +712,7 @@ must retain their exact rejected ancestry and receive independent acceptance;
 conflicting verdicts cannot directly pass. Collection requires accepted coverage
 of the entire original query batch, preserving game splits, histories, recorded
 futures and all structured-answer continuations without mirrored labels or
-student training. Fifteen focused contract tests pass. Actual preparation of
+student training. Twenty-four focused contract tests pass. Actual preparation of
 four genuine existing Astra annotations produces identical serial/four-CPU
 review packets and refuses unreviewed prose and an incomplete full-batch shard.
 See `evidence/recorded-coach-prose-real-preparation-v2.json`. A failed runtime
@@ -722,6 +722,19 @@ Full independent semantic acceptance and label collection remain incomplete.
 Contract checks and these four preparation examples do
 not establish corpus-wide teaching quality, backend identity attestation, human
 ratings, student benefit or any completed SFT/distillation round.
+
+`prepare-repairs` consumes completed original review preparations and fixed
+actual neural decisions. It copies rejection documents byte-for-byte, binds
+exact rejected ancestry, recomputes complete native histories, board/move facts
+and structured-answer lines, and groups repair queries by their original author.
+It generates neither prose nor acceptance. A genuine frozen prefix contains
+856 decisions and 52 rejected originals (40 train, 12 test). Serial/eight-CPU CLI
+outputs match the preserved native preparation for all 52, except destination
+reference paths; completed producer artifacts were freshly rehashed. See
+`evidence/recorded-coach-repair-portable-real-v1.json`. No teacher repair or
+full semantic acceptance is established by this preparation; every final
+revision still requires foreign acceptance. Human ratings and student benefit
+remain unmeasured.
 
 A frozen authored prefix contains 1672 actual annotations (560/552/560 from
 the three writers; 1416 train and 256 test). All pass the teacher contract,
@@ -899,6 +912,19 @@ correctness and finite checkpoint tensors were independently checked; all
 continues to bind the completed producer and full preflight rather than a new
 full-cache hash in the observer. See
 `evidence/recorded-foundation-clean-fifth-raw-gate.json`. The controller continues
+the first course; new mastered courses and trained distillation rounds remain
+zero, and explanation SFT has not started.
+
+The sixth static-current gate at step 3072 answers 623/768 identical validation
+questions correctly (0.8111979167); minimum task accuracy is 0.484375, so
+advancement remains rejected. Count/empty/locate/material/piece/rank accuracy is
+0.9609375/0.9765625/0.6015625/0.84375/1.0/0.484375. Paired step-2560 outputs
+contain 536 unchanged correct, 87 newly correct, 39 newly wrong and 106 unchanged
+wrong answers, a net gain of 48. Native histories, answers, formats, raw
+correctness and finite checkpoint tensors were independently checked; all
+15 completed declared artifacts were subsequently rehashed. Cache identity
+continues to bind completed production and full preflight. See
+`evidence/recorded-foundation-clean-sixth-raw-gate.json`. The controller continues
 the first course; new mastered courses and trained distillation rounds remain
 zero, and explanation SFT has not started.
 
