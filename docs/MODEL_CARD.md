@@ -273,19 +273,21 @@ original train roots (4096 per color, 499 games). All output hashes and unchange
 heldout bytes were read back. Full-dataset token and feature preflight is still
 required, and generated rule labels do not prove neural training gains.
 
-New initial-teacher inputs contain 2048 isolated train roots from 485 self-play
-games, balanced across both colors, with full-history candidate replay and all
-input/output hashes verified. The configured Astra Low subagent has actually
-authored the first two 683-item shards, totaling 1366 original annotations.
-Exact IDs, teacher identity, structured-label binding and all preparation hashes
-were checked. The first shard has completed independent individual semantic
-review: 670 originals accepted and all 13 genuine revisions independently
-accepted, with exact annotation hashes, inherited prefixes and complete revision
-ancestry verified. Second-shard review and
-third-shard authorship continue. The resolved first shard preserves all originals
-and rejections. Remaining rejections require correction and independent
-acceptance before use; this does not establish completed 2048-item
-annotation, new training, distillation or student benefit.
+All 2048 new original initial-teacher annotations are now genuinely authored,
+from 485 isolated self-play train games with 1024 roots per color. The three
+shards contain 683/683/682 items. All exact query records, unique global ID
+coverage, intra-shard order, configured teacher identity and preparation hashes
+were verified. Global query order differs from shard concatenation; no source
+records were replaced. Configured Astra Low identity has no independent backend
+attestation.
+
+The first two shards are independently resolved: 670/666 original accepts and
+13/17 genuinely corrected texts independently accepted, including one requiring
+a second revision. All exact original, rejection, ancestry and final-acceptance
+hashes were read back. Third-shard individual review remains in progress, so
+whole-corpus acceptance and new training are pending. These are initial seed
+annotations, without completed search distillation, student benefit or human
+teaching ratings.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing

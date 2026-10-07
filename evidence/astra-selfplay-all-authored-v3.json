@@ -1,0 +1,38 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_initial_teacher_annotations": 2048,
+  "by_shard": [
+    683,
+    683,
+    682
+  ],
+  "unique_exact_global_query_coverage": true,
+  "exact_intra_shard_order_and_original_query_records_preserved": true,
+  "global_query_order_not_assumed_equal_to_shard_concatenation": true,
+  "all_exact_teacher_identity_fields_and_frozen_original_shard_hashes_verified": true,
+  "all_three_review_preparation_hashes_and_structured_label_bindings_verified": true,
+  "original_annotation_sha256": {
+    "0": "6e11f16f7ddd75e2b3afc66486b4b67d11ac1bdd71c3d59fd88c4e748b28b3e5",
+    "1": "3a1349213700ed0eb2bb9066fc02397b52cda7e96ce46d506f370edcd136428c",
+    "2": "b07e465cee4a9e9cdce6341452655cc029944ee611ff8c71933ab03f7b856807"
+  },
+  "third_shard_review_input_sha256": "028e12d714181633b3504c98b1cb452467cbb34d02cee4d1ad8b756837be414b",
+  "neural_author_agent": "/root/astra_teacher_1",
+  "configured_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "backend": "codex_subagent",
+  "independently_resolved_original_teacher_items": 1366,
+  "first_shard_resolved_bundle_sha256": "b108a66e180b320e3ec1d2099f10bc4f0aa8d03034a213da21fa8a5805b39f83",
+  "second_shard_resolved_bundle_sha256": "28ac79b6e26b7d5783149a75aa9ca3af2543cf786f7bfabd053f601b41474d1f",
+  "third_shard_genuine_independent_review_complete": false,
+  "training_labels_modified": false,
+  "human_rating": false,
+  "independent_test_used": false,
+  "search_distillation_round_completed": false,
+  "student_training_benefit_measured": false,
+  "limits": [
+    "Configured neural teacher identity has no independent backend attestation",
+    "All third-shard original annotations still require genuine independent semantic decisions and any rejection repairs",
+    "Initial seed annotations and verified structure do not prove student teaching quality or strong play"
+  ]
+}
