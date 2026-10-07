@@ -7,6 +7,7 @@ from .curriculum_data import verify_splits
 from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
 from .explanations import EXPLANATION_QUESTION, continuation_positions, parse_explanation, validate_explanation
 from .search_distillation import reserved_positions
+from .prose_moves import validate_prose_moves
 
 
 def consolidated_label(query, response, teacher):
@@ -23,6 +24,9 @@ def consolidated_label(query, response, teacher):
     proof = validate_explanation(row['fen'], value, require_branches=True)
     if not proof['valid']:
         raise ValueError(f'Consolidation violates grounded facts: {proof["errors"]}')
+    prose_proof = validate_prose_moves(row['fen'], value, prose['explanation'])
+    if not prose_proof['valid']:
+        raise ValueError(f'Consolidation violates grounded prose moves: {prose_proof["errors"]}')
     if row['split'] != 'train':
         raise ValueError('Search training must never use a heldout root')
     continuation_positions(row, value)
@@ -81,6 +85,8 @@ def main():
                'rejected_consolidations': len(rejected), 'teacher': teacher,
                'search_depths': dict(Counter(r['search_depth'] for r in train)),
                'neural_consolidation_executed': True, 'structured_facts_verified': True,
+               'explicit_prose_moves_natively_verified': True,
+               'all_strategic_prose_semantics_verified': False,
                'all_branch_positions_isolated': True, 'full_history_termination_checked': True,
                'validation_source_unchanged': args.validation_data, 'strategic_prose_human_rating': False}
     atomic_json(dest / 'manifest.json', manifest('search_consolidated_dataset', vars(args),

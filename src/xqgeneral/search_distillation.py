@@ -10,6 +10,7 @@ from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, po
 from .explanations import (EXPLANATION_QUESTION, continuation_positions, line_facts, move_facts,
                            parse_explanation, validate_explanation)
 from .oracle import Pikafish
+from .prose_moves import consolidation_messages
 from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
 
 
@@ -88,7 +89,8 @@ def reachable_child_positions(record, value):
 
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
-                 candidate_threshold=0.05, child_threshold=0.10, child_contract='full'):
+                 candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
+                 record_oracle_query=None):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -96,13 +98,19 @@ class SearchMiner:
         self.candidate_threshold, self.child_threshold = candidate_threshold, child_threshold
         self.child_contract = child_contract
         self.engine_cache = {}
+        self.record_oracle_query = record_oracle_query
         self.counts = Counter()
 
     def analyze(self, row, restricted=None):
         key = row['feature_key'], tuple(restricted or [])
         if key not in self.engine_cache:
-            self.engine_cache[key] = self.oracle.analyze(row['fen'], self.nodes, row['initial_fen'],
-                                                       row['moves'], searchmoves=restricted)
+            result = self.oracle.analyze(row['fen'], self.nodes, row['initial_fen'],
+                                         row['moves'], searchmoves=restricted)
+            if self.record_oracle_query:
+                self.record_oracle_query({'record':{k:row[k] for k in
+                    ['id', 'feature_key', 'game_id', 'split', 'initial_fen', 'moves', 'history', 'fen']},
+                    'searchmoves':list(restricted or []), 'requested_nodes':self.nodes, 'response':result})
+            self.engine_cache[key] = result
         return self.engine_cache[key]
 
     def move_probability(self, row, move, result):
@@ -281,14 +289,7 @@ class SearchMiner:
                     'unverified_explanation': c['analysis'].get('explanation') if c['analysis'] else None,
                     'full_output_verification': c.get('verification'),
                     'move_evaluation_verification': c.get('child_acceptance')} for c in children]
-            messages = [{'role': 'system', 'content': '你是中国象棋讲解汇总教师。只依据提供的子局面讲解、'
-                         '逐步事实和根局面评分，解释推荐着法、备选差异、收益与风险。根评分来自根行棋方，'
-                         '子评分来自对手，不得混淆；禁止补充未给出的走法、吃子、将军或强制结果。'
-                         '只输出JSON对象，唯一字段explanation，为120到240字中文。'},
-                        {'role': 'user', 'content': json.dumps(content, ensure_ascii=False)}]
-            if self.child_contract == 'move_eval':
-                messages[0]['content'] += ('子回答正文未保证事实正确；遇到校验错误或与逐步事实冲突的陈述，'
-                    '以根棋盘、target_fields和root_line_facts为依据。只讲解实际提供且验证的变化。')
+            messages = consolidation_messages(content, root['fen'], target)
             self.counts['mined_improvements'] += 1
             return {'id': root['id'] + '-search', 'record': root, 'target_fields': target,
                     'messages': messages, 'source_root_id': original['id'], 'depth': depth,
@@ -331,15 +332,22 @@ def main():
     records = records[:args.limit]
     partial = root / 'results.partial.jsonl'
     results = load_jsonl(partial) if partial.exists() else []
+    oracle_log = root / 'oracle-queries.partial.jsonl'
+    if results and not oracle_log.exists():
+        raise ValueError('Original mining has no complete oracle ledger; resume its frozen source or use a fresh run')
     seen = {r['source_root_id'] for r in results}
     if len(seen) != len(results) or not seen <= {r['id'] for r in records}:
         raise ValueError('Search continuation IDs differ')
     predictor = Predictor(args.checkpoint, feature_cache=args.features)
     oracle = Pikafish(args.executable, args.weights, threads=2)
-    miner = SearchMiner(predictor, oracle, reserved_positions(args.data), args.nodes, args.max_depth,
-                        child_contract=args.child_contract)
     try:
-        with partial.open('a') as handle:
+        with partial.open('a') as handle, oracle_log.open('a') as oracle_handle:
+            def record_oracle_query(item):
+                oracle_handle.write(json.dumps(item, ensure_ascii=False) + '\n')
+                oracle_handle.flush()
+
+            miner = SearchMiner(predictor, oracle, reserved_positions(args.data), args.nodes, args.max_depth,
+                                child_contract=args.child_contract, record_oracle_query=record_oracle_query)
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -363,11 +371,14 @@ def main():
              'strict_pv_improvement_required': True, 'probability_model': 'pinned_Pikafish_material_WDL',
              'teacher_consolidation_executed': False, 'student_generations_preserved': True,
              'child_contract': args.child_contract,
+             'all_successful_oracle_queries_preserved': True,
+             'restricted_move_queries_in_oracle_ledger': True,
+             'oracle_query_records': sum(1 for _ in oracle_log.open()),
              'raw_child_reachable_prefixes_isolated': True,
              'all_inferred_target_lines_history_validated': True,
              'unused_child_fields_passed_to_consolidator': args.child_contract == 'full'}
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', vars(args), input_paths,
-                [root / 'queries.jsonl', partial], proof))
+                [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
 
 

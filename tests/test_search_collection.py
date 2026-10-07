@@ -62,3 +62,47 @@ def test_search_collection_refuses_history_terminal_continuation_and_missing_bra
     target['branches']=[{'move':line[0], 'pv':line, 'evaluation':target['evaluation']}]
     with pytest.raises(ValueError, match='terminal history'):
         consolidated_label(q, response(), TEACHER)
+
+
+def mined_capture_query():
+    fen = '3nkab2/4a1c2/9/8N/4P1b2/P4R2P/9/2N1B4/5p3/2rAKAB2 w - - 1 37'
+    lines = [['e2c0', 'g8g0', 'f0e1', 'd9c7', 'c0e2', 'c7b5'],
+             ['i6g5', 'c0c2', 'f4c4', 'c2b2', 'c4c0', 'f1g1'],
+             ['f0e1', 'c0c2', 'f4c4', 'c2b2', 'c4b4', 'g8i8']]
+    q = query()
+    q['record'].update(fen=fen, initial_fen=fen, moves=[])
+    q['target_fields'].update(move=lines[0][0], pv=lines[0],
+        candidates=[line[0] for line in lines], facts=move_facts(fen, lines[0][0]),
+        branches=[{'move':line[0], 'pv':line,
+                   'evaluation':{'type':'cp', 'value':score, 'perspective':'side_to_move'}}
+                  for line, score in zip(lines, [623, -199, -199])])
+    q['target_fields']['evaluation']['value'] = 677
+    return q
+
+
+@pytest.mark.parametrize('prose', [
+    '红方推荐相七进九吃车，评分677，确立优势。黑方应以炮8平1将军，红仕五进六挡将。'
+    '随后黑马9进7，红相九进七回防，黑马7进5。此变化中红方虽失一相，但成功消除黑车威胁，'
+    '且子力位置更协调。备选马八进七吃象评分-199，黑车2进4捉马后红方陷入被动。',
+    '推荐e2c0（相七进五），之后按给定变化分析对方的炮将军和红方的应对。两条备选的评分'
+    '都比推荐着法低，具体吃子和将军须以每步棋盘事实为准。该有限变化与评分不能证明强制'
+    '获胜，也不能把没有给出的后续攻击当作已经发生的结果。',
+    '推荐e2c0吃车，再考虑f4f5加强进攻。两条备选的评分都比推荐着法低，具体吃子和将军'
+    '须以每步棋盘事实为准。该有限变化与评分不能证明强制获胜，也不能把没有给出的后续'
+    '攻击当作已经发生的结果，讲解必须保持与实际提供的变化一致。',
+])
+def test_search_collection_rejects_false_or_ungrounded_prose_moves(prose):
+    raw = response()
+    raw['text'] = json.dumps({'explanation':prose}, ensure_ascii=False)
+    with pytest.raises(ValueError, match='prose[ _]move'):
+        consolidated_label(mined_capture_query(), raw, TEACHER)
+
+
+def test_search_collection_accepts_paired_native_notation_without_changing_prose():
+    prose = ('推荐e2c0（相五退七）吃掉黑车。主线g8g0（炮7进8）吃红相并将军，'
+             '红方f0e1（仕四进五）移开炮与帅之间的炮架，解除将军。备选i6g5吃象，'
+             '黑方c0c2吃马，评分较低。根评分677是红方视角；给定变化不能证明强制获胜。')
+    raw = response()
+    raw['text'] = json.dumps({'explanation':prose}, ensure_ascii=False)
+    row = consolidated_label(mined_capture_query(), raw, TEACHER)
+    assert json.loads(row['answer'])['explanation'] == prose

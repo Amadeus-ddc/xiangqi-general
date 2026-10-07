@@ -78,6 +78,24 @@ def replay(initial_fen, moves):
     return history
 
 
+def move_notation(fen, move):
+    """Native WXF and Chinese notation; unusual pawn disambiguation keeps WXF only."""
+    if move not in legal_moves(fen):
+        raise ValueError(f'Cannot name an illegal move: {move}')
+    wxf = pyffish.get_san(VARIANT, fen, to_fairy(move), False, pyffish.NOTATION_XIANGQI_WXF)
+    chinese = None
+    parts = re.fullmatch(r'[KAEHRCP]([1-9+\-=])([+\-=])([1-9])', wxf)
+    if parts:
+        origin, direction, destination = parts.groups()
+        piece = piece_map(fen)[move[:2]]
+        name = piece_name(piece)[1:]
+        number = lambda value: '一二三四五六七八九'[int(value)-1] if piece.isupper() else value
+        prefix = (name + number(origin) if origin.isdigit() else
+                  {'+':'前', '-':'后', '=':'中'}[origin] + name)
+        chinese = prefix + {'+':'进', '-':'退', '=':'平'}[direction] + number(destination)
+    return {'move':move, 'side':side(fen), 'wxf':wxf, 'chinese':chinese}
+
+
 @lru_cache(maxsize=131072)
 def future_fens(fen, moves):
     """Cache immutable, legally replayed continuations for repeated split checks."""

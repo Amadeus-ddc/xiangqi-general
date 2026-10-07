@@ -1,0 +1,98 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "selected_student_step": 9216,
+  "student_checkpoint_sha256": "f91898a7533778f982c4617e4848b0dc1c7286c6650fca976eec68aa82671368",
+  "mining": {
+    "processed": 64,
+    "accepted_for_consolidation": 1,
+    "reasons": {
+      "invalid_inferred_continuation": 5,
+      "recursion_limit": 1,
+      "invalid_root_candidates": 56,
+      "selected_root_move_still_mistake": 1,
+      "accepted_for_consolidation": 1
+    },
+    "new_session_counters": {
+      "root_attempts": 113,
+      "full_child_contract_failures_bypassed_for_move_eval_check": 141,
+      "recursive_descents": 50,
+      "oracle_candidate_injections": 13,
+      "mined_improvements": 1
+    },
+    "training_roots_only": true,
+    "heldout_positions_excluded": true,
+    "all_child_branch_positions_isolated": true,
+    "full_history_termination_checked": true,
+    "strict_pv_improvement_required": true,
+    "probability_model": "pinned_Pikafish_material_WDL",
+    "teacher_consolidation_executed": false,
+    "student_generations_preserved": true,
+    "child_contract": "move_eval",
+    "raw_child_reachable_prefixes_isolated": true,
+    "all_inferred_target_lines_history_validated": true,
+    "unused_child_fields_passed_to_consolidator": false
+  },
+  "mining_manifest_sha256": "9c7236be81a1a198b3e7210519baacb6b90cd3f3d94cb2674e0db5107d05e4b4",
+  "consolidation_executed": true,
+  "student_distillation_training_executed": false,
+  "valid_distillation_rounds": 0,
+  "validation_or_test_roots_used_for_mining": false,
+  "raw_student_outputs_changed": false,
+  "all_output_hashes_read_back": true,
+  "final_student_strength_established": false,
+  "limits": [
+    "64 train-only roots; fixed completed formal model and move/evaluation child predicate",
+    "Model, roots, and depth differ from earlier pilots; no isolated predicate-effect claim",
+    "Native legality, full-history termination, heldout isolation, and strict improvement remain required",
+    "Mining or consolidation alone is not a trained distillation round or a strength result",
+    "Original structurally accepted prose has nine unsupported Chinese move-name mentions and is ineligible",
+    "Some original forced-query raw answers were not archived; new repeats are new evidence, not recovered original answers"
+  ],
+  "consolidation_manifest_sha256": "4483c900cf759b7954870a26d326433f4f003f854f600b8c0d86302b88e721e2",
+  "collected": {
+    "games": {
+      "train": 1,
+      "validation": 24,
+      "test": 18
+    },
+    "roots": {
+      "train": 1,
+      "validation": 192,
+      "test": 256
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0,
+    "mined_queries": 1,
+    "accepted_training_roots": 1,
+    "rejected_consolidations": 0,
+    "teacher": {
+      "provider": "local_huggingface",
+      "repository": "Qwen/Qwen3.8-27B",
+      "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+      "model_path": "models/qwen3.8-27b",
+      "inference_dtype": "bfloat16",
+      "quantization": "none",
+      "purpose": "Consolidate verified child explanations into a root explanation"
+    },
+    "search_depths": {
+      "4": 1
+    },
+    "neural_consolidation_executed": true,
+    "structured_facts_verified": true,
+    "all_branch_positions_isolated": true,
+    "full_history_termination_checked": true,
+    "validation_source_unchanged": "data/astra-explanations-full-v7",
+    "strategic_prose_human_rating": false
+  },
+  "collected_manifest_sha256": "a1d258a7c2ae479431b07f437a59db33cd378dede73b70f02f3bedcc3cd9593a",
+  "pilot_manifest_sha256": "966355d24c52e0cae1996a5ad012b5276b5fda6c369ef6b72880662609689542",
+  "original_structural_collector_acceptances": 1,
+  "prose_quality_status": "rejected",
+  "eligible_consolidated_training_labels_after_prose_audit": 0,
+  "original_collected_dataset_eligible_for_student_training": false,
+  "semantic_audit_does_not_modify_original_data": true,
+  "prose_audit_manifest_sha256": "a4133a08c694d7cb8d98f5877c78a5e671286fba41cc409fcd5a9368d0b9194e",
+  "old_root_forced_query_keys_without_archived_raw": 119,
+  "all_old_forced_raw_answers_preserved": false
+}
