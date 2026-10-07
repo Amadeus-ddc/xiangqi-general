@@ -28,6 +28,8 @@ def validate_recipe(recipe):
     if len(recipe['course_mixtures']) != len(STAGES) or len(recipe['course_budgets']) != len(STAGES):
         raise ValueError('Exactly four ordered foundation courses are required')
     world = recipe.get('ddp_world_size', 1)
+    if type(recipe.get('ddp_find_unused_parameters', False)) is not bool:
+        raise ValueError('ddp_find_unused_parameters must be a boolean')
     if (type(world) is not int or world < 1 or type(recipe['batch_size']) is not int or
             recipe['batch_size'] < 1 or recipe['batch_size'] % world):
         raise ValueError('Global batch size must be divisible by the positive DDP world size')

@@ -1,0 +1,48 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_revision": "368a47a947773dd8692c026e286dd19b6277b993",
+  "declared_source_license": "CC-BY-4.0",
+  "candidate_games_natively_examined": 2160,
+  "retained_unique_human_games": 512,
+  "quarantined_games": 884,
+  "duplicate_games": 301,
+  "valid_games_omitted_for_retained_budget": 463,
+  "games_by_split": {
+    "train": 407,
+    "validation": 47,
+    "test": 58
+  },
+  "games_by_named_player": {
+    "王天一": 8,
+    "许银川": 255,
+    "洪智": 66,
+    "郑惟桐": 5,
+    "吕钦": 97,
+    "蒋川": 66,
+    "赵鑫鑫": 55,
+    "胡荣华": 50
+  },
+  "games_by_year": {
+    "2012": 37,
+    "2013": 5,
+    "2008": 110,
+    "2010": 56,
+    "2009": 74,
+    "2007": 64,
+    "2006": 20,
+    "2011": 55,
+    "2005": 22,
+    "2004": 31,
+    "2003": 22,
+    "2002": 15,
+    "2000": 1
+  },
+  "all_retained_moves_native_legal": true,
+  "full_history_terminal_checks_passed": true,
+  "game_split_assigned_before_questions": true,
+  "human_move_optimality_proven": false,
+  "source_authenticity_independently_proven": false,
+  "training_data_or_neural_labels_generated": false,
+  "manifest_sha256": "71cd886b2fb63f4ffe7033c3862baa37a20479b8d1c76c85826b75e92cad9cbd"
+}

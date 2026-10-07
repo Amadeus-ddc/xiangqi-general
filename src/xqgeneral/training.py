@@ -176,6 +176,8 @@ def compatible_resume(saved, requested):
         raise ValueError('Resume determinism differs; initialize a new experiment instead')
     if saved.get('trainable_parameter_dtype', 'base') != requested.get('trainable_parameter_dtype', 'base'):
         raise ValueError('Resume trainable precision differs; initialize a new experiment instead')
+    if saved.get('ddp_find_unused_parameters', False) != requested.get('ddp_find_unused_parameters', False):
+        raise ValueError('Resume distributed reduction contract differs')
     keys = ['model_path', 'model_revision', 'feature_path', 'data_path', 'mode', 'decoder_bridge_positions',
             'bridge_width', 'stages', 'mixture', 'seed', 'batch_size', 'learning_rate', 'max_tokens', 'steps',
             'board_tokens', 'expert_feature_depths', 'decoder_training', 'decoder_learning_rate',
@@ -291,8 +293,11 @@ def main():
     decoder_probe = next((p for n, p in model.named_parameters()
                           if n.endswith(('q_proj.weight', 'q_proj.base_layer.weight')) and p.requires_grad), None)
     decoder_before = decoder_probe.detach().flatten()[:1024].clone() if decoder_probe is not None else None
+    find_unused = config.get('ddp_find_unused_parameters', False)
+    if type(find_unused) is not bool:
+        raise ValueError('ddp_find_unused_parameters must be a boolean')
     wrapped = DistributedDataParallel(model, device_ids=[int(os.environ['LOCAL_RANK'])],
-                                       broadcast_buffers=False) if world > 1 else model
+                                       broadcast_buffers=False, find_unused_parameters=find_unused) if world > 1 else model
     if rank == 0:
         dest.mkdir(parents=True, exist_ok=True)
         atomic_json(dest / 'config.json', config)

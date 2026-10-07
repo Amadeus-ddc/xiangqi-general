@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "requested_clean_route": true,
+  "old_foundation_training_stopped": true,
+  "old_foundation_last_logged_update": 210,
+  "old_foundation_optimizer_checkpoint_saved": false,
+  "old_foundation_raw_qa_gate_executed": false,
+  "explanation_v6_training_stopped": true,
+  "explanation_v6_last_logged_update": 1878,
+  "explanation_v6_latest_saved_optimizer_checkpoint_step": 1536,
+  "explanation_v6_root_curriculum_stage": "dynamic_current",
+  "bridge_training_is_the_four_course_sequence": true,
+  "separate_course_free_trained_bridge_checkpoint_exists": false,
+  "clean_route_loads_course_or_sft_checkpoint": false,
+  "future_explanation_sft_requires_all_four_clean_course_gates": true,
+  "all_old_experiment_artifacts_preserved": true,
+  "stop_records": {
+    "runs/curriculum-expanded-v4-route-stop-v2/stopped.json": "b92d74444325d3469153c72cd41f0094ca77f1fccf124450d2af3a239bce0a0f",
+    "runs/explanation-v6-route-stop-v1/stopped.json": "585bc7c031cf87c9c17eeaa8d01e2c4c27c87b9e534422897053270baa5e6645"
+  },
+  "clean_curriculum_started": false,
+  "distillation_rounds_completed": 0
+}

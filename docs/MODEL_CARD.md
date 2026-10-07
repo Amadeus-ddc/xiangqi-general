@@ -340,19 +340,17 @@ matched training gains or estimates of overall reviewer accuracy. The reviewer
 shares the consolidation foundation model; native student checks remain separate.
 See `evidence/explanation-v5-selected-grounded-review.json`.
 
-A separate full-decoder continuation now actually trains on all 8710 reviewed
-v7 train explanations, with a reset optimizer, global batch 16 and microbatch 1.
-Its 50% main explanation pool also contains the 2048 new original self-play
-labels resampled at 15%; these replay rows are not independent new annotations.
-The remaining mix is 20% move, 10% planning and 5% balanced four-course QA.
-All 196350 mixed rows passed game/root/future isolation, all 183834 train and
-validation encodings fit 1024 tokens, and every feature key is available.
-Heldout label bytes are unchanged; test data only checks isolation and does not
-train or select models. The derived maximum is 4355 steps; actual GPU 1 updates
-have finite losses and gradients. See `evidence/explanation-v6-training-readiness.json`
-and `evidence/explanation-v6-training-start.json`. Its initial checkpoint is the
-pretraining parent, not a trained final model. Multiple training conditions
-differ, and neither benefit nor a valid search-distillation round is established.
+The old v6 full-decoder continuation has been stopped at the user's request,
+along with its selector. Its last logged update is 1878 and its latest saved
+optimizer checkpoint is step 1536; all original weights, inputs and logs remain.
+The true lineage is old dynamic-current (the second course), early move training,
+explanation v3, v5 and then v6. It is not downstream of the new four-course route.
+At actual step 1024, raw validation finds 167 legal and 155 non-mistake moves out
+of 192, 19/96 structurally complete plans, 16/96 legal explanation main lines and
+6/96 complete explanation contracts. The declared three-part score is 0.3875,
+versus the parent's 0.395833; prose semantics are unmeasured. Training and final
+selection did not complete. See `evidence/explanation-v6-interim-1024.json` and
+`evidence/foundation-clean-route-switch.json`. No trained distillation is counted.
 
 A read-only audit of the preserved early step-3072 search replayed all 117
 generated child records with complete history and ran 123 real 100K-node
@@ -422,11 +420,12 @@ optimizer and random states, and per-step losses, gradients and token counts.
 All states and output hashes were independently read back; see
 `evidence/two-gpu-example-normalized-resume.json`. The 24-train/12-val execution
 fixture does not prove a completed course, full-decoder or cross-world resume,
-or improved strength. The unstarted v2 foundation waiters were preserved and
-replaced by v3: two-GPU training and an unchanged
-global-batch, data and parent-scoring recipe. Full readiness was verified; v3 was subsequently superseded before training by the expanded sequential courses. Its unstarted GPU 1 selector was previously
-preserved and moved to GPU 3; formal full SFT has now released that GPU;
-GPU 1 now runs the reviewed v7 continuation. No foundation training was stopped.
+or improved strength. Historical v2/v3 waiters were superseded before training.
+The later inherited-initialization v4 course was actually stopped after 210
+updates, before its first raw QA gate or an optimizer checkpoint. Its data and
+execution evidence are preserved. Old v6 explanation training is also stopped.
+The active replacement prepares diverse recorded games and clean initialization;
+no new full curriculum has started yet.
 
 Split-footprint verification now accepts an optional bounded process pool while
 preserving the default serial API and all alternative future branches. A fixed
@@ -484,16 +483,16 @@ resumed execution was independently checked: all weights, optimizer/RNG states
 and step losses agree. This tiny four-update fixture is not a completed course.
 Each new stage assesses 128 raw validation answers per introduced task; both
 stage accuracy and worst-task accuracy must meet the declared targets before
-advancement. NLL alone cannot advance a course. The first static-current course
-is now actually training on GPUs 0 and 2. A frozen prefix of 84 updates, the
-two actual DDP workers, source/config identity, and finite losses/gradients were
-independently checked; see `evidence/foundation-curriculum-v4-training-start.json`.
-Full preparation readback and additional native-answer sampling continue separately.
-The first raw QA gate is scheduled at update 512. Live logs and unchanged resume commands are in
-`runs/curriculum-expanded-v4/static_current/training/` and
-`runs/curriculum-expanded-v4-launch-v2/plan.json`. The recipe is recorded in
-`evidence/foundation-curriculum-v4-queue.json`; no completed new course, curriculum
-gain or independent-test result is claimed.
+advancement. NLL alone cannot advance a course. The v4 static-current course was stopped at update 210 before that gate.
+Its preserved training-start snapshot still proves the earlier 84 updates,
+not a completed course. Full preparation readback is now complete: all 1155116
+rows, 52506 full-history contexts, all future split footprints and cached feature
+hashes agree. A native answer sample of 704 rows (32 per each of 22 tasks) also
+agrees; this is a sample checked by the same pinned rule implementation, not an
+independent solver or a full-corpus answer audit. See
+`evidence/foundation-curriculum-v4-training-readback.json`. The historical recipe
+remains in `evidence/foundation-curriculum-v4-queue.json`; no curriculum gain or
+independent-test result is established.
 
 An additional fixed 64-root training-only engine audit (32 per color) repeats all
 archived 100K-node best moves. Raising the requested budget to 1M nodes preserves
@@ -548,3 +547,43 @@ hardlink export supplies that unchanged model to the new search pilot. See
 `evidence/explanation-v4-functional-selection.json` and
 `evidence/explanation-v4-functional-selection-readback.json`. No reliable
 prose, full-game strength or independent-test claim follows from completion.
+
+
+The new route starts from the pinned pretrained Px0 expert and official Qwen
+language base with freshly initialized bridge parameters and board-token rows.
+The paper's SC, DC, SF and DF sequence is itself bridge adaptation; there is no
+separately trained, course-free bridge checkpoint. All four raw QA gates must
+pass in order before explanation SFT inherits the final course weights. Data
+collection and annotation may precede this dependency. The production recipe is
+`configs/foundation-human-engine-clean-v1.json` and still awaits complete new-data
+preflight. A real four-H20 fixture with global batch 256/microbatch 4 verifies
+139920416 FP32 trainable parameters, frozen decoder, nonzero gradients, and
+bitwise equality of continuous four-step versus 2+2 resumed weights, optimizer,
+RNG states and step logs. It enables `ddp_find_unused_parameters` to keep the
+same-world reduction contract stable; switching this flag on resume is rejected.
+See `evidence/four-gpu-clean-foundation-resume.json`. Earlier failed fixtures are
+preserved; the four-update check does not prove learned foundation skills.
+
+Source-verified recorded games are being added for coaching-relevant positions,
+without assuming recorded moves are optimal or source metadata is authentic.
+The initial native-verified set contains 512 unique games and 43612 recorded
+plies, with splits assigned before generating questions. The pinned CCPD tree
+has 53685 human-category PGN files, 167 computer-category files and 41
+human-computer files before deduplication; duplicate files are not unique games.
+The broader all-player import still runs. A bounded recent collection has completed
+93 games and 6989 plies from 2019--2023 with 18 participant labels; see
+`evidence/recent-recorded-games-native-import-v2.json`. Its original 46 accepted
+lines are preserved, and a confirmed source draw enum accounts for the expansion;
+source moves/results were not repaired. Participant/team aliases, both-player caps, exact-event
+caps, source kind, decade and result are used in later sampling; label counts
+are not independently verified person counts. Original prose and website analysis
+branches are excluded from neural labels. See
+`evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
+This is not a paper-scale seven-iteration corpus or a trained teaching model.
+
+Both old planning experiments and final selections were read back completely:
+v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
+33/96 structural plans; v2 trained/selects 11500, with 165/192 and 37/96.
+Thirteen actual candidate checkpoints and 26 raw evaluation manifests were
+verified. See `evidence/move-planning-completed-readback-v1.json`. Structural
+completion, full-game strength and prose quality are separate claims.

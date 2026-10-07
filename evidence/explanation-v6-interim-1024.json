@@ -1,0 +1,55 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_step": 1024,
+  "checkpoint_sha256": "cd6ae6e91c627538e7e422f4ee8f525be417fddba82f54f743ecdd86c9f58ba6",
+  "actual_fp32_trainable_parameters": 4162388512,
+  "all_actual_raw_output_hashes_and_summaries_read_back": true,
+  "same_validation_records_as_parent": {
+    "moves": 192,
+    "plans": 96,
+    "explanations": 96
+  },
+  "functional_score": 0.38750000000000007,
+  "parent_functional_score": 0.39583333333333337,
+  "raw_moves": {
+    "examples": 192,
+    "legal": 167,
+    "no_mistake": 155
+  },
+  "raw_plans": {
+    "examples": 96,
+    "structural_contract_valid": 19
+  },
+  "raw_explanations": {
+    "examples": 96,
+    "full_pv_legal": 16,
+    "structural_contract_valid": 6
+  },
+  "parent_raw_moves": {
+    "examples": 192,
+    "legal": 168,
+    "no_mistake": 154
+  },
+  "parent_raw_plans": {
+    "examples": 96,
+    "structural_contract_valid": 22
+  },
+  "parent_raw_explanations": {
+    "examples": 96,
+    "full_pv_legal": 18,
+    "structural_contract_valid": 7
+  },
+  "training_complete": false,
+  "selected_final_model": false,
+  "prose_semantic_rating": "unmeasured",
+  "strong_play_or_reliable_coach_proven": false,
+  "independent_test_used": false,
+  "trained_distillation_rounds": 0,
+  "limits": [
+    "One interim candidate does not establish the final v6 result",
+    "Matching validation records do not isolate changes in data, feature cache, batch size or optimizer",
+    "Structural contracts do not establish accurate strategic prose or full-game playing strength"
+  ],
+  "readback_manifest_sha256": "3febc9ae731adedf05edb0a0af8a291149802bf9b1191bd5e4da98e1e1179428"
+}
