@@ -1,0 +1,38 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "actual_checkpoint_step": 2000,
+  "checkpoint_sha256": "a0c030e3aa001f239b57db796593520abac534bcc501ac6b41bd816728809bc5",
+  "examples": 24,
+  "all_24_targets_recomputed_by_native_rules": true,
+  "all_source_evaluation_output_hashes_checked": true,
+  "full_history_terminal_examples": 0,
+  "maximum_generated_text_tokens": 20,
+  "maximum_reference_text_tokens": 28,
+  "generation_budget_tokens": 384,
+  "by_stage": {
+    "dynamic_current": {
+      "examples": 12,
+      "exact_correct": 1,
+      "semantic_exact_ignoring_order": 1,
+      "examples_with_missing_captures": 9,
+      "examples_with_extra_illegal_moves": 7,
+      "examples_with_legal_non_captures": 6
+    },
+    "dynamic_future": {
+      "examples": 12,
+      "exact_correct": 2,
+      "semantic_exact_ignoring_order": 2,
+      "examples_with_missing_captures": 9,
+      "examples_with_extra_illegal_moves": 4,
+      "examples_with_legal_non_captures": 1
+    }
+  },
+  "raw_outputs_and_original_metrics_unchanged": true,
+  "new_model_generation": false,
+  "test_used": false,
+  "limits": [
+    "Diagnostic on 24 validation examples, not a population error estimate",
+    "Decoded text token lengths do not identify why generation stopped",
+    "No causal attribution among optimizer, data scale or bridge architecture"
+  ]
+}
