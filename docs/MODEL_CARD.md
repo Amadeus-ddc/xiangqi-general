@@ -555,8 +555,8 @@ The paper's SC, DC, SF and DF sequence is itself bridge adaptation; there is no
 separately trained, course-free bridge checkpoint. All four raw QA gates must
 pass in order before explanation SFT inherits the final course weights. Data
 collection and annotation may precede this dependency. The production recipe is
-`configs/foundation-human-engine-clean-v2.json` and still awaits complete new-data
-preflight. The decoder receives no literal FEN or 90-square dictionary: the board
+`configs/foundation-human-engine-clean-v2.json`; full new-data preflight has
+completed and the first course is training. The decoder receives no literal FEN or 90-square dictionary: the board
 is read through expert memory. Earlier dictionary recipes remain separate
 comparisons. A real four-H20 fixture with global batch 256/microbatch 4 verifies
 139920416 FP32 trainable parameters, frozen decoder, nonzero gradients, and
@@ -608,6 +608,25 @@ prefixes. This bounded fixture does not estimate whole-corpus yield. See
 participant identities and redistribution permissions remain unestablished;
 raw/derived records remain excluded from releases, and live foundation inputs
 are unchanged.
+
+A separate bounded modern collection examined 910 actual game pages. Filtering
+the years declared in game records to 2024--2026 retains 240 native-legal games,
+18641 plies and 245 participant labels, split into 177/25/38 train/validation/test
+games. The original batch also retained 80 games whose declared date is in 2029
+despite a 2026 event name. The source dates are preserved and those records are
+quarantined; no event-year substitution is performed. The corrected importer
+replays the pinned cache without new requests and accepts an optional `--max-year`,
+with the historical unbounded default retained. Complete offline native replay
+and independent readback match every retained history and quarantine reason.
+One previously quarantined duplicate page is also reclassified by the year check;
+81 complete native pages carry conflicting future dates, representing 80 formerly
+accepted unique mainlines. Both failed observers and the completed offline replay
+are preserved; the final observer reuses and rehashes that completed replay.
+See `evidence/modern-recorded-games-native-import-v2.json`,
+`evidence/modern-recorded-games-native-readback-v3.json` and
+`evidence/recorded-source-future-date-audit-v1.json`. Cross-source deduplication
+against the complete additional archive pool is pending, and no new records have
+changed live foundation inputs.
 
 The capacity audit rehashes and counts both actual canonical-game files:
 22720 unique mainlines and 1874419 plies after one cross-source duplicate.
@@ -740,6 +759,20 @@ First-course training continues toward its next gate; no new course, explanation
 SFT or search-distillation round has completed. See
 `evidence/recorded-foundation-clean-first-raw-gate.json`. The source cohorts have
 unequal sample counts and are not a causal comparison of human and engine data.
+
+The second static-current gate at step 1024 uses the exact same 768 validation
+sample identities, questions, formats and gold answers. Accuracy is 0.5403645833
+and minimum task accuracy is 0.15625, so course advancement remains rejected.
+Count/empty/locate/material/piece/rank accuracies are
+0.890625/0.8203125/0.296875/0.5546875/0.5234375/0.15625. Paired raw outputs contain
+351 unchanged correct answers, 64 newly correct, 47 newly wrong and 306 unchanged
+wrong: the net gain of 17 answers does not establish spatial mastery. The CPU
+reader recomputes every native context, gold answer, format and raw correctness,
+checks the finite checkpoint and rehashes the completed artifacts. Cache identity
+matches actual producer and full-preflight manifests; it does not rehash the
+entire cache again. See `evidence/recorded-foundation-clean-second-raw-gate.json`.
+There are still zero mastered new courses and zero trained distillation rounds;
+explanation SFT has not started.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
