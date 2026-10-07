@@ -1,0 +1,13 @@
+{
+  "resolved_genuine_original_teacher_items": 682,
+  "accepted_unchanged_prose": 667,
+  "corrected_and_independently_accepted_prose": 15,
+  "all_original_rejections_and_exact_revision_ancestry_preserved": true,
+  "source_labels_modified": false,
+  "human_rating": false,
+  "student_training_benefit_measured": false,
+  "test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "all_exact_revision_acceptance_chains_verified": true,
+  "bundle_manifest_sha256": "79223abe37c49a2d06e21d653793bb86f20a52cc054e576e6bfbb2e251bbba88"
+}

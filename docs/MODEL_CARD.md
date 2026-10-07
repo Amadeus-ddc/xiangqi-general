@@ -301,6 +301,15 @@ original train roots (4096 per color, 499 games). All output hashes and unchange
 heldout bytes were read back. Full-dataset token and feature preflight is still
 required, and generated rule labels do not prove neural training gains.
 
+The expanded planning dataset now has 299952 independently searched six-ply
+lessons (298168 train) and 451236 total records. Full native history, terminal
+and heldout isolation checks passed. Old planning validation/test files are byte
+identical, and every nonplanning record is preserved: 125068/14976/11240 for
+train/validation/test. All hashes and actual counts were independently read back;
+see `evidence/move-planning-selfplay-data-v3.json`. Feature/token preflight remains
+required before foundation training. These are engine labels, with no neural
+prose, valid search-distillation round or measured student improvement.
+
 All 2048 new original initial-teacher annotations are now genuinely authored,
 from 485 isolated self-play train games with 1024 roots per color. The three
 shards contain 683/683/682 items. All exact query records, unique global ID
@@ -309,11 +318,14 @@ were verified. Global query order differs from shard concatenation; no source
 records were replaced. Configured Astra Low identity has no independent backend
 attestation.
 
-The first two shards are independently resolved: 670/666 original accepts and
-13/17 genuinely corrected texts independently accepted, including one requiring
-a second revision. All exact original, rejection, ancestry and final-acceptance
-hashes were read back. Third-shard individual review remains in progress, so
-whole-corpus acceptance and new training are pending. These are initial seed
+All three shards are independently resolved: 670/666/667 original accepts and
+13/17/15 genuinely corrected texts independently accepted, including one
+second revision in shard 1. The disjoint bundles cover all 2048 items: 2003
+unchanged texts and 45 revisions. All exact original, rejection, ancestry and
+final-acceptance hashes, and all 45 actual prose changes against the original
+author files, were read back. Original annotations remain preserved. Fresh v7
+dataset assembly and full feature/token preflight are running separately;
+active training keeps its frozen older inputs. These are initial seed
 annotations, without completed search distillation, student benefit or human
 teaching ratings.
 

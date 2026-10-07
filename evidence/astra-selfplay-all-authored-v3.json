@@ -21,10 +21,10 @@
   "configured_model": "gpt-6-astra",
   "reasoning_effort": "low",
   "backend": "codex_subagent",
-  "independently_resolved_original_teacher_items": 1366,
+  "independently_resolved_original_teacher_items": 2048,
   "first_shard_resolved_bundle_sha256": "b108a66e180b320e3ec1d2099f10bc4f0aa8d03034a213da21fa8a5805b39f83",
   "second_shard_resolved_bundle_sha256": "28ac79b6e26b7d5783149a75aa9ca3af2543cf786f7bfabd053f601b41474d1f",
-  "third_shard_genuine_independent_review_complete": false,
+  "third_shard_genuine_independent_review_complete": true,
   "training_labels_modified": false,
   "human_rating": false,
   "independent_test_used": false,
@@ -32,7 +32,13 @@
   "student_training_benefit_measured": false,
   "limits": [
     "Configured neural teacher identity has no independent backend attestation",
-    "All third-shard original annotations still require genuine independent semantic decisions and any rejection repairs",
+    "All2048 neural semantic resolutions are complete; new dataset assembly and token/feature preflight are separate stages",
     "Initial seed annotations and verified structure do not prove student teaching quality or strong play"
-  ]
+  ],
+  "third_shard_resolved_bundle_sha256": "79223abe37c49a2d06e21d653793bb86f20a52cc054e576e6bfbb2e251bbba88",
+  "accepted_unchanged_original_prose": 2003,
+  "corrected_and_independently_accepted_original_prose": 45,
+  "all2048_exact_independent_acceptance_chains_read_back": true,
+  "actual45_prose_changes_vs_original_author_files_read_back": true,
+  "raw_source_annotation_files_modified": false
 }
