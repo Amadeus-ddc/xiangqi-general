@@ -1,0 +1,37 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "completed_shards": [
+    0,
+    1
+  ],
+  "actual_original_teacher_annotations": 1366,
+  "overall_target_original_annotations": 2048,
+  "third_shard_target": 682,
+  "all_completed_shard_ids_identity_and_structured_labels_bound": true,
+  "all_new_preparation_input_and_output_hashes_read_back": true,
+  "independent_prose_review_complete": false,
+  "training_labels_modified": false,
+  "human_rating": false,
+  "test_used": false,
+  "neural_annotation_author_agent": "/root/astra_teacher_1",
+  "annotation_sha256": {
+    "0": "6e11f16f7ddd75e2b3afc66486b4b67d11ac1bdd71c3d59fd88c4e748b28b3e5",
+    "1": "3a1349213700ed0eb2bb9066fc02397b52cda7e96ce46d506f370edcd136428c"
+  },
+  "shard1_review_input_sha256": "2e16b4ac16912427fdf9fb860aa1e19152c531a1b7814fa17b16d72e7dc7174d",
+  "shard1_review_bundle_sha256": "c8d2e0a81c7c79fa5fcc8f2007c7e8a398e2b86ccf6b09b00aac64a01a89762d",
+  "limits": [
+    "Third-shard authorship remains in progress",
+    "All new prose needs independent review and rejection repair before training",
+    "Authored seed prose is not search distillation or student-quality evidence"
+  ],
+  "first_shard_genuine_independent_review_items": 683,
+  "first_shard_accepted_original_prose": 670,
+  "first_shard_required_revisions": 13,
+  "first_shard_review_sha256": "55756c98673618c581609e8be9eeb7f80284d47b6d83f5a9786cf9787caaf647",
+  "first_shard_progress_sha256": "9522d6b58f213f70c8178fcfd48ac570090c5ffb5e1025330d7722bbb1b6e6b7",
+  "first_shard_all_decision_hashes_and_transparent_inherited_prefix_verified": true,
+  "first_shard_genuine_corrections_authored": 13,
+  "first_shard_correction_sha256": "8dd17bb1bfefeb52ec73c84fdf9e4d7dd30c9728a4999f9ad6860d8c7c970cab",
+  "first_shard_revision_independent_acceptance_complete": false
+}

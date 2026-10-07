@@ -192,11 +192,16 @@ Decoded answers use at most 20 text tokens against a 384-token budget. This is
 an error audit on fixed validation examples; raw answers and metrics are retained
 and no population or single-cause conclusion follows.
 
-Grounded review inputs cover all remaining 5510 old train prose annotations,
-including originals and mirrors. Fresh reviewers are configured through
-`spawn_agent` as Astra Low; backend identity has no independent attestation.
-Individual neural decisions are in progress, not a completed full review or
-training improvement. Source labels and archived runs are preserved.
+All remaining 5510 old train prose annotations, including originals and mirrors,
+have genuine individual neural decisions: 5143 texts accepted unchanged and 367 flagged
+for revision. Exact source annotation, decision, final-review and continuation
+prefix hashes were checked. Reviewers were explicitly configured as Astra Low;
+backend identity has no independent attestation. Previously resolved bundles
+cover 98 of those revisions; the other 269 genuine revisions are now authored
+and bind their exact rejected ancestors. Their prepared review inputs preserve
+structured labels and full histories, but independent acceptance remains pending.
+Source training labels and archived runs are preserved; these neural judgments
+are neither human ratings nor evidence of student improvement.
 
 A fixed 532-item prefix is fully resolved: 502 original texts were accepted and
 30 revisions independently accepted, including one requiring a second revision.
@@ -207,7 +212,8 @@ review. Further repair and review remain separate from student-quality evidence.
 A further nonoverlapping 1280-item reviewed range is resolved: 1212 unchanged
 texts and 68 genuine revisions independently accepted. Both bundles verify
 exact ancestry and final acceptance for 1812 items in total. Source training
-labels remain unchanged; full review and measured student benefit are pending.
+labels remain unchanged; remaining revision acceptance and measured student
+benefit are pending.
 
 The early-initialization planning run at step 4000 has 177/192 legal raw moves,
 152/192 non-mistake moves and 21/96 complete planning contracts, compared with
@@ -227,8 +233,14 @@ strength are not measured by this result.
 The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
 raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
 contracts. All three evaluations bind the same real weights and verified raw
-outputs. This is interim validation; prose semantics remain unmeasured and the
-model cannot yet serve as a reliable coach.
+outputs. At actual step 4096, the same evaluation has 170/192 legal and 157/192
+non-mistake raw moves, 15/96 complete plans, and 87/96 legal recommendations,
+77/96 non-mistake recommendations and 21/96 legal PVs in explanations. Complete
+explanation contracts remain only 2/96. Its three-capability score rises from
+0.3479 to 0.3667; actual FP32 parameter count, training identity, weights and all
+raw artifacts were verified. These are interim validation results; prose
+semantics and full-game strength are unmeasured and the model cannot yet serve
+as a reliable coach.
 
 The expanded warm-initialization full-decoder run completed 6656 steps and
 selected actual step 4608 by validation NLL (0.5271). All outputs, selected
@@ -261,11 +273,14 @@ required, and generated rule labels do not prove neural training gains.
 New initial-teacher inputs contain 2048 isolated train roots from 485 self-play
 games, balanced across both colors, with full-history candidate replay and all
 input/output hashes verified. The configured Astra Low subagent has actually
-authored the first 683-item shard. Exact ID coverage, teacher identity,
-structured-label binding and all review-preparation artifact hashes were
-checked. Independent semantic review is pending and remaining shards are being
-authored; this does not establish completed 2048-item annotation, new training
-or distillation.
+authored the first two 683-item shards, totaling 1366 original annotations.
+Exact IDs, teacher identity, structured-label binding and all preparation hashes
+were checked. The first shard has completed independent individual semantic
+review: 670 originals accepted and 13 requiring revision, with exact annotation
+hashes and genuine inherited prefixes verified. Second-shard review and
+third-shard authorship continue. All rejections require genuine correction and
+independent acceptance before use; this does not establish completed 2048-item
+annotation, new training, distillation or student benefit.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
