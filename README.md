@@ -288,7 +288,7 @@ python -m xqgeneral.foundation_readback \
 
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
-实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理正在撰写原始正文，检查 `runs/astra-recorded-coach-authoring-v1/plan.json`，不把部分标注当完整 SFT 数据。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
+实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文，作者计划和完整身份读回在 `runs/astra-recorded-coach-authoring-v1/`；正文尚须逐条独立接受才能收集。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
 
 ```bash
 python -m xqgeneral.recorded_coach curate \
@@ -347,7 +347,9 @@ python -m xqgeneral.recorded_coach_prose collect \
 
 拒收后由已授权教师真实修订，另存与原包棋盘／事实完全相同的修订包，仅替换 `teacher_annotation`、其哈希和真实作者身份。新标注含 `corrected_from_annotation_sha256` 与 `correction_review_sha256`，绑定准确被拒原文及拒收文件；修订仍须由另一位审查者接受。把修订包加入 `resolve --repair-packets FILE...`，并把原决定及修订决定都传入 `--reviews`。收集会重新核验完整接受链及整个原查询批次，保留原始分割和全部未来变化。任何未完成、未复核或被篡改的输入均拒收；这些入口只准备数据，SFT 仍须等待四门课程达标。
 
-这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。收集后的实际新标签仍需重新做词元长度、特征覆盖及全部未来分割预检，完成四门验收后才能准备正式 SFT 配方。已写 1672 条的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
+全部 2496 条原文及三个完整复核包已准备完成，核验原查询身份、顺序和精确正文，并由准备入口逐条检查完整历史、结构答案变化及正文合同；见 `evidence/recorded-coach-full-authoring-review-preparation-v1.json`。三位 Astra Low 审查者分别检查另一位作者的 832 条，分配及进度入口在 `runs/astra-recorded-coach-prose-review-v1/`；全量语义接受和训练标签收集尚未完成。原文、拒收意见和后续修订分别保留。
+
+这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。收集后的实际新标签仍需重新做词元长度、特征覆盖及全部未来分割预检，完成四门验收后才能准备正式 SFT 配方。此前固定 1672 条前缀的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

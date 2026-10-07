@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_teacher_annotations": 2496,
+  "by_split": {
+    "train": 2048,
+    "validation": 192,
+    "test": 256
+  },
+  "complete_authored_shards": [
+    0,
+    1,
+    2
+  ],
+  "complete_native_checked_review_packets": 2496,
+  "all_original_annotation_ids_order_and_exact_bytes_bound": true,
+  "all_teacher_contracts_prose_coordinate_references_and_full_history_answer_lines_checked_by_preparation": true,
+  "actual_recorded_future_and_unverified_identity_metadata_hidden_from_reviewer": true,
+  "all_preparation_manifests_and_declared_artifacts_freshly_rehashed": true,
+  "root_preparation_declared_artifacts_checked": 8,
+  "independent_review_agents_confirmed_running": 3,
+  "all_reviewers_distinct_from_assigned_authors": true,
+  "review_assignment_plan_sha256": "618b4a615b108c232e13295057daa73822445baa679d25e8a81c499cf18b9e6a",
+  "review_started_sha256": "b1dabacaa33e9b2f3b06594abe31155d3ce79dcc588ac9c6438b0519d70cf414",
+  "author_identity_readback_sha256": "3be31e185a20d1a92f8963a782e3f89effd9b60b9d02482e4fc91216a8cca1c0",
+  "complete_preparation_manifest_sha256": "8ccade1b2e54115563e55e3a0af8e6ba40cc935daa33bf2059c60ff663541205",
+  "source_module_sha256": "7f4cc3f2e0fb3df307d676f4d8887fe4ed86193b30cc904cba388b783aae5803",
+  "independent_full_semantic_review_completed": false,
+  "teacher_backend_identity_attestation_proven": false,
+  "student_labels_collected_or_training_started": false,
+  "current_foundation_inputs_changed": false,
+  "human_rating": false,
+  "student_benefit_or_strong_play_proven": false,
+  "manifest_sha256": "ccbafb368147a81110dfa68b4e083e46b998213826567f8fcf835d837757c5d3"
+}
