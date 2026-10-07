@@ -1,0 +1,90 @@
+{
+  "requested": 32,
+  "valid_ratings": 32,
+  "rejected": 0,
+  "mean_scores_conditional_on_valid_ratings": {
+    "factual_correctness": 1.46875,
+    "strategic_reasoning": 1.78125,
+    "clarity": 2.59375,
+    "instruction_adherence": 2.0625
+  },
+  "all_dimensions_at_least_4_fraction_all_queries": 0.0,
+  "ratings_with_unsupported_claims": 32,
+  "reviewer": {
+    "provider": "local_huggingface",
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "model_path": "models/qwen3.8-27b",
+    "inference_dtype": "bfloat16",
+    "quantization": "none",
+    "purpose": "Consolidate verified child explanations into a root explanation"
+  },
+  "reviewer_also_used_for_training_consolidation": true,
+  "blinded_to_checkpoint_identity": true,
+  "human_rating": false,
+  "checkpoint_step": 3584,
+  "checkpoint_sha256": "b9e5c80db6215d2146a68c1c084af3682b2ef403475bcd067317a3559432e587",
+  "one_truncated_rating_genuinely_retried": true,
+  "first_attempt_and_rejection_preserved": true,
+  "both_truncated_attempts_preserved": true,
+  "one_retry_requested_concise_output": true,
+  "scoring_rubric_and_student_packet_unchanged": true,
+  "unchanged_other_31_responses": true,
+  "original_student_outputs_changed": false,
+  "independent_test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Uniform random raw validation sample with grounded rule/engine evidence",
+    "Neural ratings, not human evaluation or overall reviewer accuracy",
+    "Reviewer shares the consolidation model; no complete-game strength claim",
+    "A reviewer reason misnames the h0 red horse as a red rook; scores are neural sample ratings, not an objective accuracy rate"
+  ],
+  "all_queries_recomputed_from_original_raw_predictions": true,
+  "all_final_raw_responses_and_output_hashes_read_back": true,
+  "actual_reviewer_bf16_parameters": 27356728560,
+  "quantization": "none",
+  "unchanged_other_31_raw_responses": true,
+  "score_distribution": {
+    "factual_correctness": {
+      "1": 17,
+      "2": 15,
+      "3": 0,
+      "4": 0,
+      "5": 0
+    },
+    "strategic_reasoning": {
+      "1": 14,
+      "2": 11,
+      "3": 7,
+      "4": 0,
+      "5": 0
+    },
+    "clarity": {
+      "1": 0,
+      "2": 15,
+      "3": 15,
+      "4": 2,
+      "5": 0
+    },
+    "instruction_adherence": {
+      "1": 7,
+      "2": 16,
+      "3": 9,
+      "4": 0,
+      "5": 0
+    }
+  },
+  "reviewer_factual_crosscheck": {
+    "examples_checked_for_this_specific_claim": 1,
+    "rating_id": "4d6a11e3851f99d562ea-explanation",
+    "square": "h0",
+    "actual_piece": "红马",
+    "reviewer_reason_incorrectly_names_piece": "红车",
+    "native_illegal_recommended_move": "h4h0",
+    "rule_based_crosscheck_executed": true,
+    "overall_reviewer_accuracy_estimated": false
+  },
+  "final_student_strength_established": false,
+  "readback_manifest_sha256": "c0a726087158beacb89cbc4d21ac666ee6234d2c831a5b81dc7c69d55b72b040",
+  "source_manifest_sha256": "43b3fac7968e6627d6489b27f22bfa640f6bb4844fcc779acdbb32e8127af8d9"
+}
