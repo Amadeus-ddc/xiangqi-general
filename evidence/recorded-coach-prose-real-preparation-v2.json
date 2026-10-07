@@ -1,0 +1,30 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_genuine_original_annotations_checked": 4,
+  "actual_query_isolation_readback_complete": true,
+  "prepared_by_split": {
+    "train": 2,
+    "test": 2
+  },
+  "source_original_batch_expected": 2496,
+  "four_fixture_annotations_equal_genuine_source_values": true,
+  "complete_history_answer_line_checks_passed": true,
+  "native_step_before_and_after_positions_in_review_packets": true,
+  "actual_recorded_futures_and_unverified_metadata_hidden": true,
+  "serial_and_four_cpu_review_packet_bytes_identical": true,
+  "unreviewed_semantic_resolution_refused": true,
+  "partial_full_batch_author_preparation_refused": true,
+  "expected_refusals": {
+    "unreviewed": "Every original annotation requires exactly one independently accepted final revision",
+    "incomplete_author": "Teacher shard must be complete, unique and bound before review"
+  },
+  "failed_first_driver_preserved": true,
+  "first_driver_failure": "missing spawn main guard in runtime entry; native four-query isolation observer completed before the preparation failure",
+  "full_2496_authoring_or_semantic_review_complete": false,
+  "student_labels_collected_or_training_started": false,
+  "current_foundation_inputs_changed": false,
+  "human_rating": false,
+  "model_identity_evidence": "explicit authorized Astra Low subagent configuration; no independent backend attestation",
+  "manifest_sha256": "4ebd636ba108f657d3cdf6abb4046f79303128d24ba3e2808c1fbcadc0dbe777"
+}

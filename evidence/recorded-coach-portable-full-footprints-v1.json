@@ -1,0 +1,54 @@
+{
+  "actual_course_rows": {
+    "train": 2831004,
+    "validation": 173272,
+    "test": 167536
+  },
+  "actual_prior_label_rows": {
+    "train": 8710,
+    "validation": 192,
+    "test": 256
+  },
+  "unique_course_forecast_contexts": 286612,
+  "unique_prior_label_forecast_contexts": 9154,
+  "course_game_counts": {
+    "train": 5538,
+    "validation": 663,
+    "test": 649
+  },
+  "course_root_counts": {
+    "train": 126150,
+    "validation": 7876,
+    "test": 7616
+  },
+  "course_root_and_forecast_position_counts": {
+    "train": 541034,
+    "validation": 40942,
+    "test": 39780
+  },
+  "combined_game_overlap": {
+    "train/validation": 0,
+    "train/test": 0,
+    "validation/test": 0
+  },
+  "combined_root_and_forecast_overlap": {
+    "train/validation": 0,
+    "train/test": 0,
+    "validation/test": 0
+  },
+  "recorded_futures_and_prior_label_structured_answer_pvs_included": true,
+  "full_course_files_materialized_in_memory": false,
+  "full_feature_cache_loaded_or_rehashed": false,
+  "independent_test_read_for_isolation_only": true,
+  "teacher_annotations_generated": false,
+  "source_metadata_or_participant_identities_authenticated": false,
+  "current_foundation_inputs_changed": false,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "portable_manifest_sha256": "1f6dd3f220e887d57316d33b93104107b96c4cc5126cc01d7255b22fc36383d0",
+  "postreadback_sha256": "4872d7ca25c115a89d0ec9bd9b1d8037663b5e0576998f0457ae3d231caac967",
+  "all_declared_portable_inputs_and_outputs_freshly_rehashed": true,
+  "original_and_portable_full_footprint_bytes_exact": true,
+  "footprint_bytes": 102220391,
+  "complete_history_terminal_checks_repeated_by_this_extractor": false
+}
