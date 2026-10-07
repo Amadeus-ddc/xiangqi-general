@@ -58,3 +58,20 @@ def test_recorded_features_keep_complete_history_and_actual_color_counterpart(tm
     path.write_text(json.dumps(row) + '\n')
     with pytest.raises(ValueError, match='full-history'):
         list(recorded_histories(path))
+
+
+def test_parallel_history_preparation_matches_every_serial_history_in_order(tmp_path):
+    moves = ['h2e2', 'h7e7', 'b0c2', 'b9c7']
+    rows = []
+    for length in range(1, 5):
+        history = replay(START_FEN, moves[:length])
+        rows.append({'initial_fen': START_FEN, 'moves': moves[:length], 'history': history,
+                     'fen': history[-1], 'feature_key': history_key(history)})
+    path = tmp_path / 'roots.jsonl'
+    # Cross several worker chunks, with complete game-prefix identities retained.
+    path.write_text(''.join(json.dumps(row) + '\n' for _ in range(70) for row in rows))
+    assert list(recorded_histories(path, workers=2)) == list(recorded_histories(path, workers=1))
+    rows[0]['feature_key'] = 'bad-context'
+    path.write_text(json.dumps(rows[0]) + '\n')
+    with pytest.raises(ValueError, match='full-history'):
+        list(recorded_histories(path, workers=2))

@@ -1,6 +1,9 @@
 """Add immutable recorded-history expert features without rewriting course data."""
 import argparse
+from collections import deque
+from concurrent.futures import ProcessPoolExecutor
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import subprocess
@@ -42,19 +45,49 @@ def extend_cache(base, shards, depths):
             'wdl': torch.cat([c['wdl'] for c in caches])}
 
 
-def recorded_histories(path):
-    """Include original histories and color counterparts, without extra game claims."""
-    with Path(path).open() as handle:
-        for line in handle:
-            row = json.loads(line)
-            history = row['history']
-            if (len(history) != len(row['moves']) + 1 or history[0] != row['initial_fen'] or
-                    history[-1] != row['fen'] or history_key(history) != row['feature_key']):
-                raise ValueError('Recorded expert context has inconsistent full-history identity')
-            yield history
-            # Native replay also changes fullmove counters when the initial side
-            # becomes black. Per-FEN mirrors are different full-history keys.
-            yield replay(mirror_fen(row['initial_fen']), [mirror_move(move) for move in row['moves']])
+def _history_pair(row):
+    history = row['history']
+    if (len(history) != len(row['moves']) + 1 or history[0] != row['initial_fen'] or
+            history[-1] != row['fen'] or history_key(history) != row['feature_key']):
+        raise ValueError('Recorded expert context has inconsistent full-history identity')
+    # Native replay also changes fullmove counters when the initial side becomes
+    # black. Per-FEN mirrors are different full-history keys.
+    mirror = replay(mirror_fen(row['initial_fen']), [mirror_move(move) for move in row['moves']])
+    return history, mirror
+
+
+def _history_chunk(rows):
+    return [_history_pair(row) for row in rows]
+
+
+def recorded_histories(path, workers=1):
+    """Ordered native color counterparts with bounded CPU preparation workers."""
+    if workers < 1:
+        raise ValueError('Positive history preparation worker count required')
+    def rows():
+        with Path(path).open() as handle:
+            for line in handle:
+                row = json.loads(line)
+                yield {k: row[k] for k in ('initial_fen', 'moves', 'history', 'fen', 'feature_key')}
+    if workers == 1:
+        for row in rows():
+            yield from _history_pair(row)
+        return
+    with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn')) as pool:
+        pending, chunk = deque(), []
+        for row in rows():
+            chunk.append(row)
+            if len(chunk) == 128:
+                pending.append(pool.submit(_history_chunk, chunk))
+                chunk = []
+                if len(pending) >= 2 * workers:
+                    for pair in pending.popleft().result():
+                        yield from pair
+        if chunk:
+            pending.append(pool.submit(_history_chunk, chunk))
+        for job in pending:
+            for pair in job.result():
+                yield from pair
 
 
 def worker(runtime, shard_index):
@@ -121,7 +154,7 @@ def build(args):
         raise FileExistsError('Preserve existing expert caches; use fresh output and runtime paths')
     if (not args.gpu_indices or len(set(args.gpu_indices)) != len(args.gpu_indices) or
             any(i < 0 or i >= torch.cuda.device_count() for i in args.gpu_indices) or
-            min(args.batch_size, args.cpu_threads) < 1):
+            min(args.batch_size, args.cpu_threads, args.history_workers) < 1):
         raise ValueError('Distinct available GPUs and positive batch/thread budgets required')
     proof_path = Path(args.base_proof)
     proof = json.loads(proof_path.read_text())
@@ -140,10 +173,13 @@ def build(args):
     depths = proof['verification']['depths']
     validate_cache(base, depths)
     existing, additions = set(base['keys']), {}
-    for history in recorded_histories(args.roots):
+    print(json.dumps({'phase': 'native_mirror_history_preparation', 'workers': args.history_workers}), flush=True)
+    for index, history in enumerate(recorded_histories(args.roots, args.history_workers)):
         key = history_key(history)
         if key not in existing:
             additions.setdefault(key, history)
+        if (index + 1) % 4096 == 0:
+            print(json.dumps({'histories_prepared': index + 1, 'new_unique_histories': len(additions)}), flush=True)
     runtime.mkdir(parents=True)
     contexts = runtime / 'new-histories.jsonl'
     write_jsonl(contexts, ({'feature_key': k, 'history': h} for k, h in additions.items()))
@@ -222,6 +258,7 @@ def main():
     parser.add_argument('--gpu-indices', nargs='+', type=int, default=[0, 1, 2, 3])
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--cpu-threads', type=int, default=4)
+    parser.add_argument('--history-workers', type=int, default=16)
     parser.add_argument('--worker-runtime')
     parser.add_argument('--shard-index', type=int)
     args = parser.parse_args()
