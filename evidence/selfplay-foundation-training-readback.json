@@ -1,0 +1,92 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 74740,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "all_feature_keys_available": true,
+  "train_validation_tokens_checked": 799424,
+  "maximum_tokens_by_stage": {
+    "static_current": 485,
+    "dynamic_current": 495,
+    "static_future": 514,
+    "dynamic_future": 521,
+    "move_quality": 443,
+    "move_planning": 472
+  },
+  "token_limit": 768,
+  "recipe_sha256": "bc5a7bff6fc75812260db259d800523ccab1626dd3ef04b4469ccddadf13c21a",
+  "heldout_rule_files_byte_unchanged": true,
+  "independent_test_used_for_training_or_selection": false,
+  "student_improvement_measured": false,
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete",
+  "mixed_records": 811684,
+  "records_by_split": {
+    "train": 783684,
+    "validation": 15740,
+    "test": 12260
+  },
+  "records_by_split_stage": {
+    "train/static_current": 111396,
+    "train/dynamic_current": 92830,
+    "train/static_future": 111396,
+    "train/dynamic_future": 92830,
+    "validation/static_current": 4032,
+    "validation/dynamic_current": 3360,
+    "validation/static_future": 4032,
+    "validation/dynamic_future": 3360,
+    "test/static_current": 3000,
+    "test/dynamic_current": 2492,
+    "test/static_future": 3000,
+    "test/dynamic_future": 2492,
+    "train/move_quality": 77064,
+    "train/move_planning": 298168,
+    "validation/move_quality": 192,
+    "validation/move_planning": 764,
+    "test/move_quality": 256,
+    "test/move_planning": 1020
+  },
+  "independent_native_mixed_split_workers": 16,
+  "independent_native_mixed_split_seconds": 348.88011179026216,
+  "new_v3_recipe_data_and_token_contract_identical": true,
+  "all_input_output_hashes_read_back_including_115gb_cache": true,
+  "actual_cache_keys": 78236,
+  "actual_cache_depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    17,
+    19
+  ],
+  "cache_dtype": "torch.float16",
+  "actual_cache_shape_per_depth": [
+    78236,
+    90,
+    512
+  ],
+  "replay_exactly_preserves_only_source_move_and_planning_rows": true,
+  "source_preflight_encoded_all_train_validation_rows": true,
+  "readback_retokenized_entire_dataset": false,
+  "actual_foundation_training_started": false,
+  "readback_manifest_sha256": "f71e4727069220369c89b6ec9448e5e80f2c79274e686328ca6c46cb0bf785c3",
+  "source_manifest_sha256": "c58aa106feec548869f6b1fd54d65871236169561d4de667e389185089da6c3e"
+}

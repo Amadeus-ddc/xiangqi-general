@@ -110,3 +110,136 @@ def test_child_analysis_cannot_extend_a_terminal_repetition():
     result = SearchMiner(Predictor(), None, set()).model_analysis(row)
     assert not result['verification']['valid']
     assert 'invalid_history_continuation' in result['verification']['errors']
+
+
+class DefectiveUnusedBranch(ControlledPredictor):
+    def generate(self, row, question, max_new_tokens):
+        value = json.loads(super().generate(row, question, max_new_tokens))
+        if row['moves']:
+            value['branches'] = [{'move': value['move'], 'pv': [value['move'], 'a0a0'],
+                                  'evaluation': value['evaluation']}]
+        return json.dumps(value, ensure_ascii=False)
+
+
+def test_move_eval_child_contract_retains_raw_errors_and_only_consolidates_used_lines():
+    predictor = DefectiveUnusedBranch()
+    strict = SearchMiner(predictor, ControlledOracle(), set(), max_depth=0)
+    assert strict.mine(root_record())[2] == 'recursion_limit'
+    miner = SearchMiner(predictor, ControlledOracle(), set(), max_depth=0, child_contract='move_eval')
+    query, trace, reason = miner.mine(root_record())
+    assert reason == 'accepted_for_consolidation'
+    assert query['target_fields']['move'] == 'h0g2'
+    for child in trace[0]['children']:
+        assert not child['verification']['valid']
+        assert 'illegal_branch_pv' in child['verification']['errors']
+        assert child['child_acceptance']['valid']
+        assert json.loads(child['raw'])['branches'][0]['pv'][-1] == 'a0a0'
+    packet = json.loads(query['messages'][1]['content'])
+    assert 'verified_child_analyses' not in packet
+    assert all('branches' not in child and 'facts' not in child for child in packet['child_analyses'])
+    assert all(child['used_pv'] == ['b9c7'] for child in packet['child_analyses'])
+    assert all(branch['pv'][-1] == 'b9c7' for branch in query['target_fields']['branches'])
+
+
+def test_move_eval_contract_does_not_silently_correct_original_child_facts():
+    miner = SearchMiner(ControlledPredictor(incorrect_child=True), ControlledOracle(), set(),
+                        max_depth=0, child_contract='move_eval')
+    query, trace, reason = miner.mine(root_record())
+    assert reason == 'accepted_for_consolidation'
+    child = next(item for item in trace[0]['children'] if item['move'] == 'b0c2')
+    assert json.loads(child['raw'])['facts']['piece'] == '黑炮'
+    assert child['analysis']['facts']['piece'] == '黑炮'
+    assert child['verification']['errors'] == ['incorrect_move_facts']
+    packet = json.loads(query['messages'][1]['content'])
+    source = next(item for item in packet['child_analyses'] if item['move'] == child['move'])
+    assert source['unverified_explanation'] == child['analysis']['explanation']
+    assert source['full_output_verification'] == child['verification']
+
+
+@pytest.mark.parametrize('pv', [[], ['b9c7', 'a0a0']])
+def test_move_eval_acceptance_still_rejects_unusable_inferred_pv(pv):
+    class Predictor(ControlledPredictor):
+        def generate(self, row, question, max_new_tokens):
+            value = json.loads(super().generate(row, question, max_new_tokens))
+            if row['moves']:
+                value['pv'] = pv
+            return json.dumps(value, ensure_ascii=False)
+
+    query, trace, reason = SearchMiner(Predictor(), ControlledOracle(), set(), max_depth=0,
+        child_contract='move_eval').mine(root_record())
+    assert query is None and reason == 'invalid_inferred_continuation'
+    assert all(child['child_acceptance']['valid'] for child in trace[0]['children'])
+
+
+@pytest.mark.parametrize('defect', ['illegal_move', 'wrong_score_perspective'])
+def test_move_eval_contract_recurses_on_bad_recommendation_or_evaluation(defect):
+    class Predictor(ControlledPredictor):
+        def generate(self, row, question, max_new_tokens):
+            value = json.loads(super().generate(row, question, max_new_tokens))
+            if row['moves']:
+                if defect == 'illegal_move':
+                    value['move'] = value['candidates'][0] = 'a0a0'
+                else:
+                    value['evaluation']['perspective'] = 'red'
+            return json.dumps(value, ensure_ascii=False)
+
+    query, trace, reason = SearchMiner(Predictor(), ControlledOracle(), set(), max_depth=0,
+        child_contract='move_eval').mine(root_record())
+    assert query is None and reason == 'recursion_limit'
+    assert all(not child['child_acceptance']['valid'] for child in trace[0]['children'])
+
+
+def test_move_eval_contract_excludes_reachable_heldout_prefix_of_invalid_unused_branch():
+    class Predictor(DefectiveUnusedBranch):
+        def generate(self, row, question, max_new_tokens):
+            value = json.loads(super().generate(row, question, max_new_tokens))
+            if row['moves']:
+                value['branches'][0]['pv'] = ['b9c7', 'e3e4', 'a0a0']
+            return json.dumps(value, ensure_ascii=False)
+
+    heldout = {position_key(replay(START_FEN, ['b0c2', 'b9c7', 'e3e4'])[-1])}
+    query, trace, reason = SearchMiner(Predictor(), ControlledOracle(), heldout,
+        child_contract='move_eval').mine(root_record())
+    assert query is None and reason == 'reserved_child_continuation'
+
+
+@pytest.mark.parametrize('contract', ['full', 'move_eval'])
+def test_engine_quality_failure_keeps_structural_student_verification_unchanged(contract):
+    class Predictor(ControlledPredictor):
+        def generate(self, row, question, max_new_tokens):
+            value = json.loads(super().generate(row, question, max_new_tokens))
+            if row['moves']:
+                value['evaluation']['value'] *= -1
+            return json.dumps(value, ensure_ascii=False)
+
+    query, trace, reason = SearchMiner(Predictor(), ControlledOracle(), set(),
+        max_depth=0, child_contract=contract).mine(root_record())
+    assert query is None and reason == 'recursion_limit'
+    for child in trace[0]['children']:
+        assert child['verification']['valid'] and child['verification']['errors'] == []
+        assert child['child_acceptance']['errors'] == ['evaluation_error_exceeds_threshold']
+        assert not child['child_acceptance']['valid']
+
+
+def test_move_eval_inferred_target_cannot_continue_after_history_terminal():
+    moves = (['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2)[:-2]
+    history = replay(START_FEN, moves)
+    row = dict(root_record(), moves=moves, history=history, fen=history[-1], feature_key=history_key(history))
+
+    class Predictor:
+        def generate(self, record, question, max_new_tokens):
+            move = 'c2b0' if len(record['moves']) == len(moves) else 'c7b9'
+            pv = [move] if move == 'c2b0' else ['c7b9', 'b0c2']
+            return json.dumps({'move': move, 'pv': pv, 'candidates': [move],
+                'facts': move_facts(record['fen'], move),
+                'evaluation': {'type':'cp','value':0,'perspective':'side_to_move'},
+                'explanation':'依据完整历史检查变化，不在终局之后继续走棋。'}, ensure_ascii=False)
+
+    class Oracle:
+        def analyze(self, fen, nodes, initial_fen, played, searchmoves=None):
+            move = 'c2b0' if len(played) == len(moves) else 'c7b9'
+            return {'best_move':move,'candidates':[{'move':move,'score_type':'cp','score':0,'pv':[move],'wdl':None}]}
+
+    query, trace, reason = SearchMiner(Predictor(), Oracle(), set(),
+        child_contract='move_eval').mine(row)
+    assert query is None and reason == 'invalid_inferred_continuation'

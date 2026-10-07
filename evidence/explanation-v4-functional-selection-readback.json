@@ -1,0 +1,30 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "selected_step": 9216,
+  "nll_selected_step_preserved": 6144,
+  "checkpoint_sha256": "f91898a7533778f982c4617e4848b0dc1c7286c6650fca976eec68aa82671368",
+  "actual_fp32_trainable_parameters": 4162388512,
+  "all_five_candidates_and_fifteen_raw_evaluations_read_back": true,
+  "selected_score": 0.38958333333333334,
+  "raw_moves": {
+    "examples": 192,
+    "legal": 173,
+    "no_mistake": 154
+  },
+  "raw_plans": {
+    "examples": 96,
+    "contract_valid": 17
+  },
+  "raw_explanations": {
+    "examples": 96,
+    "full_pv_legal": 23,
+    "contract_valid": 8
+  },
+  "selection_split": "validation",
+  "independent_test_used": false,
+  "unchanged_selected_weights_hardlinked_for_pilot": true,
+  "strong_play_or_semantic_teaching_quality_established": false,
+  "readback_manifest_sha256": "35a4140133a88c66c21ae51e185367cede6e7ab0c776e9ad69c650cafab88b11",
+  "source_manifest_sha256": "cb1a83c1adb3dd8abf252627837027f38a5cbabf5fa710c443bf666739c8c194"
+}

@@ -374,21 +374,21 @@ incorrect global-order assertion failed after successful label generation.
 A separate verified continuation completed features without repeating searches.
 The actual 115370410864-byte, 16-layer cache contains 78236 full-history roots;
 all inputs/outputs, shapes, dtypes, requested keys and 23420 preserved old keys
-were checked. Validation/test bytes are unchanged. Full foundation token
-preflight remains required, and cached inputs do not establish student strength.
+were checked. Validation/test bytes are unchanged. Full foundation preflight and its independent readback are now complete as
+recorded below; cached inputs do not establish student strength.
 
 Four-course self-play grounding generated 360448 new rule questions from 8192
 original train roots (4096 per color, 499 games). All output hashes and unchanged
-heldout bytes were read back. Full-dataset token and feature preflight is still
-required, and generated rule labels do not prove neural training gains.
+heldout bytes were read back. Full-dataset token and feature preflight is now complete; generated rule
+labels do not prove neural training gains.
 
 The expanded planning dataset now has 299952 independently searched six-ply
 lessons (298168 train) and 451236 total records. Full native history, terminal
 and heldout isolation checks passed. Old planning validation/test files are byte
 identical, and every nonplanning record is preserved: 125068/14976/11240 for
 train/validation/test. All hashes and actual counts were independently read back;
-see `evidence/move-planning-selfplay-data-v3.json`. Feature/token preflight remains
-required before foundation training. These are engine labels, with no neural
+see `evidence/move-planning-selfplay-data-v3.json`. Feature/token preflight and the independent readback are now complete;
+foundation training still requires completed planning parents. These are engine labels, with no neural
 prose, valid search-distillation round or measured student improvement.
 
 All 2048 new original initial-teacher annotations are now genuinely authored,
@@ -424,9 +424,8 @@ All states and output hashes were independently read back; see
 fixture does not prove a completed course, full-decoder or cross-world resume,
 or improved strength. The unstarted v2 foundation waiters were preserved and
 replaced by v3: two-GPU training and an unchanged
-global-batch, data and parent-scoring recipe. It still waits for full readiness
-and completed planning parents. Its unstarted GPU 1 selector was subsequently
-preserved and moved to GPU 3, waiting for formal full SFT to release that GPU;
+global-batch, data and parent-scoring recipe. Full readiness is now verified; it still waits for completed planning parents. Its unstarted GPU 1 selector was subsequently
+preserved and moved to GPU 3; formal full SFT has now released that GPU;
 GPU 1 now runs the reviewed v7 continuation. No foundation training was stopped.
 
 Split-footprint verification now accepts an optional bounded process pool while
@@ -441,3 +440,45 @@ Source code uses GPL-3.0-or-later. Base weights and expert weights are downloade
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the
 Queen, Qwen, Px0, or Pikafish authors.
+
+Full foundation readiness now covers 811684 mixed records and all 799424
+train/validation encodings. Independent readback freshly hashes every input
+and output, including the actual 115370410864-byte cache, checks all 78236
+full-history feature roots at 16 FP16 depths, and exactly preserves the
+move/planning-only replay rows. Sixteen workers independently replay all
+future branches with the same split result as the completed serial preflight.
+The v3 data, token and architecture contract matches the preflight recipe;
+optimizer and batch changes remain explicit. The readback does not retokenize
+the entire corpus: the source preflight performed that complete encoding.
+See `evidence/selfplay-foundation-training-ready.json` and
+`evidence/selfplay-foundation-training-readback.json`. These checks establish
+input readiness, with no foundation training gain or independent-test claim.
+
+Search mining now optionally accepts a child on its raw recommended move and
+calibrated evaluation (`--child-contract move_eval`). The original full output
+and its structural errors remain in the trace; the default `full` predicate
+is preserved. Unused defective facts and lines are excluded from the teacher
+packet, with the actual used PV, original unverified prose and separate full
+and move/evaluation verification supplied explicitly. Every reachable raw
+prefix is checked for reserved positions, and every final used target line
+remains subject to native full-history legality, termination, heldout isolation
+and strict improvement. Ten new focused cases pass within 101 CPU tests.
+The fixed completed formal-model pilot in
+`configs/search-v4-selected-move-eval-pilot.json` does not isolate the effect
+of this predicate, and successful fixtures do not establish real label yield
+or a completed trained distillation round.
+
+The formal full-decoder explanation experiment has now actually completed
+9216 steps and 9640198 supervised tokens, with loss-selected step 6144 kept
+separately. Independent readback verifies all step records, original frozen
+source, input/output hashes, actual 4162388512 FP32 trainable parameters, and
+a decoder probe update against the official base. All five capability
+candidates and fifteen raw validation evaluations were read back; the declared
+validation recipe selects step 9216. It has 173/192 legal raw moves, 154/192
+non-mistake raw moves, 17/96 complete plans, 23/96 legal main explanation PVs
+and only 8/96 complete explanation contracts (score 0.3896). An immutable
+hardlink export supplies that unchanged model to the new search pilot. See
+`evidence/explanation-sft-v4-formal-completed.json`,
+`evidence/explanation-v4-functional-selection.json` and
+`evidence/explanation-v4-functional-selection-readback.json`. No reliable
+prose, full-game strength or independent-test claim follows from completion.

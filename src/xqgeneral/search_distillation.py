@@ -10,7 +10,7 @@ from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, po
 from .explanations import (EXPLANATION_QUESTION, continuation_positions, line_facts, move_facts,
                            parse_explanation, validate_explanation)
 from .oracle import Pikafish
-from .rules import adjudicate, legal_moves, piece_map, piece_name, play, side
+from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
 
 
 def first_divergence(fen, before, after):
@@ -61,12 +61,40 @@ def reserved_positions(data):
     return positions
 
 
+def reachable_child_positions(record, value):
+    """Check every reachable raw prefix, including unused lines that later fail."""
+    if replay(record['initial_fen'], record['moves'])[-1] != record['fen']:
+        raise ValueError('Child root differs from its complete history')
+    positions = {position_key(record['fen'])}
+    lines = [value.get('pv')]
+    branches = value.get('branches')
+    if isinstance(branches, list):
+        lines.extend(b.get('pv') for b in branches if isinstance(b, dict))
+    for line in lines:
+        if not isinstance(line, list):
+            continue
+        fen, moves = record['fen'], list(record['moves'])
+        for move in line:
+            if not isinstance(move, str) or adjudicate(record['initial_fen'], moves)['ended']:
+                break
+            try:
+                fen = play(fen, move)
+            except (ValueError, TypeError):
+                break
+            moves.append(move)
+            positions.add(position_key(fen))
+    return positions
+
+
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
-                 candidate_threshold=0.05, child_threshold=0.10):
+                 candidate_threshold=0.05, child_threshold=0.10, child_contract='full'):
+        if child_contract not in {'full', 'move_eval'}:
+            raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
         self.nodes, self.max_depth = nodes, max_depth
         self.candidate_threshold, self.child_threshold = candidate_threshold, child_threshold
+        self.child_contract = child_contract
         self.engine_cache = {}
         self.counts = Counter()
 
@@ -98,6 +126,26 @@ class SearchMiner:
         except (ValueError, TypeError, KeyError, IndexError):
             value, proof = None, {'valid': False, 'errors': ['invalid_json']}
         return {'raw': raw, 'analysis': value, 'verification': proof}
+
+    def child_acceptance(self, row, generation):
+        if self.child_contract == 'full':
+            proof = generation['verification']
+            return dict(proof, errors=list(proof['errors']), contract='full')
+        value = generation['analysis']
+        errors = []
+        if not isinstance(value, dict):
+            errors.append('invalid_json')
+        else:
+            move, candidates = value.get('move'), value.get('candidates')
+            if not isinstance(move, str) or move not in legal_moves(row['fen']):
+                errors.append('illegal_or_missing_move')
+            elif not isinstance(candidates, list) or not candidates or candidates[0] != move:
+                errors.append('inconsistent_preferred_move')
+            try:
+                evaluation_probability(row['fen'], value.get('evaluation'))
+            except (AttributeError, TypeError, ValueError, OverflowError):
+                errors.append('invalid_evaluation_contract')
+        return {'valid': not errors, 'errors': errors, 'contract': 'move_eval'}
 
     def mine(self, original):
         root = dict(original, question=EXPLANATION_QUESTION, future_moves=[])
@@ -141,21 +189,34 @@ class SearchMiner:
                                      'root_evaluation': evaluation, 'root_pv': [move]})
                     continue
                 generation = self.model_analysis(child)
-                item = {'move': move, 'record': child, **generation}
+                acceptance = self.child_acceptance(child, generation)
+                item = {'move': move, 'record': child, **generation, 'child_acceptance': acceptance}
                 children.append(item)
-                if not generation['verification']['valid']:
+                if not acceptance['valid']:
                     offending = offending or child
                     continue
                 analysis = generation['analysis']
-                if continuation_positions(child, analysis) & self.reserved:
+                positions = (continuation_positions(child, analysis) if self.child_contract == 'full'
+                             else reachable_child_positions(child, analysis))
+                if positions & self.reserved:
                     return None, trace, 'reserved_child_continuation'
+                if not generation['verification']['valid']:
+                    self.counts['full_child_contract_failures_bypassed_for_move_eval_check'] += 1
                 engine = self.analyze(child)
                 p_best = self.move_probability(child, engine['best_move'], engine)
                 p_move = self.move_probability(child, analysis['move'], engine)
                 p_model = evaluation_probability(child['fen'], analysis['evaluation'])
+                pv = analysis.get('pv')
+                inferred = ([move, *pv[:5]] if isinstance(pv, list) and pv and
+                            pv[0] == analysis['move'] and all(isinstance(m, str) for m in pv[:5]) else None)
                 item.update(oracle=engine, move_loss=max(0, p_best-p_move), evaluation_error=abs(p_model-p_best),
-                            root_evaluation=root_evaluation(analysis), root_pv=[move, *analysis['pv']][:6])
+                            root_evaluation=root_evaluation(analysis), root_pv=inferred)
                 if item['move_loss'] >= self.child_threshold or item['evaluation_error'] > self.child_threshold:
+                    acceptance['valid'] = False
+                    if item['move_loss'] >= self.child_threshold:
+                        acceptance['errors'].append('recommended_move_mistake')
+                    if item['evaluation_error'] > self.child_threshold:
+                        acceptance['errors'].append('evaluation_error_exceeds_threshold')
                     offending = offending or child
             step['children'] = children
             if offending is not None:
@@ -167,6 +228,16 @@ class SearchMiner:
             selected_loss = max(0, best - self.move_probability(root, selected['move'], oracle))
             if selected_loss >= self.child_threshold:
                 return None, trace, 'selected_root_move_still_mistake'
+            if any(c['root_pv'] is None for c in children):
+                return None, trace, 'invalid_inferred_continuation'
+            inferred_lines = {'pv': selected['root_pv'],
+                              'branches': [{'pv': c['root_pv']} for c in children]}
+            try:
+                inferred_positions = continuation_positions(root, inferred_lines)
+            except (ValueError, TypeError):
+                return None, trace, 'invalid_inferred_continuation'
+            if inferred_positions & self.reserved:
+                return None, trace, 'reserved_inferred_continuation'
             pv_before = before.get('pv')
             if not isinstance(pv_before, list) or not pv_before or any(not isinstance(m, str) for m in pv_before):
                 return None, trace, 'invalid_original_pv'
@@ -201,15 +272,28 @@ class SearchMiner:
                                            for c in children],
                        'verified_child_analyses': [{'move': c['move'], 'analysis': c['analysis'],
                                                      'terminal_outcome': c.get('outcome')} for c in children]}
+            if self.child_contract == 'move_eval':
+                del content['verified_child_analyses']
+                content['child_analyses'] = [{'move': c['move'], 'terminal_outcome': c.get('outcome'),
+                    'recommended_move': c['analysis'].get('move') if c['analysis'] else None,
+                    'evaluation': c['analysis'].get('evaluation') if c['analysis'] else None,
+                    'used_pv': c['root_pv'][1:],
+                    'unverified_explanation': c['analysis'].get('explanation') if c['analysis'] else None,
+                    'full_output_verification': c.get('verification'),
+                    'move_evaluation_verification': c.get('child_acceptance')} for c in children]
             messages = [{'role': 'system', 'content': '你是中国象棋讲解汇总教师。只依据提供的子局面讲解、'
                          '逐步事实和根局面评分，解释推荐着法、备选差异、收益与风险。根评分来自根行棋方，'
                          '子评分来自对手，不得混淆；禁止补充未给出的走法、吃子、将军或强制结果。'
                          '只输出JSON对象，唯一字段explanation，为120到240字中文。'},
                         {'role': 'user', 'content': json.dumps(content, ensure_ascii=False)}]
+            if self.child_contract == 'move_eval':
+                messages[0]['content'] += ('子回答正文未保证事实正确；遇到校验错误或与逐步事实冲突的陈述，'
+                    '以根棋盘、target_fields和root_line_facts为依据。只讲解实际提供且验证的变化。')
             self.counts['mined_improvements'] += 1
             return {'id': root['id'] + '-search', 'record': root, 'target_fields': target,
                     'messages': messages, 'source_root_id': original['id'], 'depth': depth,
-                    'selected_root_move_loss': selected_loss}, trace, 'accepted_for_consolidation'
+                    'selected_root_move_loss': selected_loss,
+                    'child_contract': self.child_contract}, trace, 'accepted_for_consolidation'
         return None, trace, 'recursion_limit'
 
 
@@ -222,6 +306,7 @@ def main():
     parser.add_argument('--limit', type=int, default=512)
     parser.add_argument('--nodes', type=int, default=100000)
     parser.add_argument('--max-depth', type=int, default=5)
+    parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
@@ -251,7 +336,8 @@ def main():
         raise ValueError('Search continuation IDs differ')
     predictor = Predictor(args.checkpoint, feature_cache=args.features)
     oracle = Pikafish(args.executable, args.weights, threads=2)
-    miner = SearchMiner(predictor, oracle, reserved_positions(args.data), args.nodes, args.max_depth)
+    miner = SearchMiner(predictor, oracle, reserved_positions(args.data), args.nodes, args.max_depth,
+                        child_contract=args.child_contract)
     try:
         with partial.open('a') as handle:
             for row in records:
@@ -275,7 +361,11 @@ def main():
              'training_roots_only': True, 'heldout_positions_excluded': True,
              'all_child_branch_positions_isolated': True, 'full_history_termination_checked': True,
              'strict_pv_improvement_required': True, 'probability_model': 'pinned_Pikafish_material_WDL',
-             'teacher_consolidation_executed': False, 'student_generations_preserved': True}
+             'teacher_consolidation_executed': False, 'student_generations_preserved': True,
+             'child_contract': args.child_contract,
+             'raw_child_reachable_prefixes_isolated': True,
+             'all_inferred_target_lines_history_validated': True,
+             'unused_child_fields_passed_to_consolidator': args.child_contract == 'full'}
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', vars(args), input_paths,
                 [root / 'queries.jsonl', partial], proof))
     print(json.dumps(proof), flush=True)

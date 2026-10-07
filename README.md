@@ -98,7 +98,7 @@ python -m xqgeneral.revise_prose --data data/astra-explanations-full-v4 \
 python scripts/freeze_run.py --output runs/explanation-v1/source-run -- \
   python -m xqgeneral.sft --init COURSE_CHECKPOINT.pt --output runs/explanation-v1/training
 python -m xqgeneral.search_distillation --checkpoint SFT_CHECKPOINT.pt \
-  --output runs/search-v1/mining
+  --child-contract move_eval --output runs/search-v1/mining
 python -m xqgeneral.local_teacher --input runs/search-v1/mining/queries.jsonl \
   --output runs/search-v1/consolidation
 python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl \
@@ -106,7 +106,7 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
   --validation-data data/astra-explanations-full-v1 --output data/search-v1
 ```
 
-搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
+搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。新模式仅向汇总教师提供实际使用的变化、评分、未经事实保证的原正文及核验结果，不传入未使用的事实和分支。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
 
 `configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。
 
@@ -186,15 +186,15 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 基础课程补训可指定 `--qa-data DATASET --qa-per-task 12`，在同一检查点上加入 264 道原始棋盘问答，覆盖四门课程的全部 22 类题，以 `0.4 × 走法无明显失误率 + 0.2 × 规划合同通过率 + 0.4 × 平衡问答正确率` 选模。各类题数量必须相等，独立测试、引擎代答、强制合法输出和变动证据均拒收；此选项与讲解选模互斥。类别指标与全部原回答分别保存，问答分数不能替代正文审查或对弈。
 
-`configs/selfplay-foundation-v3.json` 是后续实战规则补训配置：90% 四门问答、5% 走法与 5% 多步规划。回放目录只保留走法和规划项，避免重复采样旧规则题；先在两组已完成规划训练的全部候选上评测规则问答，再按同份权重的问答、走法和规划分数选择初始化；使用新优化器、FP32 可训练参数、32 条全局批量及 4 条微批量。真实双 H20 连续／恢复训练已验证全部参数、优化器及随机状态逐位一致；待条件满足后使用 GPU 0、2 训练，GPU 3 选模。选模等待 GPU 3 正式讲解训练释放，精确命令分别见 `runs/selfplay-foundation-v3/{bridge,functional-selection-gpu3}/plan.json`。桥接与棋盘词元学习率分别为 `1e-4` 和 `1e-5`，最多 24000 步，至少 6000 步后允许按验证损失提前停止。实际数据、特征与全部训练/验证词元长度通过核验后才启动；这是自适应补训，尚未证明收益。
+`configs/selfplay-foundation-v3.json` 是后续实战规则补训配置：90% 四门问答、5% 走法与 5% 多步规划。回放目录只保留走法和规划项，避免重复采样旧规则题；先在两组已完成规划训练的全部候选上评测规则问答，再按同份权重的问答、走法和规划分数选择初始化；使用新优化器、FP32 可训练参数、32 条全局批量及 4 条微批量。真实双 H20 连续／恢复训练已验证全部参数、优化器及随机状态逐位一致；待条件满足后使用 GPU 0、2 训练，GPU 3 选模。正式讲解已完成并释放 GPU 3，精确命令分别见 `runs/selfplay-foundation-v3/{bridge,functional-selection-gpu3}/plan.json`。桥接与棋盘词元学习率分别为 `1e-4` 和 `1e-5`，最多 24000 步，至少 6000 步后允许按验证损失提前停止。811684 条混合记录、全部特征及 799424 条训练/验证编码已完成预检；独立读回重新核验 115GB 缓存、原样回放和全部未来分割，见 `evidence/selfplay-foundation-training-readback.json`。当前仍等待两组规划父模型完成；这是自适应补训，尚未证明收益。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
-`configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放，质量必须另行实测。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。
+`configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。
 
 `configs/explanation-sft-v5.json` 继续已完成的全量讲解模型，使用审查后数据、新优化器与 15% 规划回放。45% 主讲解池已包含 384 条实战原始讲解，另以 15% 重采样这些条目；它们不是新的独立标注。该实验已训练 3584 步，最终能力选模在三个真实候选中选择第 3584 步，NLL 第 512 步另存。全部权重与原始能力产物已读回，初始化导出保留原权重。输入固定为当时的 v5 数据；正文语义、完整对弈和独立测试仍须验证，见 `STATUS.md`。
 
-`configs/explanation-sft-v6.json` 从上述能力选定模型继续全量训练，使用新优化器、全部复核后的 v7 讲解与全局批量 16／微批量 1。50% 主讲解池包含 8710 条训练项，另以 15% 重采样其中新增的 2048 条实战原始讲解；这些回放不是新增独立标签。20% 走法、10% 规划及合计 5% 四门问答维持旧能力。196350 条混合记录通过棋局与全部未来局面隔离，183834 条训练／验证编码和全部特征键通过预检。实际预算为最多 4355 步，GPU 1 已开始训练，GPU 3 能力选模等待正式讲解训练释放。冻结命令和续跑入口见 `runs/explanation-v6-reviewed-selfplay/{preparation,bridge,functional-selection-gpu3}/plan.json`。多项训练条件同时改变；这轮补训尚未证明学生收益，也不计作搜索蒸馏。
+`configs/explanation-sft-v6.json` 从上述能力选定模型继续全量训练，使用新优化器、全部复核后的 v7 讲解与全局批量 16／微批量 1。50% 主讲解池包含 8710 条训练项，另以 15% 重采样其中新增的 2048 条实战原始讲解；这些回放不是新增独立标签。20% 走法、10% 规划及合计 5% 四门问答维持旧能力。196350 条混合记录通过棋局与全部未来局面隔离，183834 条训练／验证编码和全部特征键通过预检。实际预算为最多 4355 步，GPU 1 已开始训练，GPU 3 每 1024 步及完成时按实际原始能力选模；正式讲解已完成并释放该卡。冻结命令和续跑入口见 `runs/explanation-v6-reviewed-selfplay/{preparation,bridge,functional-selection-gpu3}/plan.json`。多项训练条件同时改变；这轮补训尚未证明学生收益，也不计作搜索蒸馏。
 
 大型预检可调用 `verify_splits(rows, workers=N)` 并行检查全部唯一未来分支；默认 `workers=1` 保持单进程接口。预取限制为每个进程两批，跨棋局归属在去重前登记，子进程的非法未来错误向主进程传播。真实 1152 条规划上下文的串行／八进程结果一致，该样本耗时由 25.81 秒降至 6.04 秒；完整数据准备的加速尚未测量，见 `evidence/parallel-split-verification.json`。
 
