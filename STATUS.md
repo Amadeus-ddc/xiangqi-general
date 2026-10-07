@@ -69,16 +69,19 @@
 - 新数据 `data/astra-explanations-full-v5` 已实际应用上述 61 条正文修订；保持 6662/192/256 条，红黑各 3331 条训练项。所有结构标签、提示、历史、特征键及验证／测试字节不变，最长训练项仍为 943 个词元。见 `evidence/reviewed-prose-dataset-v5.json`。完整哈希、修订祖先和拒收／接受链已核验，未测学生收益。首次长度检查调用错误及字段措辞修正分别归档，完成核验位于 `runs/teacher-prose-data-v5-readback-v2/`。
 - 第 4096 步旧学生的 32 条均匀原始讲解抽样经 Astra Low 逐条评分：事实均分 1.59/5、战略 1.44/5，零条四项均至少 4 分。见 `evidence/explanation-v3-4096-astra-prose-review.json`。输入包含独立引擎和逐步事实、没有检查点身份；审查者仍有项目上下文并共享初始教师基础模型，这不是完全盲测或人工评测。
 - 正式四门初始化的讲解 v4 在第 512 步完成 96 条原始验证：39 条可解析、37 个推荐合法、28 个无明显失误，只有 1 条完整主变化合法，完整讲解合同为零。见 `evidence/explanation-v4-interim-512.json`。实际原输出大量重复或正文未闭合，保留失败；它尚未达到教学要求，不能因 NLL 为 0.8769 就判定优于旧实验。
-- 新 512 局引擎自对弈完成：286 局终局、226 局截尾，保留 27432 个完整历史训练上下文、排除 2375 个重复历史；全部上下文和输出哈希已读回，保留局面重叠为零。见 `evidence/engine-selfplay-contexts-v3.json`。独立新走法搜索正在执行，没有据此宣称训练收益或神经讲解。
+- 新 512 局引擎自对弈完成：286 局终局、226 局截尾，保留 27432 个完整历史训练上下文、排除 2375 个重复历史；全部上下文和输出哈希已读回，保留局面重叠为零。见 `evidence/engine-selfplay-contexts-v3.json`。后续独立搜索生成 27408 条新查询；11348 条旧查询逐条完整保留，验证/测试字节不变。原检查把按分割重组误判为记录改变，失败运行保留；新检查验证分组后的完整记录，特征缓存仍在生成。见 `evidence/selfplay-query-preservation-v3.json`，没有据此宣称训练收益或神经讲解。
 - 规划 v1 的首个真实第 2000 步候选已评测：192 条原始走法中 158 条合法、141 条无明显失误；96 条规划均输出六步、条件首着全部匹配，但只有 10 条完整合法，逐步质量全尝试无明显失误率为 45.5%。同份检查点的两项分数为 0.4823，见 `evidence/move-planning-v1-interim-2000.json`。全部输出和权重哈希已读回；课程与选模仍在运行，这不是强棋力或独立测试结论。
 - 第 4096 步讲解模型还在训练标签池中抽查了红黑各 16 条：32 条全部可解析、30 个推荐合法、28 个无明显失误，但只有 5 条主变化合法、1 条完整合同通过。见 `evidence/explanation-v3-training-pool-diagnostic.json`。这是训练标签池诊断，不是泛化评测；未证明各抽中样本实际被训练采样，也未用于选模或测试。错误不能只归因于陌生局面，正文语义在这项检查中未评分。
 - 第 3072 步模型的实战训练根局面搜索试批完成：128 根、168 次根尝试、40 次递归下降、10 次按既定条件注入候选，零条严格改进通过；最终均止于非法根候选。见 `evidence/search-v3-after-3072-selfplay-pilot.json`。原始回答、递归轨迹与全部输出哈希保留；没有汇总或蒸馏训练，仍不计为一轮蒸馏。
-- 新实战规则问答生成器已完成真实 512 根验证：红黑各 256 个原始根、108 个训练棋局，生成 22528 道当前/未来规则题；每条新答案独立按规则复核，70532 条训练记录词元化后最长为 521，全部根特征键存在。原验证/测试字节不变、棋局及当前/未来跨分割重叠为零，见 `evidence/selfplay-grounding-data-ready.json`。同参数单进程和八进程的三个分割文件及拒收计数完全一致，见 `evidence/selfplay-grounding-parallel-equivalence.json`。这是数据执行验证，8192 新根的大数据集仍在等待，没有训练收益或神经讲解结论。
+- 新实战规则问答生成器已完成真实 512 根验证：红黑各 256 个原始根、108 个训练棋局，生成 22528 道当前/未来规则题；每条新答案独立按规则复核，70532 条训练记录词元化后最长为 521，全部根特征键存在。原验证/测试字节不变、棋局及当前/未来跨分割重叠为零，见 `evidence/selfplay-grounding-data-ready.json`。同参数单进程和八进程的三个分割文件及拒收计数完全一致，见 `evidence/selfplay-grounding-parallel-equivalence.json`。全量 8192 新根也已生成 360448 道规则题，双方各 4096 根、499 个新训练棋局；所有产物哈希和旧保留文件字节已读回，见 `evidence/selfplay-grounding-data-v1.json`。全量词元/特征预检仍须完成，没有训练收益或神经讲解结论。
 
 ## 正在完成
 
+- 扩充讲解 SFT 已实际完成 6656 步，按验证 NLL 选择第 4608 步，最终 NLL 为 0.5271；41.62 亿 FP32 可训练参数、BF16 计算。全部产物哈希及实际权重中的步数、参数量和类型已读回，见 `evidence/explanation-sft-v3-warm-completed.json`。该选择依据损失，尚非最终能力选定模型；中间输出的走法与讲解缺陷继续保留，不能据此宣称可靠教练。
+- 正式起点的全量讲解训练第 2048 步完成同份权重三项原始验证：192 条走法中 167 条合法、154 条无明显失误；96 条规划有 9 条完整合同；96 条讲解有 84 个推荐合法、72 个无明显失误、9 条主变化合法，但仅 2 条完整合同通过。三项分数为 0.3479，权重及全部输出哈希已读回，见 `evidence/explanation-v4-after-2048.json`。训练和后续选模仍在进行，正文语义未评分，不能交付为可靠教练。
 - 两组第 2000 步规划候选已完成同题比较：早期/正式初始化的原始走法无明显失误数为 141/152（192 题），完整规划合同为 10/17（96 题），平衡规则问答为 69.7%/74.2%（264 题）。正式组仍有 79 条非法规划，当前/未来吃子仅 1/12、2/12；没有强棋力结论。所有权重和输出哈希已读回，见 `evidence/move-planning-v2-interim-2000.json`、`evidence/planning-2000-rule-retention.json`。后续初始化改为比较两组训练实际完成后的全部候选，不能拿中间模型冒充完成父模型。
 - 其余 5510 条旧训练讲解（2755 原始、2755 镜像）的完整事实复核包已生成并逐个核验，未含保留集；两位新 Astra Low 审查者正在逐条审查正文，进度文件保留具体接受依据和拒收事实，尚未全量完成。见 `evidence/old-prose-full-review-inputs.json`；已有训练标签和运行保持原样。
+- 新实战初始教师输入已完成：2048 个原始训练根局面，来自 485 个训练棋局，红黑各 1024；三个分片为 683/683/682 条。全部完整历史和候选未来分支复演、保留集隔离及输入/输出哈希均核验，见 `evidence/astra-selfplay-seed-v3-ready.json`。已授权的 Astra Low 开始逐条生成正文，输入就绪不等同于神经标注或蒸馏完成。
 
 - 红黑平衡数据上的扩大纯语言基线已完成四门课程，执行 4000/2750/4000/3250 步，264 道平衡验证问答正确率为 51.9%；见 `evidence/curriculum-v2-text.json`。完整讲解 SFT 与 96 根局面评测均已完成。
 - Astra 已生成新增 579 个训练根局面的初始讲解，并对新增训练项抽检 72 条；一处“回吃”表述已修正并复核。合并后的 1,315 条原始标注与颜色派生项共 2,630 条（2182 训练、192 验证、256 测试），全部结构校验与输出哈希读回通过；验证/测试文件与原版本字节一致。共 144 条神经抽检，见 `evidence/initial-teacher-full.json`。
@@ -104,7 +107,7 @@
 
 - 完整教师验证已完成，日志与输出位于 `runs/consolidator-weight-verification.log`、`runs/consolidator-verification-v1/`。
 - 字典专家组和纯语言组四门课程及问答验证均已完成，日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log` 与 `runs/research-v3-{bridge,text}-qa-validation.log`。
-- 两组首轮讲解训练及原始输出评测均已完成。扩充讲解训练：`xqgeneral-explanation-v3-warm-bridge`（GPU 1），日志 `runs/explanation-v3-warm-bridge.log`；初始化与验证门槛见 `runs/explanation-v3-warm/bridge/plan.json`。
+- 两组首轮讲解训练及原始输出评测均已完成。扩充讲解训练也已完成 6656 步，选择第 4608 步；日志 `runs/explanation-v3-warm-bridge.log`，初始化与验证门槛见 `runs/explanation-v3-warm/bridge/plan.json`，完整产物与实际权重读回位于 `runs/explanation-v3-completion-readback-v1/`。
 - 正式走法课程与匹配评测均已完成。训练日志 `runs/move-quality-v2-{bridge,text_lora}.log`；专家最终消融日志 `runs/move-quality-v2-final-bridge-v2/log.txt`，纯语言同题与对弈日志 `runs/move-quality-v2-final-text-v1/log.txt`。首次评测启动错误和虚拟环境路径修正另存。
 - 讲解中间检查：`xqgeneral-explanation-v3-interim-512`（GPU 0），日志 `runs/explanation-v3-interim-512.log`；原子保存的最佳检查点通过硬链接固定，后续训练不会替换该评测输入。
 - 自对弈上下文、独立搜索及特征缓存均已完成。日志 `runs/engine-selfplay-train-v2.log`、`runs/selfplay-policy-v2.log`，精确命令及续跑说明在对应 `runs/*/plan.json`。旧准备遍历额外的历史 PV，在真正引擎搜索开始前停止，合同和源码均保留。新批次用 `--no-descendants` 保留全部旧搜索结果，仅搜索新自对弈上下文。首次自对弈缺评分错误及真实重试证据保留于 `runs/engine-selfplay-debug-v1/`。
@@ -123,14 +126,14 @@
 - 正式初始化规划组：`xqgeneral-move-planning-v2-bridge`（GPU 2），日志 `runs/move-planning-v2-bridge.log`；其实际能力选模会话 `xqgeneral-move-planning-v2-functional-selection`，配置及续跑命令在对应 `runs/move-planning-v2/*/plan.json`。
 - 新讲解训练：`xqgeneral-explanation-v4-formal-bridge`（GPU 3），日志 `runs/explanation-v4-formal/bridge/log.txt`。三项能力选模：`xqgeneral-explanation-v4-functional-selection-gpu0`（GPU 0），每 2048 步及完成时检查实际权重。原 GPU 1 等待任务尚未评测便迁移，原记录保留于 `superseded.json`；GPU 1 留给后续全量 SFT。NLL 选择另存，精确参数、守卫哈希与续跑命令见各目录 `plan.json`。
 - 512 局实战上下文已完成，日志 `runs/engine-selfplay-train-v3/log.txt`；每局最多 64 个平衡上下文，排除完整保留变化。新独立走法标签和缓存继续执行。
-- 下一批独立搜索已排队：`xqgeneral-selfplay-policy-v3`（CPU，8 工作者；缓存 GPU 0），日志 `runs/selfplay-policy-v3/log.txt`；等待完整 512 局上下文清单，保留所有旧引擎查询，仅为新增上下文执行 100000 节点搜索，并排除规划与讲解保留集的全部未来分支。哈希、原标签和旧验证/测试字节检查通过后生成 16 层特征，精确参数在同目录 `plan.json`。
+- 新独立走法搜索已完成，原 `runs/selfplay-policy-v3/log.txt` 保留了错误全局顺序断言的失败。实际旧记录按训练/验证/测试重组后逐条不变，旧保留文件字节一致；新会话 `xqgeneral-selfplay-policy-v3-cache-recovery` 在 GPU 0 生成 16 层特征，不重复搜索或修改原冻结脚本。日志、完整记录检查与续跑参数在 `runs/selfplay-policy-v3-cache-recovery-v1/`；只有缓存清单和输出哈希通过后才写最终数据就绪证据。
 - 实战根局面的新搜索试批：`xqgeneral-search-v3-after-3072-selfplay`（GPU 2），日志 `runs/search-v3-after-3072-selfplay/log.txt`；128 个原始训练根局面，保留原回答与所有分支轨迹，仅严格改进项调用完整 BF16 教师汇总。学习入口的真实模型检查：`xqgeneral-coach-real-checkpoint`（GPU 0），日志 `runs/coach-real-checkpoint-v1/log.txt`；检查保存、续读、用户走棋、提示和悔棋。
 - 第 4096 步原始讲解及三项能力基线：`xqgeneral-explanation-v3-after-4096` 与 `xqgeneral-explanation-v3-functional-baseline`（GPU 0），日志在各自 `runs/*/log.txt`；同一真实原子硬链接检查点，保留原始结果并核验三项分数，不是完成新一轮训练选模。
 - 旧讲解配对抽样及修订已完成，输入与意见在 `data/old-{original,mirror}-prose-review-v1/`；两个接受后的审查包在相应 `*-prose-reviewed-v1/`，未审查的其余旧标注仍可见。 全量剩余正文的复核包在 `data/old-prose-full-review-v1/review-{0,1}.jsonl`，实际审查进度在相应 `review-*.progress.jsonl`；任务与模型调用配置见 `runs/old-prose-full-review-v1/plan.json`。
-- 审查后讲解续训已排队：`xqgeneral-explanation-v5-reviewed-bridge`（GPU 1），等待旧讲解训练完成并核验其真实 NLL 最佳完整检查点后，用新数据和新优化器训练；日志 `runs/explanation-v5-reviewed/bridge/log.txt`。其三项能力选模 `xqgeneral-explanation-v5-functional-selection` 使用 GPU 2，等待训练初始化及旧搜索释放 GPU；日志在同目录。当前仅是队列，不是已训练的模型。配置为 `configs/explanation-sft-v5.json`，守卫与续跑命令见各自 `plan.json`。
-- 新实战初始教师输入准备：`xqgeneral-astra-selfplay-seed-v3`，日志 `runs/astra-selfplay-seed-v3/log.txt`；等待新独立搜索完成后选择双方各 1024 个新训练根局面，排除已有教师上下文及保留集全部变化。当前仍在等待，不是已生成的 2048 条讲解。
-- 四门实战规则问答准备：`xqgeneral-selfplay-grounding-data-v2`，日志 `runs/selfplay-grounding-data-v2/log.txt`；等待新独立搜索后准备 8192 个平衡原始根局面，八进程按输入顺序返回并保留旧课程验证/测试。原单进程等待任务尚未生成数据即迁移，源码与 `superseded.json` 保留；512 根真实执行与并行字节对照分别记录在 `runs/selfplay-grounding-verification-v1/` 和 `runs/selfplay-grounding-parallel-verification-v1/`。词元长度与缓存仍须在实际新全量数据上核验。
+- 审查后讲解续训 `xqgeneral-explanation-v5-reviewed-bridge`（GPU 1）已通过初始化守卫：实际父权重为完成的第 4608 步，重置优化器，采用已复核的旧正文修订；初始化就绪不代表完成新训练，执行日志 `runs/explanation-v5-reviewed/bridge/log.txt`。其三项能力选模 `xqgeneral-explanation-v5-functional-selection` 使用 GPU 2，日志在同目录。配置为 `configs/explanation-sft-v5.json`，守卫与续跑命令见各自 `plan.json`。
+- 新实战初始教师输入准备已完成，日志 `runs/astra-selfplay-seed-v3/log.txt`；实际教师调用与全 2048 条范围见同目录 `author-plan.json`，正文进度在 `data/astra-selfplay-seed-v3/shards/annotations-*.jsonl`。只有全部查询覆盖、独立正文复核、结构和哈希检查通过后才组装训练数据，输入完成不等同于已生成 2048 条讲解。
+- 四门实战规则问答已生成全 8192 个平衡原始根的 360448 道新题，日志 `runs/selfplay-grounding-data-v2/log.txt`，全部产物哈希与保留文件字节另经 `root-readback.json` 读回。原单进程等待任务尚未生成数据即迁移，源码与 `superseded.json` 保留；512 根真实执行与并行字节对照分别记录在 `runs/selfplay-grounding-verification-v1/` 和 `runs/selfplay-grounding-parallel-verification-v1/`。全量词元长度与缓存由基础补训预检继续核验。
 - 实战基础补训当前队列：准备会话 `xqgeneral-selfplay-foundation-preparation` 保持不变；训练会话 `xqgeneral-selfplay-foundation-v2-bridge`、能力选模 `xqgeneral-selfplay-foundation-v2-functional-selection`（均 GPU 0）。等待实际数据/特征/词元预检及两组规划训练与能力选模完成，并等待相关 GPU 会话释放。随后在两组全部真实候选上补测 264 道平衡规则问答，以同份权重的问答、走法和规划分数选择父模型，再重置优化器补训。每 2000 步及完成时选模，独立测试不参与。配置 `configs/selfplay-foundation-v2.json`，日志与精确续跑参数在 `runs/selfplay-foundation-v2/{bridge,functional-selection}/`；共用预检在 `runs/selfplay-foundation-v1/preparation/`。原 v1 两个等待任务在未评测父模型、未开始训练时替换，源码与 `superseded.json` 保留；目前没有新训练收益结论。
-- 扩充规划数据准备：`xqgeneral-move-planning-data-v2`，日志 `runs/move-planning-data-v2/log.txt`；等待同批新独立搜索后生成 `data/move-planning-selfplay-v3`，核验全部产物哈希、旧规划验证/测试字节与非规划标签。当前仍在等待，特征与长度就绪前不启动新训练。
+- 扩充规划数据准备：`xqgeneral-move-planning-data-v2`，日志 `runs/move-planning-data-v2/log.txt`；正在生成 `data/move-planning-selfplay-v3`，核验全部产物哈希、旧规划验证/测试字节与非规划标签；特征与长度就绪前不启动新训练。
 - 完成的神经盲评与重试输出位于 `runs/interim-explanation-v2-001/prose-review/`；新增交叉复核输入、修改记录及原始拒收意见分别位于 `data/astra-engine-seed-v1/review-inputs/`、`data/astra-engine-seed-v1/corrections-2.jsonl` 与 `runs/astra-engine-seed-v1/pre-review/`。
 - 训练通过 `scripts/freeze_run.py` 保存执行源码；开发中的后续修改不会改变已启动的训练。课程入口自动从 `latest.pt` 续跑，并核对输入哈希；改变数据或配置必须新建实验。

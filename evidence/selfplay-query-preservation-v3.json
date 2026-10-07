@@ -1,0 +1,19 @@
+{
+  "old_query_records": 11348,
+  "new_query_records": 27408,
+  "all_old_query_records_exactly_preserved": true,
+  "old_global_order_preserved": false,
+  "old_order_change": "Regrouped train, validation, test before appending new train roots",
+  "grouped_seed_prefix_exactly_preserved": true,
+  "validation_test_byte_identical": true,
+  "original_run_failed_at_global_order_assertion": true,
+  "engine_search_reexecuted": false,
+  "evidence_state": "reconstructed_baseline",
+  "policy_manifest_sha256": "3a1c1cf33bc3bbd3d3ad11fb1e7a7db5ecf44c9d2b8653b38ad99f80fa060dd6",
+  "recovery_run_script_sha256": "49ac0b7af302215b82616d2797b2be155c3fe8289bf500eb6159fac93c1fac24",
+  "feature_cache_completion_claimed": false,
+  "student_improvement_measured": false,
+  "limits": [
+    "Verified query preservation and unchanged heldout files; feature-cache and neural training completion are separate stages"
+  ]
+}

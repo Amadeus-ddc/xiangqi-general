@@ -1,0 +1,62 @@
+{
+  "mode": "bridge",
+  "courses": [
+    "explanation",
+    "move_quality",
+    "static_current",
+    "dynamic_current",
+    "static_future",
+    "dynamic_future"
+  ],
+  "mixture": {
+    "explanation": 0.75,
+    "move_quality": 0.15,
+    "static_current": 0.025,
+    "dynamic_current": 0.025,
+    "static_future": 0.025,
+    "dynamic_future": 0.025
+  },
+  "steps_completed": 6656,
+  "selected_step": 4608,
+  "world_size": 1,
+  "global_batch_size": 4,
+  "supervised_tokens_seen": 7949935,
+  "training_loss_normalization": "example",
+  "validation_loss_normalization": "token",
+  "deterministic_training": true,
+  "cublas_workspace_config": ":4096:8",
+  "initial_validation_nll": 10.293521101800902,
+  "final_validation_nll": 0.5271283789955642,
+  "zero_memory_validation_nll": 21.47223306123681,
+  "shuffled_memory_validation_nll": 0.5785032842658131,
+  "trainable_parameters": 4162388512,
+  "trainable_parameter_dtypes": {
+    "torch.float32": 4162388512
+  },
+  "frozen_base_verified": false,
+  "decoder_training": "full",
+  "decoder_parameter_dtype": "torch.float32",
+  "frozen_parameter_dtypes": {},
+  "compute_dtype": "torch.bfloat16",
+  "selected_decoder_probe_max_change": 0.0002451006439514458,
+  "frozen_parameter_gradients_verified": true,
+  "nonzero_gradients": true,
+  "generation_examples": 8,
+  "generation_exact_matches": 0,
+  "peak_allocated_gib": 79.81938123703003,
+  "seconds": 21475.38737198338,
+  "purpose": "Explanation SFT after explicit-board courses and independently searched move curriculum; retain move and board replay",
+  "feature_cache_sha256": "15b5454ae37c7280a6edc18e7c7ceb14f6efe90cb11ce9baa33b074f9f0dbc26",
+  "training_manifest_sha256": "14193ac16a7f177427c706066c9523f4c6526d9b5be7cc1e3f2761a120dd429e",
+  "checkpoint_sha256": "144bd269a1538f01a52325295427b3eb701016ffd82d27453c1ec22bec178e3c",
+  "actual_checkpoint_selected_step_verified": true,
+  "all_manifest_outputs_read_back": true,
+  "actual_trainable_dtype_and_parameter_count_verified": true,
+  "independent_test_used": false,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "NLL-selected completed training, not a final capability-selected coach",
+    "No strength or semantic explanation claim from loss or eight generated examples",
+    "Later reviewed-data continuation starts a separate optimizer and experiment"
+  ]
+}
