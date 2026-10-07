@@ -347,6 +347,8 @@ python -m xqgeneral.recorded_coach_prose collect \
 
 拒收后由已授权教师真实修订，另存与原包棋盘／事实完全相同的修订包，仅替换 `teacher_annotation`、其哈希和真实作者身份。新标注含 `corrected_from_annotation_sha256` 与 `correction_review_sha256`，绑定准确被拒原文及拒收文件；修订仍须由另一位审查者接受。把修订包加入 `resolve --repair-packets FILE...`，并把原决定及修订决定都传入 `--reviews`。收集会重新核验完整接受链及整个原查询批次，保留原始分割和全部未来变化。任何未完成、未复核或被篡改的输入均拒收；这些入口只准备数据，SFT 仍须等待四门课程达标。
 
+这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。收集后的实际新标签仍需重新做词元长度、特征覆盖及全部未来分割预检，完成四门验收后才能准备正式 SFT 配方。已写 1672 条的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
+
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
 `configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。 两个规划训练与最终选模已完成并读回；v1 选择第 10000 步，v2 选择第 11500 步，完整规划合同分别为 33/96 和 37/96，见 `evidence/move-planning-completed-readback-v1.json`。这些指标不证明完整棋力或可靠正文。

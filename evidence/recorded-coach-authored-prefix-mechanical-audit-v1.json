@@ -1,0 +1,28 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_authored_prefix_items": 1672,
+  "captured_original_authored_prefixes": [
+    560,
+    552,
+    560
+  ],
+  "full_batch_expected": 2496,
+  "mechanically_valid_prefix_items": 1672,
+  "mechanically_rejected_prefix_items": 0,
+  "by_split": {
+    "test": 256,
+    "train": 1416
+  },
+  "all_source_queries_and_captured_prefix_bytes_bound": true,
+  "complete_history_and_structured_answer_lines_checked": true,
+  "independent_semantic_review_completed": false,
+  "full_2496_authoring_completed_by_this_audit": false,
+  "teacher_prose_generated_or_repaired_by_this_audit": false,
+  "student_labels_collected_or_training_started": false,
+  "current_foundation_inputs_changed": false,
+  "human_rating": false,
+  "manifest_sha256": "514843398e19361a83201875632ad2d64b4b67b19126af05772d2ee77c6ac841",
+  "postreadback_sha256": "8238dab5b8ae991d1dca90d0183cb997061b0876ae423b4299b0f5aba5a59c6c",
+  "declared_artifacts_freshly_rehashed": 14
+}
