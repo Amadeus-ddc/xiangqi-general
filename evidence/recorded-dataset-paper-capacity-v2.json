@@ -1,0 +1,75 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_collections": [
+    {
+      "source": "data/recorded-games-ccpd-v3",
+      "canonical_records": 22628,
+      "recorded_plies": 1867475,
+      "duplicates_with_prior_collections": 0
+    },
+    {
+      "source": "data/recent-recorded-games-v2",
+      "canonical_records": 93,
+      "recorded_plies": 6989,
+      "duplicates_with_prior_collections": 1
+    },
+    {
+      "source": "data/recorded-games-additional-v1",
+      "canonical_records": 81711,
+      "recorded_plies": 6246714,
+      "duplicates_with_prior_collections": 0
+    },
+    {
+      "source": "data/modern-recorded-games-v2",
+      "canonical_records": 240,
+      "recorded_plies": 18641,
+      "duplicates_with_prior_collections": 0
+    }
+  ],
+  "unique_imported_recorded_games": 104671,
+  "unique_imported_recorded_plies": 8139774,
+  "games_by_source_declared_kind": {
+    "recorded_human_match": 22585,
+    "recorded_computer_match": 22,
+    "recorded_human_computer_match": 21,
+    "published_recorded_match": 82043
+  },
+  "source_games_by_split": {
+    "validation": 10504,
+    "train": 83757,
+    "test": 10410
+  },
+  "human_or_published_candidate_games_by_split": {
+    "validation": 10497,
+    "train": 83726,
+    "test": 10405
+  },
+  "human_or_published_training_candidate_games": 83726,
+  "canonical_game_files_bytes": 845959918,
+  "new_archive_independent_full_native_readback_complete_at_size_audit": false,
+  "native_full_histories_replayed_again_by_size_audit": false,
+  "source_identity_or_all_published_games_proven_human": false,
+  "source_authenticity_or_participant_identity_independently_proven": false,
+  "metadata_authentication_or_redistribution_rights_established_by_size_audit": false,
+  "paper_source": "https://arxiv.org/html/2610.03695v1",
+  "paper_human_positions_per_search_iteration": 210000,
+  "paper_maximum_positions_per_human_game": 6,
+  "paper_search_iterations": 7,
+  "paper_games_disjoint_across_search_iterations": true,
+  "inferred_minimum_human_games_per_paper_search_iteration": 35000,
+  "inferred_minimum_human_games_for_seven_paper_search_iterations": 245000,
+  "game_minimums_are_arithmetic_bounds_not_paper_reported_game_counts": true,
+  "generous_training_candidate_position_upper_bound_at_six_per_game": 502356,
+  "training_games_arithmetic_upper_bound_full_paper_sized_human_rounds": 2,
+  "position_upper_bound_assumes_all_declared_human_or_published_games_eligible": true,
+  "root_selection_terminal_forecast_quality_and_identity_filters_not_deducted_from_capacity": true,
+  "paper_seven_iteration_human_game_capacity_met": false,
+  "current_rule_questions": 3171812,
+  "current_rule_jsonl_bytes": 20053894578,
+  "current_feature_cache_bytes": 250548260661,
+  "rule_rows_are_not_independent_positions_or_explanation_labels": true,
+  "new_queries_or_student_strength_proven_by_intake_count": false,
+  "live_foundation_data_or_recipe_changed": false,
+  "manifest_sha256": "62349c53b515e4e514714fe3999afc517d3cd27e41143673a17a69f83960555a"
+}

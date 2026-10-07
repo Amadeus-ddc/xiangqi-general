@@ -1,0 +1,43 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_original_teacher_queries": 2496,
+  "by_split": {
+    "train": 2048,
+    "validation": 192,
+    "test": 256
+  },
+  "by_split_and_side": {
+    "train/b": 1024,
+    "train/w": 1024,
+    "validation/b": 96,
+    "validation/w": 96,
+    "test/b": 128,
+    "test/w": 128
+  },
+  "distinct_original_games": 2496,
+  "maximum_original_roots_per_game": 1,
+  "all_queries_and_annotation_shards_match_original_candidates_exactly": true,
+  "completed_full_native_history_forecast_audit_reused_and_hash_bound": true,
+  "complete_history_terminal_adjudication_repeated_by_this_observer": false,
+  "all_geometric_forecasts_and_counterparts_independently_recomputed_with_native_fen_play": true,
+  "all_current_course_and_prior_label_root_and_answer_pv_footprints_protected": true,
+  "selected_game_overlap": {
+    "train/validation": 0,
+    "train/test": 0,
+    "validation/test": 0
+  },
+  "selected_forecast_overlap": {
+    "train/validation": 0,
+    "train/test": 0,
+    "validation/test": 0
+  },
+  "all_completed_manifests_and_declared_inputs_outputs_freshly_rehashed": true,
+  "independent_test_used_for_isolation_only": true,
+  "teacher_annotations_generated_by_this_observer": false,
+  "explanation_training_started": false,
+  "source_metadata_or_participant_identities_authenticated": false,
+  "current_foundation_inputs_changed": false,
+  "full_feature_cache_loaded_or_rehashed": false,
+  "manifest_sha256": "9b2e6be2dddf641cf1f1eac0ae052b3152e06905c6b437fe33b8adaa9c7c4615"
+}

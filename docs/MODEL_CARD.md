@@ -594,8 +594,12 @@ Two additional public PGN archives are pinned to the mirror revision
 `0d550401ea9b0c8542e01843ce03a708326692ff`; their actual bytes match the Git blob
 identities. Actual Game-header counts are 99771 and 41743, totaling 141514,
 versus the source-declared 141556. These are raw candidate headers, not independent
-validated games. Native full-history replay and cross-source deduplication are
-running with eight CPU workers in a fresh dataset. The importer streams ZIP
+validated games. The full eight-CPU producer has completed native full-history
+replay and cross-source deduplication: 81711 new unique mainlines, 6246714 plies,
+46826 duplicate records and 12977 quarantined records. The separate observer is
+still replaying every original candidate; producer completion is not independent
+observer completion. See `evidence/additional-recorded-games-native-import-v1.json`.
+The importer streams ZIP
 members, preserves record ordinal/byte hashes and source attribution differences,
 quarantines illegal or post-terminal play, and assigns the original canonical
 split seed before any questions. It does not inherit CCPD identity or license.
@@ -624,11 +628,11 @@ accepted unique mainlines. Both failed observers and the completed offline repla
 are preserved; the final observer reuses and rehashes that completed replay.
 See `evidence/modern-recorded-games-native-import-v2.json`,
 `evidence/modern-recorded-games-native-readback-v3.json` and
-`evidence/recorded-source-future-date-audit-v1.json`. Cross-source deduplication
-against the complete additional archive pool is pending, and no new records have
-changed live foundation inputs.
+`evidence/recorded-source-future-date-audit-v1.json`. Cross-source canonical-file
+readback finds no additional duplicates among these 240 lines and the complete
+archive/prior pools. No new records have changed live foundation inputs.
 
-The capacity audit rehashes and counts both actual canonical-game files:
+The initial two-source capacity audit rehashes and counts both canonical-game files:
 22720 unique mainlines and 1874419 plies after one cross-source duplicate.
 There are 18103 training-split human/published-match candidates, whose identities
 have not been independently authenticated. The paper samples 210000 human
@@ -643,7 +647,48 @@ color counterparts; these are neither independent roots nor explanation labels.
 See `evidence/recorded-dataset-paper-capacity.json`. Data volume does not establish
 mastery or coaching quality, and the audit does not change live training inputs.
 
-Cross-source canonical deduplication gives 22720 unique mainlines. One identical
+The newer four-source intake audit counts 104671 canonical games and 8139774
+plies, with 83757/10504/10410 train/validation/test games and 845959918 canonical
+JSONL bytes. There are 83726 training candidates declared human or published
+matches. Their generous six-position capacity upper bound is 502356 positions,
+at most two complete paper-sized human-source iterations; source authentication,
+root/forecast quality and terminal filtering are not deducted from this bound.
+The published-match category does not prove that every game was human play.
+The additional archive's full independent native replay is still running;
+this size audit rehashes immutable canonical files but does not replay all their
+histories again. See `evidence/recorded-dataset-paper-capacity-v2.json`.
+
+Original recorded-game coaching queries are prepared separately from course
+training. A side-balanced 3744-root batch produced 3740 engine fact queries;
+the four missing scored best-move responses are preserved and their rejection
+reproduced. All raw scores, board/move/line facts and complete-history candidate
+forecasts were read back. Full current-course and prior structured-answer
+forecasts were streamed for isolation. Forty actual roots and queries validate
+the reusable curator and query observer; see
+`evidence/recorded-coach-portable-original-roots-real-v1.json` and
+`evidence/recorded-coach-engine-query-real-readback-v1.json`.
+
+Qualification selects 2496 unchanged original queries, split 2048/192/256,
+one per source game and balanced by side. The source categories are 2432 human
+and 64 published matches, with 1583 normalized participant labels. Forty-six
+candidates overlap other reserved splits and another two overlap newly selected
+forecasts. Serial runtime and eight-CPU portable query/shard files are byte
+identical; see `evidence/recorded-coach-original-query-isolation-v1.json`.
+Final independent readback binds the completed full-history audit and recomputes
+legal FEN-play footprints for all candidate/recorded continuations and their
+color counterparts; every cross-split overlap is zero. It does not repeat
+complete-history terminal adjudication. The first observer's tuple/list contract
+failure is preserved; the corrected observer completed, with completed artifacts
+freshly rehashed. See `evidence/recorded-coach-selected-query-independent-readback-v2.json`.
+Counterpart geometry is reserved without derived queries or score recomputation.
+Three explicitly authorized Astra Low authors are now writing original prose;
+full annotation, independent semantic review and collection remain incomplete.
+These preparations are not teacher accuracy, student benefit or a completed SFT
+run. SFT remains conditional on all four new course gates. Explanations must not
+use unauthenticated player/event metadata or hidden recorded futures as facts,
+nor turn finite search scores into actual human win probabilities.
+
+The original two-source canonical deduplication gives 22720 unique mainlines. One identical
 45-ply mainline has conflicting player/event/date attribution between the two
 sources; neither attribution has been independently authenticated. It was not
 selected for the current course corpus and contributes no rule roots. Preserve
@@ -773,6 +818,20 @@ matches actual producer and full-preflight manifests; it does not rehash the
 entire cache again. See `evidence/recorded-foundation-clean-second-raw-gate.json`.
 There are still zero mastered new courses and zero trained distillation rounds;
 explanation SFT has not started.
+
+The third/fourth static-current gates at steps 1536/2048 use the same 768
+validation examples. Accuracy is 0.6119791667/0.6744791667 and minimum task
+accuracy is 0.140625/0.21875; both gates reject advancement. The fourth gate has
+417 unchanged correct answers, 101 newly correct, 53 newly wrong and 197
+unchanged wrong, a net gain of 48. Count/empty/locate/material/piece/rank accuracy
+at step 2048 is 0.953125/0.84375/0.4921875/0.75/0.7890625/0.21875. Native sample
+histories, gold answers, formats, raw correctness and finite checkpoint tensors
+were checked again; all completed declared artifacts were subsequently rehashed.
+Cache identity is bound to the full preflight and actual feature producer rather
+than freshly hashing the full cache in each observer. See
+`evidence/recorded-foundation-clean-third-raw-gate.json` and
+`evidence/recorded-foundation-clean-fourth-raw-gate.json`. New mastered courses
+and trained distillation rounds remain zero; explanation SFT has not started.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
