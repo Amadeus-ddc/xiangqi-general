@@ -1,0 +1,54 @@
+{
+  "games": {
+    "train": 690,
+    "validation": 24,
+    "test": 18
+  },
+  "roots": {
+    "train": 74740,
+    "validation": 672,
+    "test": 500
+  },
+  "game_overlap": 0,
+  "root_and_future_overlap": 0,
+  "move_lessons": 77512,
+  "by_split": {
+    "train": 77064,
+    "validation": 192,
+    "test": 256
+  },
+  "new_independently_searched_contexts": 27408,
+  "extra_training_contexts": 27430,
+  "extra_context_rejections": {
+    "duplicate_history": 2
+  },
+  "new_descendant_generation_enabled": false,
+  "additional_reserved_datasets": [
+    "data/move-planning-v1",
+    "data/astra-explanations-full-v4"
+  ],
+  "heldout_reserved_positions": 14358,
+  "rejected": {},
+  "root_and_answer_positions_checked": true,
+  "neural_prose_generated": false,
+  "original_course_replay_preserved": true,
+  "old_query_records": 11348,
+  "new_query_records": 27408,
+  "all_old_query_records_exactly_preserved": true,
+  "old_global_order_preserved": false,
+  "old_order_change": "Regrouped train, validation, test before appending new train roots",
+  "grouped_seed_prefix_exactly_preserved": true,
+  "validation_test_byte_identical": true,
+  "original_run_failed_at_global_order_assertion": true,
+  "engine_search_reexecuted": false,
+  "old_engine_query_records_preserved": true,
+  "all_manifest_outputs_read_back": true,
+  "policy_manifest_sha256": "3a1c1cf33bc3bbd3d3ad11fb1e7a7db5ecf44c9d2b8653b38ad99f80fa060dd6",
+  "cache_manifest_sha256": "442d9b8f24017f167405242e725e71cbd46ee210ba162174bbe8ae2081725261",
+  "feature_roots": 78236,
+  "evidence_state": "reconstructed_baseline",
+  "limits": [
+    "Independent engine labels and cached features, no neural prose generated",
+    "New data availability does not establish student improvement"
+  ]
+}

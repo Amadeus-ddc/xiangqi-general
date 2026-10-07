@@ -1,0 +1,21 @@
+{
+  "resolved_reviewed_prefix_items": 532,
+  "accepted_unchanged_prose": 502,
+  "corrected_and_independently_accepted_prose": 30,
+  "first_revision_acceptances": 29,
+  "second_revision_acceptances": 1,
+  "originals_and_all_rejections_preserved": true,
+  "source_labels_modified": false,
+  "full_old_prose_review_complete": false,
+  "whole_dataset_error_rate_estimated": false,
+  "neural_review_not_human_rating": true,
+  "human_rating": false,
+  "test_used": false,
+  "student_training_benefit_measured": false,
+  "reviewer_agent": "/root/astra_full_reviewer_1",
+  "correction_author_agent": "/root/astra_teacher_1",
+  "model_identity_evidence": "explicit Astra Low subagent configuration; no independent backend attestation",
+  "evidence_state": "reconstructed_baseline",
+  "all_revision_ancestries_and_exact_acceptances_verified": true,
+  "bundle_manifest_sha256": "18d90b5cf99f83c79826156d6c4958a99124ae8dfacbfa5dcf14f95006758aed"
+}

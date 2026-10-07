@@ -190,6 +190,13 @@ including originals and mirrors. Fresh reviewers are configured through
 Individual neural decisions are in progress, not a completed full review or
 training improvement. Source labels and archived runs are preserved.
 
+A fixed 532-item prefix is fully resolved: 502 original texts were accepted and
+30 revisions independently accepted, including one requiring a second revision.
+All exact rejection, ancestry and final-acceptance hashes were verified. The
+bundle preserves originals and has not changed the current training dataset;
+this prefix does not estimate an overall error rate or complete the 5510-item
+review. Further repair and review remain separate from student-quality evidence.
+
 The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
 raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
 contracts. All three evaluations bind the same real weights and verified raw
@@ -205,9 +212,11 @@ teaching; a new reviewed-data continuation uses a separate optimizer.
 The larger self-play search produced 27408 new independent queries and exactly
 preserved all 11348 old query records. Old records were regrouped by split; an
 incorrect global-order assertion failed after successful label generation.
-A separate verified continuation caches features without repeating searches.
-Validation/test bytes are unchanged, and query availability does not establish
-student strength or complete feature-cache readiness.
+A separate verified continuation completed features without repeating searches.
+The actual 115370410864-byte, 16-layer cache contains 78236 full-history roots;
+all inputs/outputs, shapes, dtypes, requested keys and 23420 preserved old keys
+were checked. Validation/test bytes are unchanged. Full foundation token
+preflight remains required, and cached inputs do not establish student strength.
 
 Four-course self-play grounding generated 360448 new rule questions from 8192
 original train roots (4096 per color, 499 games). All output hashes and unchanged
