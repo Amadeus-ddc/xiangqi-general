@@ -302,8 +302,9 @@ Training completed 3584 steps, with loss-based step 512 recorded separately:
 NLL changes from 0.527066 to 0.525724, with 3514677 supervised tokens and actual
 decoder updates. All step records, source, input/output hashes and FP32 weights
 were independently read back; see
-`evidence/explanation-sft-v5-reviewed-completed.json`. Final capability selection,
-prose-semantic, game-strength and independent-test evidence remain pending.
+`evidence/explanation-sft-v5-reviewed-completed.json`. Final capability selection
+is now complete; prose-semantic, game-strength and independent-test evidence
+remain pending.
 The interim scores and completed training do not establish overall improvement
 or a reliable coach.
 
@@ -312,9 +313,29 @@ moves and 22/96 complete plans. The 96 explanations contain 83 legal and 75
 non-mistake recommendations, 18 legal main PVs and only 7 complete contracts.
 Its score is 0.3958 versus the parent's 0.3375. Actual weights, FP32 parameter
 count, training identity and all raw artifacts were read back; see
-`evidence/explanation-v5-after-3584.json`. Final capability selection is separate
-from this completed-step validation; reliable teaching and full-game strength
-remain unproven.
+`evidence/explanation-v5-after-3584.json`. Final capability selection compares
+actual steps 2048, 3584 and loss-selected 512 on the same raw validation inputs,
+with respective scores 0.3500, 0.3958 and 0.3729, and selects step 3584. All three
+candidate weights, raw evaluation outputs and the selected 4.162-billion FP32
+parameters were independently read back. The loss-selected step 512 remains
+preserved, and an immutable initialization export hardlinks the unchanged
+selected weights. See `evidence/explanation-v5-functional-selection.json` and
+`evidence/explanation-v5-functional-selection-readback.json`. Reliable teaching
+and full-game strength remain unproven.
+
+A separate full-decoder continuation now actually trains on all 8710 reviewed
+v7 train explanations, with a reset optimizer, global batch 16 and microbatch 1.
+Its 50% main explanation pool also contains the 2048 new original self-play
+labels resampled at 15%; these replay rows are not independent new annotations.
+The remaining mix is 20% move, 10% planning and 5% balanced four-course QA.
+All 196350 mixed rows passed game/root/future isolation, all 183834 train and
+validation encodings fit 1024 tokens, and every feature key is available.
+Heldout label bytes are unchanged; test data only checks isolation and does not
+train or select models. The derived maximum is 4355 steps; actual GPU 1 updates
+have finite losses and gradients. See `evidence/explanation-v6-training-readiness.json`
+and `evidence/explanation-v6-training-start.json`. Its initial checkpoint is the
+pretraining parent, not a trained final model. Multiple training conditions
+differ, and neither benefit nor a valid search-distillation round is established.
 
 A read-only audit of the preserved early step-3072 search replayed all 117
 generated child records with complete history and ran 123 real 100K-node
@@ -373,7 +394,8 @@ All 2048 new rows match original queries and exact accepted annotations;
 heldout files remain byte identical. All 9158 feature keys and the actual 115GB
 cache hash were independently read back. All 8710 train rows pass the 1024-token
 limit with a maximum of 964; see `evidence/reviewed-selfplay-teacher-data-v3.json`.
-Existing runs retain their frozen older inputs. These seed annotations have no
+Earlier runs retain their frozen older inputs; the new continuation above uses
+v7 only after its complete mixed-data preflight. These seed annotations have no
 completed search distillation, measured student benefit or human teaching ratings.
 
 Actual two-H20 frozen-decoder bridge execution verifies global batch 32,
@@ -384,9 +406,19 @@ All states and output hashes were independently read back; see
 `evidence/two-gpu-example-normalized-resume.json`. The 24-train/12-val execution
 fixture does not prove a completed course, full-decoder or cross-world resume,
 or improved strength. The unstarted v2 foundation waiters were preserved and
-replaced by v3: two-GPU training, GPU 1 capability selection and an unchanged
+replaced by v3: two-GPU training and an unchanged
 global-batch, data and parent-scoring recipe. It still waits for full readiness
-and completed planning parents.
+and completed planning parents. Its unstarted GPU 1 selector was subsequently
+preserved and moved to GPU 3, waiting for formal full SFT to release that GPU;
+GPU 1 now runs the reviewed v7 continuation. No foundation training was stopped.
+
+Split-footprint verification now accepts an optional bounded process pool while
+preserving the default serial API and all alternative future branches. A fixed
+1152-context real planning sample produces identical serial and eight-worker
+results in 25.81 and 6.04 seconds (4.27x for this sample). Full-pipeline speed is
+unmeasured. Native full-history adjudication remains a data-generation contract;
+this checker preserves the existing geometry-based split-footprint checks.
+See `evidence/parallel-split-verification.json`.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing

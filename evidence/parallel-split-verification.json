@@ -1,0 +1,29 @@
+{
+  "status": "complete",
+  "records": 1152,
+  "workers": 8,
+  "serial_seconds": 25.81253665033728,
+  "parallel_seconds": 6.041590455919504,
+  "speedup_in_this_fixed_sample": 4.272473753173116,
+  "verification": {
+    "games": {
+      "train": 73,
+      "validation": 8,
+      "test": 10
+    },
+    "roots": {
+      "train": 352,
+      "validation": 22,
+      "test": 22
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "same_real_contexts_and_result": true,
+  "full_preparation_speed_proven": false,
+  "manifest_sha256": "e886265883d0618d990a49f8dbfa843dcd56d8a78fc5834f6fb16d2ed492348f",
+  "root_artifact_readback": true,
+  "default_serial_behavior_preserved": true,
+  "tests": "91 passed in 30.86s",
+  "full_history_adjudication": "Verified data-generation contracts; this checker preserves geometry-based split-footprint checks"
+}
