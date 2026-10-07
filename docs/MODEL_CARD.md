@@ -177,6 +177,19 @@ move quality and complete plans from the same checkpoint. New self-play
 foundation training is queued behind verified data and a completed selected
 parent. This is not evidence of improved strength or explanation quality.
 
+At actual planning step 2000, warm/formal initialization yields 141/152
+non-mistake raw moves out of 192, 10/17 complete plans out of 96, and
+69.7%/74.2% balanced raw board QA. Neither has reliable capture enumeration
+or strong-play evidence. The next foundation run waits for both planning
+experiments to finish, then compares all their real candidates using QA, moves
+and complete plans before choosing its parent. No independent test is used.
+
+Grounded review inputs cover all remaining 5510 old train prose annotations,
+including originals and mirrors. Fresh reviewers are configured through
+`spawn_agent` as Astra Low; backend identity has no independent attestation.
+Individual neural decisions are in progress, not a completed full review or
+training improvement. Source labels and archived runs are preserved.
+
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
 and redistribution boundaries. This repository is not affiliated with the

@@ -1,0 +1,31 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "runs": [
+    {
+      "part": "bridge",
+      "session": "xqgeneral-selfplay-foundation-v2-bridge",
+      "run_sha256": "3add986285fb39d0e2621e104f1eb7fe6606638a16a641fcec2a3ca38655b178",
+      "recipe_sha256": "0032c540f61e33d70b719f986202674d331c9a647c875ed2c5bd78d35b17b211",
+      "status": "waiting_for_complete_inputs_and_completed_parent_pool"
+    },
+    {
+      "part": "functional-selection",
+      "session": "xqgeneral-selfplay-foundation-v2-functional-selection",
+      "run_sha256": "b554247e8a5101cc51095ddaf65a8e1d74f98999efbe1e85167a5523d57cad45",
+      "recipe_sha256": "0032c540f61e33d70b719f986202674d331c9a647c875ed2c5bd78d35b17b211",
+      "status": "waiting_for_complete_inputs_and_completed_parent_pool"
+    }
+  ],
+  "supersedes_only_waiting_jobs": {
+    "scope": "Only two waiting foundation jobs, before any parent assessment or training",
+    "reason": "Actual 2000-step comparison favors formal initialization on QA, move and plan metrics; compare every candidate from both completed parents before choosing",
+    "evidence": "runs/planning-2000-qa-comparison-v1/manifest.json",
+    "superseded_by": "runs/selfplay-foundation-v2",
+    "source_and_logs_preserved": true
+  },
+  "shared_input_preparation_unchanged": "runs/selfplay-foundation-v1/preparation",
+  "training_started": false,
+  "completed_parent_assessment": false,
+  "student_improvement_measured": false,
+  "test_used": false
+}

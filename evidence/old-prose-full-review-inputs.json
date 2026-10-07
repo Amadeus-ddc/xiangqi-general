@@ -1,0 +1,25 @@
+{
+  "unreviewed_old_train_annotations": 5510,
+  "previously_reviewed_old_train": 768,
+  "coverage": "All remaining old original and mirrored train annotations, not a sample",
+  "by_side": {
+    "黑方": 2755,
+    "红方": 2755
+  },
+  "originals": 2755,
+  "mirrors": 2755,
+  "full_history_and_structured_facts_verified": true,
+  "review_complete": false,
+  "heldout_rows_included": false,
+  "training_labels_modified": false,
+  "student_improvement_measured": false,
+  "evidence_state": "reconstructed_baseline",
+  "all_input_and_output_hashes_read_back": true,
+  "manifest_sha256": "0de666b775fc2677ad07f0af0e3a9374d70c0228212416b25897744ed499341e",
+  "packet_sha256": {
+    "data/old-prose-full-review-v1/review-0.jsonl": "1b05540496aebeebb2d913ceb7e71be3e85fe414d17e65920067880ad1c0d462",
+    "data/old-prose-full-review-v1/review-1.jsonl": "0066a1d63f6df7de17b52565373b6a41a65c42ef5d19c35f460812bc85c8e57c"
+  },
+  "neural_review_finished": false,
+  "human_rating": false
+}
