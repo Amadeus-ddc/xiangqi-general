@@ -1,0 +1,53 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "genuine_full_review_items": 5510,
+  "by_shard": [
+    {
+      "shard": 0,
+      "items": 2755,
+      "accept": 2604,
+      "reject": 151,
+      "review_sha256": "f65cc5a39c9d6c0fce962aa7c395a21853a4b95b2c94255364eaa37373b2ff3f",
+      "progress_sha256": "7610c772aa3f60f70a118af6a2ef909475da5dc59e43a9405e9cd92b946b0f36",
+      "actual_reviewer_agents": [
+        "/root/astra_full_reviewer_0"
+      ]
+    },
+    {
+      "shard": 1,
+      "items": 2755,
+      "accept": 2539,
+      "reject": 216,
+      "review_sha256": "c88fe80f329dba60b55285561d8337907b53c31dea5952b57f2446334a1c6bcd",
+      "progress_sha256": "eb7073698dd10af0f0a1c2da2aaa8a00ffcbefa18e1d4fdfcc4ee20784bbcbdc",
+      "actual_reviewer_agents": [
+        "/root/astra_full_reviewer_1",
+        "/root/astra_full_reviewer_1b",
+        "/root/astra_full_reviewer_1c",
+        "/root/astra_full_reviewer_1d"
+      ]
+    }
+  ],
+  "original_texts_accepted": 5143,
+  "original_texts_requiring_revision": 367,
+  "all_ids_annotation_hashes_and_progress_decisions_bound": true,
+  "all_review_and_remaining_preparation_artifact_hashes_read_back": true,
+  "already_resolved_items": 1812,
+  "remaining_reviewed_items": 3698,
+  "remaining_rejected_items_for_neural_repair": 269,
+  "correction_input_sha256": "21ea058e378028faf7b0cd3990db5823467c44a7be4b0a8ea0fe306a7f2b58f5",
+  "remaining_neural_revisions_complete": true,
+  "training_labels_modified": false,
+  "human_rating": false,
+  "test_used": false,
+  "model_identity_evidence": "Explicit configured Astra Low subagents with preserved genuine continuation prefixes; no independent backend identity attestation",
+  "limits": [
+    "Independent neural prose review is not human evaluation",
+    "Remaining rejected prose must be genuinely revised and independently accepted before dataset use",
+    "No measured student improvement follows from completed review"
+  ],
+  "remaining_correction_annotation_sha256": "acc98285b0209734501bf8d6bada4bfec1f471aa3c4d3daddc1d55ee917958ca",
+  "remaining_revision_independent_acceptance_complete": false,
+  "remaining_review_input_sha256": "a544030daddd7c6877776ef7912fa575f6dd38d660206d7ebe40f981b7546ca6",
+  "all_269_revision_identity_and_exact_rejected_ancestor_bindings_verified": true
+}
