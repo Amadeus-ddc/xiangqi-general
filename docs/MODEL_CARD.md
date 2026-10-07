@@ -714,6 +714,25 @@ are still incomplete. Contract checks and these four preparation examples do
 not establish corpus-wide teaching quality, backend identity attestation, human
 ratings, student benefit or any completed SFT/distillation round.
 
+A frozen authored prefix contains 1672 actual annotations (560/552/560 from
+the three writers; 1416 train and 256 test). All pass the teacher contract,
+Chinese length, coordinate references, complete past and structured answer-line
+mechanical checks. Fourteen declared artifacts were freshly rehashed. See
+`evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`. This leaves
+full 2496-item authoring and independent semantic acceptance incomplete; no
+prose was rewritten, training labels collected or student training started.
+
+Cache-header inventory covers all 2496 original coaching contexts and their
+4992 native original/color histories in the current 169904-key, sixteen-layer
+FP16 feature/FP32 WDL cache. All 9158 prior reviewed-label contexts are also
+present, so this batch requires no additional GPU extraction or cache copy.
+Native color histories use the existing bounded extension interface, and all
+21 declared inventory artifacts were freshly rehashed. See
+`evidence/recorded-coach-expert-feature-coverage-v1.json`. This inspects actual
+header keys, dimensions and dtypes, binding the completed producer hash; it
+does not freshly hash the full cache, recompute feature values, create mirrored
+teacher prose or establish complete SFT-data readiness or student benefit.
+
 The original two-source canonical deduplication gives 22720 unique mainlines. One identical
 45-ply mainline has conflicting player/event/date attribution between the two
 sources; neither attribution has been independently authenticated. It was not
@@ -858,6 +877,20 @@ than freshly hashing the full cache in each observer. See
 `evidence/recorded-foundation-clean-third-raw-gate.json` and
 `evidence/recorded-foundation-clean-fourth-raw-gate.json`. New mastered courses
 and trained distillation rounds remain zero; explanation SFT has not started.
+
+The fifth static-current gate at step 2560 answers 575/768 identical validation
+questions correctly (0.7486979167); minimum task accuracy is 0.2578125, so
+advancement remains rejected. Count/empty/locate/material/piece/rank accuracy is
+0.984375/0.9609375/0.5625/0.8046875/0.921875/0.2578125. Paired step-2048 outputs
+contain 487 unchanged correct, 88 newly correct, 31 newly wrong and 162 unchanged
+wrong answers, a net gain of 57. Native histories, answers, formats, raw
+correctness and finite checkpoint tensors were independently checked; all
+15 completed declared artifacts were subsequently rehashed. Cache identity
+continues to bind the completed producer and full preflight rather than a new
+full-cache hash in the observer. See
+`evidence/recorded-foundation-clean-fifth-raw-gate.json`. The controller continues
+the first course; new mastered courses and trained distillation rounds remain
+zero, and explanation SFT has not started.
 
 Both old planning experiments and final selections were read back completely:
 v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and

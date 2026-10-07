@@ -1,0 +1,61 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_qualified_original_coaching_queries": 2496,
+  "original_query_contexts_unique": 2496,
+  "actual_native_original_and_color_contexts": 4992,
+  "native_original_and_color_contexts_unique": 4992,
+  "course_cache_contexts": 169904,
+  "by_split": {
+    "train": {
+      "queries": 2048,
+      "original_context_present": 2048,
+      "original_context_missing": 0,
+      "native_color_context_present": 2048,
+      "native_color_context_missing": 0
+    },
+    "validation": {
+      "queries": 192,
+      "original_context_present": 192,
+      "original_context_missing": 0,
+      "native_color_context_present": 192,
+      "native_color_context_missing": 0
+    },
+    "test": {
+      "queries": 256,
+      "original_context_present": 256,
+      "original_context_missing": 0,
+      "native_color_context_present": 256,
+      "native_color_context_missing": 0
+    }
+  },
+  "unique_contexts_missing_for_existing_extension_interface": 0,
+  "additional_fp16_features_and_fp32_wdl_tensor_bytes_if_extended": 0,
+  "prior_reviewed_label_rows": 9158,
+  "prior_label_rows_by_split": {
+    "train": 8710,
+    "validation": 192,
+    "test": 256
+  },
+  "prior_label_contexts_unique": 9158,
+  "prior_label_contexts_missing": 0,
+  "all_original_queries_bound_to_completed_isolation_audit": true,
+  "native_color_histories_replayed_with_existing_bounded_extension_interface": true,
+  "actual_cache_header_keys_dimensions_and_dtypes_checked": true,
+  "cache_path": "data/research-human-engine-v1/features-16.pt",
+  "completed_cache_producer_declared_sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+  "full_cache_bytes_freshly_hashed_again_by_this_inventory": false,
+  "cache_tensor_values_recomputed_or_verified_by_this_inventory": false,
+  "native_original_histories_replayed_again_by_this_inventory": false,
+  "color_counterparts_required_by_existing_extension_interface": true,
+  "color_derived_teacher_prose_generated_or_selected": false,
+  "teacher_prose_generated_or_repaired": false,
+  "gpu_feature_generation_executed": false,
+  "full_2496_semantic_review_completed": false,
+  "sft_or_distillation_training_started": false,
+  "current_foundation_inputs_changed": false,
+  "human_rating": false,
+  "manifest_sha256": "25a28729d0b39a0efd3d79da908334f64af01826c06e5bbf8d935fcb9331cf02",
+  "postreadback_sha256": "cc67d7afd896c2271184bc96851f7f3f758ce94a89172f6c5dfe659971b20493",
+  "declared_artifacts_freshly_rehashed": 21
+}
