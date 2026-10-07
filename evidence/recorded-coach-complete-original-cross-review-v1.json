@@ -1,0 +1,44 @@
+{
+  "status": "complete",
+  "actual_original_annotations_reviewed": 2496,
+  "accepted_unchanged_originals": 2363,
+  "rejected_originals_requiring_genuine_revision": 133,
+  "by_reviewer": [
+    {
+      "reviewer": "/root/astra_recorded_coach_author_0",
+      "original_author": "/root/astra_recorded_coach_author_2",
+      "actual_annotations_reviewed": 832,
+      "accepted": 786,
+      "rejected": 46,
+      "original_packet_sha256": "62ebad04d9ced53ac34a469b68647cb8229276216b10669ceb78f9f4cd886983",
+      "decision_document_sha256": "e79fbefa191b8406eca40ad39af2bd7607ea73fdef54134c9ab4fc1b898d9e2f"
+    },
+    {
+      "reviewer": "/root/astra_recorded_coach_author_1",
+      "original_author": "/root/astra_recorded_coach_author_0",
+      "actual_annotations_reviewed": 832,
+      "accepted": 785,
+      "rejected": 47,
+      "original_packet_sha256": "85d32b33d570731b1c16eb5be42ba8248b324475effcf6cd8b037179670769f4",
+      "decision_document_sha256": "5f8601591e7c03aaf13b2ba42c706a3bbc3cf8a6cc7701ae70f958ccd2a4532a"
+    },
+    {
+      "reviewer": "/root/astra_recorded_coach_author_2",
+      "original_author": "/root/astra_recorded_coach_author_1",
+      "actual_annotations_reviewed": 832,
+      "accepted": 792,
+      "rejected": 40,
+      "original_packet_sha256": "ffe7a4286a04f1a9f2fd3c2cae53709e76093bf6e6348f52913d7e0ae0730bb7",
+      "decision_document_sha256": "cc0925abbe636015841be5e630328f045d8c0fee1bd48413efaa98f940d10aea"
+    }
+  ],
+  "all_original_ids_order_hashes_and_foreign_actor_contracts_checked": true,
+  "original_annotations_and_completed_decisions_preserved": true,
+  "neural_cross_review_not_human_rating": true,
+  "neural_opinion_correctness_or_backend_attestation_proven": false,
+  "all_final_repaired_prose_independently_accepted": false,
+  "new_initial_teacher_labels_collected": false,
+  "new_sft_started": false,
+  "student_benefit_measured": false,
+  "manifest_sha256": "59c9f2333a549b9f0d8df0dad40e2c3d665a15c4d994e70bfc0ad6433d072a59"
+}

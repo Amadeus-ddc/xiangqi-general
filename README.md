@@ -220,7 +220,7 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
-另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。八 CPU 全量生产已完成：81711 个新主线、6246714 个半回合、46826 条重复及 12977 条隔离，见 `evidence/additional-recorded-games-native-import-v1.json`；全部候选的第二入口原生复演正在 `runs/additional-recorded-games-independent-readback-v1/` 执行。此前各 64 局的实际串行／四 CPU 结果仍只是有界检查。新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
+另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。八 CPU 全量生产已完成：81711 个新主线、6246714 个半回合、46826 条重复及 12977 条隔离，见 `evidence/additional-recorded-games-native-import-v1.json`；全部 141514 条原档案候选的第二入口原生复演已完成，逐条匹配规范化保留主线、分割、原字节／序号、重复署名和隔离原因；完成后的 15 份声明产物及 53 份实际冻结源码重新核验，见 `evidence/additional-recorded-games-independent-readback-v1.json`。第二入口沿用固定的分段／原生解析合同，不代表另一套规则实现或棋手真实性认证。此前各 64 局的实际串行／四 CPU 结果仍只是有界检查。新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
 
 ```bash
 python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
@@ -233,7 +233,7 @@ python scripts/freeze_run.py --output runs/new-bundled-import/source-run -- \
 
 省略 `--limit-records` 才处理全部候选；该选项只供有界执行检查。中断后保留部分产物，在新目录用原固定源码重放，不覆盖旧输出。记录数、重复、署名差异和规则拒收原因以完成清单为准；原始记录及档案不随代码发布。
 
-另一次近期来源收集检查了 910 个实际候选页面，原生导入保留 240 局、18641 个半回合、245 个参赛者名称，源记录年份为 2024—2026。原批次另有 80 局的日期写为 2029 年、赛事却写为 2026 年；这些记录按原文隔离，没有代改日期。独立离线重放、全部保留历史与隔离原因读回已完成；一条原已隔离的重复页面也重归日期异常。见 `evidence/modern-recorded-games-native-import-v2.json`、`evidence/modern-recorded-games-native-readback-v3.json`、`evidence/recorded-source-future-date-audit-v1.json`。与完整档案及旧池去重后，这 240 局无额外重复；四来源共 104671 局、8139774 个半回合、约 846MB 棋谱 JSONL，见 `evidence/recorded-dataset-paper-capacity-v2.json`。训练分割的人类／公开实战候选为 83726 局，按论文每局最多六个位置，宽松上限为 502356 个位置，尚不足其七轮互异人类棋局预算；根／变化筛选和真实性检查还会减小容量，新增档案的独立全量复演仍待完成。新棋谱尚未加入当前课程。重新解析已固定页面时可显式限制来源年份：
+另一次近期来源收集检查了 910 个实际候选页面，原生导入保留 240 局、18641 个半回合、245 个参赛者名称，源记录年份为 2024—2026。原批次另有 80 局的日期写为 2029 年、赛事却写为 2026 年；这些记录按原文隔离，没有代改日期。独立离线重放、全部保留历史与隔离原因读回已完成；一条原已隔离的重复页面也重归日期异常。见 `evidence/modern-recorded-games-native-import-v2.json`、`evidence/modern-recorded-games-native-readback-v3.json`、`evidence/recorded-source-future-date-audit-v1.json`。与完整档案及旧池去重后，这 240 局无额外重复；四来源共 104671 局、8139774 个半回合、约 846MB 棋谱 JSONL，见 `evidence/recorded-dataset-paper-capacity-v2.json`。训练分割的人类／公开实战候选为 83726 局，按论文每局最多六个位置，宽松上限为 502356 个位置，尚不足其七轮互异人类棋局预算；根／变化筛选和真实性检查还会减小容量，新增档案的独立全量复演现已完成，原容量审计的完成时快照保留。新棋谱尚未加入当前课程。重新解析已固定页面时可显式限制来源年份：
 
 ```bash
 python scripts/freeze_run.py --output runs/new-recent-reparse/source-run -- \
@@ -288,7 +288,7 @@ python -m xqgeneral.foundation_readback \
 
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
-实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文，作者计划和完整身份读回在 `runs/astra-recorded-coach-authoring-v1/`；正文尚须逐条独立接受才能收集。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
+实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文及相互审查：2496 条中原文接受 2363 条、拒收 133 条，见 `evidence/recorded-coach-complete-original-cross-review-v1.json`。作者计划及原始身份读回保留在 `runs/astra-recorded-coach-authoring-v1/`；拒收须真实修订并由不同作者逐条接受后才能收集。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
 
 ```bash
 python -m xqgeneral.recorded_coach curate \
