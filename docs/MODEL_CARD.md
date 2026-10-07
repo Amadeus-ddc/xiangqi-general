@@ -208,6 +208,14 @@ Weights and raw outputs were verified; 74 plans remain illegal and one continues
 after a full-history terminal position. This is interim validation without
 final selection, game strength or prose-semantic evidence.
 
+The formal-initialization planning run at step 4000 has 170/192 legal raw moves,
+160/192 non-mistake moves and 30/96 complete plans, compared with 165/152/17
+at step 2000. Its two-capability score rises from 0.5458 to 0.6250. Actual steps,
+training contracts and raw artifact hashes were verified; 65 plans remain
+illegal and one continues after termination. Training and final selection
+remain in progress; prose semantics, complete games and independent test
+strength are not measured by this result.
+
 The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
 raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
 contracts. All three evaluations bind the same real weights and verified raw
@@ -236,9 +244,12 @@ required, and generated rule labels do not prove neural training gains.
 
 New initial-teacher inputs contain 2048 isolated train roots from 485 self-play
 games, balanced across both colors, with full-history candidate replay and all
-input/output hashes verified. Authorized Astra Low generation has started;
-prepared packets do not count as neural annotations or distillation, and the
-new prose requires independent review before training.
+input/output hashes verified. The configured Astra Low subagent has actually
+authored the first 683-item shard. Exact ID coverage, teacher identity,
+structured-label binding and all review-preparation artifact hashes were
+checked. Independent semantic review is pending and remaining shards are being
+authored; this does not establish completed 2048-item annotation, new training
+or distillation.
 
 Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
 separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing

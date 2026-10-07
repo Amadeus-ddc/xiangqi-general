@@ -1,0 +1,18 @@
+{
+  "actual_original_teacher_annotations": 683,
+  "overall_target_original_annotations": 2048,
+  "completed_shard": 0,
+  "all_683_ids_identity_and_structured_labels_bound": true,
+  "maximum_chinese_explanation_characters": 175,
+  "independent_prose_review_complete": false,
+  "neural_annotation_author_agent": "/root/astra_teacher_1",
+  "source_labels_modified": false,
+  "no_mirror_labels_added": true,
+  "human_rating": false,
+  "test_used": false,
+  "model_identity_evidence": "explicit Astra Low subagent configuration; no independent backend identity attestation",
+  "evidence_state": "reconstructed_baseline",
+  "review_input_sha256": "18f5cbe85f15daa8c35b3b7415f961c8a648f3a57ad4c6a8aa72db7efda8e61f",
+  "review_bundle_manifest_sha256": "0b3a76fa33daf3c63f33fe542693e359afb80359dcf84b9ac42f9593bcdd0c72",
+  "all_preparation_input_output_hashes_read_back": true
+}
