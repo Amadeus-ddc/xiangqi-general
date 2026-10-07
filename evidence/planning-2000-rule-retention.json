@@ -1,0 +1,223 @@
+{
+  "evidence_state": "reconstructed_baseline",
+  "results": {
+    "warm": {
+      "checkpoint_sha256": "8012ff52cd28d6f02e902f9af6fc126833f07861d3f83c8e3619302218ca3eb2",
+      "actual_step": 2000,
+      "qa": {
+        "examples": 264,
+        "accuracy": 0.696969696969697,
+        "by_task": {
+          "dynamic_current/captures": {
+            "n": 12,
+            "accuracy": 0.16666666666666666
+          },
+          "dynamic_current/checks": {
+            "n": 12,
+            "accuracy": 0.3333333333333333
+          },
+          "dynamic_current/illegal": {
+            "n": 12,
+            "accuracy": 0.75
+          },
+          "dynamic_current/legal": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "n": 12,
+            "accuracy": 0.3333333333333333
+          },
+          "dynamic_future/captures": {
+            "n": 12,
+            "accuracy": 0.0
+          },
+          "dynamic_future/checks": {
+            "n": 12,
+            "accuracy": 0.5833333333333334
+          },
+          "dynamic_future/illegal": {
+            "n": 12,
+            "accuracy": 0.75
+          },
+          "dynamic_future/legal": {
+            "n": 12,
+            "accuracy": 0.9166666666666666
+          },
+          "dynamic_future/moves": {
+            "n": 12,
+            "accuracy": 0.25
+          },
+          "static_current/count": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/empty": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/locate": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "n": 12,
+            "accuracy": 0.3333333333333333
+          },
+          "static_current/piece": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/count": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/empty": {
+            "n": 12,
+            "accuracy": 0.9166666666666666
+          },
+          "static_future/locate": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/material": {
+            "n": 12,
+            "accuracy": 0.4166666666666667
+          },
+          "static_future/piece": {
+            "n": 12,
+            "accuracy": 0.8333333333333334
+          },
+          "static_future/rank": {
+            "n": 12,
+            "accuracy": 0.75
+          }
+        },
+        "raw_generation": true,
+        "oracle_used": false,
+        "split": "validation",
+        "seconds": 50.35478209331632
+      },
+      "raw_move_no_mistake_rate": 0.734375,
+      "raw_plan_contract_valid_rate": 0.10416666666666667,
+      "foundation_functional_score": 0.5933712121212121,
+      "qa_manifest_sha256": "fa9700e5eb710652e2756cd6a244df187e31b7692ec6d9ec762ee2fd6f0af91c"
+    },
+    "formal": {
+      "checkpoint_sha256": "a0c030e3aa001f239b57db796593520abac534bcc501ac6b41bd816728809bc5",
+      "actual_step": 2000,
+      "qa": {
+        "examples": 264,
+        "accuracy": 0.7424242424242424,
+        "by_task": {
+          "dynamic_current/captures": {
+            "n": 12,
+            "accuracy": 0.08333333333333333
+          },
+          "dynamic_current/checks": {
+            "n": 12,
+            "accuracy": 0.5833333333333334
+          },
+          "dynamic_current/illegal": {
+            "n": 12,
+            "accuracy": 0.75
+          },
+          "dynamic_current/legal": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "n": 12,
+            "accuracy": 0.5
+          },
+          "dynamic_future/captures": {
+            "n": 12,
+            "accuracy": 0.16666666666666666
+          },
+          "dynamic_future/checks": {
+            "n": 12,
+            "accuracy": 0.5833333333333334
+          },
+          "dynamic_future/illegal": {
+            "n": 12,
+            "accuracy": 0.8333333333333334
+          },
+          "dynamic_future/legal": {
+            "n": 12,
+            "accuracy": 0.9166666666666666
+          },
+          "dynamic_future/moves": {
+            "n": 12,
+            "accuracy": 0.25
+          },
+          "static_current/count": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/empty": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/locate": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "n": 12,
+            "accuracy": 0.5
+          },
+          "static_current/piece": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/count": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/empty": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/locate": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/material": {
+            "n": 12,
+            "accuracy": 0.5
+          },
+          "static_future/piece": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "static_future/rank": {
+            "n": 12,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        "raw_generation": true,
+        "oracle_used": false,
+        "split": "validation",
+        "seconds": 71.8899184120819
+      },
+      "raw_move_no_mistake_rate": 0.7916666666666666,
+      "raw_plan_contract_valid_rate": 0.17708333333333334,
+      "foundation_functional_score": 0.6490530303030302,
+      "qa_manifest_sha256": "1874d0a79568cf2836e8fbb8b5fb3e605ff2bc4177ef6a926311542eeaddafbc"
+    }
+  },
+  "all_output_hashes_read_back": true,
+  "test_used": false,
+  "limits": [
+    "Actual interim snapshot comparison, not completed training or final model selection",
+    "Initialization histories differ; no single-factor attribution or strong-play claim"
+  ]
+}
