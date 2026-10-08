@@ -1108,3 +1108,30 @@ The second entrance freshly hashes 36 declared planning/raw-gate artifacts,
 verifies 61/60 executed frozen source files and both public JSON/UTF8 bytes,
 and independently recounts training rows and the update budget. It reuses the
 completed tenth reader's native-answer/history and finite-tensor proof.
+
+The actual first-course step-5632 raw validation answers 752/768 correctly
+(97.9%). Its weakest rank identification is 121/128 (94.5%), so the current
+local gate still fails. Relative to step 5120, 19 answers improve and 10 regress,
+a net gain of nine. The completed independent reader recomputes all sampled
+native histories, gold answers, formats and raw correctness, verifies the
+finite FP32 checkpoint, and has a further readback of all 15 declared artifacts,
+61 executed frozen source files and exact public bytes. See
+`evidence/recorded-foundation-clean-eleventh-raw-gate.json`. This is within-training
+validation, not evidence of useful coaching or completed courses.
+
+The sequential controller waits for the existing four-course producer, exports
+its clean final checkpoint, requires a full-decoder four-GPU preflight, and then
+launches initial explanation SFT. The preflight uses the longest actual 24/12
+train/validation labels, compares continuous four versus resumed two-plus-two
+updates including all weights, Adam states, RNG states and step logs, checks
+actual updates in decoder/bridge/token groups, and records each worker's memory.
+Selected formal SFT weights are read back against the complete initial parameter
+shape and FP32 contract. Changed source, recipes, labels or feature-cache identity
+are rejected, and failures preserve partial outputs. The 25 new controlled CPU
+cases and all 353 CPU tests pass; these are execution contracts, not GPU training.
+The real controller has separately been observed waiting on the still-live,
+incomplete curriculum without creating a handoff, GPU probe or SFT run. Only
+this bounded observation was terminated; the curriculum was not restarted or
+stopped. See `evidence/clean-sft-sequential-real-wait-guard-v1.json`. The actual
+full-decoder GPU preflight, new SFT, subsequent search distillation and coaching
+benefit still require execution and independent evaluation.

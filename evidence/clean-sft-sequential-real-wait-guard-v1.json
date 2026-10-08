@@ -1,0 +1,13 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_sequential_controller_observed_waiting": true,
+  "actual_owned_curriculum_producer_live_before_during_and_after_observation": true,
+  "four_course_completion_manifest_present": false,
+  "handoff_or_gpu_preflight_or_formal_sft_created": false,
+  "only_this_bounded_observation_process_terminated": true,
+  "producer_restarted_or_stopped": false,
+  "independent_test_used_for_training_or_selection": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "manifest_sha256": "bb1bd8aa318139fe0f98dab53abd19f536fc49bf13730ca5fe66436578d09709"
+}
