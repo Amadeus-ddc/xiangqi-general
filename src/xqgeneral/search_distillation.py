@@ -3,15 +3,15 @@ import argparse
 from collections import Counter
 import json
 from pathlib import Path
-import random
 
 from .calibration import candidate_probability, evaluation_probability
-from .evidence import atomic_json, digest, history_key, load_jsonl, manifest, position_key, write_jsonl
+from .evidence import atomic_json, code_identity, digest, history_key, iter_jsonl, load_jsonl, manifest, position_key, write_jsonl
 from .explanations import (EXPLANATION_QUESTION, continuation_positions, line_facts, move_facts,
                            parse_explanation, validate_explanation)
 from .oracle import Pikafish
 from .prose_moves import consolidation_messages
 from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
+from .search_inputs import prepared_training_roots, training_roots
 
 
 def first_divergence(fen, before, after):
@@ -51,7 +51,7 @@ def order_score(score):
 def reserved_positions(data):
     positions = set()
     for split in ['validation', 'test']:
-        for row in load_jsonl(Path(data) / f'{split}.jsonl'):
+        for row in iter_jsonl(Path(data) / f'{split}.jsonl'):
             positions.add(position_key(row['fen']))
             for line in [row.get('future_moves', []), *row.get('future_branches', [])]:
                 fen = row['fen']
@@ -303,6 +303,7 @@ def main():
     parser.add_argument('--checkpoint', required=True)
     parser.add_argument('--data', default='data/research-balanced-v1')
     parser.add_argument('--features', default='data/research-balanced-v1/features-16.pt')
+    parser.add_argument('--prepared-inputs', help='Completed search_inputs directory bound to this data and seed')
     parser.add_argument('--output', required=True)
     parser.add_argument('--limit', type=int, default=512)
     parser.add_argument('--nodes', type=int, default=100000)
@@ -312,24 +313,30 @@ def main():
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
+    if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
+        raise ValueError('Search limits and node budgets must be positive; recursion depth cannot be negative')
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
     from .inference import Predictor
     input_paths = [args.checkpoint, args.features, args.executable, args.weights,
                    *[Path(args.data) / f'{s}.jsonl' for s in ['train', 'validation', 'test']]]
-    contract = {'arguments': vars(args), 'input_hashes': {str(p): digest(p) for p in input_paths}}
+    if args.prepared_inputs:
+        input_paths.extend(Path(args.prepared_inputs) / name for name in ['manifest.json', 'roots.jsonl', 'counts.json'])
+    contract = {'arguments': vars(args), 'input_hashes': {str(p): digest(p) for p in input_paths},
+                'code': code_identity()}
     root.mkdir(parents=True, exist_ok=True)
     if (root / 'contract.json').exists():
         if json.loads((root / 'contract.json').read_text()) != contract:
-            raise ValueError('Search continuation inputs changed')
+            raise ValueError('Search continuation inputs, arguments or execution source changed')
     else:
         atomic_json(root / 'contract.json', contract)
-    unique = {}
-    for row in load_jsonl(Path(args.data) / 'train.jsonl'):
-        unique.setdefault(row['feature_key'], row)
-    records = list(unique.values()); random.Random(args.seed).shuffle(records)
-    records = records[:args.limit]
+    if args.prepared_inputs:
+        train = Path(args.data) / 'train.jsonl'
+        records = prepared_training_roots(args.prepared_inputs, args.data, args.limit, args.seed,
+            {'sha256': contract['input_hashes'][str(train)], 'bytes': train.stat().st_size})
+    else:
+        records = training_roots(args.data, args.limit, args.seed)
     partial = root / 'results.partial.jsonl'
     results = load_jsonl(partial) if partial.exists() else []
     oracle_log = root / 'oracle-queries.partial.jsonl'

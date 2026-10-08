@@ -103,7 +103,14 @@ python -m xqgeneral.revise_prose --data data/astra-explanations-full-v4 \
 ```bash
 python scripts/freeze_run.py --output runs/explanation-v1/source-run -- \
   python -m xqgeneral.sft --init COURSE_CHECKPOINT.pt --output runs/explanation-v1/training
-python -m xqgeneral.search_distillation --checkpoint SFT_CHECKPOINT.pt \
+python scripts/freeze_run.py --output runs/search-inputs-v1/source-run -- \
+  python -m xqgeneral.search_inputs --data data/research-human-engine-v1 \
+  --output data/search-inputs-v1
+python scripts/freeze_run.py --output runs/search-v1/source-run -- \
+  python -m xqgeneral.search_distillation --checkpoint SFT_CHECKPOINT.pt \
+  --data data/research-human-engine-v1 \
+  --features data/research-human-engine-v1/features-16.pt \
+  --prepared-inputs data/search-inputs-v1 --limit 512 \
   --child-contract move_eval --output runs/search-v1/mining
 python -m xqgeneral.local_teacher --input runs/search-v1/mining/queries.jsonl \
   --output runs/search-v1/consolidation
@@ -111,6 +118,10 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
   --responses runs/search-v1/consolidation/responses.jsonl \
   --validation-data data/astra-explanations-full-v1 --output data/search-v1
 ```
+
+`search_inputs` 逐行读训练文件，保存每个完整历史的首份原记录，再按原搜索种子排序；可用 `--source-preflight COMPLETE_MANIFEST.json` 核对已完成预检中的训练文件身份。候选保留原始字段、棋局分割和已有颜色派生标记，不产生蒸馏标签。搜索入口支持上述完整候选池，核验数据、种子、输出哈希与源码合同后取前 `--limit` 条；省略候选池时仍逐行提取，选取顺序相同。旧搜索任务继续使用各自冻结源码；变动源码、数据或预算须使用新输出。
+
+现有课程训练集的完整提取已完成：2831004 条／约 17.96GB 生成 128682 个完整历史候选，包含已有 64341 个颜色派生历史。生产约 202 秒、峰值进程内存约 2.37GiB；独立入口重读全部训练行、重算 SHA256，逐字段匹配全部首记录和完整排序，检查缓存键／头部，并抽样复演 320 个原生历史。见 `evidence/search-inputs-human-engine-full-v1.json`。这份候选池只覆盖当前课程用过的局面；全部棋谱的理论容量与搜索筛选后的合格标签另行计数，后续还须从未用棋谱和学生对局扩大候选。新训练仍按四门 → 初始讲解 → 搜索蒸馏的顺序执行。
 
 搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。汇总教师接收实际使用的变化、逐步事实、原生记谱与核验结果；学生原始正文保留在轨迹中，未经语义保证的正文不传给汇总教师。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。根评分与子分析反号后的分支估计标明来源；中文记谱须紧邻对应坐标并通过原生规则核验。机械着法检查不能替代战略语义复核。后续挖掘逐次保存所有成功的自由和指定着法搜索，包括完整历史与原始引擎回答；旧轨迹缺失的回答仍按缺失记录。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
 

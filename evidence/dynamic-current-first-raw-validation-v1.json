@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "kind": "actual_second_course_first_raw_validation",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_qa_and_training_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_reader_revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+  "independent_readback": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/manifest.json",
+    "sha256": "a29f1b5011463a04ed8bf6c46818dfec1cb2286f8f4eb5939f9b6a8856fcd0df",
+    "bytes": 28361
+  },
+  "independent_readback_verification": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/verification.json",
+    "sha256": "a93f784fa38f8d10b2877d4f4ff4b1fa54f5acf4c0616e19aab5f576660a3abe",
+    "bytes": 3176
+  },
+  "independent_reader_entry": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/entry.py",
+    "sha256": "500622bd315f347c8d68b5d73a2b8c1244e69ca5dd4dd41d5394b9751149c6a3",
+    "bytes": 7701
+  },
+  "independent_reader_source_manifest": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/source-run/source-manifest.json",
+    "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+    "bytes": 6353
+  },
+  "reader_plan": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/plan.json",
+    "sha256": "43e85cf455d221de28c4269438bc7f04ce9168ecfcc1d7a560aa4abd6bf90671",
+    "bytes": 1004
+  },
+  "native_question_id_format_and_answer_readback": {
+    "path": "runs/dynamic-current-first-raw-validation-readback-v1/native-sample-readback.json",
+    "sha256": "14f5293aae48e1f275a0eaccbf15024d2e4467e84ac020f4f2f50afc30022c83",
+    "bytes": 361676
+  },
+  "original_first_course_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v2/static_current/candidates/step-5632/qa/predictions.jsonl",
+    "sha256": "38a41e5badef966ea5a0096646a0e8967adc947d25d3dfea7cd7293bfe872e01",
+    "bytes": 272854
+  },
+  "actual_second_course_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-512/qa/predictions.jsonl",
+    "sha256": "f9426c68481135cd9727caeb1a20edd229d9f52b970f13b48c9ab666705969e3",
+    "bytes": 511611
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "dynamic_current",
+    "actual_step": 512,
+    "raw_gate": {
+      "examples": 1408,
+      "accuracy": 0.7571022727272727,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.125
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.5703125
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.8671875
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 0.90625
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.140625
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.890625
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.9375
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.8984375
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.953125,
+          "minimum_task_accuracy": 0.890625,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.521875,
+          "minimum_task_accuracy": 0.125,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "native_answers_recomputed": 1408,
+    "distinct_native_histories_replayed": 1299,
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 5632,
+    "selected_parent_sha256": "56f596cbc3086bbcaf4022b64b8043936a4b9f764b221ec5b22b2e1159ae0173",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "second_course_validation_selection_minimum_steps": 4096,
+    "second_course_completed_by_this_check": false,
+    "clean_courses_completed_by_declared_policy_at_this_check": 1,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "static_sampling_comparison": {
+    "first_course_reference_step": 5632,
+    "second_course_observation_step": 512,
+    "first_course_static_questions": 768,
+    "second_course_static_questions": 768,
+    "common_original_static_record_ids": 13,
+    "common_ids_with_identical_question_text_and_variant": 3,
+    "static_question_set_identical": false,
+    "direct_paired_static_regression_claim_supported": false,
+    "reason": "balanced_rows uses one RNG across sorted task groups. Adding dynamic_current changes the RNG state before static_current sampling and the final shuffle; question variants also depend on shuffled task positions. The two aggregate static scores are different sampled evaluations."
+  },
+  "course_finished_by_this_interim_check": false,
+  "new_sft_or_distillation_training_completed": false,
+  "independent_test_used": false,
+  "oracle_predictions_repaired": false
+}
