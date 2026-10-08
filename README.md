@@ -58,6 +58,10 @@ python -m xqgeneral.evaluate_qa --checkpoint CHECKPOINT.pt \
 
 教师身份固定在 `configs/teachers.json`：初始标注为用户授权的 GPT-6-Astra Low 子代理；搜索汇总为本地官方 Qwen3.8-27B 完整权重，BF16、无量化。后者只做推理。
 
+当前初始讲解集为 10758 条训练、384 条验证和 512 条独立测试，已有 3363 条颜色派生项不能计为新增独立教师标注。原论文初始教师标注 15000 个局面，经走法筛选保留 8602 个，其中 8402 个训练、200 个验证，训练四轮；我们的四轮配方为 2690 次更新。数量相近不代表标签质量或覆盖相同。
+
+后续搜索蒸馏的规模更大：[论文附录 B.1—B.2](https://arxiv.org/html/2610.03695v1#A2) 每轮使用 21 万个人类对局局面、11.5 万个战术题及 6250 局学生与引擎对弈产生的约 5万—10万个局面，搜索筛选后得到约 15万—28.5万条训练样本，共七轮。现有六来源去重棋谱 107678 局，其中人类／公开实战训练候选 85530 局；按每局六个位置的宽松上限为 513180 个候选位置，不能计为已生成的蒸馏标签，也不足以保证七轮独立棋局容量。继续补充战术、残局及不同水平实战；首轮优先使用现有保留集隔离后的棋谱和真实学生对弈，先测有效搜索产出率，再扩充合格样本。轮数依据验证棋力、完整变化和讲解质量决定，重复问法或颜色镜像不增加独立局面容量。
+
 ```bash
 python -m xqgeneral.prepare_explanations --data data/research-v1 --output data/astra-seed-v1
 # 显式教师生成 annotations-*.jsonl 后，核对全部 ID、身份、结构与走法。
@@ -190,11 +194,20 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 原 `configs/selfplay-foundation-v3.json` 混合补训等待任务已在开始训练前保留并撤换。其 811684 条混合记录及 799424 条训练／验证编码的预检证据仍保留，不能覆盖新扩充数据。课程训练量复核见 `evidence/paper-foundation-volume-audit.json`：本地旧四门实际共 5750 步、92000 次样本呈现；论文配置上限为 240000 步、有效批量 256，且允许早停，不能当成全部实际完成步数或独立样本数。
 
-主线现在改为 `configs/foundation-human-engine-clean-v2.json`：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。解码器不再直接读取完整 FEN 或 90 格字典，棋盘状态通过专家特征进入桥接。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备；旧字典配方保留作对照。
+干净主线从 `configs/foundation-human-engine-clean-v2.json` 开始：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。解码器不再直接读取完整 FEN 或 90 格字典，棋盘状态通过专家特征进入桥接。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备；旧字典配方保留作对照。
+
+当前选模配方为 `configs/foundation-human-engine-clean-v3.json`，输出到新目录。它只导入上述干净第一门至第 7168 步的完整原始验收和冻结源码，不修改或恢复旧优化器；按总正确率、最弱题型、较早步数依次选择，继承第 5632 步的原始权重。每 512 步检查所有已引入题型；三次检查无改善时早停，各门至少执行 3072／4096／2048／6144 步以覆盖预热。步数上限、混合比例及训练率保留。早停次数、最少步数及排序方式是本地选择，不是论文公布的参数；99%／98%／98%／97% 与最弱题型 95% 保留为诊断。第一门原始结果为 97.9167%／94.5313%，旧通过字段仍为假；按最佳验证选择完成该门，不宣称达到原门槛。
+
+```bash
+python scripts/freeze_run.py --output runs/recorded-foundation-clean-launch-v2/source-run -- \
+  python -m xqgeneral.validation_curriculum --config configs/foundation-human-engine-clean-v3.json
+```
+
+相同冻结入口可加 `--resume` 恢复已完成课程和当前门的精确优化器合同；配置、源码或输入变动须使用新目录。`--prepare-only` 核验已完成／导入课程并准备下一门配置，不启动新的课程训练。课程交接重新核验完整候选历史、实际最佳权重、原始题目与答案、逐门父权重和全部四门完成状态；原始参考目标未达标的事实保留。新讲解／能力队列使用 `configs/explanation-sft-clean-v2.json` 和 `configs/evaluation-clean-sft-v2.json`，数据及预算不变，仍等待四门完成。
 
 旧 v4 继承旧四门权重，首门实际更新 210 步后按用户要求停止，未到首次问答验收；原数据、源码、特征和日志保留。其 1155116 条规则题的完整历史、未来隔离、特征及原生答案抽样已再次读回，见 `evidence/foundation-curriculum-v4-training-readback.json`。这些引擎来源题将与经过规则检查的多样真实棋谱合并，合并后重新预检，不改写旧实验输入。
 
-新训练使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。新增棋谱、全部未来分割、词元、特征及独立读回均已完成，第一门已开始更新，实际步数见 `runs/curriculum-human-engine-clean-v2/static_current/training/training.jsonl`。
+训练使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，每 512 步对已引入课程的每类题检查 128 条原回答和三种提问方式；实际步数按上述最佳验证早停策略决定。各门重置优化器并回放旧门数据，独立测试不选模。原第一门训练及验收保留在 `runs/curriculum-human-engine-clean-v2/static_current/`；新目录延续其干净起点与最佳权重。
 
 原始问答门槛是本项目另加的验收策略：四门总正确率分别为 99%／98%／98%／97%，各题型至少 95%，不是论文公布的早停规则，也未经过系统校准。[论文第 3.2 节及附录 A.2](https://arxiv.org/html/2610.03695v1) 说明按验证集早停并继承各阶段最佳检查点，没有公开这组门槛或逐题型通关线。表 10 的 99.97%／98.97%／99.97%／96.07% 是当前静态／当前动态／未来静态／未来动态的最终测试结果，不能当作预设验收线。当前实验配置与历次原始结果保留；如调整策略，须记录新合同与依据。
 
@@ -404,7 +417,7 @@ python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-
 ```bash
 python scripts/freeze_run.py --output runs/new-foundation-handoff/source-run -- \
   python -m xqgeneral.foundation_handoff \
-  --curriculum runs/curriculum-human-engine-clean-v2 \
+  --curriculum runs/curriculum-human-engine-clean-v3 \
   --output runs/new-foundation-handoff/selected
 ```
 
@@ -426,13 +439,13 @@ python scripts/freeze_run.py --output runs/new-clean-sft/source-run -- \
 `sft_pipeline` 将上述阶段顺序执行：先等待指定的现有课程进程写出四门完成清单，再导出最终权重；四卡完整解码器检查通过后才启动初始讲解训练。最长的实际 24 条训练／12 条验证标签用于连续四步和二加二续跑检查，测试答案不参与。预检验证完整 FP32 参数、Adam 状态、随机状态和逐步日志逐位一致，检查各参数组真实更新以及全部工作进程的显存记录。正式 SFT 完成后，还会读回所选完整解码器的实际参数和输入身份。它不自动重启课程；来源、配方或输入变动时停止并保留输出。长任务在 tmux 中使用以下冻结入口：
 
 ```bash
-python scripts/freeze_run.py --output runs/clean-sft-sequential-launch-v1/source-run -- \
+python scripts/freeze_run.py --output runs/clean-sft-sequential-launch-v2/source-run -- \
   python -u -m xqgeneral.sft_pipeline \
-  --curriculum runs/curriculum-human-engine-clean-v2 \
-  --producer-session xqgeneral-recorded-foundation-clean-v2 \
-  --recipe configs/explanation-sft-clean-v1.json \
+  --curriculum runs/curriculum-human-engine-clean-v3 \
+  --producer-session xqgeneral-recorded-foundation-clean-v3 \
+  --recipe configs/explanation-sft-clean-v2.json \
   --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json \
-  --output runs/clean-sft-sequential-launch-v1/pipeline
+  --output runs/clean-sft-sequential-launch-v2/pipeline
 ```
 
 检查 `pipeline/state.json`、各阶段的 `manifest.json` 和日志。仍存活的同一 tmux 任务继续观察；确认其已退出后，用同一冻结入口及原参数加 `--resume` 续跑，不能覆盖已有输出。单独执行预检可用 `python -m xqgeneral.sft_preflight --init HANDOFF/adapter.pt --recipe configs/explanation-sft-clean-v1.json --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json --output NEW_PREFLIGHT`。真实等待守卫见 `evidence/clean-sft-sequential-real-wait-guard-v1.json`；25 项新增受控 CPU 检查、全部 353 项测试通过。真实四卡完整解码器检查和新 SFT 尚未执行，当前能力进度以 `STATUS.md` 为准。
@@ -466,12 +479,12 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 新主线可将能力评测排在已启动的干净 SFT 队列后，在 tmux 中使用以下冻结入口：
 
 ```bash
-python scripts/freeze_run.py --output runs/clean-sft-capability-launch-v1/source-run -- \
+python scripts/freeze_run.py --output runs/clean-sft-capability-launch-v2/source-run -- \
   python -u -m xqgeneral.clean_sft_evaluation \
-  --pipeline runs/clean-sft-sequential-launch-v1/pipeline \
-  --producer-session xqgeneral-clean-sft-sequential-launch-v1 \
-  --config configs/evaluation-clean-sft-v1.json \
-  --output runs/clean-sft-capability-launch-v1/validation
+  --pipeline runs/clean-sft-sequential-launch-v2/pipeline \
+  --producer-session xqgeneral-clean-sft-sequential-launch-v2 \
+  --config configs/evaluation-clean-sft-v2.json \
+  --output runs/clean-sft-capability-launch-v2/validation
 ```
 
 该配方固定全部 384 条不同完整历史键的验证记录、批量 4 和每局面 100 万节点独立引擎预算；三组均保留原始生成，以正常、清零和错配专家特征进行配对比较。`evaluate_explanations --memory normal|zero|shuffled` 也可单独使用；每个错配批次须至少两条样本，不能用单条尾批充当消融。正常组全部接受有规则事实和独立评分依据的完整 BF16 教师盲评，原始拒收与条件均分分别保留；不把神经评分视为人工评价或棋力证明。

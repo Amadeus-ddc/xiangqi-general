@@ -68,13 +68,14 @@ def checked_parent(source_path, require_clean=False):
     if proof['status'] != 'complete' or digest(source_path) != proof['outputs'][str(source_path)]['sha256']:
         raise ValueError('SFT must initialize from a completed, hash-verified selected checkpoint')
     saved = json.loads((parent / 'config.json').read_text())
-    if proof.get('kind') == 'raw_qa_gated_foundation_handoff':
+    from .curriculum_selection import HANDOFF_KIND
+    if proof.get('kind') in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND):
         from .foundation_handoff import validate_sft_handoff
         if digest(parent / 'config.json') != proof['outputs'][str(parent / 'config.json')]['sha256']:
             raise ValueError('Completed foundation handoff configuration changed')
         validate_sft_handoff(proof, saved)
     if (require_clean and
-            proof.get('kind') != 'raw_qa_gated_foundation_handoff'):
+            proof.get('kind') not in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND)):
         raise ValueError('This SFT recipe requires the completed four-course clean foundation handoff')
     return saved
 
