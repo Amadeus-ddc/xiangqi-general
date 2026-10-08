@@ -121,7 +121,33 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
 
 `search_inputs` 逐行读训练文件，保存每个完整历史的首份原记录，再按原搜索种子排序；可用 `--source-preflight COMPLETE_MANIFEST.json` 核对已完成预检中的训练文件身份。候选保留原始字段、棋局分割和已有颜色派生标记，不产生蒸馏标签。搜索入口支持上述完整候选池，核验数据、种子、输出哈希与源码合同后取前 `--limit` 条；省略候选池时仍逐行提取，选取顺序相同。旧搜索任务继续使用各自冻结源码；变动源码、数据或预算须使用新输出。
 
-现有课程训练集的完整提取已完成：2831004 条／约 17.96GB 生成 128682 个完整历史候选，包含已有 64341 个颜色派生历史。生产约 202 秒、峰值进程内存约 2.37GiB；独立入口重读全部训练行、重算 SHA256，逐字段匹配全部首记录和完整排序，检查缓存键／头部，并抽样复演 320 个原生历史。见 `evidence/search-inputs-human-engine-full-v1.json`。这份候选池只覆盖当前课程用过的局面；全部棋谱的理论容量与搜索筛选后的合格标签另行计数，后续还须从未用棋谱和学生对局扩大候选。新训练仍按四门 → 初始讲解 → 搜索蒸馏的顺序执行。
+现有课程训练集的完整提取已完成：2831004 条／约 17.96GB 生成 128682 个完整历史候选，包含已有 64341 个颜色派生历史。生产约 202 秒、峰值进程内存约 2.37GiB；独立入口重读全部训练行、重算 SHA256，逐字段匹配全部首记录和完整排序，检查缓存键／头部，并抽样复演 320 个原生历史。见 `evidence/search-inputs-human-engine-full-v1.json`。这份候选池只覆盖当前课程用过的局面；未用棋谱的新增候选见下段，学生对局和搜索筛选后的合格标签另行计数。新训练仍按四门 → 初始讲解 → 搜索蒸馏的顺序执行。
+
+已有棋谱可通过 `recorded_search_inputs` 扩充：使用完成原生导入的目录、完成的课程／旧讲解足迹、现有候选和当前讲解集，每局最多取六个不同原始历史，交替检查早／中／晚阶段。排除已用棋局及历史、全部来源的保留棋局历史，以及课程／讲解的根和未来变化及颜色对应位置。保留原来源与缺失字段，不生成镜像、神经讲解或最佳走法标签。SQLite 暂存排序，完整候选按种子与历史键稳定排序；搜索入口的 `--recorded-inputs` 会核验完整产物、输入和分割，并把附加保留位置用于全部递归分支。它与 `--prepared-inputs` 互斥。
+
+```bash
+python scripts/freeze_run.py --output runs/recorded-search-inputs-v1/source-run -- \
+  python -m xqgeneral.recorded_search_inputs \
+  --games data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+          data/recorded-games-additional-v1 data/modern-recorded-games-v2 \
+          data/playstrategy-portable-real-import-v1-parallel \
+          data/playstrategy-public-users-native-import-v1 \
+  --data data/research-human-engine-v1 \
+  --footprints runs/recorded-coach-portable-footprints-v1/footprints/manifest.json \
+  --used-inputs data/search-inputs-human-engine-full-v1 \
+  --heldout-data data/astra-explanations-clean-v1 \
+  --output data/recorded-search-inputs-v1 --per-game 6 --workers 8
+python scripts/freeze_run.py --output runs/recorded-search-v1/source-run -- \
+  python -m xqgeneral.search_distillation --checkpoint SFT_CHECKPOINT.pt \
+  --data data/research-human-engine-v1 \
+  --features data/research-human-engine-v1/features-16.pt \
+  --recorded-inputs data/recorded-search-inputs-v1 --limit 512 \
+  --child-contract move_eval --output runs/recorded-search-v1/mining
+```
+
+新历史可由固定专家现场计算与训练缓存精度一致的特征；合格蒸馏数据仍需另行构建训练缓存。已有完整原生导入用于准备阶段，新增候选的实际搜索继续核验历史与终局。保留集答案只用于未来隔离，不用于训练、选模或测试成绩；原棋谱主线用于保留未来范围，不保证人类着法最优。
+
+全量新增候选已完成：六个原生导入来源中，80117 盘未用训练棋局提供 478650 个原始历史，未新增镜像。来源声明为人类实战 87544、公开实战 387678、人机 3428；红／黑为 240740／237910，早／中／晚为 103461／179575／195614。全部候选逐字段对照原棋谱并排除 2715684 个保留位置，另抽样复演 192 个完整历史及未来。正式读取入口实际读取 512 条，检查完整候选尾部，并重新计算三份课程文件的 SHA256。见 `evidence/unused-recorded-search-inputs-full-v2.json`。生产耗时约 561 秒、峰值进程内存约 1.07GiB；首次因平台棋谱缺少可选来源说明而失败的记录保留，修正后使用新目录。全部 431 项 CPU 测试通过。棋手身份与来源声明未经认证，原生全量导入证明沿用已有产物；这仍是候选池，没有新增合格标签、有效产出率或模型收益。
 
 搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。汇总教师接收实际使用的变化、逐步事实、原生记谱与核验结果；学生原始正文保留在轨迹中，未经语义保证的正文不传给汇总教师。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。根评分与子分析反号后的分支估计标明来源；中文记谱须紧邻对应坐标并通过原生规则核验。机械着法检查不能替代战略语义复核。后续挖掘逐次保存所有成功的自由和指定着法搜索，包括完整历史与原始引擎回答；旧轨迹缺失的回答仍按缺失记录。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
 

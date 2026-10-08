@@ -303,7 +303,9 @@ def main():
     parser.add_argument('--checkpoint', required=True)
     parser.add_argument('--data', default='data/research-balanced-v1')
     parser.add_argument('--features', default='data/research-balanced-v1/features-16.pt')
-    parser.add_argument('--prepared-inputs', help='Completed search_inputs directory bound to this data and seed')
+    pools = parser.add_mutually_exclusive_group()
+    pools.add_argument('--prepared-inputs', help='Completed search_inputs directory bound to this data and seed')
+    pools.add_argument('--recorded-inputs', help='Completed unused canonical-game roots and held-out positions')
     parser.add_argument('--output', required=True)
     parser.add_argument('--limit', type=int, default=512)
     parser.add_argument('--nodes', type=int, default=100000)
@@ -323,6 +325,9 @@ def main():
                    *[Path(args.data) / f'{s}.jsonl' for s in ['train', 'validation', 'test']]]
     if args.prepared_inputs:
         input_paths.extend(Path(args.prepared_inputs) / name for name in ['manifest.json', 'roots.jsonl', 'counts.json'])
+    if args.recorded_inputs:
+        from .recorded_search_inputs import ARTIFACTS, prepared_roots
+        input_paths.extend(Path(args.recorded_inputs) / name for name in ARTIFACTS)
     contract = {'arguments': vars(args), 'input_hashes': {str(p): digest(p) for p in input_paths},
                 'code': code_identity()}
     root.mkdir(parents=True, exist_ok=True)
@@ -331,7 +336,15 @@ def main():
             raise ValueError('Search continuation inputs, arguments or execution source changed')
     else:
         atomic_json(root / 'contract.json', contract)
-    if args.prepared_inputs:
+    additional_reserved = set()
+    if args.recorded_inputs:
+        base_identities = {str(Path(args.data) / f'{s}.jsonl'): {
+            'sha256': contract['input_hashes'][str(Path(args.data) / f'{s}.jsonl')],
+            'bytes': (Path(args.data) / f'{s}.jsonl').stat().st_size}
+            for s in ['train', 'validation', 'test']}
+        records, additional_reserved = prepared_roots(args.recorded_inputs, args.data,
+            args.limit, args.seed, base_identities)
+    elif args.prepared_inputs:
         train = Path(args.data) / 'train.jsonl'
         records = prepared_training_roots(args.prepared_inputs, args.data, args.limit, args.seed,
             {'sha256': contract['input_hashes'][str(train)], 'bytes': train.stat().st_size})
@@ -353,7 +366,8 @@ def main():
                 oracle_handle.write(json.dumps(item, ensure_ascii=False) + '\n')
                 oracle_handle.flush()
 
-            miner = SearchMiner(predictor, oracle, reserved_positions(args.data), args.nodes, args.max_depth,
+            miner = SearchMiner(predictor, oracle, reserved_positions(args.data) | additional_reserved,
+                                args.nodes, args.max_depth,
                                 child_contract=args.child_contract, record_oracle_query=record_oracle_query)
             for row in records:
                 if row['id'] in seen:
@@ -384,6 +398,9 @@ def main():
              'raw_child_reachable_prefixes_isolated': True,
              'all_inferred_target_lines_history_validated': True,
              'unused_child_fields_passed_to_consolidator': args.child_contract == 'full'}
+    if args.recorded_inputs:
+        proof.update(unused_recorded_training_inputs=True,
+                     additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', vars(args), input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
