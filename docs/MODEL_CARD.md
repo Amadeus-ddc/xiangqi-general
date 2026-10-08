@@ -969,6 +969,15 @@ and full preflight, without another complete cache hash by this reader. See
 continues the first course; mastered new courses and trained search-distillation
 rounds remain zero, with no new explanation SFT or general coaching claim.
 
+The raw QA thresholds are a local project policy, not reported paper stopping
+criteria: course aggregate targets are 99%/98%/98%/97%, with at least 95% for
+each task. These numeric thresholds have not been systematically calibrated.
+[Paper section 3.2 and appendix A.2](https://arxiv.org/html/2610.03695v1)
+specify validation-based early stopping and transfer of each stage's best
+checkpoint, without publishing these thresholds or task-level stopping rules.
+Table 10 contains final test outcomes, rather than advance criteria. The active
+experiment configuration and all previously reported raw gates are preserved.
+
 The eighth raw first-course gate at step 4096 has been independently read back:
 713/768 correct (92.8%), with rank recognition 82.8%. Relative to step 3584,
 43 errors were corrected and 25 correct answers became wrong, a net gain of 18.
@@ -1044,3 +1053,23 @@ CPU tests pass. No model weights are loaded by data preflight, current foundatio
 inputs are unchanged, and all four new raw course gates are still required
 before explanation SFT. These checks establish prepared data, with no new
 semantic review, student training or measured coaching gain.
+
+The foundation-to-SFT handoff verifies a completed, ordered four-course raw-gated
+curriculum with clean initialization, each inherited candidate, actual update
+counts and immutable artifact identities. It recomputes all four raw validation
+gates and the sampled native past/future histories and gold answers. Each
+distinct declared large input is freshly hashed once, with file identity checked
+through verification. Only validation answers are read. Every selected
+checkpoint must contain the complete bridge and both board-token matrices with
+the exact architecture, finite FP32 values and preserved execution/input metadata.
+
+The exporter creates a byte-identical hard link to the final candidate plus its
+configuration and completed manifest. SFT validates the handoff and rejects
+changed configuration or architecture overrides before loading a model. The
+31 new CPU cases exercise controlled four-course artifact integration and
+failure handling; all 303 CPU tests pass. These fixtures are not actual trained
+four-course models. The real step-4608 first-course candidate separately passes
+the complete 258-tensor / 139920416-parameter finite FP32 shape check, while its
+incomplete real curriculum is rejected without creating an export directory.
+See `evidence/foundation-handoff-real-partial-guard-v1.json`. A real completed
+four-course export, new SFT and any resulting coaching benefit remain unexecuted.
