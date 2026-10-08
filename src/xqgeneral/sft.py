@@ -58,15 +58,11 @@ def training_command(config, config_path, resume=None):
     return command
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--recipe', default='configs/explanation-sft.json')
-    parser.add_argument('--init', required=True)
-    parser.add_argument('--output', required=True)
-    parser.add_argument('--prepare-only', action='store_true',
-                        help='Verify the completed parent and write the exact training config without launching workers')
-    args = parser.parse_args()
-    source_path = Path(args.init)
+def checked_parent(source_path, require_clean=False):
+    """Read the selected parent through the same guard for CLI and preflight."""
+    if type(require_clean) is not bool:
+        raise ValueError('Clean foundation handoff requirement must be a boolean')
+    source_path = Path(source_path)
     parent = source_path.parent
     proof = json.loads((parent / 'manifest.json').read_text())
     if proof['status'] != 'complete' or digest(source_path) != proof['outputs'][str(source_path)]['sha256']:
@@ -77,10 +73,23 @@ def main():
         if digest(parent / 'config.json') != proof['outputs'][str(parent / 'config.json')]['sha256']:
             raise ValueError('Completed foundation handoff configuration changed')
         validate_sft_handoff(proof, saved)
-    recipe = json.loads(Path(args.recipe).read_text())
-    if (recipe.get('require_clean_foundation_handoff') is True and
+    if (require_clean and
             proof.get('kind') != 'raw_qa_gated_foundation_handoff'):
         raise ValueError('This SFT recipe requires the completed four-course clean foundation handoff')
+    return saved
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipe', default='configs/explanation-sft.json')
+    parser.add_argument('--init', required=True)
+    parser.add_argument('--output', required=True)
+    parser.add_argument('--prepare-only', action='store_true',
+                        help='Verify the completed parent and write the exact training config without launching workers')
+    args = parser.parse_args()
+    recipe = json.loads(Path(args.recipe).read_text())
+    source_path = Path(args.init)
+    saved = checked_parent(source_path, recipe.get('require_clean_foundation_handoff', False))
     config = prepare_config(saved, recipe, source_path, args.output)
     root = Path(args.output)
     if (root / 'metrics.json').exists():

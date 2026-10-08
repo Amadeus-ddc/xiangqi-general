@@ -138,6 +138,21 @@ def initialize_trainable(model, checkpoint, config):
             parameters[name].copy_(value)
 
 
+def expanded_initialization_reference(config, source_path):
+    """Build the complete CPU initial state for a guarded full-decoder probe."""
+    if config.get('decoder_training') != 'full' or config.get('trainable_parameter_dtype') != 'float32':
+        raise ValueError('The full-decoder reference requires FP32 trainable parameters')
+    source = torch.load(source_path, map_location='cpu', weights_only=True, mmap=True)
+    model, _ = load_model(config, device='cpu')
+    initialize_trainable(model, source, config)
+    state = trainable_state(model)
+    if (len(state) <= len(source['trainable']) or
+            any(t.dtype != torch.float32 or not torch.isfinite(t).all() for t in state.values()) or
+            any(name not in state or not torch.equal(t, state[name]) for name, t in source['trainable'].items())):
+        raise ValueError('Expanded decoder reference must preserve every foundation tensor exactly')
+    return state
+
+
 def load_checkpoint(path, device='cuda'):
     checkpoint = torch.load(Path(path), map_location='cpu', weights_only=True)
     model, tokenizer = load_model(checkpoint['config'], device=device)

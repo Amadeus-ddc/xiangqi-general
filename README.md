@@ -423,6 +423,20 @@ python scripts/freeze_run.py --output runs/new-clean-sft/source-run -- \
 
 `--prepare-only` 保留相同父模型守卫，写入正式配置而不启动训练；变动的已准备配置不能覆盖。完成所需四卡 GPU 检查后，在 tmux 中用同一冻结源码、同一输出去掉该选项启动。SFT 控制器按 `ddp_world_size` 启动对应进程数，单卡仍直接调用训练入口；完整优化器续跑指向同一 `latest.pt`。25 项新增 CPU 检查覆盖配置准备、单／多卡启动、续跑及旧父模型拒收，全套 328 项 CPU 测试通过，未执行 GPU 模型训练。独立第二入口另核验预算预检及第十次原始验收的 36 份声明产物、61／60 份实际冻结源码和公开证据原字节，并重新计数实际训练项与更新预算。
 
+`sft_pipeline` 将上述阶段顺序执行：先等待指定的现有课程进程写出四门完成清单，再导出最终权重；四卡完整解码器检查通过后才启动初始讲解训练。最长的实际 24 条训练／12 条验证标签用于连续四步和二加二续跑检查，测试答案不参与。预检验证完整 FP32 参数、Adam 状态、随机状态和逐步日志逐位一致，检查各参数组真实更新以及全部工作进程的显存记录。正式 SFT 完成后，还会读回所选完整解码器的实际参数和输入身份。它不自动重启课程；来源、配方或输入变动时停止并保留输出。长任务在 tmux 中使用以下冻结入口：
+
+```bash
+python scripts/freeze_run.py --output runs/clean-sft-sequential-launch-v1/source-run -- \
+  python -u -m xqgeneral.sft_pipeline \
+  --curriculum runs/curriculum-human-engine-clean-v2 \
+  --producer-session xqgeneral-recorded-foundation-clean-v2 \
+  --recipe configs/explanation-sft-clean-v1.json \
+  --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json \
+  --output runs/clean-sft-sequential-launch-v1/pipeline
+```
+
+检查 `pipeline/state.json`、各阶段的 `manifest.json` 和日志。仍存活的同一 tmux 任务继续观察；确认其已退出后，用同一冻结入口及原参数加 `--resume` 续跑，不能覆盖已有输出。单独执行预检可用 `python -m xqgeneral.sft_preflight --init HANDOFF/adapter.pt --recipe configs/explanation-sft-clean-v1.json --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json --output NEW_PREFLIGHT`。真实等待守卫见 `evidence/clean-sft-sequential-real-wait-guard-v1.json`；25 项新增受控 CPU 检查、全部 353 项测试通过。真实四卡完整解码器检查和新 SFT 尚未执行，当前能力进度以 `STATUS.md` 为准。
+
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
 `configs/explanation-sft-v4.json` 从完成四门课程的正式走法检查点开始，单独以 15% 比例采样 384 条全量交叉复核的实战原始讲解，并保留 20% 走法、10% 多步规划及 5% 基础问答。其余 50% 使用原讲解集；实战重采样池只改变 `stage`，保留题目、答案、分割和完整历史。该自适应实验同时改变初始化、数据和回放。实际训练与五候选选模均已完成：9216 步，按原始能力选第 9216 步，NLL 第 6144 步另存；实际权重及十五份原始评测已独立读回。完整主线仅 23/96 合法、完整讲解合同仅 8/96 通过，仍未达到可靠教学要求，见 `evidence/explanation-v4-functional-selection-readback.json`。`configs/move-planning-v2.json` 使用同一规划课程与预算，从正式四门课程走法检查点初始化，与第二门课程后的 v1 分别保存。 两个规划训练与最终选模已完成并读回；v1 选择第 10000 步，v2 选择第 11500 步，完整规划合同分别为 33/96 和 37/96，见 `evidence/move-planning-completed-readback-v1.json`。这些指标不证明完整棋力或可靠正文。
