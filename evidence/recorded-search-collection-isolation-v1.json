@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "kind": "actual_search_collection_recorded_ownership_and_isolation_guard",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_collection_execution_revision": "3a4328b5edbcf44f96d8385618edf871e51889d5",
+  "artifacts": {
+    "actual_manifest": {
+      "path": "runs/recorded-search-collection-real-readback-v2/manifest.json",
+      "sha256": "3d43f0ba5d708657e1272e5546ac5a40aea3594f0541738d5c8ab576995085f9",
+      "bytes": 11761
+    },
+    "actual_verification": {
+      "path": "runs/recorded-search-collection-real-readback-v2/verification.json",
+      "sha256": "b7e90ffc7dc3765093f821d4a1c0568e5175ce549f76c0af047433d83b3539c6",
+      "bytes": 718
+    },
+    "actual_entry": {
+      "path": "runs/recorded-search-collection-real-readback-v2/entry.py",
+      "sha256": "a679986f9d3866f30c372c6a9e7c9472329be1eecbde12b56e70d7e4ab56dde5",
+      "bytes": 4551
+    },
+    "actual_plan": {
+      "path": "runs/recorded-search-collection-real-readback-v2/plan.json",
+      "sha256": "224af4b29a266d2ec36f700b76fd9488696384e934f2b69c16bd1d9355ec3401",
+      "bytes": 1153
+    },
+    "actual_source_manifest": {
+      "path": "runs/recorded-search-collection-real-readback-v2/source-run/source-manifest.json",
+      "sha256": "f9a4a0aba3f778cd5d7b330ccd0304a7df01340ecce35be41c3c23af7d5820a4",
+      "bytes": 6546
+    },
+    "actual_exit": {
+      "path": "runs/recorded-search-collection-real-readback-v2/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "historical_collected_manifest": {
+      "path": "runs/recorded-search-collection-real-readback-v2/historical-collection/manifest.json",
+      "sha256": "319e813404ddebb8dc2dd06d790f9bd3984d571267d463843f493da5d5cd5e43",
+      "bytes": 11590
+    },
+    "historical_collected_train": {
+      "path": "runs/recorded-search-collection-real-readback-v2/historical-collection/train.jsonl",
+      "sha256": "9fa47a6aea2c4d41eeeda4f05cacdd74ab537cfb12a11b556498113906ec592a",
+      "bytes": 9513
+    },
+    "historical_collected_validation": {
+      "path": "runs/recorded-search-collection-real-readback-v2/historical-collection/validation.jsonl",
+      "sha256": "6bc233bfb465c88b311bb4b4e6aa7b2939e61d0e2f5f1c6740348dddd8794911",
+      "bytes": 1047580
+    },
+    "historical_collected_test": {
+      "path": "runs/recorded-search-collection-real-readback-v2/historical-collection/test.jsonl",
+      "sha256": "b11fc17a7cfa5d4fed41d28d4f3da556731ee6ddc641e21954b098daf55fa66f",
+      "bytes": 1416134
+    },
+    "actual_wrong_pool_rejection": {
+      "path": "runs/recorded-search-collection-real-readback-v2/refused-old-miner.log",
+      "sha256": "7547fb017c2676f1ebb2efb3bc63c5936098b326ee821791135cc11a5a204064",
+      "bytes": 983
+    }
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 116.54958286881447,
+    "retained_historical_real_bf16_response_recollected": true,
+    "historical_training_rows_field_identical": 1,
+    "historical_validation_and_test_bytes_preserved": true,
+    "actual_legacy_miner_refused_as_new_recorded_pool": true,
+    "mismatched_recorded_output_created": false,
+    "student_or_teacher_or_engine_inference_executed": false,
+    "current_clean_model_search_labels_generated": 0,
+    "current_clean_model_search_rounds_trained": 0,
+    "full_new_recorded_mining_and_collection_executed": false,
+    "additional_heldout_branch_rejection_proven_by_controlled_cpu_tests": true,
+    "student_benefit_proven": false
+  },
+  "all_69_actual_collection_source_files_rehashed": true,
+  "local_cpu_tests": {
+    "passed": 447,
+    "new_checks": 16,
+    "source_and_test_files_unchanged_before_and_after": 120,
+    "bindings": {
+      "path": "runs/recorded-search-collection-milestone-tests-v3/source-test-bindings.json",
+      "sha256": "18ede05456703b8fc650eab63a19d1b6cd476c0ae5db97973dc159d1028c59a1",
+      "bytes": 12454
+    },
+    "exit_record": {
+      "path": "runs/recorded-search-collection-milestone-tests-v3/exit.json",
+      "sha256": "b1427e317784c24766ed06ad20c48f0c5f0a464c263fe8056f62e06e203bee4a",
+      "bytes": 96
+    },
+    "runner": {
+      "path": "runs/recorded-search-collection-milestone-tests-v3/runner.py",
+      "sha256": "84458ee8b098cabc6f89eb33a4dcde373640ea4567f3943013e08ddecdf848ce",
+      "bytes": 757
+    },
+    "log": {
+      "path": "runs/recorded-search-collection-milestone-tests-v3/log.txt",
+      "sha256": "d353c67d03a22ab393a5ff05f26ec7bf10a9f8a586f06cd1a7f159957c5b6d1c",
+      "bytes": 592
+    }
+  },
+  "controlled_acceptance_cases": [
+    "original selected native training root",
+    "native recursive descendant",
+    "complete recorded reservations automatically inherited",
+    "byte identical heldout copies accepted and exported unchanged"
+  ],
+  "controlled_rejection_cases": [
+    "alternate branch whose color counterpart is held out",
+    "incomplete mining isolation contract",
+    "query hash or coverage changes",
+    "missing pool binding or changed seed/base",
+    "unselected root or false history cache key",
+    "explicit pool without completed miner proof",
+    "tagged recorded queries without explicit flags and missing or unrelated miner metadata",
+    "changed validation or test labels"
+  ],
+  "preserved_earlier_checks": {
+    "initial_fixture_failure": {
+      "path": "runs/recorded-search-collection-development-checks-v1/focused-exit.json",
+      "sha256": "5cc319f54b05a38799195a491c303aa686eab7caccfdbbf1e8b8c07405cb7392",
+      "bytes": 17
+    },
+    "setup_failure_before_any_test_job": {
+      "path": "runs/recorded-search-collection-milestone-tests-v1/exit.json",
+      "sha256": "d4f5cb4e5e33b8e8050ac70d956f86f5962ec6932ff1728f999b09dbeca7dff7",
+      "bytes": 153
+    },
+    "earlier_445_test_pass": {
+      "path": "runs/recorded-search-collection-milestone-tests-v2/exit.json",
+      "sha256": "34e89670ecb3618d580d91bf4f01693203fe66ebbd67b2031108853b523e0c57",
+      "bytes": 95
+    },
+    "earlier_actual_code_compatibility_pass": {
+      "path": "runs/recorded-search-collection-real-readback-v1/manifest.json",
+      "sha256": "975f5695dc6bef5c640407e39730c41b7e14c81bf8d19b3ee683095686de6279",
+      "bytes": 11761
+    }
+  },
+  "scope_limits": {
+    "actual_recollection_uses_a_preserved_historical_teacher_response": true,
+    "historical_recollection_is_not_a_new_clean_model_distillation_label": true,
+    "full_new_recorded_student_mining_and_teacher_collection_executed": false,
+    "new_student_teacher_or_engine_inference_executed": false,
+    "full_additional_reservation_acceptance_with_current_clean_model_proven": false,
+    "additional_branch_rejection_and_source_ownership_exercised_with_controlled_contracts": true,
+    "current_clean_model_search_labels_generated": 0,
+    "current_clean_model_search_rounds_trained": 0,
+    "all_strategic_prose_semantics_proven": false,
+    "student_benefit_proven": false,
+    "live_curriculum_or_initial_sft_inputs_changed": false
+  }
+}

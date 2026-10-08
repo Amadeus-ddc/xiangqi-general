@@ -143,9 +143,21 @@ python scripts/freeze_run.py --output runs/recorded-search-v1/source-run -- \
   --features data/research-human-engine-v1/features-16.pt \
   --recorded-inputs data/recorded-search-inputs-v1 --limit 512 \
   --child-contract move_eval --output runs/recorded-search-v1/mining
+python scripts/freeze_run.py --output runs/recorded-consolidation-v1/source-run -- \
+  python -m xqgeneral.local_teacher --input runs/recorded-search-v1/mining/queries.jsonl \
+  --output runs/recorded-consolidation-v1
+python scripts/freeze_run.py --output runs/recorded-collection-v1/source-run -- \
+  python -m xqgeneral.collect_search --queries runs/recorded-search-v1/mining/queries.jsonl \
+  --responses runs/recorded-consolidation-v1/responses.jsonl \
+  --mining-manifest runs/recorded-search-v1/mining/manifest.json \
+  --recorded-inputs data/recorded-search-inputs-v1 \
+  --heldout-data data/research-human-engine-v1 \
+  --validation-data data/astra-explanations-clean-v1 --output data/recorded-distillation-v1
 ```
 
 新历史可由固定专家现场计算与训练缓存精度一致的特征；合格蒸馏数据仍需另行构建训练缓存。已有完整原生导入用于准备阶段，新增候选的实际搜索继续核验历史与终局。保留集答案只用于未来隔离，不用于训练、选模或测试成绩；原棋谱主线用于保留未来范围，不保证人类着法最优。
+
+最终 `collect_search` 也会检查完整隔离范围：自动识别查询同目录的搜索清单，或使用显式 `--mining-manifest`。新棋谱模式要求已完成的真实搜索清单，核对查询原字节、候选池、三份课程文件和原选中根及其递归后代，再检查全部讲解主线和备选分支。额外保留范围用于最终收取，不只用于搜索。验证／测试标签必须与候选准备时的保留文件字节相同，输出直接复制原文件；来源不完整或不匹配时拒收。收取不会重新执行学生搜索或教师推理。
 
 全量新增候选已完成：六个原生导入来源中，80117 盘未用训练棋局提供 478650 个原始历史，未新增镜像。来源声明为人类实战 87544、公开实战 387678、人机 3428；红／黑为 240740／237910，早／中／晚为 103461／179575／195614。全部候选逐字段对照原棋谱并排除 2715684 个保留位置，另抽样复演 192 个完整历史及未来。正式读取入口实际读取 512 条，检查完整候选尾部，并重新计算三份课程文件的 SHA256。见 `evidence/unused-recorded-search-inputs-full-v2.json`。生产耗时约 561 秒、峰值进程内存约 1.07GiB；首次因平台棋谱缺少可选来源说明而失败的记录保留，修正后使用新目录。全部 431 项 CPU 测试通过。棋手身份与来源声明未经认证，原生全量导入证明沿用已有产物；这仍是候选池，没有新增合格标签、有效产出率或模型收益。
 

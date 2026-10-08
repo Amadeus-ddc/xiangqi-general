@@ -1323,3 +1323,29 @@ attempt retained and corrected execution in a fresh directory. All 431 CPU tests
 pass against 120 unchanged source and test bindings. This increases the measured
 candidate pool, not accepted distillation labels: new student search,
 consolidation, acceptance yield, trained rounds and model benefit remain unmeasured.
+
+The step-1536 second-course check uses exactly the same 1408 questions as step
+1024. Dynamic accuracy is 468/640 (73.125%), with 58 corrected answers and 16 new
+errors. Captures reach 68/128 and move lists 38/128; legal-move judgments fall
+from 128/128 to 126/128. Static replay remains 739/768, with seven corrections and
+seven new errors. `evidence/dynamic-current-third-raw-validation-v1.json` binds
+independent native answers, all three checkpoint contracts and the actual
+67-file training/QA source. The minimum of 4096 updates is not yet reached; one
+clean course is complete and these results do not establish playing strength.
+
+Final search-label collection now inherits the recorded miner's complete heldout
+reservations. It requires a completed matching miner, byte-bound queries and pool,
+fresh base-data identities, and native ownership of selected roots or recursive
+descendants. Tagged recorded queries cannot fall back to legacy collection when
+miner metadata or explicit flags are missing. All target lines and alternatives
+are checked against the additional reservations; original validation/test bytes
+are required and copied unchanged.
+
+`evidence/recorded-search-collection-isolation-v1.json` records 16 new controlled
+checks and 447 passing CPU tests with 120 unchanged source/test bindings. An actual
+CPU run recollects one preserved historical BF16 teacher response with identical
+label fields and original heldout bytes, and rejects the actual old miner as the
+new recorded pool. All 69 execution source files are rehashed. This performs no
+new student, teacher or engine inference; the historical compatibility row is
+not a new clean-model distillation label. Full current-model recorded mining,
+collection yield, strategic prose correctness and student benefit remain unproven.
