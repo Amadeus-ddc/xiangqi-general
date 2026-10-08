@@ -77,10 +77,10 @@ def raw_qa_gate(records, stages, targets, per_task):
                 validation_only=True, raw_generation=True, oracle_used=False)
 
 
-def read_gate(output, checkpoint, stages, gates, data_path=None, feature_path=None):
-    output = Path(output)
-    proof = json.loads((output / 'manifest.json').read_text())
-    config, metrics = proof['config'], json.loads((output / 'metrics.json').read_text())
+def raw_gate_from_artifacts(proof, metrics, records, checkpoint, stages, gates,
+                            data_path=None, feature_path=None, validation_rows=None):
+    """Recompute a raw gate from artifacts whose freshness is checked by the caller."""
+    config = proof['config']
     if (proof['status'] != 'complete' or config['checkpoint'] != str(checkpoint) or
             config['split'] != 'validation' or config['memory'] != 'normal' or config['stages'] != list(stages) or
             config['per_task'] != gates['per_task'] or config['question_formats'] != gates['question_formats'] or
@@ -90,12 +90,9 @@ def read_gate(output, checkpoint, stages, gates, data_path=None, feature_path=No
     if ((data_path is not None and config['data'] != data_path) or
             (feature_path is not None and config['features'] != feature_path)):
         raise ValueError('Raw validation must use the configured dataset and feature cache')
-    for path, item in {**proof['inputs'], **proof['outputs']}.items():
-        if digest(path) != item['sha256']:
-            raise ValueError(f'Changed raw validation evidence: {path}')
-    records = load_jsonl(output / 'predictions.jsonl')
     if data_path is not None:
-        expected = balanced_rows(load_jsonl(Path(data_path) / 'validation.jsonl'),
+        rows = validation_rows if validation_rows is not None else load_jsonl(Path(data_path) / 'validation.jsonl')
+        expected = balanced_rows(rows,
                                  gates['per_task'], gates['seed'], stages)
         counts = Counter()
         if len(expected) != len(records):
@@ -113,6 +110,16 @@ def read_gate(output, checkpoint, stages, gates, data_path=None, feature_path=No
     if metrics['by_task'] != result['by_task'] or metrics['accuracy'] != result['accuracy']:
         raise ValueError('Raw predictions disagree with the evaluation summary')
     return result
+
+
+def read_gate(output, checkpoint, stages, gates, data_path=None, feature_path=None):
+    output = Path(output)
+    proof = json.loads((output / 'manifest.json').read_text())
+    for path, item in {**proof['inputs'], **proof['outputs']}.items():
+        if digest(path) != item['sha256']:
+            raise ValueError(f'Changed raw validation evidence: {path}')
+    return raw_gate_from_artifacts(proof, json.loads((output / 'metrics.json').read_text()),
+        load_jsonl(output / 'predictions.jsonl'), checkpoint, stages, gates, data_path, feature_path)
 
 
 def training_config(recipe, index, root, parent):

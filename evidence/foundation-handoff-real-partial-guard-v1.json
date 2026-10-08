@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_first_course_checkpoint_step": 4608,
+  "actual_full_curriculum_manifest_absent": true,
+  "incomplete_curriculum_export_rejected": true,
+  "refused_export_directory_created": false,
+  "first_course_checkpoint_sha256": "01a3c2590fd5b14bef105fa6a464260d6ed827bec7bad1e57edebe0523f23f59",
+  "trainable_tensors": 258,
+  "trainable_parameters": 139920416,
+  "all_bridge_and_board_shapes_checked": true,
+  "all_trainable_values_finite_fp32": true,
+  "base_model_weights_loaded": false,
+  "new_sft_started": false,
+  "new_courses_mastered_by_this_check": 0,
+  "strong_play_or_coaching_gain_measured": false,
+  "manifest_sha256": "113ef076a117dcfd21f99df849b6614e9c2c7c172dbf710bd7afee5a95d8b8ae"
+}

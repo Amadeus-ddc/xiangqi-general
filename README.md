@@ -196,6 +196,8 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 新训练使用四卡全局 256／微批量 4，四门上限 50000／60000／30000／100000 步，实际步数由原始问答验收决定。每 512 步对已引入课程的每类题检查 128 条原回答、三种提问方式、总正确率及最差题型；未达标不得进入下一门。训练中重置各门优化器，回放旧门数据；独立测试不选模。新增棋谱、全部未来分割、词元、特征及独立读回均已完成，第一门已开始更新，实际步数见 `runs/curriculum-human-engine-clean-v2/static_current/training/training.jsonl`。
 
+原始问答门槛是本项目另加的验收策略：四门总正确率分别为 99%／98%／98%／97%，各题型至少 95%，不是论文公布的早停规则，也未经过系统校准。[论文第 3.2 节及附录 A.2](https://arxiv.org/html/2610.03695v1) 说明按验证集早停并继承各阶段最佳检查点，没有公开这组门槛或逐题型通关线。表 10 的 99.97%／98.97%／99.97%／96.07% 是当前静态／当前动态／未来静态／未来动态的最终测试结果，不能当作预设验收线。当前实验配置与历次原始结果保留；如调整策略，须记录新合同与依据。
+
 四卡无棋盘字典的新初始化、映射缓存及逐行数据读取，连续四步与二加二恢复已经逐位核验，见 `evidence/four-gpu-clean-latent-streamed-resume-v2.json`。该配置使用 `ddp_find_unused_parameters: true` 保持同卡恢复的归约合同；切换这个设置或 `feature_cache_mmap` 不能恢复旧优化器。逐行读取保留全部源字段、文件顺序与随机抽样结果。可用以下命令复查真实训练输出；这是执行检查，未完成课程：
 
 ```bash
@@ -396,6 +398,17 @@ python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-
 实际候选集 `data/astra-explanations-clean-v1` 为 10758／384／512 条，共 11654 个不同完整历史键；包含已有 3363 条颜色派生项，新增独立讲解仍为 2496 条。旧 384 条训练标签与已完成接受池逐字段相同；旧 448 条保留集的内容及原审查状态保留，没有补做或宣称新的语义接受。全部训练／验证共 11142 条按主线词元器及 105 个棋盘词元编码，最长 649／625、上限 1024，无截断；测试答案不参与词元编码。全部标签键存在现有 169904 键缓存中。
 
 第二入口逐字节匹配全部原片段，复演全部过去、重算事实及所有合法未来／颜色几何足迹和逐项词元长度；61 份来源／生产产物及 60 份实际冻结源码核验，见 `evidence/clean-explanation-data-independent-preflight-v1.json`。第二入口复用生产阶段完整终局证明；缓存检查读取键、形状和精度，绑定已完成全量预检，没有重哈希全部 251GB 或重算特征值。272 项 CPU 测试通过。当前四卡课程输入不变，预检不加载模型权重，新 SFT 仍须等待四门课程全部达标。
+
+四门新课程全部完成后，先将最终原始验收候选导出为讲解训练可读取的初始化目录。`foundation_handoff` 要求完整四门清单，核验干净起点、逐门继承、实际步数、全部声明字节和完整桥接／棋盘词元状态；重新计算四次已引入课程的原始验收，并复演全部抽中历史、未来终局及原生答案。相同大文件只哈希一次，验证前后检查文件身份；只读取验证答案。使用新的输出目录，在 tmux 中固定源码执行：
+
+```bash
+python scripts/freeze_run.py --output runs/new-foundation-handoff/source-run -- \
+  python -m xqgeneral.foundation_handoff \
+  --curriculum runs/curriculum-human-engine-clean-v2 \
+  --output runs/new-foundation-handoff/selected
+```
+
+完成目录包含与最终候选同字节的硬链接 `adapter.pt`、原配置 `config.json` 和完成清单 `manifest.json`。正式 SFT 配方应保留其模型版本、桥接、专家层与潜在棋盘输入合同，并以 `selected/adapter.pt` 初始化；`sft` 拒收不完整交接、变动配置及架构覆盖。该入口不加载基座权重或启动 SFT。31 项新增 CPU 检查覆盖受控四门合同的导出／消费及错误拒收；真实第 4608 步部分模型的 258 个张量、139920416 个有限 FP32 参数和完整形状也已核验，实际四门未完成状态确实拒收且未建立输出，见 `evidence/foundation-handoff-real-partial-guard-v1.json`。完整真实四门导出及其讲解收益仍未执行。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from pathlib import Path
 import torch
 from torch import nn
-from .bridge import BoardLanguageModel
+from .bridge import BoardLanguageModel, GatedBridge
 
 
 class TextLanguageModel(nn.Module):
@@ -64,6 +64,37 @@ def load_model(config, expert_dim=512, device="cuda"):
 
 def trainable_state(model):
     return {name: p.detach().cpu().clone() for name, p in model.named_parameters() if p.requires_grad}
+
+
+def foundation_state_summary(checkpoint, base_config):
+    """Check the complete frozen-decoder bridge/token state on CPU without base weights."""
+    from .board_tokens import PAIRS
+    config = checkpoint['config']
+    positions = config['decoder_bridge_positions']
+    if (config.get('mode') != 'bridge' or config.get('decoder_training') != 'frozen' or
+            config.get('board_text') is not None or config.get('board_tokens') is not True or
+            config.get('trainable_parameter_dtype') != 'float32' or
+            not positions or len(set(positions)) != len(positions) or
+            len(positions) != len(config['expert_feature_depths']) or
+            any(type(p) is not int or not 0 <= p < base_config['num_hidden_layers'] for p in positions)):
+        raise ValueError('Handoff requires the complete latent FP32 foundation architecture')
+    hidden = base_config['hidden_size']
+    with torch.device('meta'):
+        bridge = GatedBridge(hidden, 512, config['bridge_width'])
+    expected = {f'bridges.{i}.{name}': parameter.shape
+                for i in range(len(positions)) for name, parameter in bridge.named_parameters()}
+    expected.update({name: (len(PAIRS), hidden) for name in
+        ['base.model.embed_tokens.board_weight', 'base.lm_head.board_weight']})
+    state = checkpoint['trainable']
+    if set(state) != set(expected):
+        raise ValueError('Foundation checkpoint must contain every bridge and both board embeddings')
+    if any(not isinstance(t, torch.Tensor) or t.shape != expected[name] or
+           t.dtype != torch.float32 or t.device.type != 'cpu' or not torch.isfinite(t).all()
+           for name, t in state.items()):
+        raise ValueError('Foundation checkpoint tensors have incompatible shapes, precision or values')
+    return {'trainable_tensors': len(state), 'trainable_parameters': sum(t.numel() for t in state.values()),
+            'all_bridge_and_board_shapes_checked': True, 'all_trainable_values_finite_fp32': True,
+            'base_model_weights_loaded': False}
 
 
 def load_trainable(model, checkpoint):

@@ -20,9 +20,16 @@ def main():
     if proof['status'] != 'complete' or digest(source_path) != proof['outputs'][str(source_path)]['sha256']:
         raise ValueError('SFT must initialize from a completed, hash-verified selected checkpoint')
     saved = json.loads((parent / 'config.json').read_text())
+    if proof.get('kind') == 'raw_qa_gated_foundation_handoff':
+        from .foundation_handoff import validate_sft_handoff
+        if digest(parent / 'config.json') != proof['outputs'][str(parent / 'config.json')]['sha256']:
+            raise ValueError('Completed foundation handoff configuration changed')
+        validate_sft_handoff(proof, saved)
     recipe = json.loads(Path(args.recipe).read_text())
     architecture = ['model_path', 'model_revision', 'mode', 'decoder_bridge_positions', 'bridge_width',
                     'board_tokens', 'expert_feature_depths', 'lora_rank', 'board_text']
+    if any(k in recipe and recipe[k] != saved.get(k) for k in architecture):
+        raise ValueError('SFT architecture must preserve the selected checkpoint configuration')
     config = {k: saved[k] for k in architecture if k in saved}
     config.update({k: v for k, v in recipe.items() if k not in {'epochs', 'max_steps'}})
     primary = recipe['stages'][0]
