@@ -161,6 +161,20 @@ python scripts/freeze_run.py --output runs/recorded-collection-v1/source-run -- 
 
 全量新增候选已完成：六个原生导入来源中，80117 盘未用训练棋局提供 478650 个原始历史，未新增镜像。来源声明为人类实战 87544、公开实战 387678、人机 3428；红／黑为 240740／237910，早／中／晚为 103461／179575／195614。全部候选逐字段对照原棋谱并排除 2715684 个保留位置，另抽样复演 192 个完整历史及未来。正式读取入口实际读取 512 条，检查完整候选尾部，并重新计算三份课程文件的 SHA256。见 `evidence/unused-recorded-search-inputs-full-v2.json`。生产耗时约 561 秒、峰值进程内存约 1.07GiB；首次因平台棋谱缺少可选来源说明而失败的记录保留，修正后使用新目录。全部 431 项 CPU 测试通过。棋手身份与来源声明未经认证，原生全量导入证明沿用已有产物；这仍是候选池，没有新增合格标签、有效产出率或模型收益。
 
+`search_pilot` 可排在现有干净 SFT 能力验证队列之后，自动执行实际学生搜索、完整 BF16 教师汇总和最终隔离收取。它核对被评测的真实 SFT 权重与搜索父模型相同；等待时不加载学生或教师。当前配方使用 512 个未用原始实战历史、10 万引擎节点、最多五层递归及 `move_eval` 子节点合同。
+
+```bash
+python scripts/freeze_run.py --output runs/clean-search-pilot-launch-v1/source-run -- \
+  python -u -m xqgeneral.search_pilot \
+  --pipeline runs/clean-sft-sequential-launch-v2/pipeline \
+  --validation runs/clean-sft-capability-launch-v2/validation \
+  --producer-session xqgeneral-clean-sft-capability-launch-v2 \
+  --config configs/search-clean-sft-pilot-v1.json \
+  --output runs/clean-search-pilot-launch-v1/pilot
+```
+
+长任务放在 tmux，记录相同冻结入口。查看 `pilot/state.json`、`commands.jsonl`、`log.txt` 和各阶段清单；现有进程存活时继续观察，退出后可用原入口加 `--resume`。变动源码、配方或输入必须另用新目录；未完成的收取目录保留并拒绝覆盖。搜索零产出时不加载汇总教师或启动空训练。入口统计原始尝试、改进查询、最终结构合格标签和两种产出率；小批次完成不算已训练一轮蒸馏，战略正文质量及后续特征缓存、训练和收益另行验证。
+
 搜索使用真实学生根节点和子节点回答，依据引擎核验递归进入有问题的子节点，并要求主变化的首个差异确实改善。`--child-contract move_eval` 按推荐着法和评分决定子节点是否递归，保留原始回答及完整结构错误；默认 `full` 仍要求整份子分析通过。汇总教师接收实际使用的变化、逐步事实、原生记谱与核验结果；学生原始正文保留在轨迹中，未经语义保证的正文不传给汇总教师。用于标签的主线和全部分支仍须通过完整历史、终局、保留集隔离及严格改进检查。训练根节点及新子节点排除保留集局面。Qwen 汇总教师只生成讲解正文，经过验证的结构与根评分另行保留。根评分与子分析反号后的分支估计标明来源；中文记谱须紧邻对应坐标并通过原生规则核验。机械着法检查不能替代战略语义复核。后续挖掘逐次保存所有成功的自由和指定着法搜索，包括完整历史与原始引擎回答；旧轨迹缺失的回答仍按缺失记录。空产出不算完成蒸馏。新数据需重新缓存专家特征，再以新配置和输出目录训练；不能覆盖旧实验。
 
 `configs/research-v3.json` 提供一个可选对照：专家与纯语言两组都读取同一份从输入局面得到的 90 格棋盘字典。这改变了论文仅通过专家输入棋盘的条件，应单独报告结果和专家消融。

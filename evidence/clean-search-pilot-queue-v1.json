@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "kind": "clean_recorded_search_pilot_queue_prepared",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "execution_revision": "005bda86308aa367c9a4a1a512d784cf07cc5b22",
+  "source_file_count": 70,
+  "private_artifact_refs": [
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/manifest.json",
+      "sha256": "63e89cc624c754f74ea45bef3ad8a8f120f9fedb30e0541499fd0f3c29acfe8a",
+      "bytes": 12689
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/verification.json",
+      "sha256": "687cd038f1842839bd40f26457a9f58f393167caeff465de275127aa771f3883",
+      "bytes": 2344
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/entry.py",
+      "sha256": "d502ba186262fd8cc7d9c83cf2f2cb68c2c1170f7f9c4656e2d676ad510d2870",
+      "bytes": 4665
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/plan.json",
+      "sha256": "fa96321d2ca70faad79df1a0bccc246820793ad683197d70892c3e766cdb790d",
+      "bytes": 1074
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/source-run/source-manifest.json",
+      "sha256": "8dca8356b98fb6b2c0e2a8625a7bd5300c79efe9f85997a92250a5d0e7f78098",
+      "bytes": 6637
+    },
+    {
+      "path": "runs/clean-search-pilot-real-wait-guard-v1/observation/contract.json",
+      "sha256": "9437482bc857b84acfd62b9a7dcc30980f8f27afb3d3c08522c9e5f02d52dd3d",
+      "bytes": 13092
+    },
+    {
+      "path": "runs/clean-search-pilot-launch-v1/plan.json",
+      "sha256": "ebc598d6c3535598b6bc4bf60c1bc6d08da5c09e110c847657ea9b6f8cb05fa3",
+      "bytes": 1397
+    },
+    {
+      "path": "runs/clean-search-pilot-launch-v1/source-run/source-manifest.json",
+      "sha256": "8dca8356b98fb6b2c0e2a8625a7bd5300c79efe9f85997a92250a5d0e7f78098",
+      "bytes": 6637
+    },
+    {
+      "path": "runs/clean-search-pilot-launch-v1/pilot/contract.json",
+      "sha256": "9437482bc857b84acfd62b9a7dcc30980f8f27afb3d3c08522c9e5f02d52dd3d",
+      "bytes": 13092
+    },
+    {
+      "path": "runs/clean-search-pilot-launch-v1/queue-readback.json",
+      "sha256": "d21bb1502e01b6c15c1dc5af2b5f32a7c4a339f2a0480dd66183ee04d12b6780",
+      "bytes": 855
+    },
+    {
+      "path": "runs/clean-search-pilot-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "9592b1a8b09723ad0fe019791b2daea9c466cacb2a1b87c5401be8dc7a9dcf61",
+      "bytes": 12657
+    },
+    {
+      "path": "runs/clean-search-pilot-milestone-tests-v1/exit.json",
+      "sha256": "57365d4d651b22fd37846d5d01f82e6fc4b17d963b924a64646ae649e372da80",
+      "bytes": 117
+    },
+    {
+      "path": "runs/clean-search-pilot-milestone-tests-v1/runner.py",
+      "sha256": "fca618f4053df2990a944c0860cdd24238a0d677f1b743c59fe76f8c5b3f2c0b",
+      "bytes": 704
+    },
+    {
+      "path": "runs/clean-search-pilot-milestone-tests-v1/log.txt",
+      "sha256": "2510c7842d00a0913dd6b9765e7c5e3e35359d4f1b94a2878808403a2d6a72a4",
+      "bytes": 592
+    },
+    {
+      "path": "runs/clean-search-pilot-development-checks-v1/focused-exit.json",
+      "sha256": "6dc777e932144b1c4d9b5f372d163b7b74a068419dfd8a9098a9a17f83f01747",
+      "bytes": 318
+    },
+    {
+      "path": "runs/clean-search-pilot-development-checks-v1/focused.log",
+      "sha256": "44cab59a377caed471e7c526af74692d9bb2dfea188adf234edcc62e4440be5f",
+      "bytes": 110
+    }
+  ],
+  "actual_wait_guard_verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "existing_owned_jobs_live_before_during_after": [
+      {
+        "phase": "before",
+        "live": {
+          "xqgeneral-recorded-foundation-clean-v3": true,
+          "xqgeneral-clean-sft-sequential-launch-v2": true,
+          "xqgeneral-clean-sft-capability-launch-v2": true
+        }
+      },
+      {
+        "phase": "during",
+        "live": {
+          "xqgeneral-recorded-foundation-clean-v3": true,
+          "xqgeneral-clean-sft-sequential-launch-v2": true,
+          "xqgeneral-clean-sft-capability-launch-v2": true
+        }
+      },
+      {
+        "phase": "after",
+        "live": {
+          "xqgeneral-recorded-foundation-clean-v3": true,
+          "xqgeneral-clean-sft-sequential-launch-v2": true,
+          "xqgeneral-clean-sft-capability-launch-v2": true
+        }
+      }
+    ],
+    "actual_pilot_waiting_samples": [
+      {
+        "status": "waiting_for_completed_clean_sft_validation",
+        "validation": "runs/clean-sft-capability-launch-v2/validation",
+        "producer_session": "xqgeneral-clean-sft-capability-launch-v2",
+        "student_or_teacher_loaded": false,
+        "new_distillation_labels": 0
+      },
+      {
+        "status": "waiting_for_completed_clean_sft_validation",
+        "validation": "runs/clean-sft-capability-launch-v2/validation",
+        "producer_session": "xqgeneral-clean-sft-capability-launch-v2",
+        "student_or_teacher_loaded": false,
+        "new_distillation_labels": 0
+      },
+      {
+        "status": "waiting_for_completed_clean_sft_validation",
+        "validation": "runs/clean-sft-capability-launch-v2/validation",
+        "producer_session": "xqgeneral-clean-sft-capability-launch-v2",
+        "student_or_teacher_loaded": false,
+        "new_distillation_labels": 0
+      }
+    ],
+    "pilot_no_student_teacher_or_engine_load_before_clean_validation": true,
+    "no_child_stage_commands_or_outputs_created": true,
+    "only_bounded_observer_process_group_stopped": true,
+    "bounded_child_exit_code": -15,
+    "actual_execution_revision": "005bda86308aa367c9a4a1a512d784cf07cc5b22",
+    "source_files_rehashed": 70,
+    "gpu_training_or_inference_executed_by_this_check": false,
+    "new_clean_sft_completed": false,
+    "accepted_clean_model_distillation_labels": 0,
+    "trained_search_distillation_rounds": 0,
+    "student_strength_or_reliable_coaching_proven": false,
+    "seconds": 13.8159265704453
+  },
+  "production_queue_at_observation": {
+    "status": "complete",
+    "recorded_utc": "2026-10-08T15:05:31.143068+00:00",
+    "actual_state_at_observation": {
+      "status": "waiting_for_completed_clean_sft_validation",
+      "validation": "runs/clean-sft-capability-launch-v2/validation",
+      "producer_session": "xqgeneral-clean-sft-capability-launch-v2",
+      "student_or_teacher_loaded": false,
+      "new_distillation_labels": 0
+    },
+    "owned_sessions_live_at_observation": {
+      "xqgeneral-recorded-foundation-clean-v3": true,
+      "xqgeneral-clean-sft-sequential-launch-v2": true,
+      "xqgeneral-clean-sft-capability-launch-v2": true,
+      "xqgeneral-clean-search-pilot-launch-v1": true
+    },
+    "no_stage_commands_created_at_observation": true,
+    "actual_source_files_rehashed": 70,
+    "execution_revision": "005bda86308aa367c9a4a1a512d784cf07cc5b22",
+    "search_yield_or_model_benefit_proven": false
+  },
+  "cpu_validation": {
+    "added_controlled_cases": 18,
+    "focused_cases_passed": 57,
+    "all_tests_passed": 465,
+    "source_and_test_bindings": 122,
+    "all_bindings_freshly_rechecked": true,
+    "seconds": 205.45189375896007
+  },
+  "pilot_recipe": {
+    "evaluation_config": "configs/evaluation-clean-sft-v2.json",
+    "data": "data/research-human-engine-v1",
+    "recorded_inputs": "data/unused-recorded-search-inputs-full-v2",
+    "limit": 512,
+    "nodes": 100000,
+    "max_depth": 5,
+    "child_contract": "move_eval",
+    "seed": 20261013,
+    "teacher_max_new_tokens": 1536,
+    "cuda_visible_devices": "0"
+  },
+  "scope": {
+    "actual_current_clean_student_search_executed": false,
+    "full_teacher_weight_bytes_rehashed_by_wait_check": false,
+    "full_recorded_root_pool_revalidated_by_wait_check": false,
+    "new_clean_sft_completed": false,
+    "accepted_clean_model_distillation_labels": 0,
+    "trained_search_distillation_rounds": 0,
+    "strategic_prose_or_student_strength_proven": false
+  }
+}
