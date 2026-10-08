@@ -222,7 +222,7 @@ python -m xqgeneral.platform_games \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096／4608 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%／94.8%，九次均未达标；最新整行识别为 83.6%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-ninth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096／4608／5120 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%／94.8%／96.7%，十次均未达到当前本地门槛；最新整行识别为 96.1%，最弱棋子定位为 90.6%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-tenth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -409,6 +409,19 @@ python scripts/freeze_run.py --output runs/new-foundation-handoff/source-run -- 
 ```
 
 完成目录包含与最终候选同字节的硬链接 `adapter.pt`、原配置 `config.json` 和完成清单 `manifest.json`。正式 SFT 配方应保留其模型版本、桥接、专家层与潜在棋盘输入合同，并以 `selected/adapter.pt` 初始化；`sft` 拒收不完整交接、变动配置及架构覆盖。该入口不加载基座权重或启动 SFT。31 项新增 CPU 检查覆盖受控四门合同的导出／消费及错误拒收；真实第 4608 步部分模型的 258 个张量、139920416 个有限 FP32 参数和完整形状也已核验，实际四门未完成状态确实拒收且未建立输出，见 `evidence/foundation-handoff-real-partial-guard-v1.json`。完整真实四门导出及其讲解收益仍未执行。
+
+新主线初始讲解配方为 `configs/explanation-sft-clean-v1.json`，强制要求上述完成四门的干净交接，拒收旧课程或旧 SFT 完成目录。它只采样现有已复核讲解，保留训练／验证／测试分割，以四卡全局 16／微批量 1 训练完整解码器；桥接／解码器／棋盘词元学习率分别为 `1e-5`／`1e-6`／`1e-6`，预热 5%，之后保持恒定，权重衰减 0.1。四轮、批量及学习率参考[论文附录 B.2 表 12](https://arxiv.org/html/2610.03695v1)，教师、棋种、长度、验证规模和采样方法为本地适配。10758 条训练项对应 2690 次更新、43040 次样本呈现；随机有放回采样不保证每行恰好出现四次。全部 384 条验证标签选模，512 条测试标签不选模。
+
+CPU 预算预检已逐项绑定实际数据、词元预检及原独立读回，并核对第 5120 步部分模型的架构参考，见 `evidence/clean-explanation-sft-budget-preflight-v2.json`。该部分模型不能作为正式讲解起点；实际未完成四门的导出仍拒收。缓存身份复用已完成全量预检，没有再次哈希全部缓存。四卡完整解码器的真实显存、更新及精确续跑检查尚未执行，新 SFT 尚未启动。完成交接后，可以先固定源码核对正式配置：
+
+```bash
+python scripts/freeze_run.py --output runs/new-clean-sft/source-run -- \
+  python -m xqgeneral.sft --recipe configs/explanation-sft-clean-v1.json \
+  --init runs/new-foundation-handoff/selected/adapter.pt \
+  --output runs/new-clean-sft/training --prepare-only
+```
+
+`--prepare-only` 保留相同父模型守卫，写入正式配置而不启动训练；变动的已准备配置不能覆盖。完成所需四卡 GPU 检查后，在 tmux 中用同一冻结源码、同一输出去掉该选项启动。SFT 控制器按 `ddp_world_size` 启动对应进程数，单卡仍直接调用训练入口；完整优化器续跑指向同一 `latest.pt`。25 项新增 CPU 检查覆盖配置准备、单／多卡启动、续跑及旧父模型拒收，全套 328 项 CPU 测试通过，未执行 GPU 模型训练。独立第二入口另核验预算预检及第十次原始验收的 36 份声明产物、61／60 份实际冻结源码和公开证据原字节，并重新计数实际训练项与更新预算。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

@@ -1073,3 +1073,38 @@ the complete 258-tensor / 139920416-parameter finite FP32 shape check, while its
 incomplete real curriculum is rejected without creating an export directory.
 See `evidence/foundation-handoff-real-partial-guard-v1.json`. A real completed
 four-course export, new SFT and any resulting coaching benefit remain unexecuted.
+
+The actual first-course step-5120 raw validation answers 743/768 correctly
+(96.7%), with rank identification at 123/128 (96.1%) and the weakest location
+task at 116/128 (90.6%). It still fails the current local gate. Relative to
+step 4608, 30 answers improve and 15 regress, a net gain of 15. The completed
+independent reader recomputes every sampled native history, gold answer,
+question variant and raw correctness, and verifies the finite FP32 checkpoint.
+See `evidence/recorded-foundation-clean-tenth-raw-gate.json`. No new course is
+mastered and new SFT and trained search-distillation rounds remain unstarted.
+
+The initial clean explanation recipe requires a completed four-course handoff,
+preserves its latent architecture and expands to full decoder training. The
+controller launches the configured DDP worker count and can prepare the exact
+configuration without starting workers; changed prepared configurations and
+legacy parents for this recipe are rejected. The 25 new CPU tests cover
+single/multiple-worker commands, continuation, preparation and failure handling.
+All 328 CPU tests pass; they do not execute GPU training. The actual 10758 training rows give 2690
+updates and 43040 sample presentations at global batch 16 for four nominal
+epochs. Sampling with replacement does not imply four visits to every row.
+All 384 validation examples select checkpoints; 512 test examples stay reserved.
+
+Bridge/decoder/token rates 1e-5/1e-6/1e-6, batch 16, four epochs, 5% warmup,
+constant subsequent rate and weight decay 0.1 follow the initial seeding settings
+in [paper Appendix B.2, Table 12](https://arxiv.org/html/2610.03695v1).
+Teacher, game domain, sequence length, sampling and validation size are local
+adaptations. The actual label/token proofs and partial step-5120 architecture
+reference are bound by `evidence/clean-explanation-sft-budget-preflight-v2.json`.
+This planning check rejects the actual incomplete curriculum, reuses completed
+full-cache identity and loads no GPU model. A completed real four-course
+handoff, four-GPU full-decoder memory/update/exact-resume preflight and actual
+initial SFT remain required; no student benefit is claimed.
+The second entrance freshly hashes 36 declared planning/raw-gate artifacts,
+verifies 61/60 executed frozen source files and both public JSON/UTF8 bytes,
+and independently recounts training rows and the update budget. It reuses the
+completed tenth reader's native-answer/history and finite-tensor proof.

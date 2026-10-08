@@ -121,7 +121,7 @@ def test_handoff_exports_exact_final_weights_and_format_consumed_by_sft(tmp_path
     explanation = tmp_path / 'explanations';write_jsonl(explanation / 'train.jsonl', [{'stage': 'explanation'}])
     recipe_path = tmp_path / 'sft.json';atomic_json(recipe_path, {'data_path': str(explanation),
         'stages': ['explanation'], 'mixture': {'explanation': 1}, 'epochs': 1, 'max_steps': 8,
-        'batch_size': 1, 'min_steps': 1, 'decoder_training': 'full'})
+        'batch_size': 1, 'min_steps': 1, 'decoder_training': 'full', 'require_clean_foundation_handoff': True})
     calls = [];monkeypatch.setattr(sft.subprocess, 'run', lambda command, **kwargs: calls.append(command))
     monkeypatch.setattr(sys, 'argv', ['sft', '--recipe', str(recipe_path), '--init', str(output / 'adapter.pt'), '--output', str(tmp_path / 'sft')])
     sft.main()
