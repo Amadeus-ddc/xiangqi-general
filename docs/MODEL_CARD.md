@@ -979,6 +979,17 @@ See `evidence/recorded-foundation-clean-eighth-raw-gate.json`. This remains belo
 99% overall / 95% worst task; no new course is mastered, no new SFT has started,
 and strong play or reliable coaching is unproven.
 
+The ninth raw gate at step 4608 has 728/768 correct (94.8%). Count, empty-square,
+location, material, single-square and rank recognition respectively score
+100%/100%/90.6%/94.5%/100%/83.6%. The same validation items at step 4096 show
+34 corrected and 19 newly wrong answers, a net gain of 15. Actual histories,
+native answers, question formats, raw correctness and finite FP32 checkpoint
+contracts were independently checked; all fifteen completed declared artifacts
+were freshly hashed. Feature identity continues to reuse completed production
+and full preflight. See `evidence/recorded-foundation-clean-ninth-raw-gate.json`.
+The first course still fails the 99% overall / 95% worst-task gate; no new SFT,
+trained search-distillation round or general coaching benefit is established.
+
 `platform_games` imports hash-bound public PlayStrategy NDJSON exports without
 network calls or account credentials. Original JSON/PGN moves, results, registered
 player/BOT metadata and UTC dates must agree; one-based ranks are explicitly

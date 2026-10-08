@@ -1,6 +1,8 @@
 import copy
 import json
 from pathlib import Path
+import sys
+from types import ModuleType, SimpleNamespace
 
 import pytest
 
@@ -198,7 +200,6 @@ def preflight_fixture(tmp_path, monkeypatch, *, literal_prompt=False, long_test=
                       missing_feature=False, wrong_precision=False):
     import torch
     from xqgeneral.evidence import digest
-    from transformers import AutoTokenizer
     rows = [label('a', 'train', ['b0c2']), label('b', 'validation', ['h0g2']),
             label('c', 'test', ['b2e2'])]
     if literal_prompt:rows[0]['question'] += rows[0]['fen']
@@ -225,7 +226,13 @@ def preflight_fixture(tmp_path, monkeypatch, *, literal_prompt=False, long_test=
     atomic_json(completed, manifest('recorded_engine_clean_latent_foundation_preflight', {},
         [config, cache_manifest, cache_path], [],
         {'cache_sha256': digest(cache_path), 'source_recipe_sha256': digest(config)}))
-    monkeypatch.setattr(AutoTokenizer, 'from_pretrained', lambda *a, **k: TokenizerFixture())
+    def tokenizer_from_pretrained(path, *, local_files_only):
+        assert path == str(model) and local_files_only is True
+        return TokenizerFixture()
+    # Exercise the real initializer without requiring optional model packages in CPU CI.
+    transformers = ModuleType('transformers')
+    transformers.AutoTokenizer = SimpleNamespace(from_pretrained=tokenizer_from_pretrained)
+    monkeypatch.setitem(sys.modules, 'transformers', transformers)
     return data, config, completed, cache_path
 
 
