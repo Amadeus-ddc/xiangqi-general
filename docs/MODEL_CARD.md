@@ -1007,3 +1007,29 @@ unassisted play or redistribution rights, and the separate entrance shares the
 pinned native rules. Raw exports/site text are excluded from source distribution;
 no new neural labels, live curriculum changes or measured student gains follow
 from these imports.
+
+The new latent-only explanation candidate dataset combines completed collected
+labels by preserving every source split segment byte for byte. It contains
+10758/384/512 train/validation/test rows and 11654 distinct full-history keys,
+including 3363 existing color-derived rows; the new independent recorded-game
+annotations remain 2496. Native history, terminal, answer-fact and complete
+continuation checks precede cross-split game/forecast/color isolation. The 384
+legacy training labels without inline review metadata match an exact completed
+supplemental acceptance pool. The 448 legacy held-out labels retain their original
+contents and review status; no fresh semantic acceptance is claimed for them.
+
+All 11142 train/validation sequences fit the actual latent-only tokenizer and
+105 board tokens without truncation (maximum 649/625, limit 1024). Test answers
+are not tokenized. All 11654 keys are in the existing 169904-context feature
+cache. A separate entrance verifies source bytes, legally replays all past
+histories, recomputes root facts and every forecast/color geometry and checks
+every token-length result; 61 source/producer artifacts and 60 executed frozen
+source files are hash-checked. See
+`evidence/clean-explanation-data-independent-preflight-v1.json`. Full-history
+terminal adjudication is reused from completed production. Feature checks inspect
+cache keys, dimensions and precision while reusing completed production/full
+preflight; they do not rehash the entire cache or recompute its values. All 272
+CPU tests pass. No model weights are loaded by data preflight, current foundation
+inputs are unchanged, and all four new raw course gates are still required
+before explanation SFT. These checks establish prepared data, with no new
+semantic review, student training or measured coaching gain.
