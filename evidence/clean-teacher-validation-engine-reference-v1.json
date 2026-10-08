@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_readback": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/manifest.json",
+    "sha256": "91cc25cafead86585f5aa8160a444aff450f13795e34049a60121638a0b0fff3",
+    "bytes": 115353
+  },
+  "independent_readback_verification": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/verification.json",
+    "sha256": "6b75a61b90f837a63130c79c28111c7a9258e3af96db5e2bdbeb89a576cf0bfb",
+    "bytes": 4709
+  },
+  "independent_reader_entry": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/entry.py",
+    "sha256": "c3287de93d7a016acc263ae12b635f179e15e1a4c4a9f60f01c169d583449d39",
+    "bytes": 16286
+  },
+  "independent_reader_source_manifest": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/source-run/source-manifest.json",
+    "sha256": "ef46a168e1a6cc1cf2e9301e6059e71c95e89788eb844c52e9848e2402cddb63",
+    "bytes": 6353
+  },
+  "freshly_hashed_distinct_declared_files": 496,
+  "current_source_snapshot_files": 67,
+  "original_first_course_source_snapshot_files": 51,
+  "six_current_and_original_source_snapshots_rehashed": true,
+  "preserved_first_readback_failure": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v1/exit.json",
+    "sha256": "2ed02669c37a2ac734fdb957dd28f5eeefd06a137aea55f06bdffd2484952512",
+    "bytes": 78
+  },
+  "production_tasks_or_teacher_labels_changed_to_fix_reader": false,
+  "independent_test_answers_read": false,
+  "student_strength_or_coaching_benefit_proven": false,
+  "kind": "existing_teacher_validation_labels_independent_engine_reference",
+  "verification": {
+    "examples": 384,
+    "parse_valid_rate": 1.0,
+    "first_move_legal_rate": 1.0,
+    "structured_contract_valid_rate": 1.0,
+    "first_move_no_mistake_rate": 0.9921875,
+    "legal_scored_first_moves": 384,
+    "mean_first_move_expected_score_loss_conditional": 0.00328125,
+    "pv_legal_rate": 1.0,
+    "judged_legal_pv_plies": 2276,
+    "pv_no_mistake_fraction_conditional": 0.9797891036906854,
+    "errors": {},
+    "raw_generation": false,
+    "oracle_repairs": 0,
+    "score_model": "pinned_Pikafish_material_WDL",
+    "prose_semantic_rating": "unmeasured",
+    "source": "existing_teacher_validation_labels",
+    "full_pv_no_mistake_rate": 0.9166666666666666,
+    "split": "validation",
+    "judge_nodes_per_position": 1000000,
+    "all_384_protected_validation_labels_scored": true,
+    "teacher_labels_changed": false,
+    "student_model_loaded_or_evaluated": false,
+    "gpu_used": false,
+    "independent_test_answers_loaded": false,
+    "seconds": 614.0522081106901,
+    "raw_label_byte_content_and_full_384_coverage_rechecked": true,
+    "all_archived_engine_responses_reparsed": true,
+    "archived_engine_responses_reparsed": 2950,
+    "all_native_histories_and_full_pv_loss_aggregates_recomputed": true,
+    "actual_retained_metric_counts": {
+      "parse_valid": 384,
+      "structured_contract_valid": 384,
+      "first_move_legal": 384,
+      "first_move_no_mistake": 381,
+      "pv_legal": 384,
+      "full_pv_no_mistake": 352
+    },
+    "teacher_validation_reference_only": true,
+    "independent_human_judgment_completed": false
+  },
+  "loss_cutoff": {
+    "expected_score_loss_relative_to_independent_best": "strictly_less_than_0.10",
+    "full_pv_requires_all_original_plies_scored": true,
+    "human_win_probability_measured": false
+  },
+  "source_validation_labels": {
+    "path": "data/astra-explanations-clean-v1/validation.jsonl",
+    "sha256": "42016c1563668c16ad6ebfcc8e4fc9fe457ec6e9a7e560935b22192158afdbf4",
+    "bytes": 2659721
+  },
+  "independent_engine_manifest": {
+    "path": "runs/clean-teacher-label-engine-reference-v1/manifest.json",
+    "sha256": "8a377b7188e9d3fb982f927c75ff7b326bb8bd55133b1b2eb0b1c4ba2512df95",
+    "bytes": 10588
+  },
+  "raw_unchanged_teacher_labels": {
+    "path": "runs/clean-teacher-label-engine-reference-v1/raw-teacher-labels.jsonl",
+    "sha256": "7679f45ebb8b108a055afdc8272e3eb7facb85db127320cb5bf38ab716318af9",
+    "bytes": 3200413
+  },
+  "raw_independent_engine_judgments": {
+    "path": "runs/clean-teacher-label-engine-reference-v1/judged-teacher-labels.jsonl",
+    "sha256": "5585aeb330efeec7ff826646f40ad8bb9d078c289741a0e21c199a57f8d2f74c",
+    "bytes": 34584042
+  },
+  "independent_teacher_readback": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/teacher-readback.json",
+    "sha256": "a5a512507dcacbe3c8fe0f9276b95170677aec92bf360a0e494f023f4f181139",
+    "bytes": 1478
+  },
+  "dataset_splits": {
+    "training": 10758,
+    "validation": 384,
+    "independent_test": 512
+  },
+  "initial_label_color_derived_examples_across_splits": 3363,
+  "full_training_set_independently_scored_in_this_run": false,
+  "volatile_observation_input_archive_aliases": {
+    "runs/curriculum-human-engine-clean-v3/dynamic_current/training/execution.json": {
+      "path": "runs/dynamic-current-best-parent-startup-v1/initial-execution.json",
+      "sha256": "e98db00c58df58c462b65176c5857846cdc4a00393864fffd406c450b8f66ec8",
+      "bytes": 8094,
+      "reason": "The next training segment may replace execution.json; the zero-update observation preserves identical original bytes."
+    }
+  }
+}

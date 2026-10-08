@@ -60,6 +60,8 @@ python -m xqgeneral.evaluate_qa --checkpoint CHECKPOINT.pt \
 
 当前初始讲解集为 10758 条训练、384 条验证和 512 条独立测试，已有 3363 条颜色派生项不能计为新增独立教师标注。原论文初始教师标注 15000 个局面，经走法筛选保留 8602 个，其中 8402 个训练、200 个验证，训练四轮；我们的四轮配方为 2690 次更新。数量相近不代表标签质量或覆盖相同。
 
+全部 384 条现有教师验证标签已由独立引擎以每局面 100 万节点复查：381 条推荐走法无明显失误，352 条完整主变化每步无明显失误，推荐走法及主变化全部合法。标签原文和错误保留，独立读回重算统计，见 `evidence/clean-teacher-validation-engine-reference-v1.json`。这不是学生成绩、正文语义评价或全部训练标签的质量证明；独立测试答案没有参与。
+
 后续搜索蒸馏的规模更大：[论文附录 B.1—B.2](https://arxiv.org/html/2610.03695v1#A2) 每轮使用 21 万个人类对局局面、11.5 万个战术题及 6250 局学生与引擎对弈产生的约 5万—10万个局面，搜索筛选后得到约 15万—28.5万条训练样本，共七轮。现有六来源去重棋谱 107678 局，其中人类／公开实战训练候选 85530 局；按每局六个位置的宽松上限为 513180 个候选位置，不能计为已生成的蒸馏标签，也不足以保证七轮独立棋局容量。继续补充战术、残局及不同水平实战；首轮优先使用现有保留集隔离后的棋谱和真实学生对弈，先测有效搜索产出率，再扩充合格样本。轮数依据验证棋力、完整变化和讲解质量决定，重复问法或颜色镜像不增加独立局面容量。
 
 ```bash
@@ -235,7 +237,7 @@ python -m xqgeneral.platform_games \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096／4608／5120 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%／94.8%／96.7%，十次均未达到当前本地门槛；最新整行识别为 96.1%，最弱棋子定位为 90.6%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-tenth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096／4608／5120 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%／94.8%／96.7%，十次均未达到当时的本地门槛。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-tenth-raw-gate.json`；这是截至第 5120 步的历史快照，当前选择与训练阶段见 [STATUS.md](STATUS.md)。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -317,7 +319,7 @@ python -m xqgeneral.foundation_readback \
 
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
-实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文及相互审查：2496 条中原文接受 2363 条、拒收 133 条，见 `evidence/recorded-coach-complete-original-cross-review-v1.json`。全部 133 条拒收现已真实修订并由不同作者接受，其中 3 条经过第二轮；正式收集 2496 条新标签（2048／192／256），无镜像派生，棋局及根／未来几何足迹跨分割重叠均为零。独立读回逐字段核验原查询、结构答案、最终正文及实际修订链，见 `evidence/recorded-coach-complete-reviewed-labels-v1.json`；完整原生历史检查复用已完成生产与原查询证明。作者计划及原始身份读回保留在 `runs/astra-recorded-coach-authoring-v1/`。该批仍是初始教师材料，不代表人工评分或学生收益，新 SFT 须等四门课程达标。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
+实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文及相互审查：2496 条中原文接受 2363 条、拒收 133 条，见 `evidence/recorded-coach-complete-original-cross-review-v1.json`。全部 133 条拒收现已真实修订并由不同作者接受，其中 3 条经过第二轮；正式收集 2496 条新标签（2048／192／256），无镜像派生，棋局及根／未来几何足迹跨分割重叠均为零。独立读回逐字段核验原查询、结构答案、最终正文及实际修订链，见 `evidence/recorded-coach-complete-reviewed-labels-v1.json`；完整原生历史检查复用已完成生产与原查询证明。作者计划及原始身份读回保留在 `runs/astra-recorded-coach-authoring-v1/`。该批仍是初始教师材料，不代表人工评分或学生收益，新 SFT 须等四门课程按验证策略完成。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
 
 ```bash
 python -m xqgeneral.recorded_coach curate \
@@ -410,7 +412,7 @@ python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-
 
 实际候选集 `data/astra-explanations-clean-v1` 为 10758／384／512 条，共 11654 个不同完整历史键；包含已有 3363 条颜色派生项，新增独立讲解仍为 2496 条。旧 384 条训练标签与已完成接受池逐字段相同；旧 448 条保留集的内容及原审查状态保留，没有补做或宣称新的语义接受。全部训练／验证共 11142 条按主线词元器及 105 个棋盘词元编码，最长 649／625、上限 1024，无截断；测试答案不参与词元编码。全部标签键存在现有 169904 键缓存中。
 
-第二入口逐字节匹配全部原片段，复演全部过去、重算事实及所有合法未来／颜色几何足迹和逐项词元长度；61 份来源／生产产物及 60 份实际冻结源码核验，见 `evidence/clean-explanation-data-independent-preflight-v1.json`。第二入口复用生产阶段完整终局证明；缓存检查读取键、形状和精度，绑定已完成全量预检，没有重哈希全部 251GB 或重算特征值。272 项 CPU 测试通过。当前四卡课程输入不变，预检不加载模型权重，新 SFT 仍须等待四门课程全部达标。
+第二入口逐字节匹配全部原片段，复演全部过去、重算事实及所有合法未来／颜色几何足迹和逐项词元长度；61 份来源／生产产物及 60 份实际冻结源码核验，见 `evidence/clean-explanation-data-independent-preflight-v1.json`。第二入口复用生产阶段完整终局证明；缓存检查读取键、形状和精度，绑定已完成全量预检，没有重哈希全部 251GB 或重算特征值。272 项 CPU 测试通过。当前四卡课程输入不变，预检不加载模型权重，新 SFT 仍须等待四门课程按验证策略完成。
 
 四门新课程全部完成后，先将最终原始验收候选导出为讲解训练可读取的初始化目录。`foundation_handoff` 要求完整四门清单，核验干净起点、逐门继承、实际步数、全部声明字节和完整桥接／棋盘词元状态；重新计算四次已引入课程的原始验收，并复演全部抽中历史、未来终局及原生答案。相同大文件只哈希一次，验证前后检查文件身份；只读取验证答案。使用新的输出目录，在 tmux 中固定源码执行：
 
@@ -423,13 +425,13 @@ python scripts/freeze_run.py --output runs/new-foundation-handoff/source-run -- 
 
 完成目录包含与最终候选同字节的硬链接 `adapter.pt`、原配置 `config.json` 和完成清单 `manifest.json`。正式 SFT 配方应保留其模型版本、桥接、专家层与潜在棋盘输入合同，并以 `selected/adapter.pt` 初始化；`sft` 拒收不完整交接、变动配置及架构覆盖。该入口不加载基座权重或启动 SFT。31 项新增 CPU 检查覆盖受控四门合同的导出／消费及错误拒收；真实第 4608 步部分模型的 258 个张量、139920416 个有限 FP32 参数和完整形状也已核验，实际四门未完成状态确实拒收且未建立输出，见 `evidence/foundation-handoff-real-partial-guard-v1.json`。完整真实四门导出及其讲解收益仍未执行。
 
-新主线初始讲解配方为 `configs/explanation-sft-clean-v1.json`，强制要求上述完成四门的干净交接，拒收旧课程或旧 SFT 完成目录。它只采样现有已复核讲解，保留训练／验证／测试分割，以四卡全局 16／微批量 1 训练完整解码器；桥接／解码器／棋盘词元学习率分别为 `1e-5`／`1e-6`／`1e-6`，预热 5%，之后保持恒定，权重衰减 0.1。四轮、批量及学习率参考[论文附录 B.2 表 12](https://arxiv.org/html/2610.03695v1)，教师、棋种、长度、验证规模和采样方法为本地适配。10758 条训练项对应 2690 次更新、43040 次样本呈现；随机有放回采样不保证每行恰好出现四次。全部 384 条验证标签选模，512 条测试标签不选模。
+新主线初始讲解配方为 `configs/explanation-sft-clean-v2.json`，仅切换到新的验证选模课程，预算保留 v1 配方；强制要求上述完成四门的干净交接，拒收旧课程或旧 SFT 完成目录。它只采样现有已复核讲解，保留训练／验证／测试分割，以四卡全局 16／微批量 1 训练完整解码器；桥接／解码器／棋盘词元学习率分别为 `1e-5`／`1e-6`／`1e-6`，预热 5%，之后保持恒定，权重衰减 0.1。四轮、批量及学习率参考[论文附录 B.2 表 12](https://arxiv.org/html/2610.03695v1)，教师、棋种、长度、验证规模和采样方法为本地适配。10758 条训练项对应 2690 次更新、43040 次样本呈现；随机有放回采样不保证每行恰好出现四次。全部 384 条验证标签选模，512 条测试标签不选模。
 
 CPU 预算预检已逐项绑定实际数据、词元预检及原独立读回，并核对第 5120 步部分模型的架构参考，见 `evidence/clean-explanation-sft-budget-preflight-v2.json`。该部分模型不能作为正式讲解起点；实际未完成四门的导出仍拒收。缓存身份复用已完成全量预检，没有再次哈希全部缓存。四卡完整解码器的真实显存、更新及精确续跑检查尚未执行，新 SFT 尚未启动。完成交接后，可以先固定源码核对正式配置：
 
 ```bash
 python scripts/freeze_run.py --output runs/new-clean-sft/source-run -- \
-  python -m xqgeneral.sft --recipe configs/explanation-sft-clean-v1.json \
+  python -m xqgeneral.sft --recipe configs/explanation-sft-clean-v2.json \
   --init runs/new-foundation-handoff/selected/adapter.pt \
   --output runs/new-clean-sft/training --prepare-only
 ```
@@ -448,7 +450,7 @@ python scripts/freeze_run.py --output runs/clean-sft-sequential-launch-v2/source
   --output runs/clean-sft-sequential-launch-v2/pipeline
 ```
 
-检查 `pipeline/state.json`、各阶段的 `manifest.json` 和日志。仍存活的同一 tmux 任务继续观察；确认其已退出后，用同一冻结入口及原参数加 `--resume` 续跑，不能覆盖已有输出。单独执行预检可用 `python -m xqgeneral.sft_preflight --init HANDOFF/adapter.pt --recipe configs/explanation-sft-clean-v1.json --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json --output NEW_PREFLIGHT`。真实等待守卫见 `evidence/clean-sft-sequential-real-wait-guard-v1.json`；25 项新增受控 CPU 检查、全部 353 项测试通过。真实四卡完整解码器检查和新 SFT 尚未执行，当前能力进度以 `STATUS.md` 为准。
+检查 `pipeline/state.json`、各阶段的 `manifest.json` 和日志。仍存活的同一 tmux 任务继续观察；确认其已退出后，用同一冻结入口及原参数加 `--resume` 续跑，不能覆盖已有输出。单独执行预检可用 `python -m xqgeneral.sft_preflight --init HANDOFF/adapter.pt --recipe configs/explanation-sft-clean-v2.json --token-preflight runs/reviewed-explanation-clean-data-v1/preflight/manifest.json --output NEW_PREFLIGHT`。真实等待守卫见 `evidence/clean-sft-sequential-real-wait-guard-v1.json`；25 项新增受控 CPU 检查、全部 353 项测试通过。真实四卡完整解码器检查和新 SFT 尚未执行，当前能力进度以 `STATUS.md` 为准。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 

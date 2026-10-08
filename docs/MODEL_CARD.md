@@ -1240,3 +1240,25 @@ dataset or proven seven-round capacity. Additional tactical/endgame/diverse play
 and actual student-engine games will supplement the pool; acceptance yield and
 validation strength, full-line accuracy and prose quality govern expansion and
 round count. No new clean SFT or trained search-distillation round has completed.
+
+The second clean course has now started on four GPUs with a fresh optimizer and
+10% first-course replay. Its actual zero-update state has 258 tensors and
+139920416 finite FP32 parameters, bitwise equal to the selected first-course
+5632 checkpoint. The first twenty actual updates have finite nonzero gradients.
+An independent readback checks the weights, original training prefix, first
+selection and downstream waiting queues. Execution uses the merged `34154f0`
+67-file source snapshot; the first-course origin retains its original 51 files.
+See `evidence/dynamic-current-best-parent-startup-v1.json`. This establishes
+inheritance and startup, not second-course accuracy or completed SFT.
+
+All 384 existing teacher validation labels have an independent 1M-node Pikafish
+reference: 381/384 first moves have expected-score loss below 0.10, and 352/384
+complete PVs have every move below that loss cutoff. All first moves, complete PVs
+and structured contracts are legal/valid. There are 46 mistakes among 2276
+scored PV plies. An independent reader rechecks unchanged labels, full histories,
+archived engine responses and all aggregate metrics. See
+`evidence/clean-teacher-validation-engine-reference-v1.json`. These are teacher
+validation-label metrics, not student results, human win probabilities, prose
+semantic ratings or proof of quality across all training labels. No label was
+rewritten and no independent test answer was read. The failed first reader is
+preserved separately from the completed corrected readback.
