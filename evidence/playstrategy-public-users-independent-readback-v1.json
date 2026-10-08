@@ -1,0 +1,34 @@
+{
+  "status": "complete",
+  "raw_export_records_read_back": 3784,
+  "passing_full_native_histories_replayed": 3163,
+  "duplicates_and_first_attributions_preserved": 174,
+  "new_unique_games_read_back": 2989,
+  "new_plies_read_back": 165010,
+  "all_621_actual_quarantine_causes_reproduced": true,
+  "declared_producer_and_acquisition_artifacts_freshly_rehashed": 52,
+  "executed_producer_frozen_source_files_checked": 58,
+  "all_original_json_pgn_dates_and_exact_retained_native_fields_checked": true,
+  "raw_byte_ordinals_capture_identity_and_split_preserved": true,
+  "prior_unique_game_identities_and_splits_checked": 104689,
+  "combined_unique_recorded_games": 107678,
+  "games_by_platform_declared_kind": {
+    "recorded_human_computer_match": 738,
+    "recorded_human_match": 2251
+  },
+  "new_games_by_split": {
+    "train": 2395,
+    "validation": 273,
+    "test": 321
+  },
+  "distinct_participant_labels": 394,
+  "all_passing_histories_replayed_by_separate_entrance": true,
+  "second_entrance_shares_pinned_native_rule_engine": true,
+  "invalid_or_short_rejected_records_not_admitted": true,
+  "real_world_identity_or_unassisted_play_authenticated": false,
+  "redistribution_rights_established": false,
+  "full_platform_archive_imported": false,
+  "live_foundation_inputs_changed": false,
+  "student_strength_or_coaching_gain_proven": false,
+  "manifest_sha256": "38ee027764692d7ce0faa576080fd9072c81e7893d77fa3c5d62795ac894b37b"
+}

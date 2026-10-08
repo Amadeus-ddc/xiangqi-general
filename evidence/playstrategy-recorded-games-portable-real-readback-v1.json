@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "actual_source_records": 37,
+  "retained_unique_games": 18,
+  "retained_plies": 1082,
+  "quarantined_records": 19,
+  "retained_by_platform_declared_kind": {
+    "recorded_human_computer_match": 14,
+    "recorded_human_match": 4
+  },
+  "serial_and_eight_cpu_record_outputs_byte_identical": true,
+  "original_retained_fields_match_preserved_pilot": true,
+  "native_second_entrance_proof_reused": "runs/playstrategy-recorded-games-independent-readback-v1/manifest.json",
+  "declared_serial_parallel_artifacts_freshly_rehashed": 32,
+  "executed_frozen_source_files_checked": 58,
+  "existing_pool_games_checked": 104671,
+  "cross_existing_pool_duplicate_games": 0,
+  "real_world_identity_or_unassisted_play_authenticated": false,
+  "redistribution_rights_established": false,
+  "full_platform_archive_imported": false,
+  "live_foundation_inputs_changed": false,
+  "student_strength_proven": false,
+  "manifest_sha256": "9c4b64cfffb1a9e6cf5766e955edaf71b9f70701128d95269b3597dd3dd48a13"
+}

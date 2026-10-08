@@ -968,3 +968,42 @@ and full preflight, without another complete cache hash by this reader. See
 `evidence/recorded-foundation-clean-seventh-raw-gate.json`. The controller
 continues the first course; mastered new courses and trained search-distillation
 rounds remain zero, with no new explanation SFT or general coaching claim.
+
+The eighth raw first-course gate at step 4096 has been independently read back:
+713/768 correct (92.8%), with rank recognition 82.8%. Relative to step 3584,
+43 errors were corrected and 25 correct answers became wrong, a net gain of 18.
+All actual histories, native gold answers, question formats, raw correctness and
+finite FP32 checkpoint tensors were checked; completed artifact hashes were
+read back. Feature identity reuses the completed full preflight and producer.
+See `evidence/recorded-foundation-clean-eighth-raw-gate.json`. This remains below
+99% overall / 95% worst task; no new course is mastered, no new SFT has started,
+and strong play or reliable coaching is unproven.
+
+`platform_games` imports hash-bound public PlayStrategy NDJSON exports without
+network calls or account credentials. Original JSON/PGN moves, results, registered
+player/BOT metadata and UTC dates must agree; one-based ranks are explicitly
+converted before full native-history validation. Only standard-start matches
+with two registered accounts and at least 20 plies are admitted by default.
+The real 37-record serial/eight-CPU pilot has byte-identical record outputs,
+retains 18 games and quarantines 19; retained fields match the preserved pilot
+and its completed second-entrance replay. See
+`evidence/playstrategy-recorded-games-portable-real-readback-v1.json`.
+A subsequent bounded capture of 16 public users contains 3784 records, of which
+3163 pass native history, 621 are quarantined and 174 duplicate prior/new games.
+The 2989 new games contain 165010 plies, with source-declared human/human-computer
+counts 2251/738 and 394 participant labels. A separate entrance replays all
+passing histories, reproduces every quarantine cause and preserves duplicate
+first attribution; 52 declared producer/acquisition artifacts and 58 executed
+frozen source files are checked. See
+`evidence/playstrategy-public-users-independent-readback-v1.json`.
+Six qualified collections now contain 107678 unique games, 8305866 plies and
+866087221 JSONL bytes. The 85530 human-or-published training candidates support
+at most 513180 positions under six-per-game sampling, or two complete paper-sized
+human rounds, assuming every candidate qualifies. The seven-round arithmetic
+minimum remains 245000 training games; see
+`evidence/recorded-dataset-paper-capacity-v3.json`. Capacity readback does not
+repeat full native replay. Public categories do not authenticate real identities,
+unassisted play or redistribution rights, and the separate entrance shares the
+pinned native rules. Raw exports/site text are excluded from source distribution;
+no new neural labels, live curriculum changes or measured student gains follow
+from these imports.
