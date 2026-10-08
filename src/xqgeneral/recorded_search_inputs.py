@@ -11,12 +11,49 @@ from tempfile import TemporaryDirectory
 from .evidence import atomic_json, digest, file_signature, history_key, iter_jsonl, manifest, position_key
 from .human_games import assigned_split
 from .recorded_coach import extract_footprints, footprint_records
+from .recorded_sources import participant_label
+from .rules import START_FEN
 from .symmetry import mirror_fen
 
 
 KINDS = {'recorded_human_match', 'published_recorded_match',
          'recorded_computer_match', 'recorded_human_computer_match', 'recorded_tactical_line'}
 ARTIFACTS = ('manifest.json', 'roots.jsonl', 'counts.json', 'heldout-positions.json')
+TACTICAL_CONTEXT_FIELDS = ('source_initial_fen', 'declared_participants',
+    'supplied_history_starts_at_standard_initial_position', 'pre_fragment_game_history_available',
+    'provided_line_is_best_move_label', 'source_comments_or_analysis_branches_used_as_labels')
+
+
+def candidate_source_kinds(value):
+    if value is None:
+        return set(KINDS)
+    if (not isinstance(value, (list, tuple, set, frozenset)) or not value or
+            any(not isinstance(kind, str) or kind not in KINDS for kind in value)):
+        raise ValueError('Candidate source kinds must be a nonempty selection of known canonical kinds')
+    return set(value)
+
+
+def tactical_source_context(context, initial_fen, headers):
+    """Validate the original supplied-history boundary without inventing its past."""
+    if (not isinstance(context, dict) or not isinstance(initial_fen, str) or
+            not isinstance(headers, dict) or
+            any(headers.get(k) is not None and not isinstance(headers[k], str) for k in ['Red', 'Black']) or
+            set(context) != set(TACTICAL_CONTEXT_FIELDS) or
+            not isinstance(context['source_initial_fen'], str) or
+            context['source_initial_fen'] != headers.get('FEN', START_FEN)):
+        raise ValueError('Tactical source context lost its original FEN or missing-history fields')
+    standard = (initial_fen.split()[:2] == START_FEN.split()[:2] and
+                context['source_initial_fen'].split()[4:] == ['0', '1'])
+    if (any(context[name] is not standard for name in
+            ['supplied_history_starts_at_standard_initial_position', 'pre_fragment_game_history_available']) or
+            context['provided_line_is_best_move_label'] is not False or
+            context['source_comments_or_analysis_branches_used_as_labels'] is not False):
+        raise ValueError('Tactical source context changed its supplied-history or label boundary')
+    people = {key: participant_label(headers[key]) if headers.get(key) else None
+              for key in ['Red', 'Black']}
+    if context['declared_participants'] != people:
+        raise ValueError('Tactical source context changed its declared or missing participants')
+    return context
 
 
 class BoundInputs:
@@ -60,10 +97,14 @@ def checked_game(game, split_seed):
             len(game['history']) != len(game['moves']) + 1 or
             game['history'][0] != game['initial_fen']):
         raise ValueError('Canonical game identity, history dimensions or split changed')
+    if game['source_kind'] == 'recorded_tactical_line':
+        tactical_source_context({k: game.get(k) for k in TACTICAL_CONTEXT_FIELDS},
+                                game['initial_fen'], game['headers'])
 
 
 def root_order(game, seed, min_ply):
-    end = len(game['moves']) - int(game['native_terminal']['ended'])
+    # The terminal position is after the final move; its preceding decision is a valid root.
+    end = len(game['moves'])
     pools = [[], [], []]
     for ply in range(min_ply, end):
         pools[min(2, 3 * ply // max(1, end))].append(ply)
@@ -77,10 +118,12 @@ def root_order(game, seed, min_ply):
 
 
 def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
-            seed=20261013, split_seed=20261051, per_game=6, min_ply=12, workers=1):
+            seed=20261013, split_seed=20261051, per_game=6, min_ply=12, workers=1,
+            candidate_kinds=None):
     if (type(per_game) is not int or per_game < 1 or type(min_ply) is not int or min_ply < 0 or
             type(workers) is not int or workers < 1 or not games):
         raise ValueError('Positive recorded search budgets and sources are required')
+    selected_kinds = candidate_source_kinds(candidate_kinds)
     output, data, footprints, used_inputs, heldout_data = map(Path,
         (output, data, footprints, used_inputs, heldout_data))
     if output.exists():
@@ -172,6 +215,7 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
     atomic_json(output / 'state.json', {'status': 'extracting_unused_training_game_roots',
         'unique_source_games': len(unique), 'reserved_positions': len(reserved), 'gpu_model_loaded': False})
     excluded, accepted_kind, accepted_side, accepted_phase = Counter(), Counter(), Counter(), Counter()
+    accepted_context = Counter()
     per_source, seen, accepted_games = Counter(), set(), set()
     total = 0
     with TemporaryDirectory(prefix='ordering-', dir=output) as scratch:
@@ -185,6 +229,9 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                         continue
                     seen.add(identity)
                     if game['split'] != 'train':
+                        continue
+                    if game['source_kind'] not in selected_kinds:
+                        excluded['unselected_source_kind'] += 1
                         continue
                     if identity in used_games or identity in heldout_games:
                         excluded['already_used_or_reserved_game'] += 1
@@ -213,6 +260,8 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                             'provenance': ((game.get('provenance') + ';') if game.get('provenance') else '') +
                                           'unused_recorded_search_input',
                             'recorded_continuation_is_best_move_label': False}
+                        if game['source_kind'] == 'recorded_tactical_line':
+                            row['recorded_source_context'] = {k: game[k] for k in TACTICAL_CONTEXT_FIELDS}
                         priority = hashlib.sha256(f'{seed}/{key}'.encode()).hexdigest()
                         cursor = database.execute('INSERT OR IGNORE INTO roots VALUES (?, ?, ?)',
                             (key, priority, json.dumps(row, ensure_ascii=False)))
@@ -223,6 +272,9 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                         accepted += 1
                         accepted_games.add(identity)
                         accepted_kind[game['source_kind']] += 1
+                        if game['source_kind'] == 'recorded_tactical_line':
+                            accepted_context['from_standard_initial_position' if
+                                game['pre_fragment_game_history_available'] else 'pre_fragment_history_unavailable'] += 1
                         accepted_side['red' if row['fen'].split()[1] == 'w' else 'black'] += 1
                         accepted_phase[str(min(2, 3 * ply // max(1, end)))] += 1
                         per_source[str(path)] += 1
@@ -254,6 +306,10 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
         'heldout_moves_and_structured_answers_used_for_isolation_only': True,
         'teacher_inference_executed': False, 'gpu_or_model_loaded': False,
         'new_distillation_targets_generated': False, 'student_benefit_proven': False}
+    if accepted_context:
+        counts.update(distinct_canonical_training_lines=len(accepted_games),
+            tactical_candidate_counts_by_supplied_history_boundary=dict(accepted_context),
+            supplied_history_context_preserved=True, phase_buckets_relative_to_supplied_line=True)
     atomic_json(output / 'counts.json', counts)
     atomic_json(output / 'heldout-positions.json', sorted(reserved))
     config = {'games': list(map(str, games)), 'data': str(data), 'footprints': str(footprints),
@@ -262,6 +318,8 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
         'base_data_identities_reused_from_completed_footprints': {
             str(data / f'{s}.jsonl'): base['outputs'][str(data / f'{s}.jsonl')]
             for s in ('train', 'validation', 'test')}}
+    if candidate_kinds is not None:
+        config['candidate_kinds'] = sorted(selected_kinds)
     saved = manifest('prepared_unused_recorded_search_roots', config, [],
         [output / name for name in ARTIFACTS[1:]], counts)
     saved['inputs'] = bound.artifacts
@@ -290,6 +348,7 @@ def prepared_roots(pool, data, limit, seed, base_identities):
         for path, identity in saved[group].items():
             bound.bind(path, identity)
     counts = bound.json(pool / 'counts.json')
+    selected_kinds = candidate_source_kinds(saved['config'].get('candidate_kinds'))
     if (counts != saved['verification'] or counts.get('new_color_derived_candidates') != 0 or
             counts.get('new_distillation_targets_generated') is not False or
             counts.get('all_canonical_heldout_histories_and_color_positions_reserved') is not True or
@@ -303,10 +362,13 @@ def prepared_roots(pool, data, limit, seed, base_identities):
                 row.get('id') != 'recorded-search-' + key or
                 row['game_id'] != row['recorded_source_game_id'] or
                 assigned_split(row['game_id'], saved['config']['split_seed']) != 'train' or
-                row['recorded_source_kind'] not in KINDS or
+                row['recorded_source_kind'] not in selected_kinds or
                 row.get('recorded_continuation_is_best_move_label') is not False or
                 'answer' in row or previous is not None and ordered <= previous):
             raise ValueError('Recorded roots changed their original training ownership or order')
+        if row['recorded_source_kind'] == 'recorded_tactical_line':
+            tactical_source_context(row.get('recorded_source_context'), row['initial_fen'],
+                                    row['recorded_source_headers'])
         keys.add(key)
         games[row['game_id']] += 1
         kinds[row['recorded_source_kind']] += 1
@@ -341,10 +403,13 @@ def main():
     parser.add_argument('--per-game', type=int, default=6)
     parser.add_argument('--min-ply', type=int, default=12)
     parser.add_argument('--workers', type=int, default=1)
+    parser.add_argument('--candidate-kinds', nargs='+', choices=sorted(KINDS),
+                        help='Select candidate sources while reserving heldout histories from every --games input')
     args = parser.parse_args()
     print(json.dumps(prepare(args.games, args.data, args.footprints, args.used_inputs,
         args.heldout_data, args.output, seed=args.seed, split_seed=args.split_seed,
-        per_game=args.per_game, min_ply=args.min_ply, workers=args.workers)), flush=True)
+        per_game=args.per_game, min_ply=args.min_ply, workers=args.workers,
+        candidate_kinds=args.candidate_kinds)), flush=True)
 
 
 if __name__ == '__main__':

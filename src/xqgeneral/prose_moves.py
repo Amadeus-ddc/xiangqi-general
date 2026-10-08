@@ -85,5 +85,9 @@ def consolidation_messages(packet, fen, target):
               '紧邻对应坐标，写成坐标（中文记谱）。chinese为空时只用坐标。'
               '不要把撤去炮架解将误写为挡将，不要把有限变化与评分写成强制获胜。'
               '只输出JSON对象，唯一字段explanation，为120到240字中文。')
+    source_context = content.get('recorded_source_context')
+    if isinstance(source_context, dict) and source_context.get('pre_fragment_game_history_available') is False:
+        system += ('来源只提供一个对局片段，起点之前的历史未提供。禁止杜撰此前的走子或布局过程；'
+                   '棋手字段只作来源署名，不据此推断身份、棋风或赛事背景。')
     return [{'role':'system', 'content':system},
             {'role':'user', 'content':json.dumps(content, ensure_ascii=False)}]

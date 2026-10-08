@@ -280,6 +280,8 @@ class SearchMiner:
                                            for c in children],
                        'verified_child_analyses': [{'move': c['move'], 'analysis': c['analysis'],
                                                      'terminal_outcome': c.get('outcome')} for c in children]}
+            if root.get('recorded_source_kind') == 'recorded_tactical_line':
+                content['recorded_source_context'] = root['recorded_source_context']
             if self.child_contract == 'move_eval':
                 del content['verified_child_analyses']
                 content['child_analyses'] = [{'move': c['move'], 'terminal_outcome': c.get('outcome'),

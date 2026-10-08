@@ -11,7 +11,8 @@ neither strong play nor accurate strategic explanations.
 
 ## Inputs and outputs
 
-Input: Xiangqi FEN, complete move history, and a Chinese question. Coordinates
+Input: Xiangqi FEN, all supplied move history, and a Chinese question. Tactical
+fragments preserve an explicit boundary where earlier history is unavailable. Coordinates
 are `a0` to `i9`. Red is at the bottom. Structured move explanations include a
 move, principal variation, candidates, evaluation perspective, and board facts.
 Raw model generations must be evaluated before correction or oracle assistance.
@@ -1395,8 +1396,57 @@ Canonical lines are not independent puzzle counts: there are 1929 initial
 position geometries, with 22 shared across source splits. These source splits
 are not proved unseen by earlier student training and are not an independent
 benchmark. Of the training lines, 430 contain at most 12 plies, requiring
-sampling that can include fragment roots. Subsequent candidate preparation
-still must enforce global heldout, future and color isolation, and retain the
-missing-history context. This import changes no live course input, existing
+sampling that can include fragment roots. The separate tactical candidate pool
+now enforces global heldout, future and color isolation while retaining that
+missing-history context; its measured scope is described below. This import changes no live course input, existing
 search pool or queued SFT recipe. It provides no new neural labels, trained
 distillation rounds, authenticated puzzle solutions or model benefit.
+
+
+The tactical candidate pool contains 8982 histories from 1601 canonical training
+lines, with 4601 red and 4381 black roots. The source imports retain 109937 total
+canonical identities across seven sources; this includes fragments and is not a
+count of full matches or independent puzzles. Candidate selection is restricted
+to tactical lines while all seven sources contribute heldout reservations,
+including 2738116 existing and canonical root/future/color positions. There are
+7744 candidates with unknown pre-fragment history and 1238 from the standard
+initial position. Phase buckets describe the supplied line, not an authenticated
+stage of the original match. The final pre-terminal decision remains eligible,
+including one-move fragments; terminal positions never become roots.
+
+`evidence/tactical-search-inputs-full-v1.json` binds the actual frozen 71-module
+preparation, full independent readback and production adapter consumption.
+Every emitted row matches its canonical source fields, supplied-history boundary,
+training ownership, seeded ordering and per-line cap. The reader independently
+rebuilds the complete heldout and explanation-branch color reservations and
+natively replays every candidate's supplied past and recorded future. It shares
+native rules with the importer and does not independently reimplement sampling
+inclusion. Actual preparation takes 54.41 seconds; full readback takes 183.67
+seconds with eight native replay workers. The production adapter selects 512
+roots, including 443 with unknown earlier history, checks the full tail and
+freshly hashes all three base course files. No student, teacher, engine or
+feature cache is loaded. Controlled search and collection checks preserve the
+source context in recursive queries, grounded teacher prompts and final labels;
+source fields and boolean types cannot change during collection. All 501 CPU
+tests pass against 125 unchanged source/test bindings; 22 new cases and the
+102-test focused suite cover these contracts.
+
+Fresh streaming hashes of both completed pools find 40 shared full-history keys,
+leaving a 487592-key inventory. Another 541 old candidate roots intersect the
+new source reservations. Every old future has not been rechecked against those
+new reservations, so this inventory is not a newly merged isolated training
+pool. The existing pilot and course/SFT queues keep their frozen contracts.
+Canonical source splits are not proved unseen by earlier training and are not
+new independent benchmark results. Accepted clean-model labels, trained
+search-distillation rounds and model benefit remain zero or unmeasured.
+
+The sixth second-course raw check at step 3072 uses the same 1408 questions as
+all five earlier checks. Dynamic accuracy reaches 536/640 (83.75%), with 39
+corrections and 20 new errors relative to step 2560. Captures score 94/128,
+move lists 70/128, checks 120/128, and legal/illegal judgments each 126/128.
+Static replay scores 728/768 (94.7917%), with 17 corrections and 22 new errors.
+The independent reader recomputes all native answers, replays 1299 distinct
+histories, checks all six candidate contracts and rehashes the actual 67-module
+training/QA source; see `evidence/dynamic-current-sixth-raw-validation-v1.json`.
+This remains below the 4096-update minimum. One of four clean courses is
+complete; new SFT, strong play and reliable strategic coaching are unproven.

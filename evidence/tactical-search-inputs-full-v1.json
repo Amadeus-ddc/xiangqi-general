@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "kind": "actual_globally_isolated_tactical_search_candidate_pool",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_preparation_source_revision": "41d420796f88fea4132cdf8a33a8ee7f42034853",
+  "artifacts": {
+    "producer_manifest_json": {
+      "path": "runs/tactical-search-inputs-full-v1/manifest.json",
+      "sha256": "1f0900134eabdd1680fe3a6382311bdcd6808af2630fce03197febb7806cb73a",
+      "bytes": 11042
+    },
+    "producer_verification_json": {
+      "path": "runs/tactical-search-inputs-full-v1/verification.json",
+      "sha256": "f1e9849a7069c698997541df058e64c2092fe18da2de5c5b3968dee386e6236a",
+      "bytes": 2150
+    },
+    "producer_entry_py": {
+      "path": "runs/tactical-search-inputs-full-v1/entry.py",
+      "sha256": "70d662fc86120576bd27ff743ceff1469707090af327be943dbe9ba8415b2525",
+      "bytes": 1306
+    },
+    "producer_plan_json": {
+      "path": "runs/tactical-search-inputs-full-v1/plan.json",
+      "sha256": "8ff5dbc52417ad57efb5216e80536ad147372d26021287e4b4828ad453e72fe7",
+      "bytes": 1991
+    },
+    "producer_exit_json": {
+      "path": "runs/tactical-search-inputs-full-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "producer_source-run_source-manifest_json": {
+      "path": "runs/tactical-search-inputs-full-v1/source-run/source-manifest.json",
+      "sha256": "17e9fbebd6d7b40644165e66720c3ddc33d6d25616ac433438d0bba851e83bcd",
+      "bytes": 6730
+    },
+    "independent_reader_manifest_json": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/manifest.json",
+      "sha256": "2c9bc938752ff14e2fcf4043334664614eb550021150d6da31781d1394b5db41",
+      "bytes": 47745
+    },
+    "independent_reader_verification_json": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/verification.json",
+      "sha256": "4986397f9fb31e2b0632b87a5d8c9235b1e874443009cfb3fb6d80d8f1665511",
+      "bytes": 3842
+    },
+    "independent_reader_entry_py": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/entry.py",
+      "sha256": "86b5328cf3783259d856b624da642fa554078eacc6ceefa2042b7c5977d8a66a",
+      "bytes": 17804
+    },
+    "independent_reader_plan_json": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/plan.json",
+      "sha256": "8296b03b31bc95089eb8609db1d55ec62d0b3ddae8453b5c3d03fd4539dcfd78",
+      "bytes": 1022
+    },
+    "independent_reader_exit_json": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "independent_reader_source-run_source-manifest_json": {
+      "path": "runs/tactical-search-inputs-full-readback-v1/source-run/source-manifest.json",
+      "sha256": "17e9fbebd6d7b40644165e66720c3ddc33d6d25616ac433438d0bba851e83bcd",
+      "bytes": 6730
+    },
+    "actual_consumer_manifest_json": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/manifest.json",
+      "sha256": "b69753e95aecd380456e89f46c445594c7da903d2fc8dd7d1d72ba3a7ca58c9f",
+      "bytes": 11374
+    },
+    "actual_consumer_verification_json": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/verification.json",
+      "sha256": "d95c499fd7260a0ef35b4c6ce098e54f2a2044baa381b6cdc984b9a6be001551",
+      "bytes": 1274
+    },
+    "actual_consumer_entry_py": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/entry.py",
+      "sha256": "c92350b317ff86edf06a7df007ed874e142c0160fbba4e7c6e19345a4f1076ae",
+      "bytes": 3104
+    },
+    "actual_consumer_plan_json": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/plan.json",
+      "sha256": "a7e3c31da98ae18ab3f23d0da69d9624487c9fe322f4b98fd46e3be61b480474",
+      "bytes": 990
+    },
+    "actual_consumer_exit_json": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "actual_consumer_source-run_source-manifest_json": {
+      "path": "runs/tactical-search-inputs-real-consumption-v1/source-run/source-manifest.json",
+      "sha256": "17e9fbebd6d7b40644165e66720c3ddc33d6d25616ac433438d0bba851e83bcd",
+      "bytes": 6730
+    },
+    "pool_manifest": {
+      "path": "data/tactical-search-inputs-full-v1/manifest.json",
+      "sha256": "c7281abf4abd6cb535f1a05f160ed07e55f5b6eea9a451e87eb59f6ceb609098",
+      "bytes": 15882
+    },
+    "candidate_roots": {
+      "path": "data/tactical-search-inputs-full-v1/roots.jsonl",
+      "sha256": "67afde514c608566b7aea3946ce23c177febb3237f92d33c0375e9e30dc5ee42",
+      "bytes": 32652123
+    },
+    "candidate_counts": {
+      "path": "data/tactical-search-inputs-full-v1/counts.json",
+      "sha256": "72fa2f88bb22a83dcedb9d250c5518566d3d4860d4c824608d8ef128956181fe",
+      "bytes": 1805
+    },
+    "reserved_positions": {
+      "path": "data/tactical-search-inputs-full-v1/heldout-positions.json",
+      "sha256": "83006cd4cd606ee0fbaebd29145cec759040fec46261079089c3874ce5b572ac",
+      "bytes": 171154879
+    },
+    "cross_pool_manifest_json": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/manifest.json",
+      "sha256": "a2af7425d5d99db7c9328c963fcaf46258da1c7190e4d818710f0128c62d7daf",
+      "bytes": 10872
+    },
+    "cross_pool_verification_json": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/verification.json",
+      "sha256": "78339f3a5da77cdba9edf56ad4414ad48ece6bfbc3ea9b6625904891a8d3275f",
+      "bytes": 778
+    },
+    "cross_pool_entry_py": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/entry.py",
+      "sha256": "17722e7cb31eb8ae03e197a68abeecc01ee2caf7b7d2cf1c22868eb8957cb6e9",
+      "bytes": 3835
+    },
+    "cross_pool_plan_json": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/plan.json",
+      "sha256": "ba334ea8155e0d113d8e93afb7a7e1d79aa6eb3d371d274e7f1d26da0c850ec7",
+      "bytes": 865
+    },
+    "cross_pool_exit_json": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "cross_pool_source-run_source-manifest_json": {
+      "path": "runs/tactical-search-pool-overlap-readback-v1/source-run/source-manifest.json",
+      "sha256": "17e9fbebd6d7b40644165e66720c3ddc33d6d25616ac433438d0bba851e83bcd",
+      "bytes": 6730
+    }
+  },
+  "actual_preparation": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 54.41467845439911,
+    "peak_process_rss_kib": 1135804,
+    "candidate_counts": {
+      "candidate_training_histories": 8982,
+      "distinct_original_training_games": 1601,
+      "unique_canonical_source_games": 109937,
+      "canonical_game_splits": {
+        "validation": 11016,
+        "train": 87970,
+        "test": 10951
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_tactical_line": 8982
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-tactical-lines-ccpd-v1/games.jsonl": 8982
+      },
+      "candidate_counts_by_side": {
+        "red": 4601,
+        "black": 4381
+      },
+      "candidate_counts_by_game_phase": {
+        "0": 2647,
+        "1": 3049,
+        "2": 3286
+      },
+      "excluded": {
+        "unselected_source_kind": 86165,
+        "heldout_root_or_recorded_future": 8685,
+        "duplicate_full_history": 24,
+        "already_used_full_history": 46
+      },
+      "reserved_game_identifiers": 22009,
+      "reserved_root_and_future_positions": 2738116,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false,
+      "distinct_canonical_training_lines": 1601,
+      "tactical_candidate_counts_by_supplied_history_boundary": {
+        "pre_fragment_history_unavailable": 7744,
+        "from_standard_initial_position": 1238
+      },
+      "supplied_history_context_preserved": true,
+      "phase_buckets_relative_to_supplied_line": true
+    },
+    "gpu_model_loaded": false,
+    "new_distillation_targets_generated": false
+  },
+  "independent_readback": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 183.67425075452775,
+    "native_candidate_replay_workers": 8,
+    "tactical_supplied_history_context_compared_to_every_source_record": true,
+    "canonical_training_identifiers_are_lines_not_all_full_matches": true,
+    "native_rules_implementation_shared_with_importer": true,
+    "unknown_pre_fragment_history_reconstructed": false,
+    "phase_buckets_relative_to_supplied_line": true,
+    "canonical_source_splits_claimed_unseen_by_prior_training": false,
+    "sampling_inclusion_algorithm_independently_reimplemented": false,
+    "all_original_candidates_compared_field_for_field": 8982,
+    "all_seven_canonical_source_files_independently_streamed_and_rehashed": true,
+    "all_original_training_ownership_keys_priority_and_per_game_caps_checked": true,
+    "all_candidate_roots_and_recorded_color_futures_disjoint_from_full_reservations": true,
+    "full_canonical_heldout_and_explanation_branch_color_reservations_recomputed": true,
+    "used_course_and_initial_teacher_games_and_history_keys_excluded": true,
+    "canonical_unique_games": 109937,
+    "candidate_counts": {
+      "candidate_training_histories": 8982,
+      "distinct_original_training_games": 1601,
+      "unique_canonical_source_games": 109937,
+      "canonical_game_splits": {
+        "validation": 11016,
+        "train": 87970,
+        "test": 10951
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_tactical_line": 8982
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-tactical-lines-ccpd-v1/games.jsonl": 8982
+      },
+      "candidate_counts_by_side": {
+        "red": 4601,
+        "black": 4381
+      },
+      "candidate_counts_by_game_phase": {
+        "0": 2647,
+        "1": 3049,
+        "2": 3286
+      },
+      "excluded": {
+        "unselected_source_kind": 86165,
+        "heldout_root_or_recorded_future": 8685,
+        "duplicate_full_history": 24,
+        "already_used_full_history": 46
+      },
+      "reserved_game_identifiers": 22009,
+      "reserved_root_and_future_positions": 2738116,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false,
+      "distinct_canonical_training_lines": 1601,
+      "tactical_candidate_counts_by_supplied_history_boundary": {
+        "pre_fragment_history_unavailable": 7744,
+        "from_standard_initial_position": 1238
+      },
+      "supplied_history_context_preserved": true,
+      "phase_buckets_relative_to_supplied_line": true
+    },
+    "candidate_decade_counts_from_declared_headers": {
+      "unknown": 4838,
+      "1980": 2509,
+      "1990": 385,
+      "1970": 567,
+      "2000": 306,
+      "1950": 86,
+      "1960": 207,
+      "1920": 18,
+      "1930": 54,
+      "1940": 12
+    },
+    "native_complete_supplied_pasts_and_recorded_futures_replayed": 8982,
+    "native_full_replay_counts_by_source_declared_kind": {
+      "recorded_tactical_line": 8982
+    },
+    "every_candidate_natively_replayed_again": true,
+    "completed_canonical_native_imports_reused": true,
+    "model_or_feature_cache_loaded": false,
+    "new_distillation_targets_generated": false,
+    "teacher_inference_executed": false,
+    "student_benefit_proven": false,
+    "actual_preparation_source_revision": "41d420796f88fea4132cdf8a33a8ee7f42034853",
+    "all_71_producer_source_files_rehashed": true
+  },
+  "actual_production_reader_consumption": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_selected_original_roots": 512,
+    "exact_first_selected_seeded_records_preserved": true,
+    "selection_limit": 512,
+    "every_selected_root_is_tactical_line": true,
+    "selected_unknown_pre_fragment_history_roots": 443,
+    "source_context_retained_by_production_adapter": true,
+    "canonical_source_splits_claimed_unseen_by_prior_training": false,
+    "complete_pool_tail_ownership_counts_and_order_checked": true,
+    "actual_additional_reserved_positions": 2738116,
+    "all_three_base_course_split_files_freshly_hashed": true,
+    "base_course_identities": {
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      },
+      "data/research-human-engine-v1/validation.jsonl": {
+        "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+        "bytes": 1059759384
+      },
+      "data/research-human-engine-v1/test.jsonl": {
+        "sha256": "7d33fc8e573046792d695397130c20c7671aa303ea21386a7d739c81386a580d",
+        "bytes": 1035798738
+      }
+    },
+    "seconds": 22.720670834183693,
+    "model_gpu_or_engine_loaded": false,
+    "student_search_or_teacher_generation_executed": false
+  },
+  "cpu_checks": {
+    "new_cases": 22,
+    "focused_passed": 102,
+    "focused_terminal": {
+      "path": "runs/tactical-search-development-checks-v3/exit.json",
+      "sha256": "7860187b64968904682015a753b2a731869f7e02b928d594c4ca6f95902f7f9f",
+      "bytes": 116
+    },
+    "focused_log": {
+      "path": "runs/tactical-search-development-checks-v3/focused.log",
+      "sha256": "ff46870f7107b01252faac402d49de15b8f426fee49400d9cc5d08ef00fc384d",
+      "bytes": 191
+    },
+    "full_passed": 501,
+    "full_terminal": {
+      "path": "runs/tactical-search-milestone-tests-v3/exit.json",
+      "sha256": "2d0c0db6e0eb24dc09e56073bc3e0e781a25e10b5c3452f76efc149bcc1649a7",
+      "bytes": 117
+    },
+    "full_log": {
+      "path": "runs/tactical-search-milestone-tests-v3/log.txt",
+      "sha256": "3f312d67ed4fea90cfa62401100c4d5e5daecc5a40713a029d478cef3d614deb",
+      "bytes": 592
+    },
+    "unchanged_source_and_test_bindings": 125,
+    "bindings": {
+      "path": "runs/tactical-search-milestone-tests-v3/source-test-bindings.json",
+      "sha256": "b9148063fe6cf90000e82eca5a21d622c28f84ac9304a8fa53342a2a06524175",
+      "bytes": 12974
+    }
+  },
+  "scope_limits": {
+    "candidate_histories_not_accepted_search_targets": true,
+    "all_emitted_candidates_native_supplied_past_and_recorded_future_replayed": true,
+    "native_rules_shared_with_importer": true,
+    "sampling_inclusion_algorithm_independently_reimplemented": false,
+    "source_canonical_identifiers_are_lines_not_all_full_games": true,
+    "canonical_source_splits_are_not_proven_unseen_by_prior_student_training": true,
+    "supplied_phase_buckets_are_relative_to_each_line": true,
+    "pre_fragment_history_or_missing_participant_names_invented": false,
+    "source_declared_player_metadata_authenticated": false,
+    "original_line_or_source_prose_treated_as_optimal_or_neural_label": false,
+    "tactical_source_context_preserved_through_queries_and_final_labels_in_controlled_cases": true,
+    "new_student_search_or_teacher_inference_executed": false,
+    "new_accepted_clean_model_distillation_labels": 0,
+    "trained_distillation_rounds": 0,
+    "effective_yield_or_student_benefit_proven": false,
+    "prior_full_game_pool_or_existing_four_queues_modified": false,
+    "total_unique_histories_across_old_and_new_candidate_pools_measured": true,
+    "new_model_weight_artifact_published": false,
+    "combined_globally_isolated_training_pool_created": false
+  },
+  "cross_pool_overlap_readback": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 20.773528510704637,
+    "old_full_match_candidate_histories": 478650,
+    "new_tactical_candidate_histories": 8982,
+    "shared_full_history_keys": 40,
+    "unique_full_history_keys_across_both_completed_pools": 487592,
+    "old_candidate_root_geometries_in_new_source_reservations": 541,
+    "old_first_512_root_geometries_in_new_source_reservations": 0,
+    "every_old_recorded_future_rechecked_against_new_reservations": false,
+    "prior_root_files_freshly_streamed_and_hashed": true,
+    "combined_training_pool_created": false,
+    "source_holdouts_claimed_unseen_by_prior_training": false,
+    "prior_pilot_or_live_curriculum_modified": false,
+    "new_student_teacher_engine_or_feature_cache_loaded": false
+  },
+  "latest_verified_collection_source_revision": "17f3420e303b5d0b6b2e0582c4ad633b98148544",
+  "preserved_launch_setup_failure": {
+    "path": "runs/tactical-search-development-checks-v2/exit.json",
+    "sha256": "bd90f6bd4b20880067ef54eb241444cd8685b57fbb28177529dd6cd5bda8b968",
+    "bytes": 144
+  }
+}
