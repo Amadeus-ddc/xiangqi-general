@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "kind": "actual_second_course_second_raw_validation",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_qa_and_training_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_reader_revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+  "independent_readback": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/manifest.json",
+    "sha256": "f2f5bce4657de99665e5d8b18329358a6ea9ee67acf5364489a3a88ca16fb721",
+    "bytes": 29645
+  },
+  "independent_readback_verification": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/verification.json",
+    "sha256": "6179202adf93d20639e952799385eca2e53cf766966de0f331bfc16d9d6171aa",
+    "bytes": 3186
+  },
+  "independent_reader_entry": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/entry.py",
+    "sha256": "39a3ecdd98f286e5e37aea6801544a2cfb906297ac7009ba497ba7f7b3bc24e7",
+    "bytes": 7708
+  },
+  "independent_reader_source_manifest": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/source-run/source-manifest.json",
+    "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+    "bytes": 6353
+  },
+  "reader_plan": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/plan.json",
+    "sha256": "a3a2078e2fb1514c386283c41418bf3e357bf2644c79a1d47bedbf709e7aafc5",
+    "bytes": 933
+  },
+  "native_question_id_format_and_answer_readback": {
+    "path": "runs/dynamic-current-second-raw-validation-readback-v1/native-sample-readback.json",
+    "sha256": "14f5293aae48e1f275a0eaccbf15024d2e4467e84ac020f4f2f50afc30022c83",
+    "bytes": 361676
+  },
+  "actual_before_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-512/qa/predictions.jsonl",
+    "sha256": "f9426c68481135cd9727caeb1a20edd229d9f52b970f13b48c9ab666705969e3",
+    "bytes": 511611
+  },
+  "actual_after_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-1024/qa/predictions.jsonl",
+    "sha256": "72a7acff38d32fd538c6cb12f6af736c4a3844881a03efb124222953d7976372",
+    "bytes": 510320
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "dynamic_current",
+    "actual_step": 1024,
+    "raw_gate": {
+      "examples": 1408,
+      "accuracy": 0.8274147727272727,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.3984375
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.6796875
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.28125
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.890625
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.921875
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.9622395833333334,
+          "minimum_task_accuracy": 0.890625,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.665625,
+          "minimum_task_accuracy": 0.28125,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "native_answers_recomputed": 1408,
+    "distinct_native_histories_replayed": 1299,
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 5632,
+    "selected_parent_sha256": "56f596cbc3086bbcaf4022b64b8043936a4b9f764b221ec5b22b2e1159ae0173",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "second_course_validation_selection_minimum_steps": 4096,
+    "second_course_completed_by_this_check": false,
+    "clean_courses_completed_by_declared_policy_at_this_check": 1,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "paired_comparison_with_step_512": {
+    "all_1408_original_question_ids_gold_text_and_variants_identical": true,
+    "courses": {
+      "static_current": {
+        "examples": 768,
+        "before_correct": 732,
+        "after_correct": 739,
+        "corrected": 9,
+        "new_errors": 2
+      },
+      "dynamic_current": {
+        "examples": 640,
+        "before_correct": 334,
+        "after_correct": 426,
+        "corrected": 96,
+        "new_errors": 4
+      }
+    }
+  },
+  "first_course_5632_static_sample_is_different": true,
+  "course_finished_by_this_interim_check": false,
+  "new_sft_or_distillation_training_completed": false,
+  "independent_test_used": false,
+  "oracle_predictions_repaired": false
+}

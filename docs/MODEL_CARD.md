@@ -1290,3 +1290,36 @@ These are retained search inputs: no student search, teacher consolidation,
 accepted distillation labels, trained round, effective yield or model benefit is
 measured here. Unused training game records and actual student-engine games must
 expand the raw pool before paper-scale filtered labels can be claimed.
+
+At second-course step 1024, the same 1408 question IDs, reference answers, text and
+variants are checked against step 512. Dynamic accuracy improves from 334/640 to
+426/640, correcting 96 answers and introducing four errors. Captures and move
+lists reach 51/128 and 36/128. Static replay reaches 739/768, with nine corrected
+answers and two new errors. Independent native/weight/source readback is recorded
+in `evidence/dynamic-current-second-raw-validation-v1.json`. Selection still
+requires at least 4096 second-course updates; only one of four clean courses is
+complete. These rule QA results do not establish playing or coaching strength.
+
+Unused canonical training games now provide 478650 additional original history
+candidates from 80117 games, with no newly generated color mirrors. Source
+declarations account for 87544 human, 387678 published and 3428 human-computer
+candidates; these declarations do not authenticate the players or dates. Red and
+black counts are 240740 and 237910; early, middle and late counts are 103461,
+179575 and 195614. Each game contributes at most six histories.
+
+`evidence/unused-recorded-search-inputs-full-v2.json` binds the actual producer,
+independent reader and production-adapter consumption. All 478650 rows match the
+original records field for field; all six source files are independently
+streamed and rehashed. Complete heldout histories, explanation branches and color
+counterparts reserve 2715684 positions. Native replay samples 192 complete pasts
+and recorded futures; completed canonical native imports are reused rather than
+replaying every history again. The actual adapter selects 512 records, checks the
+complete pool tail and freshly hashes all three base course split files. No
+student, teacher, engine or feature cache is loaded in these checks.
+
+Preparation takes 560.67 seconds and peaks at 1126352 KiB process RSS. Missing
+optional platform provenance is preserved explicitly, with the failed first
+attempt retained and corrected execution in a fresh directory. All 431 CPU tests
+pass against 120 unchanged source and test bindings. This increases the measured
+candidate pool, not accepted distillation labels: new student search,
+consolidation, acceptance yield, trained rounds and model benefit remain unmeasured.

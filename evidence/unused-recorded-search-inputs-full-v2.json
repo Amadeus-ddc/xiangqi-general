@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "kind": "actual_full_unused_recorded_search_candidate_pool",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_preparation_source_revision": "2400ab8b7e239c4580660bffe948e3492e6d3d2d",
+  "artifacts": {
+    "producer_manifest": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/manifest.json",
+      "sha256": "b47bcf3d16449d2c22dd2abba7e835ec3e51f552fa587950d777a8271ba44c39",
+      "bytes": 10922
+    },
+    "producer_verification": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/verification.json",
+      "sha256": "ad1ef0638a5898d05b5ec5a456af647df0eb24144baa9bea8c8b52faadd93610",
+      "bytes": 2213
+    },
+    "producer_entry": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/entry.py",
+      "sha256": "0cc898244a174d860cc977de09d49ca786a7eb6bd79ebe56b59f39fe3c9ba4db",
+      "bytes": 1309
+    },
+    "producer_plan": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/plan.json",
+      "sha256": "399cdad3c44e63b7f5064abfad534e3965488e6b1ed9d9492d7d76a0ad2a0427",
+      "bytes": 1871
+    },
+    "producer_source_manifest": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/source-run/source-manifest.json",
+      "sha256": "b2aa7f941cb9addf472970447e3c31c063aafe76f93db03ffe88ce48ddcd1450",
+      "bytes": 6546
+    },
+    "producer_exit": {
+      "path": "runs/unused-recorded-search-inputs-full-v2/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "independent_reader_manifest": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/manifest.json",
+      "sha256": "7807cbbf323bb463d6786ede33b6f1ecd6d56bb7ae36fd1a0ce5d0d43771c4cc",
+      "bytes": 31819
+    },
+    "independent_reader_verification": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/verification.json",
+      "sha256": "3beb7c9df63d874030472bec9ccf0194404d930c4a70ea6448a75ce925220686",
+      "bytes": 3497
+    },
+    "independent_reader_entry": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/entry.py",
+      "sha256": "859d67d2e9c735fc536177cdb8e00e4bb9a2a7937d89268d0924869047569f37",
+      "bytes": 13283
+    },
+    "independent_reader_plan": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/plan.json",
+      "sha256": "aebc07d0cd9ce1ce0b794b3c3029715df8034ef5f84f2ad2d782d66266c03c1a",
+      "bytes": 987
+    },
+    "independent_reader_source_manifest": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/source-run/source-manifest.json",
+      "sha256": "b2aa7f941cb9addf472970447e3c31c063aafe76f93db03ffe88ce48ddcd1450",
+      "bytes": 6546
+    },
+    "independent_reader_exit": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v2/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "actual_consumer_manifest": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/manifest.json",
+      "sha256": "d0e40fecd8a89db50990a1a42d4fb7804398653fc8f270f2480379ac88289da5",
+      "bytes": 10954
+    },
+    "actual_consumer_verification": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/verification.json",
+      "sha256": "f4fe2b549f2ee7eb931e8fd9f2722cf11e520062523a677fe76e9f269a61ae95",
+      "bytes": 1015
+    },
+    "actual_consumer_entry": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/entry.py",
+      "sha256": "54c32d1dd911ef10e6d71459bf3a682c355a1d41c356b9051f782353e07587eb",
+      "bytes": 2344
+    },
+    "actual_consumer_plan": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/plan.json",
+      "sha256": "f27826ff57368809878d5c361a55c5bfe908de67e413e7e68dcecec1e7f8ef20",
+      "bytes": 826
+    },
+    "actual_consumer_source_manifest": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/source-run/source-manifest.json",
+      "sha256": "b2aa7f941cb9addf472970447e3c31c063aafe76f93db03ffe88ce48ddcd1450",
+      "bytes": 6546
+    },
+    "actual_consumer_exit": {
+      "path": "runs/unused-recorded-search-inputs-real-consumption-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "pool_manifest": {
+      "path": "data/unused-recorded-search-inputs-full-v2/manifest.json",
+      "sha256": "30b378bbb874f0847ecbbfad951582097d0cc5c9330b2bb38527a793d6ef0a2c",
+      "bytes": 15299
+    },
+    "candidate_roots": {
+      "path": "data/unused-recorded-search-inputs-full-v2/roots.jsonl",
+      "sha256": "df6e7874f0a74fe38fcfb295377b5b1dee4319d3b1177aebec21d58eea55023b",
+      "bytes": 2759896688
+    },
+    "candidate_counts": {
+      "path": "data/unused-recorded-search-inputs-full-v2/counts.json",
+      "sha256": "dd10c6bb43913f88641663fb2a6a312ee52436b0e2ebad0a54cff17681152785",
+      "bytes": 1870
+    },
+    "reserved_positions": {
+      "path": "data/unused-recorded-search-inputs-full-v2/heldout-positions.json",
+      "sha256": "71a4198b46f26e305ed22f737d4f747dc2680130efd9059a30ebb3ba1f442651",
+      "bytes": 169783175
+    }
+  },
+  "actual_preparation": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 560.6659652516246,
+    "peak_process_rss_kib": 1126352,
+    "candidate_counts": {
+      "candidate_training_histories": 478650,
+      "distinct_original_training_games": 80117,
+      "unique_canonical_source_games": 107678,
+      "canonical_game_splits": {
+        "validation": 10780,
+        "train": 86165,
+        "test": 10733
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_human_match": 87544,
+        "published_recorded_match": 387678,
+        "recorded_human_computer_match": 3428
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-games-ccpd-v3/games.jsonl": 76745,
+        "data/recorded-games-additional-v1/games.jsonl": 386624,
+        "data/modern-recorded-games-v2/games.jsonl": 1054,
+        "data/playstrategy-portable-real-import-v1-parallel/games.jsonl": 75,
+        "data/playstrategy-public-users-native-import-v1/games.jsonl": 14152
+      },
+      "candidate_counts_by_side": {
+        "red": 240740,
+        "black": 237910
+      },
+      "candidate_counts_by_game_phase": {
+        "0": 103461,
+        "1": 179575,
+        "2": 195614
+      },
+      "excluded": {
+        "already_used_or_reserved_game": 4848,
+        "heldout_root_or_recorded_future": 184933,
+        "already_used_full_history": 9096,
+        "duplicate_full_history": 3242
+      },
+      "reserved_game_identifiers": 21555,
+      "reserved_root_and_future_positions": 2715684,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false
+    },
+    "gpu_model_loaded": false,
+    "new_distillation_targets_generated": false
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "all_original_candidates_compared_field_for_field": 478650,
+    "all_six_canonical_source_files_independently_streamed_and_rehashed": true,
+    "all_original_training_ownership_keys_priority_and_per_game_caps_checked": true,
+    "all_candidate_roots_and_recorded_color_futures_disjoint_from_full_reservations": true,
+    "full_canonical_heldout_and_explanation_branch_color_reservations_recomputed": true,
+    "used_course_and_initial_teacher_games_and_history_keys_excluded": true,
+    "canonical_unique_games": 107678,
+    "candidate_counts": {
+      "candidate_training_histories": 478650,
+      "distinct_original_training_games": 80117,
+      "unique_canonical_source_games": 107678,
+      "canonical_game_splits": {
+        "validation": 10780,
+        "train": 86165,
+        "test": 10733
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_human_match": 87544,
+        "published_recorded_match": 387678,
+        "recorded_human_computer_match": 3428
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-games-ccpd-v3/games.jsonl": 76745,
+        "data/recorded-games-additional-v1/games.jsonl": 386624,
+        "data/modern-recorded-games-v2/games.jsonl": 1054,
+        "data/playstrategy-portable-real-import-v1-parallel/games.jsonl": 75,
+        "data/playstrategy-public-users-native-import-v1/games.jsonl": 14152
+      },
+      "candidate_counts_by_side": {
+        "red": 240740,
+        "black": 237910
+      },
+      "candidate_counts_by_game_phase": {
+        "0": 103461,
+        "1": 179575,
+        "2": 195614
+      },
+      "excluded": {
+        "already_used_or_reserved_game": 4848,
+        "heldout_root_or_recorded_future": 184933,
+        "already_used_full_history": 9096,
+        "duplicate_full_history": 3242
+      },
+      "reserved_game_identifiers": 21555,
+      "reserved_root_and_future_positions": 2715684,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false
+    },
+    "candidate_decade_counts_from_declared_headers": {
+      "2010": 276234,
+      "unknown": 51264,
+      "2000": 88943,
+      "2020": 19053,
+      "1990": 30511,
+      "1980": 10413,
+      "1960": 690,
+      "1950": 657,
+      "1970": 741,
+      "1920": 36,
+      "1910": 18,
+      "1930": 84,
+      "1940": 6
+    },
+    "native_complete_pasts_and_recorded_futures_sampled": 192,
+    "native_sample_counts_by_source_declared_kind": {
+      "published_recorded_match": 64,
+      "recorded_human_match": 64,
+      "recorded_human_computer_match": 64
+    },
+    "every_candidate_natively_replayed_again": false,
+    "completed_canonical_native_imports_reused": true,
+    "model_or_feature_cache_loaded": false,
+    "new_distillation_targets_generated": false,
+    "teacher_inference_executed": false,
+    "student_benefit_proven": false,
+    "actual_preparation_source_revision": "2400ab8b7e239c4580660bffe948e3492e6d3d2d",
+    "all_69_producer_source_files_rehashed": true
+  },
+  "actual_production_reader_consumption": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_selected_original_roots": 512,
+    "exact_first_512_seeded_records_preserved": true,
+    "complete_pool_tail_ownership_counts_and_order_checked": true,
+    "actual_additional_reserved_positions": 2715684,
+    "all_three_base_course_split_files_freshly_hashed": true,
+    "base_course_identities": {
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      },
+      "data/research-human-engine-v1/validation.jsonl": {
+        "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+        "bytes": 1059759384
+      },
+      "data/research-human-engine-v1/test.jsonl": {
+        "sha256": "7d33fc8e573046792d695397130c20c7671aa303ea21386a7d739c81386a580d",
+        "bytes": 1035798738
+      }
+    },
+    "seconds": 53.384816407226026,
+    "model_gpu_or_engine_loaded": false,
+    "student_search_or_teacher_generation_executed": false
+  },
+  "local_cpu_tests": {
+    "passed": 431,
+    "new_checks": 19,
+    "source_and_test_files_unchanged_before_and_after": 120,
+    "exit_record": {
+      "path": "runs/unused-recorded-search-inputs-milestone-tests-v2/exit.json",
+      "sha256": "8c3feebd50ebd3a1ec103c26fe8cac86c602f3349ff408f844eeee8527aae53c",
+      "bytes": 96
+    },
+    "bindings": {
+      "path": "runs/unused-recorded-search-inputs-milestone-tests-v2/source-test-bindings.json",
+      "sha256": "fd9b57741c0d836206995b03bc1b5b90fd10f82618166afa09b36c2b8939bf3b",
+      "bytes": 12454
+    },
+    "runner": {
+      "path": "runs/unused-recorded-search-inputs-milestone-tests-v2/runner.py",
+      "sha256": "e88440f3ae2a7285dc57b68c86a1f62220022be090b7a173fdd1857309c9d74e",
+      "bytes": 760
+    },
+    "log": {
+      "path": "runs/unused-recorded-search-inputs-milestone-tests-v2/log.txt",
+      "sha256": "9dbc157c0ef7816d63badf3c02e085bfe18cbb41cd556f5e94a336a1ac09afd5",
+      "bytes": 512
+    }
+  },
+  "preserved_failures": {
+    "missing_optional_source_provenance": {
+      "path": "runs/unused-recorded-search-inputs-full-v1/exit.json",
+      "sha256": "8e64588f3c857c42a048d8302a722b35a4a13d78c3347961f218fce439ef89b0",
+      "bytes": 76
+    },
+    "dependent_reader_rejected_incomplete_producer": {
+      "path": "runs/unused-recorded-search-inputs-full-readback-v1/exit.json",
+      "sha256": "7873aff9e2b482209538a46df5917399f34f8a05f76904e47678eeb57378b058",
+      "bytes": 70
+    },
+    "color_branch_reservation_regression_before_fix": {
+      "path": "runs/recorded-search-inputs-development-checks-v1/before-color-branch-reservation.json",
+      "sha256": "973bde81732ae1a9e1ac780ffa0c83d47e1ec68f5c814e01561a087ea330c108",
+      "bytes": 410
+    },
+    "failed_preparation_count_is_not_a_completed_pool": true
+  },
+  "scope_limits": {
+    "original_recorded_histories_not_search_labels": true,
+    "new_mirror_histories_generated": 0,
+    "all_candidate_histories_natively_replayed_again": false,
+    "completed_canonical_native_imports_reused": true,
+    "native_history_and_recorded_future_sample": 192,
+    "source_kind_dates_and_player_metadata_not_independently_authenticated": true,
+    "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+    "base_course_files_freshly_hashed_by_actual_consumer": true,
+    "large_expert_feature_cache_loaded_or_rehashed": false,
+    "actual_reader_consumption_not_student_search": true,
+    "student_search_or_teacher_consolidation_executed": false,
+    "accepted_search_consolidation_labels_produced": 0,
+    "trained_search_distillation_rounds": 0,
+    "effective_search_yield_or_student_benefit_measured": false,
+    "live_curriculum_or_sft_inputs_changed": false
+  }
+}
