@@ -1,0 +1,53 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "label_rows_read_back": 11654,
+  "by_split": {
+    "train": 10758,
+    "validation": 384,
+    "test": 512
+  },
+  "all_source_split_bytes_and_original_fields_exactly_preserved": true,
+  "complete_native_past_histories_and_history_keys_replayed": 11654,
+  "native_root_facts_and_all_legal_forecast_geometries_recomputed": true,
+  "history_terminal_adjudication_repeated_by_this_reader": false,
+  "completed_full_history_terminal_and_continuation_producer_proof_reused": true,
+  "game_overlap": 0,
+  "root_and_forecast_and_color_overlap": 0,
+  "train_validation_token_lengths_independently_recomputed": 11142,
+  "tokenized_rows_by_split": {
+    "train": 10758,
+    "validation": 384
+  },
+  "maximum_tokens_by_split": {
+    "train": 649,
+    "validation": 625
+  },
+  "token_limit": 1024,
+  "independent_test_rows_tokenized": 0,
+  "existing_feature_contexts_checked": 11654,
+  "feature_contexts_missing": 0,
+  "cache_contexts": 169904,
+  "cache_header_dimensions_and_precision_checked": true,
+  "full_feature_cache_rehashed_again_by_this_reader": false,
+  "feature_tensor_values_recomputed_or_verified_by_this_reader": false,
+  "source_and_producer_declared_artifacts_freshly_rehashed": 61,
+  "executed_producer_frozen_source_files_checked": 60,
+  "legacy_training_labels_exactly_bound_to_supplemental_review": 384,
+  "legacy_labels_without_inline_review_metadata_by_split": {
+    "train": 384,
+    "validation": 192,
+    "test": 256
+  },
+  "legacy_heldout_semantic_acceptance_not_newly_established": true,
+  "existing_color_derived_rows_preserved": 3363,
+  "new_teacher_records_or_mirrors_generated": 0,
+  "new_neural_or_human_semantic_review_performed": false,
+  "decoder_literal_board_text": null,
+  "student_training_started": false,
+  "four_new_course_gates_required_before_sft": true,
+  "active_foundation_inputs_changed": false,
+  "independent_test_used_for_training_or_selection": false,
+  "student_strength_or_coaching_gain_proven": false,
+  "manifest_sha256": "39935076947d24a6823e0b82ea1b93edf241da7944b8704e7505de5ed20207cb"
+}

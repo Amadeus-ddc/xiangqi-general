@@ -220,7 +220,7 @@ python -m xqgeneral.platform_games \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%，八次均未达标；最新整行识别为 82.8%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-eighth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096／4608 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%／94.8%，九次均未达标；最新整行识别为 83.6%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-ninth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -376,7 +376,26 @@ python -m xqgeneral.recorded_coach_prose prepare-repairs \
 
 全部 2496 条原文及三个完整复核包已准备完成，核验原查询身份、顺序和精确正文，并由准备入口逐条检查完整历史、结构答案变化及正文合同；见 `evidence/recorded-coach-full-authoring-review-preparation-v1.json`。三位 Astra Low 审查者分别检查另一位作者的 832 条，分配及进度入口在 `runs/astra-recorded-coach-prose-review-v1/`；全部拒收已真实修订并由不同作者接受，最终训练标签收集已完成，见 `evidence/recorded-coach-complete-reviewed-labels-v1.json`。原文、拒收意见和后续修订分别保留。
 
-这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。收集后的实际新标签仍需重新做词元长度、特征覆盖及全部未来分割预检，完成四门验收后才能准备正式 SFT 配方。此前固定 1672 条前缀的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
+这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。实际收集标签的合并及 CPU 预检现已完成，见下方；完成四门验收后才能准备正式 SFT 配方。此前固定 1672 条前缀的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
+
+`reviewed_explanations` 合并已完成的讲解标签集，原始训练／验证／测试文件分别逐字节拼接，保留原字段、分割和已有镜像。它重验完整过去、原生终局及全部答案／实战变化、走法事实和颜色对应隔离；新增实战标签要求内嵌接受身份，旧训练项的独立接受池可用 `--legacy-review-data` 逐字段绑定。此入口适用于已收集标签；`merge_teacher` 仍用于旧的原始查询／标注批次。
+
+```bash
+python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-run -- \
+  python -m xqgeneral.reviewed_explanations \
+  --inputs data/astra-explanations-full-v7 data/astra-recorded-coach-teacher-reviewed-v1 \
+  --legacy-review-data data/astra-selfplay-explanation-replay-v1 \
+  --output data/new-reviewed-explanations --workers 8
+python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-run -- \
+  python -m xqgeneral.explanation_preflight --data data/new-reviewed-explanations \
+  --foundation-config configs/foundation-human-engine-clean-v2.json \
+  --foundation-preflight runs/recorded-foundation-full-preflight-v3/preflight/manifest.json \
+  --output runs/new-reviewed-explanation-preflight --max-tokens 1024 --workers 8
+```
+
+实际候选集 `data/astra-explanations-clean-v1` 为 10758／384／512 条，共 11654 个不同完整历史键；包含已有 3363 条颜色派生项，新增独立讲解仍为 2496 条。旧 384 条训练标签与已完成接受池逐字段相同；旧 448 条保留集的内容及原审查状态保留，没有补做或宣称新的语义接受。全部训练／验证共 11142 条按主线词元器及 105 个棋盘词元编码，最长 649／625、上限 1024，无截断；测试答案不参与词元编码。全部标签键存在现有 169904 键缓存中。
+
+第二入口逐字节匹配全部原片段，复演全部过去、重算事实及所有合法未来／颜色几何足迹和逐项词元长度；61 份来源／生产产物及 60 份实际冻结源码核验，见 `evidence/clean-explanation-data-independent-preflight-v1.json`。第二入口复用生产阶段完整终局证明；缓存检查读取键、形状和精度，绑定已完成全量预检，没有重哈希全部 251GB 或重算特征值。272 项 CPU 测试通过。当前四卡课程输入不变，预检不加载模型权重，新 SFT 仍须等待四门课程全部达标。
 
 `configs/explanation-sft-v3.json` 在走法课程后混合讲解、走法与基础课程回放；其中的新增 Astra 数据集必须先完成全量标注、复核与收集，不能以未完成分片替代。该配置按每条样本的平均监督损失训练（`loss_normalization: example`），使短走法题保留配置中的回放比例。已有配置默认仍按词元归一化；验证和检查点选择继续使用词元平均 NLL。
 
