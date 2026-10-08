@@ -1158,3 +1158,18 @@ hash the full teacher weights or execute GPU inference. See
 `evidence/clean-sft-capability-real-wait-guard-v1.json`. New SFT completion,
 actual paired capability measurements, neural review, independent final tests
 and useful coaching remain unproven.
+
+The actual first-course step-6144 raw validation still answers 752/768 correctly
+(97.9%), with the weakest location task at 119/128 (93.0%). Nine answers improve
+and nine regress relative to step 5632, so the net change is zero. The current
+local gate fails. All sampled native histories, gold answers, question variants,
+raw correctness and finite FP32 weights were independently recomputed; a further
+readback verifies all 15 declared artifacts, 64 executed frozen source files and
+exact public bytes. Full-cache identity reuses the completed producer/preflight.
+See `evidence/recorded-foundation-clean-twelfth-raw-gate.json`.
+
+The clean curriculum-to-SFT and downstream capability queues are now actually
+running from their independently preserved 64/65-file source snapshots after CI
+and merge. Both have been observed live in their prerequisite waiting states.
+No new full-decoder probe, initial SFT, capability generation or prose review has
+yet executed; no new course is mastered or search-distillation round trained.
