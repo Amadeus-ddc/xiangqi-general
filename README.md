@@ -314,6 +314,19 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
+CCPD 的中局、残局、全盘战术及杀法目录另由 `tactical_games` 导入，允许源谱缺少棋手姓名，保留原始 FEN、主线和来源别名；未提供的片段前历史明确标为缺失。原棋谱主线只做规则核验，不作为最优走法或神经讲解标签。固定版本共 3614 个文件、2818 份不同内容；对六个已有来源去重后保留 2259 条主线、68565 个半回合，来源分割为 1805／236／218，另有 505 条重复和 54 份隔离内容。1988 条未提供给定起点之前的历史，349 条缺少一方或双方棋手字段。全部不同内容已由独立入口重新提取、原生复演，并逐字段匹配保留、重复分割及隔离原因；71 份执行源码及 2930 份产物／源码绑定重新哈希。见 `evidence/recorded-tactical-lines-ccpd-native-import-v1.json`；全部 479 项 CPU 测试通过。不同主线只有 1929 个起始几何局面，22 个在来源分割之间重复，430 条训练主线不超过 12 半回合。来源分割不是相对已有训练集独立的新测试集；后续候选须再核验全部已用、保留及未来／颜色局面，不能直接追加到旧候选池。执行入口为：
+
+```bash
+python scripts/freeze_run.py --output runs/tactical-import/source-run -- \
+  python -m xqgeneral.tactical_games \
+  --source data/sources/ccpd-v1 --revision 368a47a947773dd8692c026e286dd19b6277b993 \
+  --previous data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+             data/recorded-games-additional-v1 data/modern-recorded-games-v2 \
+             data/playstrategy-portable-real-import-v1-parallel \
+             data/playstrategy-public-users-native-import-v1 \
+  --output data/tactical-import --workers 8 --seed 20261051
+```
+
 另有两份公开 PGN 档案已固定下载版本和实际字节，清点为 141514 个原始棋局头，其中一份比声明少 42 个；这不是去重后的有效棋局数，见 `evidence/additional-recorded-source-acquisition-v1.json`。`bundled_games` 直接读取压缩成员、保留记录序号和原字节哈希，逐着检查完整历史，隔离非法／终局后着法，并对已有棋局去重和保留不同来源署名。来源身份及许可证独立记录，不继承 CCPD 的声明。八 CPU 全量生产已完成：81711 个新主线、6246714 个半回合、46826 条重复及 12977 条隔离，见 `evidence/additional-recorded-games-native-import-v1.json`；全部 141514 条原档案候选的第二入口原生复演已完成，逐条匹配规范化保留主线、分割、原字节／序号、重复署名和隔离原因；完成后的 15 份声明产物及 53 份实际冻结源码重新核验，见 `evidence/additional-recorded-games-independent-readback-v1.json`。第二入口沿用固定的分段／原生解析合同，不代表另一套规则实现或棋手真实性认证。此前各 64 局的实际串行／四 CPU 结果仍只是有界检查。新棋谱尚未改变当前课程输入。使用固定源码、tmux 及新输出目录运行：
 
 ```bash

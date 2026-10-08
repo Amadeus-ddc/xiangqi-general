@@ -15,7 +15,7 @@ from .symmetry import mirror_fen
 
 
 KINDS = {'recorded_human_match', 'published_recorded_match',
-         'recorded_computer_match', 'recorded_human_computer_match'}
+         'recorded_computer_match', 'recorded_human_computer_match', 'recorded_tactical_line'}
 ARTIFACTS = ('manifest.json', 'roots.jsonl', 'counts.json', 'heldout-positions.json')
 
 

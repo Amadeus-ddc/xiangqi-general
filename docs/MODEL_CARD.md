@@ -1324,17 +1324,18 @@ pass against 120 unchanged source and test bindings. This increases the measured
 candidate pool, not accepted distillation labels: new student search,
 consolidation, acceptance yield, trained rounds and model benefit remain unmeasured.
 
-The step-2048 second-course check uses exactly the same 1408 questions as the
-three earlier checks. Dynamic accuracy progresses from 334 to 426 to 468 to
-503/640 (78.59375%). Compared with step 1536, 51 answers are corrected and 16
-new errors appear. Captures reach 80/128, move lists 56/128, checks 112/128,
-legal judgments 128/128 and illegal judgments 127/128. Static replay is 742/768,
-with 11 corrections and eight new errors. The independent reader recomputes all
-1408 native answers, replays 1299 distinct histories, and checks all four
-checkpoint contracts and the actual 67-file training/QA source; see
-`evidence/dynamic-current-fourth-raw-validation-v1.json`. The minimum of 4096
-updates is not yet reached; one clean course is complete and these results do
-not establish playing strength. The first-course step-5632 static sample differs.
+The step-2560 second-course check uses exactly the same 1408 questions as the
+four earlier checks. Dynamic accuracy progresses from 334 to 426 to 468 to 503
+to 517/640 (80.78125%). Compared with step 2048, 37 answers are corrected and 23
+new errors appear. Captures reach 88/128, move lists 58/128, checks 117/128, and
+both legal and illegal judgments 127/128. Static replay falls from 742 to 733/768
+(95.4427%), with seven corrections and 16 new errors. The independent reader
+recomputes all 1408 native answers, replays 1299 distinct histories, and checks
+all five checkpoint contracts and the actual 67-file training/QA source; see
+`evidence/dynamic-current-fifth-raw-validation-v1.json`. Earlier raw results and
+errors remain preserved. The minimum of 4096 updates is not yet reached; one
+clean course is complete and these results do not establish playing strength.
+The first-course step-5632 static sample differs.
 
 Final search-label collection now inherits the recorded miner's complete heldout
 reservations. It requires a completed matching miner, byte-bound queries and pool,
@@ -1373,3 +1374,29 @@ validation. `evidence/clean-search-pilot-queue-v1.json` records the observation
 and queue snapshot. It does not rehash all teacher weights or revalidate the
 complete candidate tail during waiting, and proves no current-model search yield,
 accepted new labels, trained distillation rounds or student benefit.
+
+The four pinned CCPD tactical categories are now fully imported separately from
+full-match collections. The 3614 source paths contain 2818 distinct Git blobs;
+2259 new canonical legal lines retain 68565 supplied-history plies, with source
+splits of 1805/236/218. Another 505 canonical lines duplicate prior or newly
+retained lines, and 54 blobs are quarantined. Missing pre-fragment history is
+explicit in 1988 records; 349 lack one or both participant fields. Source moves
+and comments are not treated as optimal moves or neural explanations.
+
+`evidence/recorded-tactical-lines-ccpd-native-import-v1.json` binds full native
+import and independent re-extraction/replay of every distinct blob. Retained
+records, duplicate splits and quarantine reasons match exactly. The reader
+reuses the same pinned PGN/native-rules contract, freshly hashes 2930 artifact
+and source bindings including all 71 execution modules, and reuses prior native
+full-game proofs through their exact canonical outputs. All 479 CPU tests pass
+with 124 unchanged source/test bindings; 14 controlled cases are new.
+
+Canonical lines are not independent puzzle counts: there are 1929 initial
+position geometries, with 22 shared across source splits. These source splits
+are not proved unseen by earlier student training and are not an independent
+benchmark. Of the training lines, 430 contain at most 12 plies, requiring
+sampling that can include fragment roots. Subsequent candidate preparation
+still must enforce global heldout, future and color isolation, and retain the
+missing-history context. This import changes no live course input, existing
+search pool or queued SFT recipe. It provides no new neural labels, trained
+distillation rounds, authenticated puzzle solutions or model benefit.

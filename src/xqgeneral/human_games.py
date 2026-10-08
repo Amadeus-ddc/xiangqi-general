@@ -122,11 +122,14 @@ def resolve_move(fen, notation):
     return matches[0]
 
 
-def parse_game(raw):
+def parse_game(raw, *, require_players=True):
+    if type(require_players) is not bool:
+        raise ValueError('Recorded participant requirement must be a boolean')
     text, headers, encoding = pgn_headers(raw)
     if headers.get('Game', 'Chinese Chess') != 'Chinese Chess':
         raise ValueError('Source is not a Chinese Chess game')
-    if not headers.get('Red') or not headers.get('Black') or headers.get('Result') not in RESULTS:
+    if (require_players and (not headers.get('Red') or not headers.get('Black')) or
+            headers.get('Result') not in RESULTS):
         raise ValueError('A recorded full game needs both players and a declared result')
     tokens = mainline_text(TAG.sub('', text)).split()
     if not tokens or tokens[-1] != headers['Result']:

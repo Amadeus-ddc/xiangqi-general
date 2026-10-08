@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "kind": "actual_all_pinned_ccpd_tactical_categories_native_import",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_source_revision": "5a8f3cf903706d2a07f633c0fad080ea8c3cbb15",
+  "pinned_dataset_repository": "Yvonne761/Chinese-Chess-Practical-Dataset",
+  "pinned_dataset_revision": "368a47a947773dd8692c026e286dd19b6277b993",
+  "artifacts": {
+    "native_source_manifest": {
+      "path": "data/recorded-tactical-lines-ccpd-v1/manifest.json",
+      "sha256": "79c50084f0b4ed58e9294fabc10dcb913e01234a4cdf7bdcc89fec7aecc25075",
+      "bytes": 602436
+    },
+    "actual_producer_manifest": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/manifest.json",
+      "sha256": "065acc268771980025264e914cdc8dce5e1fd31165970404f3d4193e1cb15033",
+      "bytes": 10592
+    },
+    "actual_producer_verification": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/verification.json",
+      "sha256": "32771c6a08b5d445fc81359fe1232b276cb4b3a4c39681d7a9557ced5f95d63b",
+      "bytes": 1702
+    },
+    "actual_producer_entry": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/entry.py",
+      "sha256": "63dbc37e6ff1865a6768a4fc6fa015ea103c3f75763b19611d688d9bc5cd6ec7",
+      "bytes": 1405
+    },
+    "actual_producer_plan": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/plan.json",
+      "sha256": "72c0b9bb9e3869919a6a81cac229ac2b313eb0c2e868a29e4ab24b323a9b6ca4",
+      "bytes": 1372
+    },
+    "actual_producer_source_manifest": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/source-run/source-manifest.json",
+      "sha256": "82c6dd6d97044d8872bd298fa6e76a7a7b61c505a3e298455b364cb4702c5fd1",
+      "bytes": 6730
+    },
+    "actual_producer_exit": {
+      "path": "runs/recorded-tactical-lines-ccpd-import-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "independent_reader_manifest": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/manifest.json",
+      "sha256": "8b8cb3485e39789163a6b2c3062d7fefe10422dafefc5a91a72d3a6d19c7aa7b",
+      "bytes": 621808
+    },
+    "independent_reader_verification": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/verification.json",
+      "sha256": "1940c5961e8e5e85e3583e514e1c362396cd5c463e0792a50a213a2d7a339570",
+      "bytes": 1504
+    },
+    "independent_reader_entry": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/entry.py",
+      "sha256": "808b1b2bea436d0a01b70ad50a39eaae367269b50d4ac5061a2ecece818a5ea7",
+      "bytes": 11673
+    },
+    "independent_reader_plan": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/plan.json",
+      "sha256": "65e3ad03ec169f36e62fe671a4a5c53b10af16db2bac0789399aba650b036532",
+      "bytes": 837
+    },
+    "independent_reader_source_manifest": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/source-run/source-manifest.json",
+      "sha256": "82c6dd6d97044d8872bd298fa6e76a7a7b61c505a3e298455b364cb4702c5fd1",
+      "bytes": 6730
+    },
+    "independent_reader_exit": {
+      "path": "runs/recorded-tactical-lines-ccpd-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "native_lines": {
+      "path": "data/recorded-tactical-lines-ccpd-v1/games.jsonl",
+      "sha256": "67567466554847ada408c262b03b2f6f9a187d6224f270ff9498a46b01105ac6",
+      "bytes": 9642697
+    },
+    "duplicates": {
+      "path": "data/recorded-tactical-lines-ccpd-v1/duplicates.jsonl",
+      "sha256": "989b7a608f610b854cb0a2bb32dc67877d37a5106ec8ed93cdd13cbb899e54e3",
+      "bytes": 278606
+    },
+    "quarantine": {
+      "path": "data/recorded-tactical-lines-ccpd-v1/quarantine.jsonl",
+      "sha256": "f46cf79c4bb666fd5517dcdd03e4d0df61d3c5283a6a4b1110dc21d8e058912c",
+      "bytes": 26626
+    },
+    "pinned_source_license": {
+      "path": "data/recorded-tactical-lines-ccpd-v1/SOURCE_LICENSE",
+      "sha256": "780f2279779f7225ee84b9c163479a329cab19cd73e1e8182922d780a6bb45f8",
+      "bytes": 487
+    },
+    "full_tests_exit": {
+      "path": "runs/tactical-games-milestone-tests-v1/exit.json",
+      "sha256": "17dfaeb68570e858d25663db7eb1ac0da67fd8308a7701364cea31a2b401fe07",
+      "bytes": 116
+    },
+    "full_tests_bindings": {
+      "path": "runs/tactical-games-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "cc87df346c1173ff073915072210ca4ecd9b887a7baa2f63da2197eac52c14bf",
+      "bytes": 12864
+    },
+    "full_tests_plan": {
+      "path": "runs/tactical-games-milestone-tests-v1/plan.json",
+      "sha256": "b65ed163dbde1b9fb7dc5909d4c7607b8c4174e59537121709ad5c88fcd8fcb5",
+      "bytes": 509
+    },
+    "full_tests_log": {
+      "path": "runs/tactical-games-milestone-tests-v1/log.txt",
+      "sha256": "b3fd40ae077c7aa7dc3eda86cc9371cdd21e3b91db007702a49b05f3bf541a3e",
+      "bytes": 592
+    },
+    "focused_checks_exit": {
+      "path": "runs/tactical-games-development-checks-v1/exit.json",
+      "sha256": "4290f3aab23eed7399b513438ef3af76519aa0d4b56671502e084d903c8d78c6",
+      "bytes": 82
+    },
+    "focused_checks_log": {
+      "path": "runs/tactical-games-development-checks-v1/focused.log",
+      "sha256": "5f698f3567c3c021ff054c9fb1d2ea642192e5f2129f693c551329b5dbcea384",
+      "bytes": 100
+    }
+  },
+  "actual_production": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 371.9786432068795,
+    "peak_process_rss_kib": 490936,
+    "native_import_counts": {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "source_revision": "368a47a947773dd8692c026e286dd19b6277b993",
+      "declared_source_license": "CC-BY-4.0",
+      "source_category_file_counts": {
+        "midgame": 2807,
+        "full_game_tactics": 433,
+        "endgame": 244,
+        "mate_exercises": 130
+      },
+      "source_category_files": 3614,
+      "unique_git_blobs_examined": 2818,
+      "previous_unique_games": 107678,
+      "new_unique_tactical_lines": 2259,
+      "quarantined_blobs": 54,
+      "duplicate_canonical_lines": 505,
+      "native_verified_plies": 68565,
+      "games_by_split": {
+        "train": 1805,
+        "validation": 236,
+        "test": 218
+      },
+      "lines_by_primary_declared_category": {
+        "midgame": 1781,
+        "full_game_tactics": 236,
+        "endgame": 234,
+        "mate_exercises": 8
+      },
+      "nonstandard_initial_position_fragments": 1988,
+      "lines_missing_one_or_both_declared_participants": 349,
+      "all_retained_moves_native_legal": true,
+      "full_history_terminal_checks_passed": true,
+      "game_split_assigned_before_questions": true,
+      "provided_fragment_history_preserved": true,
+      "unknown_pre_fragment_history_reconstructed": false,
+      "source_authenticity_independently_proven": false,
+      "provided_moves_are_oracle_best_move_labels": false,
+      "source_prose_used_as_neural_labels": false,
+      "training_questions_or_neural_labels_generated": false,
+      "gpu_or_teacher_loaded": false
+    },
+    "gpu_model_loaded": false,
+    "new_distillation_targets_generated": false
+  },
+  "independent_readback": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "source_category_files": 3614,
+    "unique_git_blobs_examined": 2818,
+    "previous_unique_games": 107678,
+    "new_unique_tactical_lines": 2259,
+    "quarantined_blobs": 54,
+    "duplicate_canonical_lines": 505,
+    "native_verified_plies": 68565,
+    "games_by_split": {
+      "train": 1805,
+      "validation": 236,
+      "test": 218
+    },
+    "lines_by_primary_declared_category": {
+      "midgame": 1781,
+      "full_game_tactics": 236,
+      "endgame": 234,
+      "mate_exercises": 8
+    },
+    "nonstandard_initial_position_fragments": 1988,
+    "lines_missing_one_or_both_declared_participants": 349,
+    "all_pinned_source_blobs_reextracted_and_native_replayed": true,
+    "all_retained_rows_and_declared_participants_match": true,
+    "all_canonical_duplicates_splits_and_quarantine_reasons_match": true,
+    "all_producer_artifacts_prior_native_outputs_and_execution_source_rehashed": true,
+    "prior_native_full_replay_reused_from_completed_proofs": true,
+    "source_parse_and_native_rules_contract_shared_with_producer": true,
+    "distinct_native_rules_implementation_used": false,
+    "fragment_pre_history_reconstructed": false,
+    "unique_best_moves_or_puzzle_quality_verified": false,
+    "new_neural_labels_generated": false,
+    "live_curriculum_or_existing_candidate_pool_changed": false,
+    "gpu_teacher_or_student_loaded": false,
+    "seconds": 370.9222093746066,
+    "peak_process_rss_kib": 200948,
+    "fresh_artifact_bindings": 2930,
+    "execution_source_files": 71
+  },
+  "source_capacity_diagnostics": {
+    "distinct_initial_position_geometries": 1929,
+    "initial_geometries_shared_by_declared_source_splits": 22,
+    "duplicates_matching_prior_six_native_collections": 305,
+    "duplicates_matching_an_earlier_new_tactical_line": 200,
+    "train_lines_with_at_most_12_plies": 430,
+    "quarantine_reasons": {
+      "Recorded move follows a native full-history terminal at ply 33": 2,
+      "Malformed PGN header": 8,
+      "Recorded move follows a native full-history terminal at ply 19": 1,
+      "Recorded move follows a native full-history terminal at ply 14": 2,
+      "Recorded move follows a native full-history terminal at ply 11": 1,
+      "Recorded move follows a native full-history terminal at ply 25": 2,
+      "Recorded move follows a native full-history terminal at ply 13": 2,
+      "Recorded move follows a native full-history terminal at ply 10": 1,
+      "Recorded move follows a native full-history terminal at ply 36": 2,
+      "Recorded move follows a native full-history terminal at ply 40": 2,
+      "Recorded move follows a native full-history terminal at ply 178": 1,
+      "Recorded game has no moves": 2,
+      "Recorded notation has 0 legal interpretations: 後兵進一": 1,
+      "Recorded move follows a native full-history terminal at ply 71": 1,
+      "Recorded move follows a native full-history terminal at ply 124": 2,
+      "Recorded move follows a native full-history terminal at ply 201": 1,
+      "Recorded move follows a native full-history terminal at ply 115": 1,
+      "Recorded move follows a native full-history terminal at ply 65": 1,
+      "Recorded move follows a native full-history terminal at ply 38": 2,
+      "Recorded move follows a native full-history terminal at ply 31": 1,
+      "Recorded move follows a native full-history terminal at ply 41": 1,
+      "Recorded move follows a native full-history terminal at ply 43": 1,
+      "Recorded move follows a native full-history terminal at ply 46": 1,
+      "Recorded game needs one general per side": 1,
+      "Recorded move follows a native full-history terminal at ply 23": 1,
+      "Recorded notation has 0 legal interpretations: 士４進５": 1,
+      "Recorded move follows a native full-history terminal at ply 15": 1,
+      "Recorded notation has 0 legal interpretations: 馬６退７": 1,
+      "Recorded move follows a native full-history terminal at ply 20": 1,
+      "Recorded move follows a native full-history terminal at ply 88": 1,
+      "Recorded move follows a native full-history terminal at ply 53": 2,
+      "Recorded move follows a native full-history terminal at ply 168": 1,
+      "Recorded move follows a native full-history terminal at ply 102": 1,
+      "Recorded move follows a native full-history terminal at ply 47": 1,
+      "Recorded move follows a native full-history terminal at ply 51": 1,
+      "Recorded move follows a native full-history terminal at ply 22": 1,
+      "Recorded notation has 0 legal interpretations: 後卒進１": 1
+    }
+  },
+  "cpu_validation": {
+    "new_controlled_cases": 14,
+    "focused_checks_passed": 57,
+    "full_cpu_tests_passed": 479,
+    "full_cpu_tests_seconds": 210.8853854360059,
+    "unchanged_source_test_bindings": 124
+  },
+  "boundaries": {
+    "native_rules_and_pgn_parse_contract_shared_between_producer_and_reader": true,
+    "distinct_native_rule_implementation_verified": false,
+    "canonical_line_identity_not_independent_puzzle_count": true,
+    "new_source_splits_proven_unseen_by_prior_model_training": false,
+    "new_tactical_roots_added_to_existing_search_pool": false,
+    "unknown_pre_fragment_history_reconstructed": false,
+    "source_attribution_or_unique_best_moves_authenticated": false,
+    "new_neural_labels_or_distillation_rounds_generated": false,
+    "live_curriculum_inputs_or_queued_sft_recipe_changed": false,
+    "strong_student_play_or_reliable_coaching_verified": false,
+    "dataset_and_raw_pgns_bundled_in_code_release": false
+  }
+}
