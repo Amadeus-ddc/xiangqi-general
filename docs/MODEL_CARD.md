@@ -1324,14 +1324,17 @@ pass against 120 unchanged source and test bindings. This increases the measured
 candidate pool, not accepted distillation labels: new student search,
 consolidation, acceptance yield, trained rounds and model benefit remain unmeasured.
 
-The step-1536 second-course check uses exactly the same 1408 questions as step
-1024. Dynamic accuracy is 468/640 (73.125%), with 58 corrected answers and 16 new
-errors. Captures reach 68/128 and move lists 38/128; legal-move judgments fall
-from 128/128 to 126/128. Static replay remains 739/768, with seven corrections and
-seven new errors. `evidence/dynamic-current-third-raw-validation-v1.json` binds
-independent native answers, all three checkpoint contracts and the actual
-67-file training/QA source. The minimum of 4096 updates is not yet reached; one
-clean course is complete and these results do not establish playing strength.
+The step-2048 second-course check uses exactly the same 1408 questions as the
+three earlier checks. Dynamic accuracy progresses from 334 to 426 to 468 to
+503/640 (78.59375%). Compared with step 1536, 51 answers are corrected and 16
+new errors appear. Captures reach 80/128, move lists 56/128, checks 112/128,
+legal judgments 128/128 and illegal judgments 127/128. Static replay is 742/768,
+with 11 corrections and eight new errors. The independent reader recomputes all
+1408 native answers, replays 1299 distinct histories, and checks all four
+checkpoint contracts and the actual 67-file training/QA source; see
+`evidence/dynamic-current-fourth-raw-validation-v1.json`. The minimum of 4096
+updates is not yet reached; one clean course is complete and these results do
+not establish playing strength. The first-course step-5632 static sample differs.
 
 Final search-label collection now inherits the recorded miner's complete heldout
 reservations. It requires a completed matching miner, byte-bound queries and pool,
@@ -1349,3 +1352,24 @@ new recorded pool. All 69 execution source files are rehashed. This performs no
 new student, teacher or engine inference; the historical compatibility row is
 not a new clean-model distillation label. Full current-model recorded mining,
 collection yield, strategic prose correctness and student benefit remain unproven.
+
+The `search_pilot` controller waits for the exact completed clean SFT paired
+validation before any student or consolidator load. It verifies the selected
+parent, then executes existing mining, full BF16 consolidation and isolated
+collection commands. The first pilot requests 512 unused original histories,
+100K engine nodes and recursion depth five. A zero-query search skips teacher
+inference and collection; a completed pilot records measured yield and zero
+trained distillation rounds. Structured acceptance does not certify all strategic
+prose. The 18 new controlled CPU cases exercise CLI orchestration and refusal
+paths, without real student, teacher or engine inference.
+
+All 465 CPU tests pass against 122 unchanged source/test identities. An actual
+bounded CPU observation verifies that the three existing owned jobs remain live
+before, during and after the new controller's wait; only its own observation
+process group is stopped. The frozen 70-file execution source is rehashed, and
+no child commands, model loads or search outputs occur. The production pilot is
+now queued with that same source, waiting for actual clean SFT capability
+validation. `evidence/clean-search-pilot-queue-v1.json` records the observation
+and queue snapshot. It does not rehash all teacher weights or revalidate the
+complete candidate tail during waiting, and proves no current-model search yield,
+accepted new labels, trained distillation rounds or student benefit.
