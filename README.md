@@ -204,9 +204,23 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
   --resumed runs/four-gpu-clean-latent-resume-v2/resumed
 ```
 
+公开平台导入入口 `xqgeneral.platform_games` 接受已完成的 PlayStrategy 原始 NDJSON 采集清单。清单的 `kind` 为 `public_platform_recorded_game_acquisition`，`verification.captures` 含每份原文件的 `path`、公开 `url`、`sha256`、`bytes`、非空记录数 `records` 和带时区的 `captured_utc`；文件同时绑定在 `outputs`。采集保存原响应字节，按[官方 API](https://playstrategy.org/api)串行请求；清单及数据不随代码发布。导入核对原 JSON／PGN 主线、结果、登记棋手及 BOT 标签、UTC 日期和原生完整历史，明确将平台 1—10 横线转成项目 0—9 坐标。默认至少 20 个半回合、仅标准初始局面及双侧登记账号；匿名 AI、未结束及合同不合记录保留隔离原因，站点文字不作神经标签。
+
+```bash
+python -m xqgeneral.platform_games \
+  --acquisition data/sources/playstrategy-public-users-v1/manifest.json \
+  --output data/playstrategy-new-import --workers 8 \
+  --previous data/recorded-games-ccpd-v3 \
+  --previous data/recent-recorded-games-v2 \
+  --previous data/recorded-games-additional-v1 \
+  --previous data/modern-recorded-games-v2
+```
+
+真实 37 条试导入的串行／八 CPU 文件逐字节相同，18 局／1082 个半回合保留、19 条隔离，并绑定此前第二入口完整复演，见 `evidence/playstrategy-recorded-games-portable-real-readback-v1.json`。随后从 16 个公开账号捕获 3784 条：3163 条原生通过、621 条隔离、174 条重复，新增 2989 局／165010 个半回合；平台声明的人类／人机为 2251／738 局，394 个参赛者标签。第二入口已复演全部通过历史、复现全部隔离原因并匹配重复的首份来源，见 `evidence/playstrategy-public-users-independent-readback-v1.json`。六来源重新按规范化身份计数为 107678 局、8305866 个半回合、约 866MB；训练的人类／公开实战候选 85530 局，论文式取样上限 513180 个位置、两个完整轮次，见 `evidence/recorded-dataset-paper-capacity-v3.json`。平台声明不证明真实身份或未借助软件；当前课程输入和新 SFT 状态未改变。
+
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%，七次均未达标；最新整行识别为 71.1%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-seventh-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584／4096 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%／92.8%，八次均未达标；最新整行识别为 82.8%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-eighth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \

@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "unique_recorded_games": 107678,
+  "recorded_plies": 8305866,
+  "canonical_game_files_bytes": 866087221,
+  "source_declared_kind_counts": {
+    "recorded_human_match": 24840,
+    "recorded_computer_match": 22,
+    "recorded_human_computer_match": 773,
+    "published_recorded_match": 82043
+  },
+  "game_split_counts": {
+    "validation": 10780,
+    "train": 86165,
+    "test": 10733
+  },
+  "human_or_published_candidate_games_by_split": {
+    "validation": 10703,
+    "train": 85530,
+    "test": 10650
+  },
+  "paper_human_positions_per_search_iteration": 210000,
+  "paper_maximum_positions_per_game": 6,
+  "paper_seven_round_arithmetic_minimum_training_games": 245000,
+  "game_minimum_is_arithmetic_not_paper_reported_count": true,
+  "generous_candidate_training_position_upper_bound": 513180,
+  "candidate_training_games_upper_bound_complete_paper_human_rounds": 2,
+  "seven_round_capacity_met": false,
+  "all_declared_published_games_proven_human": false,
+  "full_native_replay_repeated_by_this_capacity_reader": false,
+  "complete_native_production_and_independent_replay_proofs_reused": true,
+  "live_foundation_inputs_changed": false,
+  "student_benefit_proven": false,
+  "manifest_sha256": "53ead9ae266d112deb8f8ce382c14a750d1dc933ce3f2a1e3b27ff5ef87e4133"
+}
