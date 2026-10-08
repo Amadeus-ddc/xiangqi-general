@@ -1173,3 +1173,28 @@ running from their independently preserved 64/65-file source snapshots after CI
 and merge. Both have been observed live in their prerequisite waiting states.
 No new full-decoder probe, initial SFT, capability generation or prose review has
 yet executed; no new course is mastered or search-distillation round trained.
+
+Fresh expert features now round through FP16 before conversion to BF16, matching
+the stored features used in training and cached inference. Direct FP32-to-BF16
+conversion previously differed in 92536 of 1474560 feature elements (6.28%) in
+an actual CPU expert computation on two original validation histories with red
+and black to move. After the fix, both inference paths are bitwise identical in
+that comparison; original FP32 and stored FP16 tensors are unchanged. Both
+65-file execution snapshots and 146 distinct artifact/source bindings were
+read back. Four regressions fail before the fix and pass after it; all 14 focused
+checks and all 374 CPU tests pass. An earlier manifest-assembly failure is preserved. See
+`evidence/live-expert-cache-precision-v1.json`. This verifies CPU feature-reading
+consistency, without loading the language model or using GPU or independent
+test data. It does not establish CPU/GPU bitwise equivalence or improved play
+and prose. Live training and the existing frozen queues are unchanged.
+
+The thirteenth first-course raw gate at step 6656 answers 743/768 correctly
+(96.7%), with location at 117/128 (91.4%). Eight answers improve and seventeen
+regress relative to step 6144, for a net decrease of nine. The local gate fails.
+All native samples, golds, question formats, raw correctness and finite FP32
+weights were independently recomputed; a further readback verifies all 15
+declared artifacts, 65 frozen source files and exact public bytes. Two failed
+reader path/key checks are preserved before the completed corrected readback.
+Full-cache identity reuses the completed producer/preflight. See
+`evidence/recorded-foundation-clean-thirteenth-raw-gate.json`. New course completions and trained
+distillation rounds remain zero; new SFT is waiting.

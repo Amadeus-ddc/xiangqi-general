@@ -36,7 +36,8 @@ class Predictor:
         depths = self.config.get('expert_feature_depths')
         kwargs = {'depths': depths} if depths is not None else {}
         features, _ = self.expert(encode_history(history).unsqueeze(0).to(self.device), **kwargs)
-        return [f.to(torch.bfloat16) for f in features]
+        # Match training's FP16 cache rounding for newly computed positions too.
+        return [f.to(torch.float16).to(torch.bfloat16) for f in features]
 
     @torch.no_grad()
     def generate(self, record, question=None, max_new_tokens=768):
