@@ -699,9 +699,19 @@ Readback checks complete ordered coverage, exact annotation/packet hashes and
 foreign reviewer contracts; see
 `evidence/recorded-coach-complete-original-cross-review-v1.json`. Rejections
 require genuine changed prose and independent acceptance before collection.
-Acceptance of every final body, repairs and collection remain incomplete.
-Cross-review is a neural opinion and provides neither independent backend
-attestation nor human ratings.
+All 133 genuinely changed final bodies have now received acceptance from a
+different actor; three needed a second revision. Portable resolution and
+collection have completed 2496 labels (2048/192/256), without derived mirrors
+and with zero cross-split game or root/future geometry overlap. Independent
+readback traverses every actual rejection/acceptance ancestor and matches every
+collected field to its qualified query, engine structure and exact final prose.
+It freshly hashes 57 declared artifacts and checks 57 executed frozen collection
+source files; see `evidence/recorded-coach-complete-reviewed-labels-v1.json`.
+Complete native histories and answer-line checks reuse completed production and
+query proofs; this field reader does not rerun all histories. Cross-review is a
+neural opinion, does not prove every semantic statement true, and provides
+neither independent backend attestation nor human ratings. Student benefit has
+not been measured and new SFT remains conditional on the four course gates.
 These preparations are not teacher accuracy, student benefit or a completed SFT
 run. SFT remains conditional on all four new course gates. Explanations must not
 use unauthenticated player/event metadata or hidden recorded futures as facts,
@@ -728,7 +738,8 @@ review packets and refuses unreviewed prose and an incomplete full-batch shard.
 See `evidence/recorded-coach-prose-real-preparation-v2.json`. A failed runtime
 driver without a spawn main guard is preserved; its native four-query isolation
 observer completed, and a corrected fresh driver then passed preparation.
-Full independent semantic acceptance and label collection remain incomplete.
+This four-query preparation is historical; full-batch final acceptance and
+label collection have since completed as recorded above.
 Contract checks and these four preparation examples do
 not establish corpus-wide teaching quality, backend identity attestation, human
 ratings, student benefit or any completed SFT/distillation round.
@@ -944,3 +955,16 @@ v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
 Thirteen actual candidate checkpoints and 26 raw evaluation manifests were
 verified. See `evidence/move-planning-completed-readback-v1.json`. Structural
 completion, full-game strength and prose quality are separate claims.
+
+The seventh static-current gate at step 3584 answers 695/768 identical validation
+questions correctly (90.49%); rank accuracy is 71.09%, still below the gate.
+Count/empty/locate/material/piece/rank accuracies are
+1.0/0.9921875/0.796875/0.9296875/1.0/0.7109375. Relative to step 3072, it corrects
+88 errors and introduces 16, a net gain of 72. All raw sample histories, native
+answers, question formats, output correctness and finite FP32 checkpoint
+contracts were independently checked, and all fifteen completed declared
+artifacts were freshly hashed. Cache identity is bound to completed production
+and full preflight, without another complete cache hash by this reader. See
+`evidence/recorded-foundation-clean-seventh-raw-gate.json`. The controller
+continues the first course; mastered new courses and trained search-distillation
+rounds remain zero, with no new explanation SFT or general coaching claim.

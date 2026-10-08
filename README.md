@@ -206,7 +206,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 真实棋谱导入先固定来源和许可证，再逐着检查完整历史，按规范化棋局身份预先划分，之后才生成规则题。默认保留人类、电脑及人机来源类别，类别和棋手名称都是源记录声明；不把实战走法当作最优着法，不使用网站原讲解冒充神经标注。CCPD 全库已完成 22628 个独立有效棋局、1867475 个半回合，其中电脑／人机为 22／21 局，见 `evidence/recorded-games-ccpd-native-import-v3.json`；首批 512 局保留作历史子集。近期另完成 93 局、6989 个半回合、2019—2023 年的 18 个参赛者名称，见 `evidence/recent-recorded-games-native-import-v2.json`。训练抽样限制双方棋手及来源赛事组，并覆盖年代、来源和胜负；赛事组是元数据启发式，镜像及改写不增加真实棋局数。
 
-当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%，六次均未达标；最新整行识别为 48.4%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-sixth-raw-gate.json`；继续第一门，讲解 SFT 未启动。
+当前课程使用的旧两来源去重为 22720 局、约 187 万个半回合；317 万条规则题合计约 20GB，特征缓存另约 251GB。规则题、独立局面、棋局及讲解样例须分别计数；不能用镜像、改写或重复训练宣称论文同级容量，旧容量审计见 `evidence/recorded-dataset-paper-capacity.json`。实际第 256 步参数、优化器及四卡随机状态读回见 `evidence/recorded-foundation-clean-first-optimizer.json`。第一门同一组 768 道原始验证题，第 512／1024／1536／2048／2560／3072／3584 步正确率为 51.8%／54.0%／61.2%／67.4%／74.9%／81.1%／90.5%，七次均未达标；最新整行识别为 71.1%。原始输出、原生答案及检查点合同均已独立读回，见 `evidence/recorded-foundation-clean-seventh-raw-gate.json`；继续第一门，讲解 SFT 未启动。
 
 ```bash
 python -m xqgeneral.recorded_sources --source data/sources/ccpd-v1 \
@@ -288,7 +288,7 @@ python -m xqgeneral.foundation_readback \
 
 长任务须在 tmux 中使用 `scripts/freeze_run.py` 固定源码。完整课程准备命令在 `runs/recorded-curriculum-full-v1/plan.json`；缓存、预检、独立读回和正式训练等待入口分别在 `runs/recorded-expert-cache-full-v3/`、`runs/recorded-foundation-full-preflight-v3/`、`runs/recorded-foundation-full-readback-v2/`、`runs/recorded-foundation-clean-launch-v1/` 的 `plan.json`。各目录 `log.txt` 记录实际阶段；全部前置检查及 CI 里程碑通过后，等待入口才自动启动新四门课程。中断保留输出、按固定源码及合同续跑；改变输入或配置另建实验。完整棋谱来源与发布边界见 `THIRD_PARTY_NOTICES.md`。
 
-实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文及相互审查：2496 条中原文接受 2363 条、拒收 133 条，见 `evidence/recorded-coach-complete-original-cross-review-v1.json`。作者计划及原始身份读回保留在 `runs/astra-recorded-coach-authoring-v1/`；拒收须真实修订并由不同作者逐条接受后才能收集。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
+实战初始讲解查询从 `recorded-roots.jsonl` 选择原始根，保留棋局分割、双方平衡及棋手／赛事上限，不把整份 20GB 规则题载入内存。3744 个候选根产生 3740 个事实查询，4 个无评分首选拒收已复现；隔离全部现有课程和旧讲解的完整变化后，选定 2496 个原始查询（2048／192／256），每局一个。串行原流程与八 CPU 入口的查询及三片文件逐字节一致；最终独立读回复用已完成的完整历史证明，重新计算合法变化和颜色对应几何足迹，跨分割重叠为零。见 `evidence/recorded-coach-original-query-isolation-v1.json`、`evidence/recorded-coach-selected-query-independent-readback-v2.json`；实际 40 个根／查询的可复用入口检查另存。三个已授权的 Astra Low 代理已完成全部原始正文及相互审查：2496 条中原文接受 2363 条、拒收 133 条，见 `evidence/recorded-coach-complete-original-cross-review-v1.json`。全部 133 条拒收现已真实修订并由不同作者接受，其中 3 条经过第二轮；正式收集 2496 条新标签（2048／192／256），无镜像派生，棋局及根／未来几何足迹跨分割重叠均为零。独立读回逐字段核验原查询、结构答案、最终正文及实际修订链，见 `evidence/recorded-coach-complete-reviewed-labels-v1.json`；完整原生历史检查复用已完成生产与原查询证明。作者计划及原始身份读回保留在 `runs/astra-recorded-coach-authoring-v1/`。该批仍是初始教师材料，不代表人工评分或学生收益，新 SFT 须等四门课程达标。使用新输出目录按以下顺序准备；长任务放在 tmux 中并由 `scripts/freeze_run.py` 固定源码：
 
 ```bash
 python -m xqgeneral.recorded_coach curate \
@@ -360,7 +360,7 @@ python -m xqgeneral.recorded_coach_prose prepare-repairs \
 
 实际固定前缀的 856 条神经审查决定包含 52 条拒收（训练 40、测试 12）；全部修订查询已通过串行／八 CPU CLI 和原生准备结果对照，仅输出引用路径不同，见 `evidence/recorded-coach-repair-portable-real-v1.json`。这证明拒收准备与祖先保留，不证明完成修订、全文语义接受或学生收益。
 
-全部 2496 条原文及三个完整复核包已准备完成，核验原查询身份、顺序和精确正文，并由准备入口逐条检查完整历史、结构答案变化及正文合同；见 `evidence/recorded-coach-full-authoring-review-preparation-v1.json`。三位 Astra Low 审查者分别检查另一位作者的 832 条，分配及进度入口在 `runs/astra-recorded-coach-prose-review-v1/`；全量语义接受和训练标签收集尚未完成。原文、拒收意见和后续修订分别保留。
+全部 2496 条原文及三个完整复核包已准备完成，核验原查询身份、顺序和精确正文，并由准备入口逐条检查完整历史、结构答案变化及正文合同；见 `evidence/recorded-coach-full-authoring-review-preparation-v1.json`。三位 Astra Low 审查者分别检查另一位作者的 832 条，分配及进度入口在 `runs/astra-recorded-coach-prose-review-v1/`；全部拒收已真实修订并由不同作者接受，最终训练标签收集已完成，见 `evidence/recorded-coach-complete-reviewed-labels-v1.json`。原文、拒收意见和后续修订分别保留。
 
 这批 2496 个原始查询及 4992 个原生颜色对应历史键、9158 条旧讲解历史键已全部覆盖在当前课程的专家缓存中，见 `evidence/recorded-coach-expert-feature-coverage-v1.json`；无需单独运行 GPU 特征扩充或复制 251GB 缓存。该盘点检查缓存头并绑定已完成生产证明，没有再次提取或验证全部特征值。收集后的实际新标签仍需重新做词元长度、特征覆盖及全部未来分割预检，完成四门验收后才能准备正式 SFT 配方。此前固定 1672 条前缀的机械检查见 `evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`，不能替代完整语义接受。
 

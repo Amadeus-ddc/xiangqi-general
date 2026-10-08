@@ -1,0 +1,159 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "course": "static_current",
+  "actual_step": 3584,
+  "global_batch_size": 256,
+  "sample_presentations": 917504,
+  "actual_raw_validation_examples": 768,
+  "per_task_examples": 128,
+  "actual_checkpoint_trainable_tensors": 258,
+  "actual_checkpoint_trainable_parameters": 139920416,
+  "all_raw_native_contexts_and_expected_answers_recomputed": true,
+  "all_raw_sample_ids_formats_and_generated_correctness_recomputed": true,
+  "checkpoint_and_validation_and_raw_outputs_freshly_rehashed": true,
+  "feature_hash_matches_prior_completed_full_preflight_and_actual_producer_manifest": true,
+  "full_feature_cache_rehashed_again_by_this_reader": false,
+  "raw_gate": {
+    "examples": 768,
+    "accuracy": 0.9049479166666666,
+    "by_task": {
+      "static_current/count": {
+        "n": 128,
+        "accuracy": 1.0
+      },
+      "static_current/empty": {
+        "n": 128,
+        "accuracy": 0.9921875
+      },
+      "static_current/locate": {
+        "n": 128,
+        "accuracy": 0.796875
+      },
+      "static_current/material": {
+        "n": 128,
+        "accuracy": 0.9296875
+      },
+      "static_current/piece": {
+        "n": 128,
+        "accuracy": 1.0
+      },
+      "static_current/rank": {
+        "n": 128,
+        "accuracy": 0.7109375
+      }
+    },
+    "courses": {
+      "static_current": {
+        "examples": 768,
+        "accuracy": 0.9049479166666666,
+        "minimum_task_accuracy": 0.7109375,
+        "passed": false
+      }
+    },
+    "passed": false,
+    "validation_only": true,
+    "raw_generation": true,
+    "oracle_used": false
+  },
+  "by_question_format": {
+    "0": {
+      "examples": 258,
+      "correct": 232,
+      "accuracy": 0.8992248062015504
+    },
+    "1": {
+      "examples": 258,
+      "correct": 230,
+      "accuracy": 0.8914728682170543
+    },
+    "2": {
+      "examples": 252,
+      "correct": 233,
+      "accuracy": 0.9246031746031746
+    }
+  },
+  "by_recorded_source_kind": {
+    "recorded_human_computer_match": {
+      "examples": 2,
+      "correct": 2,
+      "accuracy": 1.0
+    },
+    "recorded_human_match": {
+      "examples": 687,
+      "correct": 625,
+      "accuracy": 0.9097525473071325
+    },
+    "published_recorded_match": {
+      "examples": 17,
+      "correct": 14,
+      "accuracy": 0.8235294117647058
+    },
+    "previous_engine_or_seeded_rules": {
+      "examples": 59,
+      "correct": 52,
+      "accuracy": 0.8813559322033898
+    },
+    "recorded_computer_match": {
+      "examples": 3,
+      "correct": 2,
+      "accuracy": 0.6666666666666666
+    }
+  },
+  "next_course_permitted_by_gate": false,
+  "first_course_mastered": false,
+  "decoder_literal_board_text": null,
+  "old_course_or_sft_initialization_used": false,
+  "independent_test_used_for_training_or_selection": false,
+  "teacher_or_oracle_repaired_predictions": false,
+  "new_courses_mastered_by_observed_gate": 0,
+  "trained_search_distillation_rounds": 0,
+  "strong_play_or_reliable_coaching_proven": false,
+  "paired_first_course_steps_3072_and_3584": {
+    "identical_sample_ids_questions_formats_and_gold_answers": true,
+    "previous_accuracy": 0.8111979166666666,
+    "current_accuracy": 0.9049479166666666,
+    "accuracy_change": 0.09375,
+    "transitions": {
+      "unchanged_correct": 607,
+      "corrected_wrong": 88,
+      "newly_wrong": 16,
+      "unchanged_wrong": 57
+    },
+    "by_task_transitions": {
+      "rank": {
+        "corrected_wrong": 37,
+        "unchanged_correct": 54,
+        "unchanged_wrong": 29,
+        "newly_wrong": 8
+      },
+      "locate": {
+        "unchanged_correct": 73,
+        "corrected_wrong": 29,
+        "unchanged_wrong": 22,
+        "newly_wrong": 4
+      },
+      "piece": {
+        "unchanged_correct": 128
+      },
+      "count": {
+        "unchanged_correct": 123,
+        "corrected_wrong": 5
+      },
+      "empty": {
+        "unchanged_correct": 124,
+        "corrected_wrong": 3,
+        "newly_wrong": 1
+      },
+      "material": {
+        "unchanged_correct": 105,
+        "unchanged_wrong": 6,
+        "corrected_wrong": 14,
+        "newly_wrong": 3
+      }
+    },
+    "no_other_checkpoint_selected_from_independent_test": true,
+    "comparison_is_within_training_not_a_general_coaching_claim": true
+  },
+  "manifest_sha256": "899e742ce9523b75646cb3e77a264e6ec33cb4eb47282246142da6c6e3f5d8b2"
+}
