@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_capability_controller_observed_waiting": true,
+  "actual_owned_clean_sft_pipeline_live_before_during_and_after_observation": true,
+  "clean_initial_sft_completion_manifest_present": false,
+  "raw_evaluation_or_neural_reviewer_outputs_created": false,
+  "only_this_bounded_observation_process_terminated": true,
+  "curriculum_or_sft_producer_restarted_or_stopped": false,
+  "actual_validation_examples_checked": 384,
+  "three_paired_memory_conditions_prepared": true,
+  "teacher_shard_identities_bound": 18,
+  "full_teacher_weight_bytes_rehashed_by_this_wait_observation": false,
+  "independent_test_used_for_training_or_selection": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "manifest_sha256": "976523584f46c2aa32b22587361e1a63b3753b466bf3e9e16eec4481dd4c1e5c"
+}

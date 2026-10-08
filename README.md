@@ -463,6 +463,21 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 
 讲解评测使用更高预算、独立执行的皮卡鱼检查推荐走法、变化、评分方向和棋盘事实；中文战略正文仍需单独评审。对弈从固定开局交换红黑，完整保留历史。非法模型走法判负，达到步数上限记为截尾，结果不自动换算 Elo。先用验证集完成开发，最终选择的模型才进入独立测试。
 
+新主线可将能力评测排在已启动的干净 SFT 队列后，在 tmux 中使用以下冻结入口：
+
+```bash
+python scripts/freeze_run.py --output runs/clean-sft-capability-launch-v1/source-run -- \
+  python -u -m xqgeneral.clean_sft_evaluation \
+  --pipeline runs/clean-sft-sequential-launch-v1/pipeline \
+  --producer-session xqgeneral-clean-sft-sequential-launch-v1 \
+  --config configs/evaluation-clean-sft-v1.json \
+  --output runs/clean-sft-capability-launch-v1/validation
+```
+
+该配方固定全部 384 条不同完整历史键的验证记录、批量 4 和每局面 100 万节点独立引擎预算；三组均保留原始生成，以正常、清零和错配专家特征进行配对比较。`evaluate_explanations --memory normal|zero|shuffled` 也可单独使用；每个错配批次须至少两条样本，不能用单条尾批充当消融。正常组全部接受有规则事实和独立评分依据的完整 BF16 教师盲评，原始拒收与条件均分分别保留；不把神经评分视为人工评价或棋力证明。
+
+检查 `validation/state.json`、`commands.jsonl`、各组 `raw-predictions.jsonl`／`judged-predictions.jsonl`、盲评接受／拒收及阶段清单。现有任务存活时继续观察；已退出后可用同一冻结入口与原参数加 `--resume`，复用经哈希核验的完整阶段及教师逐条缓存。未完成的原始评测目录保留并拒绝覆盖，此时须用新输出重做该实验。真实等待守卫见 `evidence/clean-sft-capability-real-wait-guard-v1.json`；17 项新增受控检查及全部 370 项 CPU 测试通过。当前入口只在未完成的新 SFT 前等待，实际能力评测和盲评尚未执行。
+
 对弈对手只读取固定节点预算返回的合法走法并保存完整引擎输出，不要求附带完整评分，也不追加搜索节点。独立质量评分和训练标签继续使用严格评分接口，缺少完整评分时不会被视为有效评分。
 
 走法课程采用相同的独立引擎质量判断，同时统计原始 UCCI 格式、合法率和相对教师标签的完全匹配率。非法回答不会被引擎替换：

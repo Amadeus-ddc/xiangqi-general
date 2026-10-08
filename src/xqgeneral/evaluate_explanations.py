@@ -118,22 +118,11 @@ def judge_shard(rows, args):
         oracle.close()
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', required=True)
-    parser.add_argument('--data', default='data/astra-explanations-v1')
-    parser.add_argument('--features', default='data/research-balanced-v1/features-16.pt')
-    parser.add_argument('--split', choices=['validation', 'test'], default='validation')
-    parser.add_argument('--limit', type=int, default=32)
-    parser.add_argument('--batch-size', type=int, default=4)
-    parser.add_argument('--max-new-tokens', type=int, default=768)
-    parser.add_argument('--nodes', type=int, default=1000000)
-    parser.add_argument('--workers', type=int, default=4)
-    parser.add_argument('--seed', type=int, default=20261014)
-    parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
-    parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
-    parser.add_argument('--output', required=True)
-    args = parser.parse_args()
+def run_evaluation(args):
+    if min(args.limit, args.batch_size, args.max_new_tokens, args.nodes, args.workers) <= 0:
+        raise ValueError('Raw evaluation budgets must be positive')
+    if args.memory not in {'normal', 'zero', 'shuffled'}:
+        raise ValueError('Unknown expert-memory ablation')
     dest = Path(args.output)
     if dest.exists():
         raise FileExistsError('Use a fresh raw explanation evaluation output')
@@ -142,13 +131,18 @@ def main():
     random.Random(args.seed).shuffle(rows); rows = rows[:args.limit]
     if not rows or any(r['split'] != args.split for r in rows):
         raise ValueError('Evaluation split contract differs')
+    if len({r['id'] for r in rows}) != len(rows):
+        raise ValueError('Evaluation IDs must be unique')
+    if args.memory == 'shuffled' and (args.batch_size < 2 or len(rows) < 2 or len(rows) % args.batch_size == 1):
+        raise ValueError('Every shuffled batch needs at least two histories')
     started = time.monotonic()
     predictor = Predictor(args.checkpoint, feature_cache=args.features)
     raw = []
     for offset in range(0, len(rows), args.batch_size):
         batch = [dict(r, question=EXPLANATION_QUESTION) for r in rows[offset:offset + args.batch_size]]
-        answers = predictor.generate_batch(batch, args.max_new_tokens)
-        raw.extend({'id': r['id'], 'record': r, 'raw': a} for r, a in zip(batch, answers))
+        answers = predictor.generate_batch(batch, args.max_new_tokens, memory=args.memory)
+        if len(answers) != len(batch):raise ValueError('Raw generation coverage differs from the requested batch')
+        raw.extend({'id': r['id'], 'record': r, 'raw': a} for r, a in zip(batch, answers, strict=True))
         print(json.dumps({'generated': len(raw), 'requested': len(rows)}), flush=True)
     dest.mkdir(parents=True)
     write_jsonl(dest / 'raw-predictions.jsonl', raw)
@@ -161,7 +155,8 @@ def main():
         judged = [r for job in jobs for r in job.result()]
     judged.sort(key=lambda r: r['id'])
     write_jsonl(dest / 'judged-predictions.jsonl', judged)
-    proof = {**explanation_summary(judged), 'split': args.split, 'judge_nodes_per_position': args.nodes,
+    proof = {**explanation_summary(judged), 'split': args.split, 'memory': args.memory,
+             'judge_nodes_per_position': args.nodes,
              'engine_sha256': digest(args.executable), 'engine_weights_sha256': digest(args.weights),
              'seconds': time.monotonic() - started}
     atomic_json(dest / 'metrics.json', proof)
@@ -169,6 +164,26 @@ def main():
                 [args.checkpoint, Path(args.data)/f'{args.split}.jsonl', args.features, args.executable, args.weights],
                 [dest/'raw-predictions.jsonl', dest/'judged-predictions.jsonl', dest/'metrics.json'], proof))
     print(json.dumps(proof), flush=True)
+    return proof
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--checkpoint', required=True)
+    parser.add_argument('--data', default='data/astra-explanations-v1')
+    parser.add_argument('--features', default='data/research-balanced-v1/features-16.pt')
+    parser.add_argument('--split', choices=['validation', 'test'], default='validation')
+    parser.add_argument('--limit', type=int, default=32)
+    parser.add_argument('--batch-size', type=int, default=4)
+    parser.add_argument('--max-new-tokens', type=int, default=768)
+    parser.add_argument('--memory', choices=['normal', 'zero', 'shuffled'], default='normal')
+    parser.add_argument('--nodes', type=int, default=1000000)
+    parser.add_argument('--workers', type=int, default=4)
+    parser.add_argument('--seed', type=int, default=20261014)
+    parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
+    parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
+    parser.add_argument('--output', required=True)
+    run_evaluation(parser.parse_args())
 
 
 if __name__ == '__main__':

@@ -1135,3 +1135,26 @@ this bounded observation was terminated; the curriculum was not restarted or
 stopped. See `evidence/clean-sft-sequential-real-wait-guard-v1.json`. The actual
 full-decoder GPU preflight, new SFT, subsequent search distillation and coaching
 benefit still require execution and independent evaluation.
+
+Clean initial SFT now has a preserved downstream capability controller. It waits
+for the completed clean training pipeline and reads back the actual selected
+full-decoder state and its input/shape contract before loading an inference model.
+All 384 validation histories use the same questions and generation budgets in
+normal, zero and within-batch shuffled expert-memory conditions. Independent
+Pikafish judgments use one million nodes per position and retain every raw error;
+the controller checks complete paired coverage, unmodified raw/judged bindings
+and aggregate statistics. The normal group receives full BF16, grounded neural
+prose review blinded to the checkpoint identity. Truncated/invalid reviewer
+answers remain rejected and count in the all-query denominator. Reviewer scores
+are not human ratings, and the reviewer shares the future search consolidator's
+base model.
+
+The 17 new controlled CPU cases and all 370 CPU tests pass. The actual controller
+has separately been observed waiting on the live, incomplete SFT queue without
+creating raw-evaluation or neural-review outputs. Its 65 executed frozen source
+files, all 384 distinct protected validation histories, and 18 declared teacher
+shard identities/current sizes were read back; this observation does not freshly
+hash the full teacher weights or execute GPU inference. See
+`evidence/clean-sft-capability-real-wait-guard-v1.json`. New SFT completion,
+actual paired capability measurements, neural review, independent final tests
+and useful coaching remain unproven.
