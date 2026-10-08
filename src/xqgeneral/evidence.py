@@ -12,6 +12,12 @@ def digest(path):
         return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
+def file_signature(path):
+    """Guard the identity and timestamps of an input already hashed by the caller."""
+    stat = Path(path).stat()
+    return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
+
+
 def atomic_json(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -20,8 +26,16 @@ def atomic_json(path, value):
     partial.replace(path)
 
 
+def iter_jsonl(path):
+    """Read records in file order without holding the complete JSONL text in memory."""
+    with Path(path).open(encoding='utf-8') as handle:
+        for line in handle:
+            if line.strip():
+                yield json.loads(line)
+
+
 def load_jsonl(path):
-    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+    return list(iter_jsonl(path))
 
 
 def write_jsonl(path, rows):

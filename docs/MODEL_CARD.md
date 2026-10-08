@@ -1262,3 +1262,31 @@ validation-label metrics, not student results, human win probabilities, prose
 semantic ratings or proof of quality across all training labels. No label was
 rewritten and no independent test answer was read. The failed first reader is
 preserved separately from the completed corrected readback.
+
+The second course's first raw validation, at step 512, answers 334/640 dynamic
+questions correctly, including 16/128 captures and 18/128 move-list questions.
+Static replay accuracy is 732/768. Adding the dynamic task groups changes the
+single-RNG balanced sampler: only 13 static record IDs overlap the previous
+5632-step reference, and just three have identical question text and variant.
+These static aggregate scores are not a paired regression measurement. An
+independent reader recomputes all 1408 native answers and raw results, checks
+1299 full histories and the actual FP32 checkpoint. See
+`evidence/dynamic-current-first-raw-validation-v1.json`. This interim check
+precedes the 4096-step minimum for second-course selection; one of four courses
+is complete and new clean SFT and trained distillation remain pending.
+
+A complete CPU preparation of the existing 2831004-row, 17.96GB training file
+produces 128682 distinct full-history search candidates, retaining 64341 existing
+color-derived histories. Source-declared human/computer/mixed/published/old-engine
+or rules counts are 75822/256/240/1030/51334. There are 5538 stored game identifiers;
+this does not certify independent human games. Actual preparation takes about
+202 seconds with 2.37GiB peak process RSS. An independent full-file scan recomputes
+the training SHA256, matches every candidate's first original record field for
+field and reproduces the complete historical seeded order. Existing cache keys
+and header shapes/dtypes are checked; 320 contexts are natively replayed, with
+complete native preflight and the large cache hash reused from prior evidence.
+See `evidence/search-inputs-human-engine-full-v1.json`. All 412 CPU tests pass.
+These are retained search inputs: no student search, teacher consolidation,
+accepted distillation labels, trained round, effective yield or model benefit is
+measured here. Unused training game records and actual student-engine games must
+expand the raw pool before paper-scale filtered labels can be claimed.

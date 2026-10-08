@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "kind": "actual_full_training_search_candidate_pool",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_producer_execution_revision": "d11e889f9e724e20b035faddce61581c5f5352b6",
+  "producer": {
+    "path": "runs/search-inputs-human-engine-full-v1/manifest.json",
+    "sha256": "312a31afe10d70d6b1a7a7e850e16cb9718101d9d62e3b6c1ac73846e563e024",
+    "bytes": 9719
+  },
+  "producer_entry": {
+    "path": "runs/search-inputs-human-engine-full-v1/entry.py",
+    "sha256": "94153bcbe7b29fc97f0e5ebad2d0c09f225729d054b2411e297ae83b6fa53ce0",
+    "bytes": 1482
+  },
+  "producer_source_manifest": {
+    "path": "runs/search-inputs-human-engine-full-v1/source-run/source-manifest.json",
+    "sha256": "ce058b74b019ff706e4e84964121bc59fe92a22cb6da7aab251e5039a7269eed",
+    "bytes": 6445
+  },
+  "producer_plan": {
+    "path": "runs/search-inputs-human-engine-full-v1/plan.json",
+    "sha256": "693da8ba611d7d9ec08340292c3a315aae4c8bad4ac452f4d201077fe34902c1",
+    "bytes": 987
+  },
+  "independent_readback": {
+    "path": "runs/search-inputs-human-engine-full-readback-v1/manifest.json",
+    "sha256": "e3c951140d57140e9916a4ab67f4bbc1fe105facac7d966c732e7f31fac98580",
+    "bytes": 27005
+  },
+  "independent_readback_verification": {
+    "path": "runs/search-inputs-human-engine-full-readback-v1/verification.json",
+    "sha256": "01da91dbbc156aa51fc9096089cd94a55583818ea7c34c04f5ae2a412377b075",
+    "bytes": 2529
+  },
+  "independent_reader_entry": {
+    "path": "runs/search-inputs-human-engine-full-readback-v1/entry.py",
+    "sha256": "a16b37b190df22c4c0c709063df487b4b0e268eaf3a5e4fba05aef4ec98e9dea",
+    "bytes": 8338
+  },
+  "independent_reader_source_manifest": {
+    "path": "runs/search-inputs-human-engine-full-readback-v1/source-run/source-manifest.json",
+    "sha256": "ce058b74b019ff706e4e84964121bc59fe92a22cb6da7aab251e5039a7269eed",
+    "bytes": 6445
+  },
+  "independent_reader_plan": {
+    "path": "runs/search-inputs-human-engine-full-readback-v1/plan.json",
+    "sha256": "84e17510daf2140b122a6d79653553496e1461e3d32915e15bbdeefd91328dfd",
+    "bytes": 982
+  },
+  "pool_manifest": {
+    "path": "data/search-inputs-human-engine-full-v1/manifest.json",
+    "sha256": "6dde042505b9508500993bca748030d0e3f626ff9e7f087f3a6c1508c19cb4c6",
+    "bytes": 9569
+  },
+  "candidate_roots": {
+    "path": "data/search-inputs-human-engine-full-v1/roots.jsonl",
+    "sha256": "f8d0588e686e66ab45a04a2e579a9a020fbd96ead04e913eec0f27539910882e",
+    "bytes": 809895810
+  },
+  "candidate_counts": {
+    "path": "data/search-inputs-human-engine-full-v1/counts.json",
+    "sha256": "8aec561a5183458ab8266630993a6b386888e3bedf3f8a9c4bb54e588cb1be1b",
+    "bytes": 904
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "all_source_training_rows_independently_streamed": 2831004,
+    "all_prepared_roots_match_first_source_record_field_for_field": true,
+    "full_seeded_root_order_matches_original_search_algorithm": true,
+    "source_training_sha256_recomputed_during_complete_scan": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+    "candidate_counts": {
+      "candidate_training_histories": 128682,
+      "distinct_full_history_keys": 128682,
+      "distinct_stored_game_identifiers": 5538,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_computer_match": 256,
+        "recorded_human_match": 75822,
+        "previous_engine_or_seeded_rules": 51334,
+        "published_recorded_match": 1030,
+        "recorded_human_computer_match": 240
+      },
+      "existing_color_derived_candidates": 64341,
+      "first_original_record_of_each_history_preserved": true,
+      "original_seeded_search_shuffle_preserved": true,
+      "training_file_streamed": true,
+      "validation_or_test_answers_read": false,
+      "gpu_or_model_loaded": false,
+      "teacher_consolidation_executed": false,
+      "new_distillation_targets_generated": false,
+      "search_acceptance_yield_measured": false,
+      "trained_search_distillation_rounds": 0,
+      "student_benefit_proven": false,
+      "source_preflight_identity_verified": true
+    },
+    "all_candidate_feature_keys_present_in_existing_cache": true,
+    "existing_full_cache_header_keys": 169904,
+    "native_original_contexts_replayed": 320,
+    "native_contexts_replayed_by_source_declared_kind": {
+      "previous_engine_or_seeded_rules": 64,
+      "published_recorded_match": 64,
+      "recorded_computer_match": 64,
+      "recorded_human_computer_match": 64,
+      "recorded_human_match": 64
+    },
+    "every_prepared_history_natively_replayed_in_this_readback": false,
+    "existing_full_cache_shape_dtype_depth_and_wdl_headers_checked": true,
+    "large_cache_identity_reused_from_completed_full_preflight": {
+      "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+      "bytes": 250548260661
+    },
+    "full_feature_cache_values_recomputed_or_rehashed": false,
+    "complete_native_corpus_production_preflight_reused": true,
+    "validation_or_independent_test_answers_read": false,
+    "gpu_model_loaded": false,
+    "new_distillation_training_targets_generated": false,
+    "student_benefit_proven": false,
+    "actual_producer_execution_revision": "d11e889f9e724e20b035faddce61581c5f5352b6",
+    "all_68_producer_source_files_rehashed": true
+  },
+  "actual_preparation": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 202.27390460763127,
+    "peak_process_rss_kib": 2483088,
+    "candidate_counts": {
+      "candidate_training_histories": 128682,
+      "distinct_full_history_keys": 128682,
+      "distinct_stored_game_identifiers": 5538,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_computer_match": 256,
+        "recorded_human_match": 75822,
+        "previous_engine_or_seeded_rules": 51334,
+        "published_recorded_match": 1030,
+        "recorded_human_computer_match": 240
+      },
+      "existing_color_derived_candidates": 64341,
+      "first_original_record_of_each_history_preserved": true,
+      "original_seeded_search_shuffle_preserved": true,
+      "training_file_streamed": true,
+      "validation_or_test_answers_read": false,
+      "gpu_or_model_loaded": false,
+      "teacher_consolidation_executed": false,
+      "new_distillation_targets_generated": false,
+      "search_acceptance_yield_measured": false,
+      "trained_search_distillation_rounds": 0,
+      "student_benefit_proven": false,
+      "source_preflight_identity_verified": true
+    },
+    "gpu_model_loaded": false,
+    "actual_distillation_training_labels_generated": false
+  },
+  "scope_limits": {
+    "existing_question_records_preserved_not_new_search_labels": true,
+    "different_question_types_do_not_multiply_independent_histories": true,
+    "already_derived_color_histories_retained_not_new_independent_teacher_calls": true,
+    "stored_game_identifier_count_not_certified_independent_human_games": true,
+    "all_native_contexts_replayed_again_in_this_readback": false,
+    "complete_source_native_preflight_reused": true,
+    "large_cache_hash_reused_not_recomputed": true,
+    "gpu_or_model_inference_executed": false,
+    "accepted_search_consolidation_labels_produced": 0,
+    "trained_search_distillation_rounds": 0,
+    "effective_search_yield_or_student_benefit_measured": false
+  },
+  "local_cpu_tests": {
+    "passed": 412,
+    "source_and_test_files_unchanged_before_and_after": 118,
+    "exit_record": {
+      "path": "runs/search-inputs-milestone-tests-v1/exit.json",
+      "sha256": "cdce76067f2cd980d6af923f294968f767dab7a38bf3a8206e414185f76e3d29",
+      "bytes": 96
+    },
+    "test_log": {
+      "path": "runs/search-inputs-milestone-tests-v1/log.txt",
+      "sha256": "5d9bb38dc185da99773c7b7a4c12fbb0ebfb729214b816cea6ec832337682e95",
+      "bytes": 512
+    },
+    "source_test_bindings": {
+      "path": "runs/search-inputs-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "05e0c7dfeb98edad18caeb5638971fb55bce9229886521f527daf14d3b1dd34c",
+      "bytes": 12231
+    }
+  }
+}
