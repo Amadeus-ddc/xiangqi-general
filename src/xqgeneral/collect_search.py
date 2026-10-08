@@ -116,6 +116,10 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
                 row.get('moves', [])[:len(original['moves'])] != original['moves'] or
                 len(row.get('moves', [])) != len(original['moves']) + depth):
             raise ValueError('Consolidation root is not an original selected training root or its descendant')
+        for field in ['recorded_source_kind', 'recorded_source', 'recorded_source_headers',
+                      'recorded_source_provenance', 'recorded_source_context']:
+            if json.dumps(row.get(field), sort_keys=True) != json.dumps(original.get(field), sort_keys=True):
+                raise ValueError('Consolidation changed original recorded source or supplied-history context')
         history = replay(row['initial_fen'], row['moves'])
         suffix = ''.join('-' + move for move in row['moves'][len(original['moves']):])
         if (row.get('history') != history or row.get('fen') != history[-1] or

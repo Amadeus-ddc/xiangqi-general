@@ -161,6 +161,27 @@ python scripts/freeze_run.py --output runs/recorded-collection-v1/source-run -- 
 
 全量新增候选已完成：六个原生导入来源中，80117 盘未用训练棋局提供 478650 个原始历史，未新增镜像。来源声明为人类实战 87544、公开实战 387678、人机 3428；红／黑为 240740／237910，早／中／晚为 103461／179575／195614。全部候选逐字段对照原棋谱并排除 2715684 个保留位置，另抽样复演 192 个完整历史及未来。正式读取入口实际读取 512 条，检查完整候选尾部，并重新计算三份课程文件的 SHA256。见 `evidence/unused-recorded-search-inputs-full-v2.json`。生产耗时约 561 秒、峰值进程内存约 1.07GiB；首次因平台棋谱缺少可选来源说明而失败的记录保留，修正后使用新目录。全部 431 项 CPU 测试通过。棋手身份与来源声明未经认证，原生全量导入证明沿用已有产物；这仍是候选池，没有新增合格标签、有效产出率或模型收益。
 
+战术片段的独立候选池 `data/tactical-search-inputs-full-v1` 已完成：1601 条训练主线提供 8982 个历史，红／黑为 4601／4381；其中 7744 个没有片段前历史、1238 个从标准初始局面开始。全部候选逐字段匹配原始主线、复演给定起点之后的完整历史及记录后续；七份来源的保留历史、现有课程及讲解的未来分支和颜色局面共 2738116 个位置被排除。正式读取接口实际选择 512 条，并检查全池尾部和三份课程文件的 SHA256，见 `evidence/tactical-search-inputs-full-v1.json`。原棋谱后续仍不是最佳着法标签，缺失的前序历史不会补造。该上下文保留到搜索查询、教师汇总提示与最终标签；收取拒收来源字段或布尔类型的变动。
+
+只抽战术候选时，`--games` 仍需列出全部来源供隔离，`--candidate-kinds` 只限制候选类型。`--min-ply 0` 包含短片段起点；最后一步之前的合法决策点也保留，终局本身不作为根。阶段桶相对于给定主线，不表示片段位于原对局的哪个阶段。长批次用 tmux 和固定源码执行，输出目录须新建：
+
+```bash
+python scripts/freeze_run.py --output runs/tactical-candidates-v1/source-run -- \
+  python -m xqgeneral.recorded_search_inputs \
+  --games data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+    data/recorded-games-additional-v1 data/modern-recorded-games-v2 \
+    data/playstrategy-portable-real-import-v1-parallel \
+    data/playstrategy-public-users-native-import-v1 data/recorded-tactical-lines-ccpd-v1 \
+  --data data/research-human-engine-v1 \
+  --footprints runs/recorded-coach-portable-footprints-v1/footprints/manifest.json \
+  --used-inputs data/search-inputs-human-engine-full-v1 \
+  --heldout-data data/astra-explanations-clean-v1 \
+  --output data/tactical-candidates-v1 --candidate-kinds recorded_tactical_line \
+  --min-ply 0 --per-game 6 --workers 8
+```
+
+旧实战池和新战术池逐行重新哈希后，发现 40 个相同历史，合计 487592 个不同历史键；这只是两池库存。旧池另有 541 个根几何落入新增来源保留范围，尚未逐条检查旧池全部未来，因此合并使用前必须重新做全局隔离和去重。来源分割未证明相对先前训练独立；当前原训练输入和已排队的首批搜索仍保留各自固定合同。这些准备没有执行学生或教师推理，也没有产生新主线蒸馏标签。
+
 `search_pilot` 可排在现有干净 SFT 能力验证队列之后，自动执行实际学生搜索、完整 BF16 教师汇总和最终隔离收取。它核对被评测的真实 SFT 权重与搜索父模型相同；等待时不加载学生或教师。当前配方使用 512 个未用原始实战历史、10 万引擎节点、最多五层递归及 `move_eval` 子节点合同。
 
 ```bash
@@ -314,7 +335,7 @@ python -m xqgeneral.human_games --source data/sources/ccpd-v1 \
   --public-evidence evidence/new-recorded-games-import.json
 ```
 
-CCPD 的中局、残局、全盘战术及杀法目录另由 `tactical_games` 导入，允许源谱缺少棋手姓名，保留原始 FEN、主线和来源别名；未提供的片段前历史明确标为缺失。原棋谱主线只做规则核验，不作为最优走法或神经讲解标签。固定版本共 3614 个文件、2818 份不同内容；对六个已有来源去重后保留 2259 条主线、68565 个半回合，来源分割为 1805／236／218，另有 505 条重复和 54 份隔离内容。1988 条未提供给定起点之前的历史，349 条缺少一方或双方棋手字段。全部不同内容已由独立入口重新提取、原生复演，并逐字段匹配保留、重复分割及隔离原因；71 份执行源码及 2930 份产物／源码绑定重新哈希。见 `evidence/recorded-tactical-lines-ccpd-native-import-v1.json`；全部 479 项 CPU 测试通过。不同主线只有 1929 个起始几何局面，22 个在来源分割之间重复，430 条训练主线不超过 12 半回合。来源分割不是相对已有训练集独立的新测试集；后续候选须再核验全部已用、保留及未来／颜色局面，不能直接追加到旧候选池。执行入口为：
+CCPD 的中局、残局、全盘战术及杀法目录另由 `tactical_games` 导入，允许源谱缺少棋手姓名，保留原始 FEN、主线和来源别名；未提供的片段前历史明确标为缺失。原棋谱主线只做规则核验，不作为最优走法或神经讲解标签。固定版本共 3614 个文件、2818 份不同内容；对六个已有来源去重后保留 2259 条主线、68565 个半回合，来源分割为 1805／236／218，另有 505 条重复和 54 份隔离内容。1988 条未提供给定起点之前的历史，349 条缺少一方或双方棋手字段。全部不同内容已由独立入口重新提取、原生复演，并逐字段匹配保留、重复分割及隔离原因；71 份执行源码及 2930 份产物／源码绑定重新哈希。见 `evidence/recorded-tactical-lines-ccpd-native-import-v1.json`；导入里程碑的全部 479 项 CPU 测试通过。不同主线只有 1929 个起始几何局面，22 个在来源分割之间重复，430 条训练主线不超过 12 半回合。来源分割不是相对已有训练集独立的新测试集；已完成的独立战术候选及全局隔离用法见上方搜索候选部分，不能直接追加到旧候选池。执行入口为：
 
 ```bash
 python scripts/freeze_run.py --output runs/tactical-import/source-run -- \
