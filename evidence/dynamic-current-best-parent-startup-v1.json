@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_readback": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/manifest.json",
+    "sha256": "91cc25cafead86585f5aa8160a444aff450f13795e34049a60121638a0b0fff3",
+    "bytes": 115353
+  },
+  "independent_readback_verification": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/verification.json",
+    "sha256": "6b75a61b90f837a63130c79c28111c7a9258e3af96db5e2bdbeb89a576cf0bfb",
+    "bytes": 4709
+  },
+  "independent_reader_entry": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/entry.py",
+    "sha256": "c3287de93d7a016acc263ae12b635f179e15e1a4c4a9f60f01c169d583449d39",
+    "bytes": 16286
+  },
+  "independent_reader_source_manifest": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/source-run/source-manifest.json",
+    "sha256": "ef46a168e1a6cc1cf2e9301e6059e71c95e89788eb844c52e9848e2402cddb63",
+    "bytes": 6353
+  },
+  "freshly_hashed_distinct_declared_files": 496,
+  "current_source_snapshot_files": 67,
+  "original_first_course_source_snapshot_files": 51,
+  "six_current_and_original_source_snapshots_rehashed": true,
+  "preserved_first_readback_failure": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v1/exit.json",
+    "sha256": "2ed02669c37a2ac734fdb957dd28f5eeefd06a137aea55f06bdffd2484952512",
+    "bytes": 78
+  },
+  "production_tasks_or_teacher_labels_changed_to_fix_reader": false,
+  "independent_test_answers_read": false,
+  "student_strength_or_coaching_benefit_proven": false,
+  "kind": "actual_dynamic_current_best_parent_startup",
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "dynamic_current",
+    "actual_updates_verified": 20,
+    "global_batch_size": 256,
+    "world_size": 4,
+    "selected_first_course_parent_step": 5632,
+    "selected_parent_sha256": "56f596cbc3086bbcaf4022b64b8043936a4b9f764b221ec5b22b2e1159ae0173",
+    "actual_zero_update_parameters_bitwise_equal_selected_parent": true,
+    "actual_zero_update_state_checks": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "optimizer_resumed_from_prior_course": false,
+    "first_twenty_gradients_finite_nonzero": true,
+    "first_training_loss": 6.899035930633545,
+    "twentieth_training_loss": 6.334470272064209,
+    "actual_owned_worker_assignments": [
+      {
+        "rank": 0,
+        "local_rank": 0,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 1,
+        "local_rank": 1,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 2,
+        "local_rank": 2,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 3,
+        "local_rank": 3,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      }
+    ],
+    "course_replay": {
+      "static_current": 0.1,
+      "dynamic_current": 0.9
+    },
+    "raw_second_course_gate_completed": false,
+    "new_clean_courses_completed_by_validation_selection": 1,
+    "new_sft_started": false,
+    "trained_search_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false,
+    "independent_test_used_for_training_or_selection": false,
+    "full_feature_cache_rehashed_again_by_observer": false,
+    "independently_rechecked_complete_parameters_and_first_twenty_rows": true,
+    "actual_first_course_selection_recomputed": true,
+    "downstream_wait_states_observed": {
+      "sft": {
+        "status": "waiting_for_four_courses",
+        "curriculum": "runs/curriculum-human-engine-clean-v3",
+        "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+        "gpu_model_loaded_or_sft_started": false
+      },
+      "capability": {
+        "status": "waiting_for_completed_clean_sft",
+        "pipeline": "runs/clean-sft-sequential-launch-v2/pipeline",
+        "producer_session": "xqgeneral-clean-sft-sequential-launch-v2",
+        "gpu_model_or_reviewer_loaded": false
+      }
+    },
+    "full_cache_identity_reused_from_completed_producer_preflight": true
+  },
+  "origin_manifest": {
+    "path": "runs/dynamic-current-best-parent-startup-v1/manifest.json",
+    "sha256": "21e867bbf6d3e6802a7c5b1d47bd58ee5825d5b26f8dc666f539230e1ef3132f",
+    "bytes": 12827
+  },
+  "zero_update_checkpoint": {
+    "path": "runs/dynamic-current-best-parent-startup-v1/initial-step-0.pt",
+    "sha256": "b9fbf4b671c0a54341e11f5c77542850044a88a0a4136c7c5f020b4f91555ef1",
+    "bytes": 559769427
+  },
+  "first_twenty_updates": {
+    "path": "runs/dynamic-current-best-parent-startup-v1/first-twenty-updates.json",
+    "sha256": "5e9218ec6b182930bf30826fb46a1a752a43a0e0ff50ba653ba86625ef73b769",
+    "bytes": 3880
+  },
+  "independent_startup_readback": {
+    "path": "runs/clean-route-and-teacher-reference-readback-v2/startup-readback.json",
+    "sha256": "803363ccbb6f419991428ef0b75498d8a076badbf446794c20b112fba4f963ae",
+    "bytes": 2507
+  },
+  "initial_first_course_quality_reference": {
+    "path": "evidence/foundation-best-validation-import-v1.json",
+    "sha256": "79507d1f75632af03774f4d52f76005538cad90f0ad21b79a2831512f2556a14",
+    "bytes": 1811
+  },
+  "volatile_observation_input_archive_aliases": {
+    "runs/curriculum-human-engine-clean-v3/dynamic_current/training/execution.json": {
+      "path": "runs/dynamic-current-best-parent-startup-v1/initial-execution.json",
+      "sha256": "e98db00c58df58c462b65176c5857846cdc4a00393864fffd406c450b8f66ec8",
+      "bytes": 8094,
+      "reason": "The next training segment may replace execution.json; the zero-update observation preserves identical original bytes."
+    }
+  }
+}

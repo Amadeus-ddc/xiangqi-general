@@ -4,6 +4,8 @@
 
 ## 已验证
 
+- 第二门已从第一门最佳权重实际启动：零更新时全部 258 个张量、139920416 个 FP32 参数与原第 5632 步逐位相同，使用新优化器及 10% 第一门／90% 第二门回放。四卡前 20 次真实更新的梯度有限且非零，冻结源码为合并后的 `34154f0`、67 份文件；第二入口重新检查权重、原始训练前缀、第一门选择与三个队列。见 `evidence/dynamic-current-best-parent-startup-v1.json`。这证明正确继承与开始训练，尚不是第二门问答成绩或四门完成。讲解和能力评测队列仍分别等待四门、等待 SFT，没有加载模型。
+- 全部 384 条现有教师验证标签已接受独立皮卡鱼每局面 100 万节点复查：推荐走法 381／384 无明显失误（99.2188%），完整主变化 352／384 每步无明显失误（91.6667%）；结构、推荐走法与完整主变化合法率均为 100%。2276 个合法变化半回合中 46 个未通过失误判据；判据为相对独立引擎最佳选择的预期得分损失低于 0.10，不是实测人类胜率。第二入口逐条核对原标签、完整历史、归档引擎回答和全部统计，失败的首版读回及修正后的独立目录均保留，见 `evidence/clean-teacher-validation-engine-reference-v1.json`。这只衡量该验证子集的教师结构与走法，正文语义和全部训练标签质量未由本次引擎检查证明；没有改标签、训练学生或读取独立测试答案。
 - 第一门改为按最佳原始验证权重完成：新配方 `configs/foundation-human-engine-clean-v3.json` 在独立目录导入原干净第一门的 14 次检查和 51 份冻结源码，保留训练配置、候选权重和全部原始错误。第 5632 步 752／768 正确（97.9167%），最弱题型 121／128（94.5313%）；第 6144／6656／7168 步均未超过它，第 7168 步为 746／768（97.1354%）、最弱 120／128（93.75%）。按总分、最弱题型、较早步数排序，三次无改善即早停；99%／95% 原始通过字段仍为假，不再阻止课程切换。各门最少步数 3072／4096／2048／6144 覆盖预热，上限和混合比例不变；这些是本地策略，不是论文参数。真实 CPU 导入已完成全部声明字节核验，包括完整特征缓存，选定的 258 个张量、139920416 个 FP32 参数有限且形状完整，第二门配置精确继承原第 5632 步。见 `evidence/foundation-best-validation-import-v1.json` 与 `evidence/recorded-foundation-clean-fourteenth-raw-gate.json`。四门完成清单和 SFT 交接重新核验完整候选历史及最佳选择，不能把未达参考目标改写为达标；19 项新增受控检查和全部 393 项 CPU 测试通过。新主线已完成第一门选择（1／4），后续三门、新 SFT、已训练蒸馏轮次及强棋力／可靠讲解仍未完成。
 - 初始讲解与蒸馏容量已区分：现有初始训练／验证／测试为 10758／384／512 条，包含已有颜色派生项；论文初始 15000 个教师局面筛到 8402 条训练、200 条验证。当前可启动初始讲解的资料准备，训练仍等待四门完成。论文每轮搜索候选约 37.5万—42.5万个，筛出约 15万—28.5万条训练样本，七轮使用不同人类棋局和战术题。现有 85530 局人类／公开实战训练候选按每局六个位置的宽松上限为 513180 个位置，尚非蒸馏标签，不能保证七轮容量。后续优先以已有棋谱和真实学生对弈测有效搜索产出率，再补战术、残局及不同水平实战并扩到足够合格样本；轮数依据验证棋力、变化与讲解质量调整。出处及数据量说明见 `README.md` 的讲解教师部分。
 - 新局面实时专家特征现采用与训练缓存相同的 FP16 存储精度，再转 BF16 送入语言模型。此前直接从 FP32 转 BF16，在两个原始红黑验证历史的实际 CPU 专家复算中，使 1474560 个特征值中的 92536 个（6.28%）与缓存路径不同；修复后差异为零，原始 FP32 和缓存 FP16 值均逐位不变。两组各 65 份冻结源码与 146 份去重产物／源码绑定另经读回，四种缓存／历史情况的回归检查在修复前失败、修复后通过，相关 14 项检查及全部 374 项 CPU 测试通过。第一次复核的清单字段错误及失败输出保留，新目录完成复核，见 `evidence/live-expert-cache-precision-v1.json`。这是数值读取一致性修复，未加载语言模型、未使用 GPU 或独立测试，未测走法／讲解收益，也不证明 CPU／GPU 逐位等价；现有课程和后续冻结队列未改。
@@ -178,6 +180,9 @@
 
 ## 当前运行与续跑
 
+- 当前课程会话为 `xqgeneral-recorded-foundation-clean-v3`，启动记录在 `runs/recorded-foundation-clean-launch-v2/`，控制器状态为 `runs/curriculum-human-engine-clean-v3/state.json`；第二门逐步记录在 `dynamic_current/training/training.jsonl`。同一存活会话持续观察，确认退出后才按启动目录 `plan.json` 使用原冻结 `runner.py --resume`；变更源码、输入或配置必须新建实验。
+- 顺序讲解会话 `xqgeneral-clean-sft-sequential-launch-v2` 的状态在 `runs/clean-sft-sequential-launch-v2/pipeline/state.json`；后续能力会话 `xqgeneral-clean-sft-capability-launch-v2` 的状态在 `runs/clean-sft-capability-launch-v2/validation/state.json`。分别使用 `configs/explanation-sft-clean-v2.json` 和 `configs/evaluation-clean-sft-v2.json`；当前仍等待，没有提前执行 SFT 或 GPU 预检。续跑规则及固定命令见各启动目录 `plan.json`，不要另启重复等待队列。
+- 第二门启动观察在 `runs/dynamic-current-best-parent-startup-v1/`，教师验证参考在 `runs/clean-teacher-label-engine-reference-v1/`，联合独立读回在 `runs/clean-route-and-teacher-reference-readback-v2/`；检查各目录的 `manifest.json`、`exit.json` 和 `log.txt`。首版联合读回的启动字段假设错误保留于同名 `v1`，没有改生产任务或标签。
 - 完整教师验证已完成，日志与输出位于 `runs/consolidator-weight-verification.log`、`runs/consolidator-verification-v1/`。
 - 字典专家组和纯语言组四门课程及问答验证均已完成，日志 `runs/research-v3/{bridge,text_lora}/curriculum/*.log` 与 `runs/research-v3-{bridge,text}-qa-validation.log`。
 - 两组首轮讲解训练及原始输出评测均已完成。扩充讲解训练也已完成 6656 步，选择第 4608 步；日志 `runs/explanation-v3-warm-bridge.log`，初始化与验证门槛见 `runs/explanation-v3-warm/bridge/plan.json`，完整产物与实际权重读回位于 `runs/explanation-v3-completion-readback-v1/`。
