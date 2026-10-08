@@ -9,6 +9,7 @@ import time
 import torch
 
 from .evidence import atomic_json, code_identity, digest, manifest
+from .curriculum_selection import CURRICULUM_KIND
 from .foundation_handoff import Artifacts, export_curriculum
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
@@ -25,7 +26,7 @@ def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30):
             'curriculum': str(curriculum), 'producer_session': producer_session, 'gpu_model_loaded_or_sft_started': False})
         time.sleep(poll_seconds)
     proof = json.loads(path.read_text())
-    if proof.get('status') != 'complete' or proof.get('kind') != 'four_course_raw_qa_gated_curriculum':
+    if proof.get('status') != 'complete' or proof.get('kind') not in ('four_course_raw_qa_gated_curriculum', CURRICULUM_KIND):
         raise ValueError('A completed four-course curriculum is required')
     return path
 

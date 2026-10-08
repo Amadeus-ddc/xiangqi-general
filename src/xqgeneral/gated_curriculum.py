@@ -21,10 +21,14 @@ TASKS = {
     'static_future': ('piece', 'count', 'locate', 'empty', 'material', 'rank'),
     'dynamic_future': ('legal', 'illegal', 'moves', 'captures', 'checks'),
 }
-CONTROL_KEYS = {'course_mixtures', 'course_budgets', 'raw_qa_gates', 'ddp_world_size', 'output', 'purpose'}
+CONTROL_KEYS = {'course_mixtures', 'course_budgets', 'raw_qa_gates', 'ddp_world_size', 'output', 'purpose',
+                'validation_selection', 'initial_course_import'}
 
 
 def validate_recipe(recipe):
+    if 'validation_selection' in recipe:
+        from .curriculum_selection import validate_policy
+        validate_policy(recipe['validation_selection'])
     if len(recipe['course_mixtures']) != len(STAGES) or len(recipe['course_budgets']) != len(STAGES):
         raise ValueError('Exactly four ordered foundation courses are required')
     world = recipe.get('ddp_world_size', 1)

@@ -1198,3 +1198,45 @@ reader path/key checks are preserved before the completed corrected readback.
 Full-cache identity reuses the completed producer/preflight. See
 `evidence/recorded-foundation-clean-thirteenth-raw-gate.json`. New course completions and trained
 distillation rounds remain zero; new SFT is waiting.
+
+
+The clean curriculum now selects the best raw-validation checkpoint instead of
+requiring the uncalibrated local reference thresholds. The first course completed
+7168 validated updates; 5632 is selected, with 752/768 correct (97.9167%) and a
+121/128 worst task (94.5313%). Subsequent checks at 6144, 6656 and 7168 do not
+improve its score. The 7168 candidate has 746/768 correct and a 120/128 worst task.
+Reference gates remain false in the original artifacts. The new policy ranks
+balanced raw accuracy, then worst-task accuracy, then earlier update; three
+non-improving checks after local minimum budgets stop a course. Minimum budgets
+are 3072/4096/2048/6144 and maximum budgets/replay mixtures are unchanged. These
+selection details are local choices, not published paper hyperparameters.
+
+`configs/foundation-human-engine-clean-v3.json` imports only the preserved clean
+first-course candidates and their original 51-file execution source. Later
+courses start fresh optimizers from the actual selected parent bytes. A real CPU
+import freshly hashes the complete declared inputs including the feature cache,
+recomputes all 14 raw checks and verifies the complete finite FP32 selected state.
+An independent readback rehashes 144 declared files and both source snapshots
+(51/67 files), replays 730 selected native histories and recomputes 768 gold
+answers; it reuses the import's full-cache identity without hashing that cache a
+second time. See `evidence/foundation-best-validation-import-v1.json` and
+`evidence/recorded-foundation-clean-fourteenth-raw-gate.json`. Nineteen new
+controlled checks and all 393 CPU tests pass, including ordered progression,
+original-source retention, best-parent inheritance, tamper rejection, four-course
+handoff and downstream SFT consumption with honest failed reference gates. This
+is one selected clean course, not four completed courses or a coaching result.
+
+The new downstream recipes `configs/explanation-sft-clean-v2.json` and
+`configs/evaluation-clean-sft-v2.json` retain the reviewed 10758/384/512 labels,
+2690-update initial SFT budget and held-out validation protocol. All four courses
+must complete before any full-decoder GPU probe/SFT. Initial-label counts include
+existing color-derived examples and do not establish equal teacher-label
+quality. The paper's initial 15000 annotations yield 8402 training and 200
+validation positions. Its search iterations instead use about 375000-425000
+candidate positions, retaining approximately 150000-285000 training examples per
+round. Current 85530 human/published training-game candidates offer only a generous
+513180-position upper bound at six per game; this is not a generated distillation
+dataset or proven seven-round capacity. Additional tactical/endgame/diverse play
+and actual student-engine games will supplement the pool; acceptance yield and
+validation strength, full-line accuracy and prose quality govern expansion and
+round count. No new clean SFT or trained search-distillation round has completed.
