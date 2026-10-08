@@ -1,0 +1,45 @@
+{
+  "status": "complete",
+  "collected_original_teacher_labels": 2496,
+  "by_split": {
+    "train": 2048,
+    "validation": 192,
+    "test": 256
+  },
+  "accepted_unchanged_original_bodies": 2363,
+  "genuinely_changed_final_bodies": 133,
+  "additional_second_revisions": 3,
+  "by_shard": [
+    {
+      "shard": 0,
+      "final_annotations": 832,
+      "changed_bodies": 47
+    },
+    {
+      "shard": 1,
+      "final_annotations": 832,
+      "changed_bodies": 40
+    },
+    {
+      "shard": 2,
+      "final_annotations": 832,
+      "changed_bodies": 46
+    }
+  ],
+  "all_actual_review_decisions_and_exact_rejection_ancestors_checked": true,
+  "every_collected_field_matches_qualified_query_oracle_and_exact_final_teacher_body": true,
+  "collected_game_and_root_future_overlap": {
+    "games": 0,
+    "root_and_future": 0
+  },
+  "declared_artifacts_freshly_rehashed": 57,
+  "executed_collection_frozen_source_files_checked": 57,
+  "native_complete_history_and_answer_checks_reuse_completed_production_and_query_proofs": true,
+  "this_reader_reruns_all_native_histories": false,
+  "human_rating": false,
+  "neural_opinion_truth_or_backend_attestation_proven": false,
+  "student_training_started": false,
+  "student_benefit_measured": false,
+  "all_four_new_courses_required_before_sft": true,
+  "manifest_sha256": "7c31dfe9e8531e9dba9f046bc7adbbe83345058859744bdc3c691080ca05614e"
+}
