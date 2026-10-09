@@ -308,6 +308,18 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 走法枚举诊断覆盖 19 个检查点、2432 份回答，并重新核验同批 128 个完整历史及原生答案，见 `evidence/curriculum-move-enumeration-diagnostic-v1.json`。第二门末次 28 道错误均有实际漏招或多招；第三门第 1024 步 41 道错误只有 1 道纯顺序问题，炮题净回落 7 道。按棋子／答案长度分组和逐走法精确率只作诊断，保留原始严格评分；这不证明错误原因或实际棋力。第 2048 步观察 `xqgeneral-static-future-fourth-raw-validation-readback-v2` 已启动，将基于已完成的第 1536 步原生证明核对第 2048 步实际检查。
 
+可复用 CPU 入口 `xqgeneral.diagnose_moves` 已在第三门 512／1024／1536 步的全部 384 份走法回答上执行，重新核验 128 个历史和原生答案，逐字段匹配已完成专用诊断，见 `evidence/move-enumeration-portable-real-v1.json`。第 1536 步严格正确 76／128，集合正确 77／128；52 道错误中 51 道有真实漏招或多招，1 道仅重复输出。漏掉 61 个合法招，多报 41 个招，其中 40 个非法、1 个属于另一棋子；相对第 1024 步，炮／车题净变化为 −5／−3。原始评分保持不变，规则实现与原生预检共享。29 项新合同检查及全部 560 项 CPU 测试通过，129 份源码／测试身份已读回，原训练配方未变。
+
+以下命令只分析保存的验证回答，不加载模型；多个文件必须具有相同题目、问法变体和参考答案，按检查点顺序提供。分析未来动态题时加 `--stage dynamic_future`，并使用新输出目录。结果包含 `analysis.json`、`item-diagnostics.jsonl` 和绑定输入／源码身份的 `manifest.json`。
+
+```bash
+python -m xqgeneral.diagnose_moves --validation DATA/validation.jsonl \
+  --predictions FIRST_QA/predictions.jsonl SECOND_QA/predictions.jsonl \
+  --output runs/move-diagnostics-new
+```
+
+原课程训练使用以下冻结入口：
+
 ```bash
 python scripts/freeze_run.py --output runs/recorded-foundation-clean-launch-v2/source-run -- \
   python -m xqgeneral.validation_curriculum --config configs/foundation-human-engine-clean-v3.json

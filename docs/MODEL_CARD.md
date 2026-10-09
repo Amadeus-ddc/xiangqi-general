@@ -1649,6 +1649,27 @@ waiting with 67 pinned source files and requires the completed step-1536 native
 proof. A title-literal preparation failure never launched a job and is preserved;
 the reader uses a fresh v2 directory. Training and recipes remain unchanged.
 
+`evidence/move-enumeration-portable-real-v1.json` records the reusable CPU
+`xqgeneral.diagnose_moves` command on all 384 current-move answers from third-course
+steps 512, 1024 and 1536. It freshly hashes all 173272 validation rows and rechecks
+128 histories and native answers. All candidate summaries, three paired comparisons
+and item fields match the completed specialized diagnostic, using shared native
+rules. Step 1536 has 76/128 strict answers and 77/128 exact move sets: 51 errors
+have missing or extra moves and one has duplicates only. There are 61 missing moves
+across 41 answers and 41 extra moves across 32 answers; 40 extras are illegal and
+one is a legal move from another piece. From step 1024, missing moves increase from
+48 to 61, while cannon/rook strict answers fall from 24/42 and 29/41 to 19/42 and
+26/41. The command preserves strict scoring and rejects changed questions, invalid
+native gold, non-validation data and changing inputs. Future-board diagnosis has
+controlled contract tests, without a real fourth-course diagnosis yet. The 73-file
+analysis snapshot retains the producer's native helper identities; live training
+keeps its original 67 files and recipe. Checkpoint ancestry reuses completed raw
+validation evidence and is outside this command's scope. These diagnostics do not
+establish playing strength, coaching quality or a causal explanation of forgetting.
+All 560 CPU tests pass, including 29 new diagnostic contract cases, with 129
+source/test identities verified; the prior 127 identities and training recipe are
+unchanged.
+
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
 color-derived rows. Validation is 288 plus 96, and test is 384 plus 128.
