@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "kind": "real_engine_interrupted_match_resume_protocol",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifacts": [
+    {
+      "path": "runs/match-resume-real-v1/entry.py",
+      "sha256": "4133bddecd76cb41495c8fc8c6aec5b34d1f5871e20e8426471680b4f5133c18",
+      "bytes": 10389
+    },
+    {
+      "path": "runs/match-resume-real-v1/runner.py",
+      "sha256": "5fff6a66c1ababc1cb5f0dd781e2e55b9d58e4f6d0e40efe07be9c8d99e1246a",
+      "bytes": 1814
+    },
+    {
+      "path": "runs/match-resume-real-v1/plan.json",
+      "sha256": "72f5d44687d9aab694caa0d466c1150b647bdbf76e97e3f7828e46e42f11799b",
+      "bytes": 8815
+    },
+    {
+      "path": "runs/match-resume-real-v1/launch.json",
+      "sha256": "b0de69a3ed95dffedd735e8626c3626815d2d84da9e28bb255e0156e577d1b2c",
+      "bytes": 220
+    },
+    {
+      "path": "runs/match-resume-real-v1/source-run/source-manifest.json",
+      "sha256": "4ea0eceba98f41b711e03e1c5fae8dbb7068491397e1d06bcedbea3fea31c1c7",
+      "bytes": 7013
+    },
+    {
+      "path": "runs/match-resume-real-v1/first-exit.json",
+      "sha256": "74c83bfe1459a3f43fcf8f2f0e0362d9f2b160f72f438eb08d5a4d8823e8b981",
+      "bytes": 81
+    },
+    {
+      "path": "runs/match-resume-real-v1/resume-exit.json",
+      "sha256": "61722bc8eaaaa85f03cd506ab88f29cbf217e125ea4c73f6f4c913a4ea9b89b7",
+      "bytes": 80
+    },
+    {
+      "path": "runs/match-resume-real-v1/readback-exit.json",
+      "sha256": "5c37947692f5bb96714ae573a9e104229355182ffcc2fc55c4fab6f21b831b64",
+      "bytes": 80
+    },
+    {
+      "path": "runs/match-resume-real-v1/exit.json",
+      "sha256": "8fe81db23a7346ca14c97d1b63a023e2815bee5a43c0de80aa40166c8d6c81dd",
+      "bytes": 89
+    },
+    {
+      "path": "runs/match-resume-real-v1/first-stats.json",
+      "sha256": "6f13cea83841a4821d6a5caf409e40dea4ef061c0f4c83a79072c415bf3813c3",
+      "bytes": 703
+    },
+    {
+      "path": "runs/match-resume-real-v1/resume-stats.json",
+      "sha256": "6a97566c974a35e69f9954dd1ad98656e6f426a9074a45e1e08a13b0c85d29fd",
+      "bytes": 709
+    },
+    {
+      "path": "runs/match-resume-real-v1/readback-stats.json",
+      "sha256": "c3be11309351d0ecd4f56aaf94cb3306a9cf456900c698170d7956bc85e7129c",
+      "bytes": 705
+    },
+    {
+      "path": "runs/match-resume-real-v1/preserved-prefix.json",
+      "sha256": "987bd1536efea8b237d1fd1fd22c44f7c104d6e674bf5d523650fdd0d9aa0f17",
+      "bytes": 630
+    },
+    {
+      "path": "runs/match-resume-real-v1/interrupted-game.json",
+      "sha256": "459d5416ffec16fcf1ef06fb448bd2337006078d9272e1acc4d689bb1b0d4550",
+      "bytes": 4747
+    },
+    {
+      "path": "runs/match-resume-real-v1/verification.json",
+      "sha256": "31d43a054caf3ac4eed9992af34f5f1631f03d20e2a47b2ddb5bc0e84dd40662",
+      "bytes": 3199
+    },
+    {
+      "path": "runs/match-resume-real-v1/manifest.json",
+      "sha256": "8b8fc18cd92330bb73f1f28048ab62a3f6a3743ed0db7a6efdbe549cdbb21e93",
+      "bytes": 113109
+    },
+    {
+      "path": "runs/match-resume-real-v1/matches/manifest.json",
+      "sha256": "774e3086a20574c81905a93bbd99060d13abf8fedb68fec223962e2fb6cef306",
+      "bytes": 101003
+    }
+  ],
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "opening_count": 64,
+    "real_engine_protocol_matches": 256,
+    "node_budgets": [
+      100,
+      1000
+    ],
+    "both_colors_per_opening_and_budget": true,
+    "maximum_new_plies": 8,
+    "preserved_complete_games": 1,
+    "preserved_turns": 11,
+    "interrupted_game_saved_turns": 3,
+    "first_exit_code": 37,
+    "original_completed_game_and_checkpoint_bytes_unchanged": true,
+    "interrupted_raw_turns_and_native_move_prefix_unchanged": true,
+    "engine_turns": 1024,
+    "scripted_student_turns": 1024,
+    "total_player_queries_equal_final_native_turns": true,
+    "completed_resume_loads_no_players_and_changes_no_match_files": true,
+    "all_saved_games_native_replayed": true,
+    "match_bound_outputs_freshly_hashed": 515,
+    "model_oracle_repairs": 0,
+    "metrics": {
+      "games": 256,
+      "wins": 0,
+      "losses": 1,
+      "draws": 0,
+      "censored": 255,
+      "score_on_completed_games": 0.0,
+      "termination_reasons": {
+        "ply_limit": 255,
+        "checkmate_or_stalemate_loss": 1
+      },
+      "raw_model_forfeits": 0,
+      "censored_games_counted_as_draws": false,
+      "elo_estimate": null,
+      "model_oracle_repairs": 0,
+      "action_mode": "explanation",
+      "openings": 64,
+      "opening_split": "validation",
+      "both_model_colors_at_each_opening_and_budget": true,
+      "rule_legal_constraints": false,
+      "explanation_quality_evaluated": false,
+      "by_opponent_nodes": {
+        "100": {
+          "games": 128,
+          "wins": 0,
+          "losses": 0,
+          "draws": 0,
+          "censored": 128,
+          "score_on_completed_games": null,
+          "termination_reasons": {
+            "ply_limit": 128
+          },
+          "raw_model_forfeits": 0,
+          "censored_games_counted_as_draws": false,
+          "elo_estimate": null,
+          "model_oracle_repairs": 0
+        },
+        "1000": {
+          "games": 128,
+          "wins": 0,
+          "losses": 1,
+          "draws": 0,
+          "censored": 127,
+          "score_on_completed_games": 0.0,
+          "termination_reasons": {
+            "ply_limit": 127,
+            "checkmate_or_stalemate_loss": 1
+          },
+          "raw_model_forfeits": 0,
+          "censored_games_counted_as_draws": false,
+          "elo_estimate": null,
+          "model_oracle_repairs": 0
+        }
+      },
+      "seconds": 71.85355793684721,
+      "elapsed_scope": "last_invocation",
+      "completed_games_reused": 1,
+      "saved_turns_reused": 11,
+      "rule_profile": "pyffish-0.0.90-xiangqi-AXF"
+    },
+    "neural_model_or_teacher_loaded": false,
+    "trained_student_inference_executed": false,
+    "match_results_are_student_strength_evidence": false,
+    "new_training_labels": 0,
+    "owned_original_queues_live": {
+      "before": [
+        "xqgeneral-clean-search-pilot-launch-v2 401942 0",
+        "xqgeneral-clean-sft-capability-launch-v2 90921 0",
+        "xqgeneral-clean-sft-sequential-launch-v2 90918 0",
+        "xqgeneral-recorded-foundation-clean-v3 90915 0"
+      ],
+      "after": [
+        "xqgeneral-clean-search-pilot-launch-v2 401942 0",
+        "xqgeneral-clean-sft-capability-launch-v2 90921 0",
+        "xqgeneral-clean-sft-sequential-launch-v2 90918 0",
+        "xqgeneral-recorded-foundation-clean-v3 90915 0"
+      ]
+    },
+    "seconds": 34.47249428462237
+  },
+  "execution_source_commit": "1d8d9c28cb62046f77689644952096913a3feaec",
+  "frozen_execution_modules": 74,
+  "planned_interruption_preserved": true,
+  "resumed_completed_match_files_byte_preserved": true,
+  "completed_second_resume_without_players": true,
+  "fresh_current_turn_readback": {
+    "source_modules_hashed": 74,
+    "match_outputs_hashed": 515
+  },
+  "validation_opening_source_proof_reused": "evidence/recorded-match-openings-real-v1.json",
+  "cpu_suite": {
+    "passed": 669,
+    "new_meaningful_cases": 45,
+    "focused_evaluation_cases_passed": 82,
+    "source_test_bindings": 132,
+    "bindings": {
+      "path": "runs/match-resume-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "29519cb23dc2631e7fdee49d9f404b7bd16a50064d72567598e9954bc17ea671",
+      "bytes": 13703
+    },
+    "exit": {
+      "path": "runs/match-resume-milestone-tests-v1/exit.json",
+      "sha256": "505d7e0419aacf3f6c07e3d6c71fec128e314a24997c7429e7697a10ad2c230f",
+      "bytes": 214
+    },
+    "pytest_log": {
+      "path": "runs/match-resume-milestone-tests-v1/log.txt",
+      "sha256": "e3e348749abbfa8403f9a660149b19218285524857b43c433a1e4158d8d22566",
+      "bytes": 832
+    },
+    "foundation_recipe_unchanged": true
+  },
+  "scope_limits": {
+    "student_is_non_neural_first_legal_move_script": true,
+    "trained_model_or_teacher_inference_executed": false,
+    "raw_saved_prefix_preserved": true,
+    "bitwise_equivalence_to_a_separate_uninterrupted_engine_run_proven": false,
+    "student_strength_or_explanation_quality_proven": false,
+    "maximum_new_plies_is_protocol_control_budget": true,
+    "independent_final_test_used": false,
+    "new_distillation_labels": 0
+  }
+}
