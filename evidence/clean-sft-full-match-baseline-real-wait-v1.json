@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "kind": "clean_initial_sft_full_match_baseline_actual_wait_guard",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifacts": [
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/runner.py",
+      "bytes": 784,
+      "sha256": "f29a6875bce645aa0544e7c6a4928d8e0c0597221ee636d10dd7de884ffdb4a1"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/plan.json",
+      "bytes": 9750,
+      "sha256": "554acf0cc0481fafdf671347b2d2023f54e6225dccd59f659e079057539e7ea0"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/launch.json",
+      "bytes": 238,
+      "sha256": "e5d0b0db3256764093a355cbc89e281cd5ea89448186dc4acb17f904cf0b6b44"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/source-run/source-manifest.json",
+      "bytes": 7109,
+      "sha256": "9ee69709c0ff808612f6545784ce522ab14c9522a49689bb00e06470872a84d5"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/baseline/contract.json",
+      "bytes": 12974,
+      "sha256": "43136d2eed24da98d8b6c9d7807dafbadf2fb391a9cb3e024994dec58160bb74"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/waiting-readback.json",
+      "bytes": 985,
+      "sha256": "d6cfe87019111734b3a203ccec1d9c9e5ebb6666d7f711ae8ef6910f93d45c51"
+    },
+    {
+      "path": "runs/clean-sft-match-baseline-launch-v1/waiting-state-snapshot.json",
+      "bytes": 263,
+      "sha256": "599cacc65223b07897f710d3b815cc9dabf73f7c44b2fad506eea3d5ee089339"
+    }
+  ],
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_waiting_state": {
+      "status": "waiting_for_completed_clean_sft_validation",
+      "validation": "runs/clean-sft-capability-launch-v2/validation",
+      "producer_session": "xqgeneral-clean-sft-capability-launch-v2",
+      "student_or_teacher_loaded": false,
+      "new_distillation_labels": 0
+    },
+    "live_owned_handle": "xqgeneral-clean-sft-match-baseline-launch-v1 542879 0",
+    "actual_clean_courses_completed": 2,
+    "baseline_matches_started": false,
+    "student_or_teacher_loaded": false,
+    "protected_opening_count": 64,
+    "planned_full_games": 384,
+    "node_budgets": [
+      100,
+      1000,
+      10000
+    ],
+    "maximum_new_plies": 256,
+    "frozen_source_files_rehashed": 75,
+    "source_revision": "a3c66545f343d27f332096888e50d3b540ccf7b9",
+    "initial_four_gpu_sft_and_paired_validation_still_pending": true,
+    "existing_four_queues_not_reconfigured": true,
+    "strong_play_or_reliable_coaching_proven": false
+  },
+  "configuration": {
+    "evaluation_config": "configs/evaluation-clean-sft-v2.json",
+    "opening_suite": "runs/recorded-match-openings-real-v1/suite",
+    "opening_count": 64,
+    "nodes": [
+      100,
+      1000,
+      10000
+    ],
+    "max_plies": 256,
+    "action_mode": "explanation",
+    "move_beams": 4,
+    "executable": "vendor/pikafish/src/pikafish",
+    "weights": "vendor/pikafish/src/pikafish.nnue",
+    "expert_weights": "models/px0-latest.pb.gz",
+    "cuda_visible_devices": "2"
+  },
+  "cpu_suite": {
+    "passed": 701,
+    "new_meaningful_cases": 32,
+    "focused_cases_passed": 95,
+    "source_test_bindings": 134,
+    "bindings": {
+      "path": "runs/clean-sft-match-baseline-milestone-tests-v1/source-test-bindings.json",
+      "bytes": 13916,
+      "sha256": "92dd277009bf8fa5bef17ae074f59292e0ab056552547f1c5bbfeaf06991a289"
+    },
+    "exit": {
+      "path": "runs/clean-sft-match-baseline-milestone-tests-v1/exit.json",
+      "bytes": 215,
+      "sha256": "982837ea1cdf37e6683d9e0e66244eea0e1af55b34d2bda78ac5da579aad347a"
+    },
+    "log": {
+      "path": "runs/clean-sft-match-baseline-milestone-tests-v1/log.txt",
+      "bytes": 832,
+      "sha256": "6de4105a2e3976cabef0a4e7566aa6efe6f94147f644a94b02788bb719e43038"
+    },
+    "foundation_recipe_unchanged": true
+  },
+  "scope_limits": {
+    "only_the_real_startup_and_wait_gate_have_executed": true,
+    "future_clean_student_full_matches_completed": false,
+    "independent_final_test_used": false,
+    "new_distillation_labels": 0,
+    "old_courses_and_sft_search_queues_preserved": true
+  }
+}
