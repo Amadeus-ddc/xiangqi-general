@@ -1,0 +1,418 @@
+{
+  "schema_version": 1,
+  "kind": "actual_three_task_enumeration_error_diagnostic",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifacts": [
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/entry.py",
+      "bytes": 5087,
+      "sha256": "ccfd75750066eb43f25582cb5857865c292737167b48a89c21699889d35ede9e"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/plan.json",
+      "bytes": 3509,
+      "sha256": "b9344ff0c558d62299e95ea060c2eac78f1a6eff61645ec666262530cdd87ade"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/runner.py",
+      "bytes": 637,
+      "sha256": "061c6728a974ebb86cf778d79c0876a802e7e29e89192d0383b17ca27a732e89"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/manifest.json",
+      "bytes": 3929,
+      "sha256": "fc352d8a0d537e37bfa767d08886d7f2300058d61e44ddaa4e41964b50721900"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/verification.json",
+      "bytes": 9131,
+      "sha256": "a8f905bb177cb88de895b1e9a71bb302a97031756e080c2b928489c4078b9e5f"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/exit.json",
+      "bytes": 53,
+      "sha256": "d8afe10bbaea7217791def84e5a5d4225acc84e9be30dc7d597d9ae55b26f306"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/runner-exit.json",
+      "bytes": 54,
+      "sha256": "de7a9a2bc7b8f49c2b495d2d6801734ef9d4f532622816c2a0c7b52749d53460"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/source-run/source-manifest.json",
+      "bytes": 7013,
+      "sha256": "85b42543ba289b4d55ac1ca7fccb24728a5f6aaf674d2d8386ae8f3b1c1dfbb6"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/moves/analysis.json",
+      "bytes": 26288,
+      "sha256": "6219a9ffe19c08f17f6672cb2c00a4541c006dc3cd0d1a0866458143ae2c58d1"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/moves/item-diagnostics.jsonl",
+      "bytes": 215438,
+      "sha256": "fffdb6fd5566302ebae1ed2d539bee59444ff6814827aa86799669cfa8e00a73"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/moves/manifest.json",
+      "bytes": 10209,
+      "sha256": "a311b68579b106ba6f92740221399c27e280fdd66067f354d566b0799fba7642"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/captures/analysis.json",
+      "bytes": 17085,
+      "sha256": "6255f8c8a424036424f3f8162fc8475cd6586275800f865d3ecae3bd4dcdd9e7"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/captures/item-diagnostics.jsonl",
+      "bytes": 250758,
+      "sha256": "befa48665359781cb03f44cd9c35409faea74523920129dc826f2282e1a0826b"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/captures/manifest.json",
+      "bytes": 10248,
+      "sha256": "e15d28e0ec72adb70d903b13ff819c7c92d5da40dd5d51860b227e446a61ade9"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/checks/analysis.json",
+      "bytes": 15835,
+      "sha256": "6bd926b65a37307c9a8067873d87c6a11149b97284e074f07c4547c79f162e20"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/checks/item-diagnostics.jsonl",
+      "bytes": 246764,
+      "sha256": "dcd287e9fcc8143e5878750b38ce6fb5d7b5b6a4f2caddd35cc5b1e51bd10879"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-real-v1/checks/manifest.json",
+      "bytes": 10240,
+      "sha256": "085cb5d6000d34991d65c332ec82ebc62cef593c2ce19b5247ab8311185ac0c6"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-milestone-tests-v1/plan.json",
+      "bytes": 14620,
+      "sha256": "2571597b779c50f4bc159abceb65f09be86e6574e2aab7fe7ace6196a1c99f71"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-milestone-tests-v1/runner.py",
+      "bytes": 1363,
+      "sha256": "d6ca927b94d149eb0b5ccc3df3767f1b607caed8352fc1210d991137479490cd"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-milestone-tests-v1/source-test-bindings.json",
+      "bytes": 13603,
+      "sha256": "547430e4952d042afaf1dc4fb7277a84267ecd6489d8cbe5469202d01897232b"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-milestone-tests-v1/log.txt",
+      "bytes": 752,
+      "sha256": "7c935b6b3078b68c51e62b754b28149601e5e1fc2502e85fd6c24b1a35b1806b"
+    },
+    {
+      "path": "runs/enumeration-task-diagnostic-milestone-tests-v1/exit.json",
+      "bytes": 215,
+      "sha256": "6e0e49e52cfd90d45ebba605b5cb33ded5b3abdeebe01bc810f092080346df0f"
+    }
+  ],
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_same_question_steps": [
+      2048,
+      2560
+    ],
+    "tasks": {
+      "moves": {
+        "candidate_summaries": [
+          {
+            "examples": 128,
+            "raw_correct": 79,
+            "raw_accuracy": 0.6171875,
+            "error_categories": {
+              "extra_only": 24,
+              "missing_and_extra": 19,
+              "raw_correct": 79,
+              "missing_only": 6
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 79,
+            "answers_with_duplicate_tokens": 0,
+            "answers_with_missing_moves": 25,
+            "answers_with_extra_moves": 43,
+            "unique_missing_moves": 50,
+            "unique_extra_moves": 59,
+            "unique_illegal_extra_moves": 59,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.9359391965255157,
+            "diagnostic_unique_move_recall": 0.9451754385964912,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors"
+          },
+          {
+            "examples": 128,
+            "raw_correct": 83,
+            "raw_accuracy": 0.6484375,
+            "error_categories": {
+              "missing_and_extra": 18,
+              "raw_correct": 83,
+              "missing_only": 16,
+              "extra_only": 11
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 83,
+            "answers_with_duplicate_tokens": 0,
+            "answers_with_missing_moves": 34,
+            "answers_with_extra_moves": 29,
+            "unique_missing_moves": 60,
+            "unique_extra_moves": 46,
+            "unique_illegal_extra_moves": 46,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.9487750556792873,
+            "diagnostic_unique_move_recall": 0.9342105263157895,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors"
+          }
+        ],
+        "paired": {
+          "examples": 128,
+          "before_raw_correct": 79,
+          "after_raw_correct": 83,
+          "corrected": 18,
+          "newly_wrong": 14,
+          "net_correct_change": 4,
+          "before_missing_unique_moves": 50,
+          "after_missing_unique_moves": 60,
+          "before_illegal_extra_unique_moves": 59,
+          "after_illegal_extra_unique_moves": 46
+        }
+      },
+      "captures": {
+        "candidate_summaries": [
+          {
+            "examples": 128,
+            "raw_correct": 102,
+            "raw_accuracy": 0.796875,
+            "error_categories": {
+              "raw_correct": 102,
+              "missing_and_extra": 19,
+              "missing_only": 4,
+              "order_only": 1,
+              "extra_only": 2
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 103,
+            "answers_with_duplicate_tokens": 0,
+            "answers_with_missing_moves": 23,
+            "answers_with_extra_moves": 21,
+            "unique_missing_moves": 31,
+            "unique_extra_moves": 26,
+            "unique_illegal_extra_moves": 24,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.9011406844106464,
+            "diagnostic_unique_move_recall": 0.8843283582089553,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors",
+            "unique_legal_moves_outside_requested_task": 2,
+            "missing_moves_by_piece_kind": {
+              "c": 13,
+              "e": 1,
+              "h": 8,
+              "p": 4,
+              "r": 5
+            },
+            "extra_moves_by_piece_kind": {
+              "c": 7,
+              "e": 2,
+              "empty": 5,
+              "h": 6,
+              "p": 2,
+              "r": 4
+            }
+          },
+          {
+            "examples": 128,
+            "raw_correct": 86,
+            "raw_accuracy": 0.671875,
+            "error_categories": {
+              "raw_correct": 86,
+              "missing_and_extra": 18,
+              "missing_only": 22,
+              "extra_only": 1,
+              "order_only": 1
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 87,
+            "answers_with_duplicate_tokens": 0,
+            "answers_with_missing_moves": 40,
+            "answers_with_extra_moves": 19,
+            "unique_missing_moves": 47,
+            "unique_extra_moves": 27,
+            "unique_illegal_extra_moves": 25,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.8911290322580645,
+            "diagnostic_unique_move_recall": 0.8246268656716418,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors",
+            "unique_legal_moves_outside_requested_task": 2,
+            "missing_moves_by_piece_kind": {
+              "c": 15,
+              "e": 1,
+              "h": 6,
+              "p": 4,
+              "r": 21
+            },
+            "extra_moves_by_piece_kind": {
+              "c": 4,
+              "e": 1,
+              "empty": 10,
+              "h": 7,
+              "p": 3,
+              "r": 2
+            }
+          }
+        ],
+        "paired": {
+          "examples": 128,
+          "before_raw_correct": 102,
+          "after_raw_correct": 86,
+          "corrected": 7,
+          "newly_wrong": 23,
+          "net_correct_change": -16,
+          "before_missing_unique_moves": 31,
+          "after_missing_unique_moves": 47,
+          "before_illegal_extra_unique_moves": 24,
+          "after_illegal_extra_unique_moves": 25,
+          "before_legal_wrong_task_unique_moves": 2,
+          "after_legal_wrong_task_unique_moves": 2
+        }
+      },
+      "checks": {
+        "candidate_summaries": [
+          {
+            "examples": 128,
+            "raw_correct": 123,
+            "raw_accuracy": 0.9609375,
+            "error_categories": {
+              "missing_only": 1,
+              "raw_correct": 123,
+              "missing_and_extra": 2,
+              "extra_only": 2
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 123,
+            "answers_with_duplicate_tokens": 0,
+            "answers_with_missing_moves": 3,
+            "answers_with_extra_moves": 4,
+            "unique_missing_moves": 6,
+            "unique_extra_moves": 7,
+            "unique_illegal_extra_moves": 5,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.9333333333333333,
+            "diagnostic_unique_move_recall": 0.9423076923076923,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors",
+            "unique_legal_moves_outside_requested_task": 2,
+            "missing_moves_by_piece_kind": {
+              "c": 1,
+              "h": 5
+            },
+            "extra_moves_by_piece_kind": {
+              "h": 4,
+              "p": 2,
+              "r": 1
+            }
+          },
+          {
+            "examples": 128,
+            "raw_correct": 120,
+            "raw_accuracy": 0.9375,
+            "error_categories": {
+              "missing_and_extra": 4,
+              "raw_correct": 120,
+              "extra_only": 2,
+              "order_only": 1,
+              "missing_only": 1
+            },
+            "parseable_answers": 128,
+            "exact_move_set_answers": 121,
+            "answers_with_duplicate_tokens": 1,
+            "answers_with_missing_moves": 5,
+            "answers_with_extra_moves": 6,
+            "unique_missing_moves": 10,
+            "unique_extra_moves": 11,
+            "unique_illegal_extra_moves": 7,
+            "unique_legal_moves_from_wrong_source": 0,
+            "diagnostic_unique_move_precision": 0.8952380952380953,
+            "diagnostic_unique_move_recall": 0.9038461538461539,
+            "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors",
+            "unique_legal_moves_outside_requested_task": 4,
+            "missing_moves_by_piece_kind": {
+              "c": 1,
+              "h": 6,
+              "r": 3
+            },
+            "extra_moves_by_piece_kind": {
+              "c": 1,
+              "empty": 1,
+              "h": 9
+            }
+          }
+        ],
+        "paired": {
+          "examples": 128,
+          "before_raw_correct": 123,
+          "after_raw_correct": 120,
+          "corrected": 1,
+          "newly_wrong": 4,
+          "net_correct_change": -3,
+          "before_missing_unique_moves": 6,
+          "after_missing_unique_moves": 10,
+          "before_illegal_extra_unique_moves": 5,
+          "after_illegal_extra_unique_moves": 7,
+          "before_legal_wrong_task_unique_moves": 2,
+          "after_legal_wrong_task_unique_moves": 4
+        }
+      }
+    },
+    "raw_answers_diagnosed": 768,
+    "native_answers_recomputed": 384,
+    "validation_scans": 3,
+    "validation_rows_per_scan": 173272,
+    "validation_identity": {
+      "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+      "bytes": 1059759384
+    },
+    "default_moves_2048_summary_and_groups_unchanged": true,
+    "frozen_source_files_freshly_rehashed": 74,
+    "native_helpers_match_producer": true,
+    "new_gpu_student_teacher_or_engine_inference": false,
+    "raw_predictions_repaired": false,
+    "training_or_recipe_changed": false,
+    "independent_test_used": false
+  },
+  "diagnostic_code_commit": "3af8d827c7b0eaac2976f89d2aab7e506eaa4b07",
+  "source_files": 74,
+  "all_snapshot_sources_match_code_commit_and_worktree": true,
+  "native_histories_by_task": {
+    "moves": 128,
+    "captures": 128,
+    "checks": 128
+  },
+  "cpu_tests": {
+    "passed": 624,
+    "new_cases": 32,
+    "focused_total": 61,
+    "source_test_bindings": 131,
+    "unchanged_prior_bindings": 129,
+    "updated_prior_bindings": [
+      "src/xqgeneral/diagnose_moves.py",
+      "tests/test_diagnose_moves.py"
+    ],
+    "seconds": 333.95331755280495,
+    "foundation_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5"
+  },
+  "scope_limits": {
+    "strict_raw_answers_and_scores_preserved": true,
+    "independent_test_used": false,
+    "native_rules_shared_with_producer": true,
+    "checkpoint_ancestry_reused_from_completed_native_readers": true,
+    "piece_groups_prove_causation": false,
+    "new_training_labels_or_student_strength_proven": false
+  }
+}
