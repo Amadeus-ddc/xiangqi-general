@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "kind": "actual_dynamic_current_seventeenth_raw_validation",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_qa_and_training_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_reader_revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+  "artifacts": {
+    "manifest_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/manifest.json",
+      "sha256": "48ced67c621354f692600e534edbce30ba0ebacbbe6ca9c68f48aa5c0bc1a28a",
+      "bytes": 49075
+    },
+    "verification_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/verification.json",
+      "sha256": "29ccba77b9fba57f3effdb32b05a8692013311d3ee809603af982d8fa1db902c",
+      "bytes": 3545
+    },
+    "entry_py": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/entry.py",
+      "sha256": "6f45bff7a83123745e189b1784df775a545382b4c03536521c70bae067375fcc",
+      "bytes": 8190
+    },
+    "plan_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/plan.json",
+      "sha256": "0d0073d9ead50e301e91f3393e7cfd8333b4ad69986ec9ca3593d08ba971e24f",
+      "bytes": 1055
+    },
+    "exit_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "native-sample-readback_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/native-sample-readback.json",
+      "sha256": "14f5293aae48e1f275a0eaccbf15024d2e4467e84ac020f4f2f50afc30022c83",
+      "bytes": 361676
+    },
+    "source-run_source-manifest_json": {
+      "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/source-run/source-manifest.json",
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+      "bytes": 6353
+    }
+  },
+  "actual_selected_best_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-7168/qa/predictions.jsonl",
+    "sha256": "2faa616dc0214510a8b5541960db38be562ae946b75e7766ae940d30f8f10b46",
+    "bytes": 511114
+  },
+  "actual_previous_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-8192/qa/predictions.jsonl",
+    "sha256": "0249aec58e8764cdda876ea05bebfa66e9f3dbca245be24f5104871857e4ce58",
+    "bytes": 511013
+  },
+  "actual_after_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-8704/qa/predictions.jsonl",
+    "sha256": "208ae11a149a44286fdf7a96fdc589474a6d703c4fc69920a46e23fbcff9af79",
+    "bytes": 510867
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "dynamic_current",
+    "actual_step": 8704,
+    "raw_gate": {
+      "examples": 1408,
+      "accuracy": 0.9346590909090909,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.8671875
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.78125
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.8984375
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.9140625
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.8671875
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.9453125,
+          "minimum_task_accuracy": 0.8671875,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.921875,
+          "minimum_task_accuracy": 0.78125,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "native_answers_recomputed": 1408,
+    "distinct_native_histories_replayed": 1299,
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 5632,
+    "selected_parent_sha256": "56f596cbc3086bbcaf4022b64b8043936a4b9f764b221ec5b22b2e1159ae0173",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "second_course_validation_selection_minimum_steps": 4096,
+    "second_course_completed_by_declared_policy_at_this_check": true,
+    "validation_selection_decision": {
+      "stop": true,
+      "selected_step": 7168,
+      "steps_completed": 8704,
+      "checks_without_improvement": 3,
+      "stopping_reason": "validation_plateau",
+      "selected_accuracy": 0.9410511363636364,
+      "selected_minimum_task_accuracy": 0.7734375
+    },
+    "actual_controller_course_handoff_verified": false,
+    "clean_courses_completed_by_declared_policy_at_this_check": 2,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "full_series_identity_and_statistics_readback": {
+    "path": "runs/dynamic-current-learning-curve-v6/analysis.json",
+    "sha256": "96e287353d9499aac291a64bc8208d4af7c9e02e90f4e3c0cc78f665077802b5",
+    "bytes": 33750
+  },
+  "validation_selection_snapshot_decision_at_this_check": {
+    "stop": true,
+    "selected_step": 7168,
+    "steps_completed": 8704,
+    "checks_without_improvement": 3,
+    "stopping_reason": "validation_plateau",
+    "selected_accuracy": 0.9410511363636364,
+    "selected_minimum_task_accuracy": 0.7734375
+  },
+  "same_question_checks_compared_in_full_series": 17,
+  "same_question_checks_in_native_reader_history": 17,
+  "first_course_5632_static_sample_is_different": true,
+  "new_sft_or_distillation_training_completed": false,
+  "independent_test_used": false,
+  "unchanged_code_cpu_suite": {
+    "passed": 531,
+    "bindings": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    },
+    "terminal": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/exit.json",
+      "sha256": "7a514ab5ca89c58690a2342ff7b3375459e0615e1db2f0ac78ff6aacb16e1ac9",
+      "bytes": 215
+    },
+    "log": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/log.txt",
+      "sha256": "ab98806973a608a8a7ba8958025208f775aac5d66b8e9ec54dd0b4a84f43f96a",
+      "bytes": 672
+    },
+    "all_127_source_and_test_files_freshly_unchanged": true,
+    "suite_rerun_for_this_milestone": true
+  },
+  "paired_selected_best_7168_to_8704_recomputed_from_raw_answers": {
+    "dynamic_current": {
+      "examples": 640,
+      "before_correct": 582,
+      "after_correct": 590,
+      "corrected": 19,
+      "new_errors": 11
+    },
+    "static_current": {
+      "examples": 768,
+      "before_correct": 743,
+      "after_correct": 726,
+      "corrected": 13,
+      "new_errors": 30
+    }
+  },
+  "paired_previous_8192_to_8704_recomputed_from_raw_answers": {
+    "dynamic_current": {
+      "examples": 640,
+      "before_correct": 579,
+      "after_correct": 590,
+      "corrected": 19,
+      "new_errors": 8
+    },
+    "static_current": {
+      "examples": 768,
+      "before_correct": 742,
+      "after_correct": 726,
+      "corrected": 13,
+      "new_errors": 29
+    }
+  },
+  "course_completion_manifest": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/manifest.json",
+    "sha256": "a03320220fed807dc83eece4b86649c4fd79f9740646f976c729457eca2ef6a7",
+    "bytes": 111334
+  },
+  "actual_controller_handoff_verified_by_separate_startup_readback": {
+    "path": "runs/static-future-best-parent-startup-v1/manifest.json",
+    "sha256": "ca7f6e6423735811f3feea581131d613667a2d27401af00f647ab7b0c05221c3",
+    "bytes": 93889
+  },
+  "course_finished_by_this_check": true
+}
