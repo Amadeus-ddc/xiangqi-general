@@ -1585,13 +1585,35 @@ the completed native replay. The real resumed execution differs from the initial
 archive, while the completed first-raw proof excludes the mutable live file.
 The 1408 prior-course IDs and reference answers match the selected second-course
 check, but 954 wording variants change; cross-course aggregate differences do
-not provide a same-wording paired estimate of forgetting. The actual step-1024
-reader is queued with 67 frozen files and three verified waiting observations,
+not provide a same-wording paired estimate of forgetting. At the first-check
+milestone, the step-1024 reader was queued with 67 frozen files and three verified
+waiting observations,
 requiring identical IDs, games, stages, tasks, questions, variants and gold before
 counting corrections and new errors. The four original training/downstream panes
 remain live. Fresh 531-test CPU verification passes with 127 unchanged source/test
 bindings and the unchanged curriculum recipe. There are no independent test
 answers, repaired predictions, completed clean SFT or trained distillation rounds.
+
+`evidence/static-future-second-raw-validation-v1.json` verifies actual step 1024:
+704/768 future-static answers (91.6667%), 740/768 static-current replay (96.3542%),
+561/640 dynamic-current replay (87.6563%) and 2005/2176 overall (92.1415%). All
+2176 IDs, games, tasks, questions, variants and gold match step 512. Future answers
+correct 62 prior errors and introduce 13; static replay corrects 13 and introduces
+14, and dynamic replay corrects 14 and introduces 26. Future material and rank
+net gains are 21 and 22, while current move enumeration loses 10 correct answers
+to 87/128 (67.9688%). The overall net gain of 36 preserves these old-course losses.
+
+The second reader checks all 2176 native answers, including 768 future answers,
+1907 histories and 738 future contexts, and rehashes 67 producer files. A separate
+artifact reader hashes all 416 declared references (20110006159 bytes), recomputes
+raw correctness, all 17 task numerators and the paired counts, and reuses the
+completed native proof. Full cache/train identities reuse completed preflight
+proof. The step-1536 reader is actually waiting, with three observations of all
+four original queues and the new 67-file reader. Fresh 531-test CPU verification
+passes with 127 unchanged source/test identities and the unchanged recipe. The
+third course continues under its 2048-update minimum; no four-course completion,
+clean SFT, trained distillation, independent playing strength or reliable coaching
+is established by these validation results.
 
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
