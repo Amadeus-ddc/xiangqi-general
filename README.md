@@ -182,7 +182,23 @@ python scripts/freeze_run.py --output runs/tactical-candidates-v1/source-run -- 
 
 两份旧池的库存读回曾得到 487592 个不同历史键，并发现 541 个旧根几何命中新增保留范围，不能直接拼接。现已从七份原生来源重新构建混合池 `data/recorded-tactical-search-inputs-full-v1`，对全部根及记录未来做统一隔离，实际保留 487552 个历史、81694 个训练主线标识。来源声明为人类实战 87390、公开实战 387693、人机 3487、战术主线 8982；没有新增镜像，主线标识不都是完整对局或独立题目。全部候选逐字段匹配，七份原谱重新哈希，2738116 个保留位置及完整未来／颜色范围重新核验；全部 8982 个战术历史和其记录未来再次原生复演，普通实战另抽样复演 192 个，其余沿用已完成全量导入证明。正式接口实际读取 512 条（其中战术 4 条），检查完整尾部并重新哈希三份课程文件，见 `evidence/recorded-tactical-search-inputs-full-v1.json`。生产约 546 秒、读回约 777 秒，均未加载模型或特征缓存。来源分割未证明相对先前训练独立；现有课程及已排队的首批搜索仍使用各自冻结输入。合格新主线蒸馏标签及已训练轮次仍为零。
 
-另已缓存公开战术资料库 [xiangqi-pwa-offline](https://github.com/dffge552/xiangqi-pwa-offline) 的固定版本 `3ff21f4502a03f30bb0df55db6f3814ceeb989f5`：209 份资料／5866937 字节，全部 Git blob、大小和原文件 SHA256 匹配，见 `evidence/public-tactical-source-acquisition-v1.json`。这批为局面 JSON，部分缺少解答或带非走法文本；尚未核验原生局面、解答、跨来源去重或保留集隔离，可用于训练的新增局面计为零。源库声明 MIT，原始和派生资料均不随源码发布，具体边界见 `THIRD_PARTY_NOTICES.md`。
+公开战术局面库 [xiangqi-pwa-offline](https://github.com/dffge552/xiangqi-pwa-offline) 的固定版本 `3ff21f4502a03f30bb0df55db6f3814ceeb989f5` 已全量导入：9990 条源记录保留 9683 个原生局面（训练／验证／测试 7754／966／963），306 条源内或先前原谱历史／颜色重复、1 条拒收。独立入口重算全部原文件身份，重建七份原谱的历史颜色轨道，重新解析全部局面并逐字段匹配保留、重复及拒收，见 `evidence/public-tactical-positions-native-import-v1.json`。`tactical_positions` 保留原始 FEN 和缺失计数状态，规范化局面只有零步记录；即便棋盘等于开局，此前历史也标为缺失，源解答不作为走法或讲解标签。来源许可声明与发布边界见 `THIRD_PARTY_NOTICES.md`。
+
+`data/tactical-position-search-inputs-full-v1` 的 7754 条独立局面候选由全部八份来源共同隔离，排除根、记录未来和颜色保留范围；独立入口重算全部入选条件、逐字段匹配全部候选并再次原生检查。正式读取接口实际选择 512 条，检查完整尾部及三份课程文件 SHA256，见 `evidence/tactical-position-search-inputs-full-v1.json`。红／黑为 7750／4，保持源方向，没有新镜像；阶段桶只是零步局面的接口字段，不代表真实对局阶段。这些是候选而非合格标签，没有搜索产出率、教师生成或模型收益。旧候选与已排队首批搜索不变，新旧池不直接拼接；后续联合搜索须用统一的八来源保留范围。
+
+导入需要已完成并哈希绑定的固定版本采集目录；输出目录必须新建。独立局面由 `recorded_tactical_position` 标识，搜索候选仍列出全部来源供隔离，并使用 `--candidate-kinds recorded_tactical_position --min-ply 0 --per-game 1`。长批次用 tmux 和 `freeze_run.py`：
+
+```bash
+python scripts/freeze_run.py --output runs/tactical-positions-new/source-run -- \
+  python -m xqgeneral.tactical_positions \
+  --source data/sources/public-tactical-xiangqi-pwa-v1 \
+  --acquisition runs/public-tactical-source-acquisition-v1 \
+  --previous data/recorded-games-ccpd-v3 data/recent-recorded-games-v2 \
+    data/recorded-games-additional-v1 data/modern-recorded-games-v2 \
+    data/playstrategy-portable-real-import-v1-parallel \
+    data/playstrategy-public-users-native-import-v1 data/recorded-tactical-lines-ccpd-v1 \
+  --output data/tactical-positions-new --seed 20261051
+```
 
 `search_pilot` 可排在现有干净 SFT 能力验证队列之后，自动执行实际学生搜索、完整 BF16 教师汇总和最终隔离收取。它核对被评测的真实 SFT 权重与搜索父模型相同；等待时不加载学生或教师。当前配方使用 512 个未用原始实战历史、10 万引擎节点、最多五层递归及 `move_eval` 子节点合同。
 
@@ -285,6 +301,8 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 干净主线从 `configs/foundation-human-engine-clean-v2.json` 开始：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。解码器不再直接读取完整 FEN 或 90 格字典，棋盘状态通过专家特征进入桥接。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备；旧字典配方保留作对照。
 
 当前选模配方为 `configs/foundation-human-engine-clean-v3.json`，输出到新目录。它只导入上述干净第一门至第 7168 步的完整原始验收和冻结源码，不修改或恢复旧优化器；按总正确率、最弱题型、较早步数依次选择，继承第 5632 步的原始权重。每 512 步检查所有已引入题型；三次检查无改善时早停，各门至少执行 3072／4096／2048／6144 步以覆盖预热。步数上限、混合比例及训练率保留。早停次数、最少步数及排序方式是本地选择，不是论文公布的参数；99%／98%／98%／97% 与最弱题型 95% 保留为诊断。第一门原始结果为 97.9167%／94.5313%，旧通过字段仍为假；按最佳验证选择完成该门，不宣称达到原门槛。
+
+第二门最新第 6656 步：动态题 573／640（89.53%），完整走法列表 92／128（71.88%），静态回放 729／768（94.92%）。综合正确数 1302／1408，仍低于第 5632 步的 1311；连续两次无改善，继续观察第 7168 步。十三次全部同题、原生答案及候选身份已读回，曲线见 `evidence/dynamic-current-learning-curve-v2.json`，原始验收见 `evidence/dynamic-current-thirteenth-raw-validation-v1.json`。训练损失继续下降不保证验证收益；这些规则问答也不代表独立对弈棋力或可靠讲解。
 
 ```bash
 python scripts/freeze_run.py --output runs/recorded-foundation-clean-launch-v2/source-run -- \

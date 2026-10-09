@@ -1459,25 +1459,24 @@ Canonical source splits are not proved unseen by earlier training and are not
 new independent benchmark results. Accepted clean-model labels, trained
 search-distillation rounds and model benefit remain zero or unmeasured.
 
-The twelfth second-course raw check at step 6144 scores 570/640 dynamic
-questions (89.0625%), including 87/128 move-list answers (67.9688%). Static
-replay is 736/768 (95.8333%). Relative to step 5632, dynamic predictions correct
-30 errors and introduce 27; static replay corrects 17 and introduces 25.
-Combined correctness falls from 1311 to 1306, so the current validation-selected
-best remains step 5632. Every one of the twelve checks uses identical question
-identities, text, variants and gold answers; raw exact-match correctness and
-numerators are recomputed. The native reader replays 1299 histories, checks
-all twelve candidate contracts and hashes the actual 67-module execution source;
-see `evidence/dynamic-current-twelfth-raw-validation-v1.json`.
+The thirteenth second-course raw check at step 6656 scores 573/640 dynamic
+questions (89.53125%), including 92/128 move-list answers (71.875%). Static
+replay is 729/768 (94.921875%). Relative to step 5632, dynamic predictions
+correct 28 errors and introduce 22; static replay corrects 14 and introduces 29.
+Combined correctness falls from 1311 to 1302. The selected best remains step
+5632 with two checks without improvement. All thirteen checks use identical
+question identities, text, variants and gold answers. The native reader replays
+1299 histories, checks every candidate contract and hashes the actual 67-module
+execution source; see `evidence/dynamic-current-thirteenth-raw-validation-v1.json`.
 
-`evidence/dynamic-current-learning-curve-v1.json` binds a training-log prefix
-through step 6535 and all twelve raw validation checkpoints. Dynamic accuracy
-gains 7.50 percentage points over steps 2048–4096 and 2.97 over 4096–6144.
-Training loss still falls; this does not establish future gains or an overfitting
-cause. The 41 incorrect move lists include 19 with missing moves only, 10 with
-extra moves only and 12 with both. The diagnostic recommends retaining the
-existing best-validation policy and observing the next two scheduled checks;
-no live training or recipe is changed. One of four clean courses is complete;
+`evidence/dynamic-current-learning-curve-v2.json` binds all thirteen checks and
+a continuous training-log prefix through step 6656. The last complete 512-update
+mean training loss is 0.0247276, versus 0.0273200 at step 6144. The 36 incorrect
+move lists include 10 with missing moves only, 12 with extra moves only and 14
+with both. Declining training loss does not establish future gains or an
+overfitting cause. The existing best-validation policy continues through the
+next scheduled check at 7168; no live training or recipe is changed. Earlier
+curves and raw errors are preserved. One of four clean courses is complete;
 clean SFT, trained distillation and reliable strategic coaching are unproven.
 
 Fresh counts and hashes of the clean initial-label files separate training's
@@ -1488,13 +1487,40 @@ tokenizer or native review. Unmarked rows are not all independent human games.
 The paper's filtered initial corpus has 8402 training and 200 validation rows;
 the current total does not prove equal quality or more independent annotations.
 
-`evidence/public-tactical-source-acquisition-v1.json` binds 209 cached files
-(5866937 bytes) from `dffge552/xiangqi-pwa-offline` revision
+`evidence/public-tactical-source-acquisition-v1.json` preserves the original
+acquisition snapshot: 209 cached files (5866937 bytes) from
+`dffge552/xiangqi-pwa-offline` revision
 `3ff21f4502a03f30bb0df55db6f3814ceeb989f5`, actual Git tree
-`85c7e92ef00fe5e3fad0d086fe844dcab13439bf`. All blob identities, sizes and raw
-SHA256 hashes match, including an end-of-run rehash. Native position legality,
-supplied solutions, cross-source duplicates and heldout isolation are unverified;
-zero new canonical training positions or labels are counted. The upstream MIT
-declaration does not independently authenticate underlying puzzle rights.
-Raw and derived files are excluded from source releases. Existing training
-and search queues are unchanged.
+`85c7e92ef00fe5e3fad0d086fe844dcab13439bf`. Subsequent complete native import
+and independent readback are in `evidence/public-tactical-positions-native-import-v1.json`.
+All 9990 source rows are reconstructed; 9683 new native positions are retained
+with 7754/966/963 training/validation/test identifiers. There are 248 duplicates
+against prior canonical histories or their colors, 58 source-internal position
+or color duplicates, and one rejected row. The reader rehashes every raw file,
+rebuilds 6370398 prior-history color orbits, and compares every retained,
+duplicate and rejected record. Source parsing and dedup aggregation are
+independently rebuilt; native rules are shared and previous full-match native
+proofs are reused rather than replaying every prior move again. These are
+supplied zero-move positions, not verified full-game histories or proof of
+historical reachability. Missing counters use explicitly recorded native
+defaults; pre-position history is always unavailable. Source solution text,
+titles and unverified player identities are not used as labels.
+
+`evidence/tactical-position-search-inputs-full-v1.json` binds a separate
+7754-root pool with joint reservations from all eight canonical sources.
+Every zero-move root's inclusion, field values, original ownership and native
+status is rechecked, and all 2741974 reserved root/future/color positions are
+rebuilt. The real adapter selects 512 roots, validates the entire tail and
+freshly hashes all three base course files. All roots retain unavailable
+prehistory and contain no recorded continuations. The source directions are
+7750 red and four black; no new color augmentation is generated. A zero-ply
+phase bucket does not identify a real game phase. Preparation takes 53.62
+seconds, readback 102.97 seconds and real consumption 22.61 seconds. All 531
+CPU tests pass with 127 unchanged source/test bindings, including 30 new
+position-contract cases. Native rules are loaded; neural models, external
+search engines and feature caches are not used for this preparation. Existing
+pools and four training/waiting queues retain their frozen inputs. Pools are
+not simply concatenated; joint future mining needs the shared reservations.
+No new clean-model labels, distillation training or model benefit is proved.
+The upstream MIT declaration does not independently authenticate underlying
+puzzle rights. Raw and derived files are excluded from source releases.

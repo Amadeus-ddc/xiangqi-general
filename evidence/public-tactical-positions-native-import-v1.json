@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "kind": "actual_pinned_public_isolated_tactical_positions_native_import_and_independent_readback",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "execution_code_revision": "8516c9137ee5abfac7d45946a8e99e4703e64675",
+  "source_repository": "dffge552/xiangqi-pwa-offline",
+  "source_revision": "3ff21f4502a03f30bb0df55db6f3814ceeb989f5",
+  "artifacts": {
+    "producer_entry_py": {
+      "path": "runs/public-tactical-positions-native-import-v1/entry.py",
+      "sha256": "b52ce8e2495787d15ee7d2ee15bf4c33696bf2c139a3a25a211847e0c0e1d683",
+      "bytes": 1689
+    },
+    "producer_plan_json": {
+      "path": "runs/public-tactical-positions-native-import-v1/plan.json",
+      "sha256": "c895815d125e97535891690cc1b170c96077399745392c6d424d9765d57598d0",
+      "bytes": 8106
+    },
+    "producer_manifest_json": {
+      "path": "runs/public-tactical-positions-native-import-v1/manifest.json",
+      "sha256": "81f40353f4853f08b66b0ee668a0e3b70b85917733312467bef82afa800636f0",
+      "bytes": 10888
+    },
+    "producer_verification_json": {
+      "path": "runs/public-tactical-positions-native-import-v1/verification.json",
+      "sha256": "c396d9e4f668f5c29fadf99208a5c23fb2453398529ad0d8f32cce6365a1f3ce",
+      "bytes": 1680
+    },
+    "producer_exit_json": {
+      "path": "runs/public-tactical-positions-native-import-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "producer_source-run_source-manifest_json": {
+      "path": "runs/public-tactical-positions-native-import-v1/source-run/source-manifest.json",
+      "sha256": "ace40a1ab899db704839c415d76b043611d9a01e2446e7c755d0182799d09cde",
+      "bytes": 6827
+    },
+    "independent_reader_entry_py": {
+      "path": "runs/public-tactical-positions-native-readback-v1/entry.py",
+      "sha256": "9dde2006c3e0635d873a320602781600eaf40c4debc55c17849df9553e52eed9",
+      "bytes": 11022
+    },
+    "independent_reader_plan_json": {
+      "path": "runs/public-tactical-positions-native-readback-v1/plan.json",
+      "sha256": "0671ce9bce1a129084e6d0c53aeff454f15dcc645980dd25637f27a6ab9826e6",
+      "bytes": 815
+    },
+    "independent_reader_manifest_json": {
+      "path": "runs/public-tactical-positions-native-readback-v1/manifest.json",
+      "sha256": "689fd2cae42ef367ce86c37e5fbc183765103d16c0c96a5480f81882c99b3d41",
+      "bytes": 79034
+    },
+    "independent_reader_verification_json": {
+      "path": "runs/public-tactical-positions-native-readback-v1/verification.json",
+      "sha256": "c3688062c46c73eaeb66218ce55e112452d2dbf59a7316b6769ab16337f59556",
+      "bytes": 1453
+    },
+    "independent_reader_exit_json": {
+      "path": "runs/public-tactical-positions-native-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "independent_reader_source-run_source-manifest_json": {
+      "path": "runs/public-tactical-positions-native-readback-v1/source-run/source-manifest.json",
+      "sha256": "ace40a1ab899db704839c415d76b043611d9a01e2446e7c755d0182799d09cde",
+      "bytes": 6827
+    },
+    "native_data_manifest_json": {
+      "path": "data/recorded-tactical-positions-pwa-v1/manifest.json",
+      "sha256": "14d9cfe0dfa95a1b8edffe9611a1c47dcc4edc508340dac93d3381d69a090a25",
+      "bytes": 58219
+    },
+    "native_data_counts_json": {
+      "path": "data/recorded-tactical-positions-pwa-v1/counts.json",
+      "sha256": "0ca666001f29e795a54cc9de88e008fbc7f7c729c661015890c77aac2771a25c",
+      "bytes": 1279
+    },
+    "native_data_games_jsonl": {
+      "path": "data/recorded-tactical-positions-pwa-v1/games.jsonl",
+      "sha256": "bb61547dc2b8727b3572a2820e948eeef5ea92e3e8260e85dab5c29fb8acd030",
+      "bytes": 15380673
+    },
+    "native_data_duplicates_jsonl": {
+      "path": "data/recorded-tactical-positions-pwa-v1/duplicates.jsonl",
+      "sha256": "b30561209e2129affad2169482b75638e7e90432395c69fce5e077ace4ab98af",
+      "bytes": 200830
+    },
+    "native_data_quarantine_jsonl": {
+      "path": "data/recorded-tactical-positions-pwa-v1/quarantine.jsonl",
+      "sha256": "4a800edaabbcd3e5c281cf758bd79919fd85adcecb821f6d2486f91d442d2695",
+      "bytes": 599
+    },
+    "source_acquisition_public_proof": {
+      "path": "evidence/public-tactical-source-acquisition-v1.json",
+      "sha256": "f4c7451a5ae5e66e6a130cfa2da0bd30ccb4abc0460adc95b5cb2e0d518b13db",
+      "bytes": 3345
+    },
+    "cpu_suite_exit_json": {
+      "path": "runs/tactical-position-milestone-checks-v4/exit.json",
+      "sha256": "8684f06247f1b0f40372c8b974adb595ab0cb495b235c5ce0789e21b459d3cba",
+      "bytes": 116
+    },
+    "cpu_suite_source-test-bindings_json": {
+      "path": "runs/tactical-position-milestone-checks-v4/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    }
+  },
+  "native_import": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "source_revision": "3ff21f4502a03f30bb0df55db6f3814ceeb989f5",
+    "source_files": 209,
+    "source_position_rows": 9990,
+    "source_metadata_files_skipped": 1,
+    "new_unique_native_source_positions": 9683,
+    "duplicate_positions": 306,
+    "quarantined_positions": 1,
+    "prior_canonical_history_color_orbits": 6370398,
+    "positions_by_split": {
+      "validation": 966,
+      "train": 7754,
+      "test": 963
+    },
+    "native_terminal_positions": 0,
+    "all_retained_supplied_positions_native_validated": true,
+    "full_history_terminal_checks_passed": true,
+    "native_verified_recorded_plies": 0,
+    "game_split_assigned_before_questions": true,
+    "source_and_color_duplicates_removed_before_split_assignment": true,
+    "every_position_has_explicitly_unavailable_pre_fragment_history": true,
+    "supplied_move_text_used_as_recorded_moves_or_best_move_labels": false,
+    "source_comments_or_titles_used_as_neural_labels": false,
+    "source_move_optimality_proven": false,
+    "native_proof_reuses_same_rules_implementation": true,
+    "heldout_course_or_explanation_branch_isolation_completed_by_import": false,
+    "training_questions_or_neural_labels_generated": false,
+    "student_teacher_engine_or_feature_cache_loaded": false
+  },
+  "independent_readback": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 132.16165041271597,
+    "peak_process_rss_kib": 1165068,
+    "all_source_position_rows_independently_reconstructed": 9990,
+    "native_valid_source_rows_including_duplicates": 9989,
+    "accepted_positions": 9683,
+    "duplicates": 306,
+    "quarantine": 1,
+    "duplicate_reasons": {
+      "same_source_position_or_color_duplicate": 58,
+      "position_or_color_seen_in_previous_canonical_supplied_history": 248
+    },
+    "positions_by_split": {
+      "validation": 966,
+      "train": 7754,
+      "test": 963
+    },
+    "prior_canonical_records_rehashed": 109938,
+    "prior_history_color_orbits_rebuilt": 6370398,
+    "pinned_raw_files_git_blob_size_and_sha256_rechecked": 209,
+    "all_retained_original_fields_terminal_status_dedup_and_splits_matched": true,
+    "actual_frozen_source_modules_rehashed": 72,
+    "bound_artifacts_freshly_rehashed_at_end": 336,
+    "native_rules_library_loaded": true,
+    "native_rules_shared_with_producer": true,
+    "source_import_parser_and_dedup_reimplemented_in_reader": true,
+    "prior_native_full_history_proofs_reused_not_all_replayed_again": true,
+    "prehistorical_moves_invented": false,
+    "source_solutions_used_as_labels": false,
+    "course_or_explanation_full_branch_isolation_completed_by_this_reader": false,
+    "new_training_or_distillation_targets_generated": false,
+    "gpu_model_loaded": false,
+    "independent_authenticity_or_underlying_rights_proven": false
+  },
+  "local_cpu_tests_passed": 531,
+  "local_source_test_bindings_unchanged": 127,
+  "new_position_cases_passed": 30,
+  "related_focused_tests_passed": 118,
+  "native_rules_library_loaded": true,
+  "external_search_engine_or_neural_model_loaded": false,
+  "zero_recorded_moves_and_unknown_prehistory_preserved": true,
+  "heldout_course_and_explanation_branch_isolation_completed_by_native_import": false,
+  "source_solution_text_used_as_labels": false,
+  "new_curriculum_questions_generated": false,
+  "new_clean_model_distillation_targets_generated": 0,
+  "new_distillation_rounds_trained": 0,
+  "training_and_existing_search_queues_changed": false,
+  "independent_source_authenticity_and_underlying_rights_proven": false,
+  "raw_and_derived_data_bundled_with_code": false
+}
