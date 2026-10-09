@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "actual_pinned_public_tactical_source_acquisition",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "source_url": "https://github.com/dffge552/xiangqi-pwa-offline",
+  "source_revision": "3ff21f4502a03f30bb0df55db6f3814ceeb989f5",
+  "actual_git_tree_sha": "85c7e92ef00fe5e3fad0d086fe844dcab13439bf",
+  "artifacts": {
+    "manifest_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/manifest.json",
+      "sha256": "b2d6e1bfbd350ffe7b158f237a66c6f91cbf7f85cad248134e2b157351fafe10",
+      "bytes": 10001
+    },
+    "verification_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/verification.json",
+      "sha256": "3b040694004a18eda39850ca1a8be35b698f020535735884bc842db425aeba96",
+      "bytes": 836
+    },
+    "exit_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "entry_py": {
+      "path": "runs/public-tactical-source-acquisition-v1/entry.py",
+      "sha256": "3132268afc7884e6416920d9aa57d54375e41f7bcb58ae7775762005d84b5d66",
+      "bytes": 4614
+    },
+    "plan_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/plan.json",
+      "sha256": "dc088c33d4a384dd0d5493f48aa458fb757f26812d3cba53a7239e80eb23be27",
+      "bytes": 1128
+    },
+    "pinned-source_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/pinned-source.json",
+      "sha256": "e066411c3f8ac2228766e0afd7a606e2abcb0d313e90ebb85e274a9dded09109",
+      "bytes": 69425
+    },
+    "cached-source-files_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/cached-source-files.json",
+      "sha256": "89017c99470ccd6f2e2304446b1d717a9e5b3460e77ec75e493da087d1d7b425",
+      "bytes": 87856
+    },
+    "source-run_source-manifest_json": {
+      "path": "runs/public-tactical-source-acquisition-v1/source-run/source-manifest.json",
+      "sha256": "b909171c1d7151e57adbe93a347fb93e8f7c6ffdde8213a6b9c96a0b44a5f235",
+      "bytes": 6730
+    }
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "repository": "dffge552/xiangqi-pwa-offline",
+    "source_revision": "3ff21f4502a03f30bb0df55db6f3814ceeb989f5",
+    "actual_git_tree_sha": "85c7e92ef00fe5e3fad0d086fe844dcab13439bf",
+    "source_files": 209,
+    "source_bytes": 5866937,
+    "all_pinned_blob_sha1_sizes_and_raw_sha256_checked": true,
+    "all_cached_file_sha256_rechecked": true,
+    "upstream_license_declared": "MIT",
+    "underlying_puzzle_redistribution_rights_independently_authenticated": false,
+    "native_rules_or_supplied_solutions_verified": false,
+    "canonical_or_independent_training_positions_counted": 0,
+    "source_labels_used_for_training": false,
+    "teacher_model_engine_or_feature_cache_loaded": false,
+    "project_live_training_or_search_queue_modified": false,
+    "seconds": 67.58100938983262
+  },
+  "scope_limits": {
+    "unverified_upstream_titles_or_solutions_not_training_labels": true,
+    "source_files_decoded_and_verified_not_usable_puzzle_count": true,
+    "upstream_license_declaration_not_independent_rights_authentication": true,
+    "raw_dataset_files_not_committed_or_redistributed": true,
+    "new_neural_labels_or_model_training": false
+  }
+}
