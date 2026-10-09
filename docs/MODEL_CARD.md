@@ -32,11 +32,13 @@ training/validation/test rows, including existing color-derived rows. The joint
 495306-history search pool is candidate material, not accepted distillation
 labels or evidence of model strength. See `STATUS.md` for verified checkpoints.
 
-At third-course step 2560, future-static accuracy is 737/768, static replay
-755/768 and dynamic replay 544/640, for 2036/2176 raw exact answers. On the
-identical questions from step 2048, future/static/dynamic changes are +10/0/-14;
-selection retains step 2048 and training continues. Five verified checks and
-the contiguous training log are in `evidence/static-future-fifth-raw-validation-v1.json`.
+At third-course step 3072, future-static accuracy is 738/768, static replay
+754/768 and dynamic replay 567/640, for 2059/2176 raw exact answers. On the
+identical questions from step 2560, future/static/dynamic changes are +1/-1/+23.
+Capture enumeration recovers from 86 to 102/128; move enumeration rises from
+83 to 88/128. Selection adopts step 3072 and training continues. Native answers,
+complete histories and checkpoint identity were verified; the previous decline
+is preserved. See `evidence/static-future-sixth-raw-validation-v1.json`.
 
 The original 80-step checkpoint is a historical pipeline pilot. Both first research arms
 completed four 800-step courses, but balanced validation accuracy and ablations
@@ -44,19 +46,18 @@ do not establish a reliable expert benefit. All original roots were black to
 move; this sampling defect is corrected for new runs. Current measurements and
 their limits are recorded in `STATUS.md`, with lightweight evidence in `evidence/`.
 
-Recorded opening suites now support complete-history matches from protected
-validation or final-test games. A real validation suite contains 64 distinct
-12-ply prefixes; source categories declare 63 human matches and one human versus
-computer match. Full source hashing, selected-row readback and native replay
-passed. A non-neural scripted control played 256 eight-ply protocol games against
-the real engine, covering both colors and two node budgets; four illegal-root
-forfeits and two explanation lines crossing history terminals were checked.
-The first helper failed in its added control stage because engine paths were
-omitted. Its completed suite and primary games were preserved; a new reader
-verified them and executed the missing controls. All 592 CPU tests passed.
-Actual trained-student inference and strength were not tested. Source import and
-global isolation evidence are reused; opening geometry novelty and player
-identity are not proven. See `evidence/recorded-match-openings-real-v1.json`.
+Recorded opening suites support full-history matches from protected validation
+or final-test games. The real validation suite contains 64 distinct 12-ply
+prefixes, declared as 63 human matches and one human versus computer match;
+source and isolation limits are in `evidence/recorded-match-openings-real-v1.json`.
+Matches save raw turns and resume under the original frozen source, input and
+budget contract. A controlled interruption after game two's third saved turn
+reused one complete game and 11 turns, preserving previous bytes and raw history.
+The scripted student and real engine made 2048 total queries for 256 eight-ply
+protocol games. A second resume loaded neither player and changed no match files;
+all 515 match outputs were hashed again. The 669 CPU tests passed.
+This control uses no trained-student inference and measures neither student
+strength nor explanation quality. See `evidence/match-resume-real-v1.json`.
 
 ## Differences from the paper
 

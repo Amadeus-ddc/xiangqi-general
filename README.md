@@ -304,7 +304,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 第二门已在第 8704 步按三次无改善策略结束，并选用第 7168 步最佳权重：582／640 动态题、743／768 静态回放、1325／1408 综合（94.11%）。末次动态题为 590／640（92.19%），完整走法列表 100／128（78.13%），静态回放 726／768（94.53%），综合 1316／1408（93.47%）；相对最佳，动态净增 8 题，静态净减 17 题。十七次同题、原始正确数、原生答案及候选身份已读回，见 `evidence/dynamic-current-seventeenth-raw-validation-v1.json`；更新曲线见 `evidence/dynamic-current-learning-curve-v6.json`，最后完整 512 步平均损失为 0.017760。近期继续训练的动态收益被旧课回落抵消，实际控制器已按原配方交接，没有手动停训或改训练率。
 
-第三门静态未来从第二门第 7168 步最佳权重启动，初始化逐位相同及新优化器已核验，见 `evidence/static-future-best-parent-startup-v1.json`。完成课程仍为 2／4。最新第 2560 步：未来静态 737／768（95.96%）、静态回放 755／768（98.31%）、动态回放 544／640（85.00%），综合 2036／2176（93.57%），见 `evidence/static-future-fifth-raw-validation-v1.json`。与第 2048 步为同一套题、问法及金标，未来／静态／动态净变化为 +10／0／−14；综合下降 4 题，主要回落为吃子枚举 102→86／128，走法枚举反而 79→83／128。原生入口核验全部 2176 个答案、1907 个历史及 738 个未来上下文，完整缓存／训练身份沿用完成预检。五次同题曲线与连续第 1—2560 步日志匹配，最近 512 步平均损失为 0.022468。控制器暂保留第 2048 步最佳权重，按原配方继续；第 3072 步观察会话为 `xqgeneral-static-future-sixth-raw-validation-readback-v1`。四门完成、新 SFT、蒸馏和独立棋力／讲解验收仍待执行。
+第三门静态未来从第二门第 7168 步最佳权重启动，初始化逐位相同及新优化器已核验，见 `evidence/static-future-best-parent-startup-v1.json`。完成课程仍为 2／4。最新第 3072 步：未来静态 738／768（96.09%）、静态回放 754／768（98.18%）、动态回放 567／640（88.59%），综合 2059／2176（94.62%），见 `evidence/static-future-sixth-raw-validation-v1.json`。与第 2560 步为同一套题、问法及金标，未来／静态／动态净变化为 +1／−1／+23；吃子枚举从 86 恢复到 102／128，走法枚举从 83 到 88／128。原生入口核验全部 2176 个答案、1907 个历史及 738 个未来上下文，完整缓存／训练身份沿用完成预检。前五次曲线保留在第五次证明中；控制器已选第 3072 步并按原配方继续，第 3584 步观察会话为 `xqgeneral-static-future-seventh-raw-validation-readback-v1`。四门完成、新 SFT、蒸馏和独立棋力／讲解验收仍待执行。
 
 走法枚举诊断覆盖 19 个检查点、2432 份回答，并重新核验同批 128 个完整历史及原生答案，见 `evidence/curriculum-move-enumeration-diagnostic-v1.json`。第二门末次 28 道错误均有实际漏招或多招；第三门第 1024 步 41 道错误只有 1 道纯顺序问题，炮题净回落 7 道。按棋子／答案长度分组和逐走法精确率只作诊断，保留原始严格评分；这不证明错误原因或实际棋力。这份历史诊断止于第 1024 步；最新三类诊断及原生验证见下文及上文证明。
 
@@ -616,11 +616,14 @@ python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
 ```bash
 python -m xqgeneral.match_openings --data data/research-human-engine-v1 \
   --split validation --count 64 --plies 12 --output NEW_OPENING_SUITE
-python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
+python scripts/freeze_run.py --output NEW_MATCH_SOURCE -- \
+  python -m xqgeneral.evaluate_games --checkpoint CHECKPOINT.pt \
   --opening-suite NEW_OPENING_SUITE --nodes 100 1000 10000 --output NEW_MATCHES
 ```
 
-对弈入口还核验讲解主线和分支是否越过完整历史终局。合法首着仍用于对弈，变化错误保留在逐步核验；非法首着判负。检查点、引擎、专家权重及开局输入在运行中改变时拒绝完成，保留已生成记录。`--expert-weights` 可指定实际 Px0 权重，默认沿用项目路径。实际准备的 64 个验证开局来自 64 个不同原始棋局（源声明为 63 个人类实战、1 个人机）；256 局真实引擎 CPU 控制执行、4 个非法首着判负和 2 个历史终局控制检查已读回，见 `evidence/recorded-match-openings-real-v1.json`。控制方是脚本，不是训练学生；初次辅助控制阶段因漏传引擎路径失败，完整主阶段保留并由新入口读回、补齐控制。全部 592 项 CPU 测试通过。原始来源及整体隔离证明沿用生产数据，开局几何未见性和棋手身份未独立证明；这些检查不建立学生棋力或讲解质量。
+对弈入口还核验讲解主线和分支是否越过完整历史终局。合法首着用于对弈，变化错误保留在逐步核验；非法首着判负。检查点、引擎、专家权重及开局输入在运行中改变时拒绝完成，保留已生成记录。`--expert-weights` 可指定实际 Px0 权重，默认沿用项目路径。每回合原始记录写入 `progress/game-NNN.json`，完成局另存为 `game-NNN.json`。原任务退出后，在同一冻结入口的原命令末尾加 `--resume`；它先核验配置、输入、执行源码、原始回答和完整历史，再复用完成局及最后保存回合。已完成的同一评测只读回核验，不再加载模型或引擎。`metrics.json` 的 `seconds` 只记录最后一次调用耗时。
+
+实际 64 个验证开局来自 64 个不同原始棋局（源声明为 63 个人类实战、1 个人机），来源和原生读回见 `evidence/recorded-match-openings-real-v1.json`。新的 256 局真实引擎 CPU 控制在第二局第三回合保存后中断，续跑复用一局、11 回合并保留原字节和回答前缀；总计 2048 次双方调用与最终回合数一致。再次续读未加载双方或改变产物，515 份输出重新哈希，见 `evidence/match-resume-real-v1.json`；全部 669 项 CPU 测试通过。这些每局八个新增半回合的控制方是脚本，学生棋力与讲解质量仍待正式验收；来源真实性、开局几何未见性及棋手身份未独立证明。
 
 新主线可将能力评测排在已启动的干净 SFT 队列后，在 tmux 中使用以下冻结入口：
 
