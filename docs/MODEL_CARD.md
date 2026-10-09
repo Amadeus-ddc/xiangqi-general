@@ -1377,12 +1377,33 @@ All 465 CPU tests pass against 122 unchanged source/test identities. An actual
 bounded CPU observation verifies that the three existing owned jobs remain live
 before, during and after the new controller's wait; only its own observation
 process group is stopped. The frozen 70-file execution source is rehashed, and
-no child commands, model loads or search outputs occur. The production pilot is
-now queued with that same source, waiting for actual clean SFT capability
+no child commands, model loads or search outputs occur. At that v1 snapshot the
+production pilot was queued with the same source, waiting for clean SFT capability
 validation. `evidence/clean-search-pilot-queue-v1.json` records the observation
 and queue snapshot. It does not rehash all teacher weights or revalidate the
 complete candidate tail during waiting, and proves no current-model search yield,
 accepted new labels, trained distillation rounds or student benefit.
+
+The current `configs/search-clean-sft-pilot-v2.json` queue uses the completed
+eight-source candidate pool. It changes only the pool path and preserves the
+512-root, 100K-node, depth-five budgets and exact evaluated-parent prerequisite.
+Its 72-file frozen source supports tactical fragments and zero-move positions
+with their missing-prehistory context. The real CPU waiting guard passes and
+the production queue contract matches it field for field. All 531 CPU tests
+pass with 127 source/test identities and the new recipe unchanged across the run.
+See `evidence/clean-search-pilot-queue-v2.json`.
+
+The former six-source v1 waiting queue is retired before any search child starts;
+its config, contract, plan and 70 source files remain preserved and are rehashed.
+The first exit readback fails at an immediate post-signal process assertion and
+is preserved. A separate read-only follow-up verifies that the old tmux session
+and exact legacy launcher/pilot command processes are absent, while all six
+current owned panes remain alive at three observations. The original signalled
+PID list was not saved by the failed readback and is not reconstructed. Waiting
+checks reuse the completed full-pool consumption proof and check teacher-asset
+sizes; they do not rehash all teacher weights or the full course files again.
+No student/teacher inference, new search labels or trained distillation is
+claimed by this queue migration. Course, SFT and capability jobs are not restarted.
 
 The four pinned CCPD tactical categories are now fully imported separately from
 full-match collections. The 3614 source paths contain 2818 distinct Git blobs;
@@ -1460,7 +1481,9 @@ is independently recomputed. Production takes 672.47 seconds and readback
 and nine isolated-position roots, preserves the 13 missing-prehistory markers,
 checks the full tail and hashes all three base course files. No student, teacher,
 engine or feature cache is
-loaded. The existing pilot and course/SFT queues keep their frozen contracts.
+loaded. Candidate production did not alter the then-existing pilot or course/SFT
+queues. The later v2 search queue migration described above uses this pool;
+course/SFT/capability jobs retain their original execution contracts.
 Canonical source splits are not proved unseen by earlier training and are not
 new independent benchmark results. Accepted clean-model labels, trained
 search-distillation rounds and model benefit remain zero or unmeasured.

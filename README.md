@@ -200,16 +200,16 @@ python scripts/freeze_run.py --output runs/tactical-positions-new/source-run -- 
   --output data/tactical-positions-new --seed 20261051
 ```
 
-`search_pilot` 可排在现有干净 SFT 能力验证队列之后，自动执行实际学生搜索、完整 BF16 教师汇总和最终隔离收取。它核对被评测的真实 SFT 权重与搜索父模型相同；等待时不加载学生或教师。当前配方使用 512 个未用原始实战历史、10 万引擎节点、最多五层递归及 `move_eval` 子节点合同。
+`search_pilot` 已排在现有干净 SFT 能力验证队列之后，自动执行实际学生搜索、完整 BF16 教师汇总和最终隔离收取。它核对被评测的真实 SFT 权重与搜索父模型相同；等待时不加载学生或教师。当前 `configs/search-clean-sft-pilot-v2.json` 使用八来源统一候选池，包含实战、战术主线和零步独立局面；预算仍为 512 个未用训练历史、10 万引擎节点、最多五层递归及 `move_eval` 子节点合同。新队列冻结 72 份源码，保留缺失此前历史的边界；旧六来源 v1 等待队列已在执行搜索前退役，原配置、源码和日志保留。实际等待检查、切换读回及全部 531 项 CPU 测试通过，见 `evidence/clean-search-pilot-queue-v2.json`。这没有生成新的搜索标签或证明蒸馏收益。
 
 ```bash
-python scripts/freeze_run.py --output runs/clean-search-pilot-launch-v1/source-run -- \
+python scripts/freeze_run.py --output runs/clean-search-pilot-launch-v2/source-run -- \
   python -u -m xqgeneral.search_pilot \
   --pipeline runs/clean-sft-sequential-launch-v2/pipeline \
   --validation runs/clean-sft-capability-launch-v2/validation \
   --producer-session xqgeneral-clean-sft-capability-launch-v2 \
-  --config configs/search-clean-sft-pilot-v1.json \
-  --output runs/clean-search-pilot-launch-v1/pilot
+  --config configs/search-clean-sft-pilot-v2.json \
+  --output runs/clean-search-pilot-launch-v2/pilot
 ```
 
 长任务放在 tmux，记录相同冻结入口。查看 `pilot/state.json`、`commands.jsonl`、`log.txt` 和各阶段清单；现有进程存活时继续观察，退出后可用原入口加 `--resume`。变动源码、配方或输入必须另用新目录；未完成的收取目录保留并拒绝覆盖。搜索零产出时不加载汇总教师或启动空训练。入口统计原始尝试、改进查询、最终结构合格标签和两种产出率；小批次完成不算已训练一轮蒸馏，战略正文质量及后续特征缓存、训练和收益另行验证。

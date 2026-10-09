@@ -1,0 +1,12 @@
+{
+  "evaluation_config": "configs/evaluation-clean-sft-v2.json",
+  "data": "data/research-human-engine-v1",
+  "recorded_inputs": "data/recorded-all-sources-search-inputs-full-v1",
+  "limit": 512,
+  "nodes": 100000,
+  "max_depth": 5,
+  "child_contract": "move_eval",
+  "seed": 20261013,
+  "teacher_max_new_tokens": 1536,
+  "cuda_visible_devices": "0"
+}
