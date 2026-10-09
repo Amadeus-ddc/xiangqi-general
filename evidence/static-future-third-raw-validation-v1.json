@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "kind": "actual_static_future_third_raw_validation",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifacts": [
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/manifest.json",
+      "sha256": "bbbe12acff3a5d6d6d71c806f1e0280ca11ff266ad5a83fbf72f3c9116d470f2",
+      "bytes": 101887
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/verification.json",
+      "sha256": "237c48837c92a4159c2d78bea3f98ddf428976c3f553aeb651265d62ef44464f",
+      "bytes": 5329
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/native-sample-readback.json",
+      "sha256": "d744f61fa86bc55990abd978c4d67a464f91066462e2698bc4b8a3684b61e171",
+      "bytes": 555434
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/entry.py",
+      "sha256": "e5cd12be827656b8f55b38dac988a7f97977f4c9daaa50af350b8ee0b2857582",
+      "bytes": 13360
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/plan.json",
+      "sha256": "392c669f4ffb5a981a153353a20ed1c07fadd28ace7d080fd900f77a2cb7d9c4",
+      "bytes": 1598
+    },
+    {
+      "path": "runs/static-future-third-raw-validation-readback-v1/source-run/source-manifest.json",
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+      "bytes": 6353
+    }
+  ],
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "static_future",
+    "actual_step": 1536,
+    "raw_gate": {
+      "examples": 2176,
+      "accuracy": 0.9301470588235294,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.8203125
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.9375
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.9765625
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.59375
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 0.9765625
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.9375
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.984375
+        },
+        "static_future/count": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_future/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_future/locate": {
+          "n": 128,
+          "accuracy": 0.9140625
+        },
+        "static_future/material": {
+          "n": 128,
+          "accuracy": 0.84375
+        },
+        "static_future/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_future/rank": {
+          "n": 128,
+          "accuracy": 0.859375
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.9778645833333334,
+          "minimum_task_accuracy": 0.9375,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.865625,
+          "minimum_task_accuracy": 0.59375,
+          "passed": false
+        },
+        "static_future": {
+          "examples": 768,
+          "accuracy": 0.9361979166666666,
+          "minimum_task_accuracy": 0.84375,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "startup_volatile_execution_bound_to_preserved_initial_archive": true,
+    "startup_execution_archive": "runs/static-future-best-parent-startup-v1/initial-execution.json",
+    "startup_mutable_execution_not_registered_as_required_unchanged_input": true,
+    "native_answers_recomputed": 2176,
+    "distinct_native_histories_replayed": 1907,
+    "same_2176_questions_as_actual_previous_third_course_check": true,
+    "previous_second_raw_native_proof_reused": "runs/static-future-second-raw-validation-readback-v1/manifest.json",
+    "paired_previous_1024_to_current_1536_raw_correctness": {
+      "static_current": {
+        "n": 768,
+        "corrected": 18,
+        "new_errors": 7,
+        "previous_correct": 740,
+        "current_correct": 751,
+        "net_correct_change": 11
+      },
+      "dynamic_current": {
+        "n": 640,
+        "corrected": 32,
+        "new_errors": 39,
+        "previous_correct": 561,
+        "current_correct": 554,
+        "net_correct_change": -7
+      },
+      "static_future": {
+        "n": 768,
+        "corrected": 34,
+        "new_errors": 19,
+        "previous_correct": 704,
+        "current_correct": 719,
+        "net_correct_change": 15
+      }
+    },
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 7168,
+    "selected_parent_from_actual_completed_second_course_manifest": true,
+    "native_future_answers_recomputed": 768,
+    "distinct_native_future_contexts_replayed": 738,
+    "selected_parent_sha256": "1996f8a3aa0bde98414604e9acc8407b40370c8bd80266421124166a9b0a01e0",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "third_course_validation_selection_minimum_steps": 2048,
+    "third_course_completed_by_declared_policy_at_this_check": false,
+    "validation_selection_decision": {
+      "stop": false,
+      "selected_step": null,
+      "steps_completed": 1536,
+      "checks_without_improvement": 0,
+      "stopping_reason": null
+    },
+    "actual_controller_course_handoff_verified": true,
+    "clean_courses_completed_by_declared_policy_at_this_check": 2,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "actual_raw_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-1536/qa/predictions.jsonl",
+    "sha256": "a28b1f354163a0f071b0b04a9f5006ed889476241764462f28669e45d8215d62",
+    "bytes": 811463
+  },
+  "previous_raw_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-1024/qa/predictions.jsonl",
+    "sha256": "9db756635b2d830369e6b41a00e8e67504eb3c7027f1c1068dc5d66457d21ea3",
+    "bytes": 811619
+  },
+  "previous_public_raw_proof": {
+    "path": "evidence/static-future-second-raw-validation-v1.json",
+    "sha256": "283c604473a189f5627e39b37237413ec0340cf4c3a26e3519dd6fb1752dd625",
+    "bytes": 24370
+  },
+  "raw_correct_by_course": {
+    "static_future": 719,
+    "static_current": 751,
+    "dynamic_current": 554
+  },
+  "raw_total_correct": 2024,
+  "raw_total_examples": 2176,
+  "paired_1024_to_1536_by_task": {
+    "dynamic_current/captures": {
+      "examples": 128,
+      "corrected": 9,
+      "new_errors": 8,
+      "previous_correct": 104,
+      "current_correct": 105,
+      "net_correct_change": 1
+    },
+    "static_future/piece": {
+      "examples": 128,
+      "corrected": 1,
+      "new_errors": 0,
+      "previous_correct": 127,
+      "current_correct": 128,
+      "net_correct_change": 1
+    },
+    "static_current/locate": {
+      "examples": 128,
+      "corrected": 7,
+      "new_errors": 2,
+      "previous_correct": 115,
+      "current_correct": 120,
+      "net_correct_change": 5
+    },
+    "static_future/rank": {
+      "examples": 128,
+      "corrected": 13,
+      "new_errors": 8,
+      "previous_correct": 105,
+      "current_correct": 110,
+      "net_correct_change": 5
+    },
+    "static_future/count": {
+      "examples": 128,
+      "corrected": 1,
+      "new_errors": 0,
+      "previous_correct": 127,
+      "current_correct": 128,
+      "net_correct_change": 1
+    },
+    "static_current/rank": {
+      "examples": 128,
+      "corrected": 4,
+      "new_errors": 2,
+      "previous_correct": 124,
+      "current_correct": 126,
+      "net_correct_change": 2
+    },
+    "static_future/empty": {
+      "examples": 128,
+      "corrected": 0,
+      "new_errors": 0,
+      "previous_correct": 128,
+      "current_correct": 128,
+      "net_correct_change": 0
+    },
+    "dynamic_current/checks": {
+      "examples": 128,
+      "corrected": 1,
+      "new_errors": 3,
+      "previous_correct": 122,
+      "current_correct": 120,
+      "net_correct_change": -2
+    },
+    "static_current/count": {
+      "examples": 128,
+      "corrected": 1,
+      "new_errors": 3,
+      "previous_correct": 127,
+      "current_correct": 125,
+      "net_correct_change": -2
+    },
+    "static_current/piece": {
+      "examples": 128,
+      "corrected": 0,
+      "new_errors": 0,
+      "previous_correct": 128,
+      "current_correct": 128,
+      "net_correct_change": 0
+    },
+    "static_current/material": {
+      "examples": 128,
+      "corrected": 6,
+      "new_errors": 0,
+      "previous_correct": 118,
+      "current_correct": 124,
+      "net_correct_change": 6
+    },
+    "static_future/locate": {
+      "examples": 128,
+      "corrected": 9,
+      "new_errors": 3,
+      "previous_correct": 111,
+      "current_correct": 117,
+      "net_correct_change": 6
+    },
+    "static_future/material": {
+      "examples": 128,
+      "corrected": 10,
+      "new_errors": 8,
+      "previous_correct": 106,
+      "current_correct": 108,
+      "net_correct_change": 2
+    },
+    "dynamic_current/illegal": {
+      "examples": 128,
+      "corrected": 5,
+      "new_errors": 2,
+      "previous_correct": 122,
+      "current_correct": 125,
+      "net_correct_change": 3
+    },
+    "dynamic_current/moves": {
+      "examples": 128,
+      "corrected": 15,
+      "new_errors": 26,
+      "previous_correct": 87,
+      "current_correct": 76,
+      "net_correct_change": -11
+    },
+    "static_current/empty": {
+      "examples": 128,
+      "corrected": 0,
+      "new_errors": 0,
+      "previous_correct": 128,
+      "current_correct": 128,
+      "net_correct_change": 0
+    },
+    "dynamic_current/legal": {
+      "examples": 128,
+      "corrected": 2,
+      "new_errors": 0,
+      "previous_correct": 126,
+      "current_correct": 128,
+      "net_correct_change": 2
+    }
+  },
+  "queued_next_observer": {
+    "session": "xqgeneral-static-future-fourth-raw-validation-readback-v2",
+    "observed_utc": "2026-10-09T10:39:13.417096+00:00",
+    "pane": {
+      "pane_pid": 459111,
+      "pane_dead": 0
+    },
+    "state": {
+      "status": "waiting_for_actual_third_course_step_2048_raw_check",
+      "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+      "gpu_model_loaded": false
+    },
+    "entry": {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/entry.py",
+      "bytes": 13361,
+      "sha256": "cac7ef26f6afe110b8c1e04cc0888cbd04516e35d22eab579de6dfa75ce5e447"
+    },
+    "plan": {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/plan.json",
+      "bytes": 1784,
+      "sha256": "c58630b4b34959ca8c026cd59a597204b607a944fe9881908b7ef103b7665600"
+    },
+    "source_manifest": {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/source-run/source-manifest.json",
+      "bytes": 6353,
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701"
+    },
+    "all_67_source_files_rehashed": true,
+    "required_previous_actual_check": 1536,
+    "required_previous_native_proof": "runs/static-future-third-raw-validation-readback-v1/manifest.json",
+    "actual_step_2048_results_proven": false,
+    "preparation_failure_preserved": {
+      "path": "runs/static-future-fourth-raw-validation-readback-v1/preparation-failure.json",
+      "bytes": 273,
+      "sha256": "e64130aa805ea4d050d921cd0ccbbc2b7f284ace24405c9283d485ecb39bdf16"
+    }
+  },
+  "cpu_suite": {
+    "tests_passed": 531,
+    "exit": {
+      "path": "runs/third-course-third-raw-milestone-tests-v1/exit.json",
+      "sha256": "d39d616d7b25cc8e3045f1ed5c8179473451256bea55984fe267eeef8022eba6",
+      "bytes": 215
+    },
+    "log": {
+      "path": "runs/third-course-third-raw-milestone-tests-v1/log.txt",
+      "sha256": "d1547c8cbceb6fb9f10f2ef42b54b55fb7decdc9814a6c1e83bbd20d53f25e18",
+      "bytes": 672
+    },
+    "source_test_bindings": {
+      "path": "runs/third-course-third-raw-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    },
+    "source_test_files": 127,
+    "suite_rerun_for_this_milestone": true
+  },
+  "scope_limits": {
+    "validation_only": true,
+    "independent_test_answers_used": false,
+    "oracle_repaired_predictions": false,
+    "native_proof_reused_without_additional_full_reference_hash_pass": true,
+    "course_three_completed": false,
+    "all_four_courses_completed": false,
+    "clean_sft_completed": false,
+    "new_accepted_search_labels": 0,
+    "trained_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false,
+    "large_feature_and_training_input_identity_reused_from_completed_preflight": true,
+    "training_configuration_changed": false
+  }
+}
