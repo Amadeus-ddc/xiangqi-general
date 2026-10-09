@@ -25,8 +25,8 @@ test results are in run manifests. Synthetic legal games are split before QA
 creation, and root/future positions are checked for overlap. Validation selects
 checkpoints. Test games do not train or select checkpoints.
 
-The current clean recorded-game foundation has completed one of four courses;
-the second course is training. Clean explanation SFT and accepted clean-model
+The current clean recorded-game foundation has completed two of four courses;
+the third course is training. Clean explanation SFT and accepted clean-model
 search labels remain pending. The reviewed initial corpus contains 10758/384/512
 training/validation/test rows, including existing color-derived rows. The joint
 495306-history search pool is candidate material, not accepted distillation
@@ -37,6 +37,20 @@ completed four 800-step courses, but balanced validation accuracy and ablations
 do not establish a reliable expert benefit. All original roots were black to
 move; this sampling defect is corrected for new runs. Current measurements and
 their limits are recorded in `STATUS.md`, with lightweight evidence in `evidence/`.
+
+Recorded opening suites now support complete-history matches from protected
+validation or final-test games. A real validation suite contains 64 distinct
+12-ply prefixes; source categories declare 63 human matches and one human versus
+computer match. Full source hashing, selected-row readback and native replay
+passed. A non-neural scripted control played 256 eight-ply protocol games against
+the real engine, covering both colors and two node budgets; four illegal-root
+forfeits and two explanation lines crossing history terminals were checked.
+The first helper failed in its added control stage because engine paths were
+omitted. Its completed suite and primary games were preserved; a new reader
+verified them and executed the missing controls. All 592 CPU tests passed.
+Actual trained-student inference and strength were not tested. Source import and
+global isolation evidence are reused; opening geometry novelty and player
+identity are not proven. See `evidence/recorded-match-openings-real-v1.json`.
 
 ## Differences from the paper
 
@@ -54,7 +68,7 @@ input and requires separate reporting and ablations.
 Frozen-decoder move training can preserve trainable bridge, token and LoRA
 parameters in FP32 while computing in BF16. Older runs retain their original
 parameter precision; new execution verification is not a model-strength claim.
-The next explanation recipe averages supervised loss within each example before
+An earlier experimental explanation recipe averages supervised loss within each example before
 averaging examples, so long prose does not overwhelm short move replay. It also
 requires deterministic GPU algorithms. Validation still uses token-average NLL;
 these changes are experiments, not established improvements in model quality.
@@ -81,7 +95,7 @@ limit is reported as censored.
 An optional move-only decoding mode restricts the language model to a trie of
 rule-legal moves and chooses using model probabilities. It uses no engine move
 selection, is labeled separately from raw generation, and imposes legal output
-by construction. Its games do not establish explanation quality. The current
+by construction. Its games do not establish explanation quality. An earlier
 move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
 Expanded explanation SFT reached 72 legal recommendations and 57 without a
 large fitted-score loss out of 96 validation answers at its 1024-step checkpoint.

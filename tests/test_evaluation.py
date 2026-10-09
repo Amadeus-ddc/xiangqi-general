@@ -60,6 +60,51 @@ def test_match_opponent_needs_only_a_legal_move_at_the_fixed_budget():
     assert game['turns'][0]['oracle']['requested_nodes'] == 100
 
 
+@pytest.mark.parametrize('principal,branch', [(['c7b9', 'b0c2'], ['c7b9']),
+                                            (['c7b9'], ['c7b9', 'b0c2'])])
+def test_match_marks_explanation_past_history_terminal_but_preserves_legal_root_move(principal, branch):
+    moves = (['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2)[:-1]
+    fen = replay(START_FEN, moves)[-1]
+    score = {'type': 'cp', 'value': 0, 'perspective': 'side_to_move'}
+    value = {'move': 'c7b9', 'pv': principal, 'candidates': ['c7b9'],
+             'branches': [{'move': 'c7b9', 'pv': branch, 'evaluation': score}],
+             'evaluation': score, 'facts': move_facts(fen, 'c7b9'), 'explanation': '保留完整棋局历史。'}
+    raw = json.dumps(value, ensure_ascii=False)
+    class Student:
+        def generate(self, record, **kwargs):
+            assert record['moves'] == moves
+            return raw
+    game = play_game(Student(), None, ('repetition', moves), 'black', 100, 4)
+    assert game['status'] == 'completed' and game['reason'] == 'AXF_repetition_or_move_limit'
+    assert game['moves'] == [*moves, 'c7b9'] and len(game['turns']) == 1
+    turn = game['turns'][0]
+    assert turn['raw'] == raw and turn['move'] == 'c7b9' and not turn['model_oracle_used']
+    assert not turn['verification']['valid']
+    assert 'invalid_history_continuation' in turn['verification']['errors']
+
+
+def test_recorded_match_preserves_nonstandard_initial_fen_for_both_players():
+    from xqgeneral.evidence import history_key
+    initial = START_FEN.replace(' 0 1', ' 0 7')
+    past = ['b0c2'];history = replay(initial, past)
+    opening = {'id': 'supplied', 'game_id': 'recorded-example', 'split': 'validation',
+               'initial_fen': initial, 'moves': past, 'history': history,
+               'fen': history[-1], 'feature_key': history_key(history)}
+    class Engine:
+        def choose_move(self, fen, nodes, initial_fen, moves):
+            assert initial_fen == initial and moves == past and fen == history[-1]
+            return {'best_move': 'b9c7', 'requested_nodes': nodes}
+    class Student:
+        def generate(self, record, **kwargs):
+            assert record['initial_fen'] == initial and record['moves'] == [*past, 'b9c7']
+            assert record['history'] == replay(initial, record['moves'])
+            return '{"move":"h0g2"}'
+    game = play_game(Student(), Engine(), opening, 'red', 100, 2)
+    assert game['status'] == 'censored' and game['initial_fen'] == initial
+    assert game['moves'] == [*past, 'b9c7', 'h0g2']
+    assert game['opening_moves'] == past and opening['moves'] == past
+
+
 def test_predictor_mapped_and_copied_caches_keep_identical_features(tmp_path, monkeypatch):
     from xqgeneral import inference
     path = tmp_path / 'features.pt'

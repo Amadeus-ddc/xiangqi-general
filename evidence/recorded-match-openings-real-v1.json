@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "kind": "heldout_recorded_openings_and_real_cpu_match_protocol",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_suite": {
+      "status": "complete",
+      "split": "validation",
+      "source_rows_read": 173272,
+      "eligible_original_recorded_games": 639,
+      "openings": 64,
+      "distinct_source_games": 64,
+      "distinct_opening_histories": 64,
+      "distinct_opening_positions": 64,
+      "opening_plies": 12,
+      "by_source_declared_kind": {
+        "recorded_human_match": 63,
+        "recorded_human_computer_match": 1
+      },
+      "excluded": {
+        "derived_or_noncurrent_or_nonmatch_rows": 151660,
+        "duplicate_opening_positions_or_histories": 11
+      },
+      "selected_full_prefixes_native_checked": true,
+      "answers_or_recorded_future_used": false,
+      "source_import_and_global_split_proof_reused": true,
+      "opening_geometry_unseen_during_training_proven": false,
+      "source_player_identities_authenticated": false,
+      "new_training_labels": 0,
+      "student_or_teacher_model_loaded": false
+    },
+    "opening_prefixes_native_replayed": 64,
+    "completed_suite_and_primary_matches_reused": true,
+    "original_helper_exit_code": 1,
+    "original_failure": "control-stage constructor omitted explicit executable and weights",
+    "actual_new_engine_control_and_terminal_checks_executed": true,
+    "selected_source_prefixes_checked_by_complete_loader_scan": true,
+    "real_engine_protocol_matches": 256,
+    "engine_turns": 1024,
+    "scripted_fixture_turns": 1024,
+    "both_colors_and_both_node_budgets_for_every_opening": true,
+    "model_oracle_repairs": 0,
+    "illegal_forfeit_controls": 4,
+    "full_history_terminal_prose_controls": 2,
+    "raw_control_answers_preserved": true,
+    "match_input_and_output_hashes_freshly_rechecked": true,
+    "trained_student_inference_executed": false,
+    "neural_model_or_teacher_loaded": false,
+    "match_results_are_student_strength_evidence": false,
+    "new_training_labels": 0,
+    "owned_original_queues_live": {
+      "before": [
+        "xqgeneral-clean-search-pilot-launch-v2 401942 0",
+        "xqgeneral-clean-sft-capability-launch-v2 90921 0",
+        "xqgeneral-clean-sft-sequential-launch-v2 90918 0",
+        "xqgeneral-recorded-foundation-clean-v3 90915 0"
+      ],
+      "during": [
+        "xqgeneral-clean-search-pilot-launch-v2 401942 0",
+        "xqgeneral-clean-sft-capability-launch-v2 90921 0",
+        "xqgeneral-clean-sft-sequential-launch-v2 90918 0",
+        "xqgeneral-recorded-foundation-clean-v3 90915 0"
+      ],
+      "after": [
+        "xqgeneral-clean-search-pilot-launch-v2 401942 0",
+        "xqgeneral-clean-sft-capability-launch-v2 90921 0",
+        "xqgeneral-clean-sft-sequential-launch-v2 90918 0",
+        "xqgeneral-recorded-foundation-clean-v3 90915 0"
+      ]
+    },
+    "seconds": 21.888565307483077
+  },
+  "artifacts": [
+    {
+      "path": "runs/recorded-match-openings-real-v1/entry.py",
+      "bytes": 9307,
+      "sha256": "aca65a5de948859b61c5c22db36f16041dd8bb77bd173d665a785828e10e85db"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/plan.json",
+      "bytes": 8921,
+      "sha256": "6eaa888795420c91d28a9d79a660e502d34b2ad8210116a91b1192f567c2e9af"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/exit.json",
+      "bytes": 89,
+      "sha256": "d41747fd3cfe66cd6b56e372fb8a80844778e0df089eb62939f972caec357a68"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/log.txt",
+      "bytes": 69029,
+      "sha256": "b2c13b7a7a08c59d8b23431b861c2a13787a068dc1743af1d7fb700aa8f18160"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/suite/manifest.json",
+      "bytes": 10120,
+      "sha256": "0895f83b1d4ca71768be32c5eb9c559b8f1ab18b895398f9acfcdf68ed651b6e"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/suite/counts.json",
+      "bytes": 832,
+      "sha256": "60239b9e97e0fefdab69c2d8ce6ea65eed663c8593580d89a13a18e9271f5ebc"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/suite/openings.jsonl",
+      "bytes": 112280,
+      "sha256": "d37b83c6852c635f26653cd7adda533d9a21825a5be777749be5fcaf26b9e461"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/cpu-protocol-matches/manifest.json",
+      "bytes": 12380,
+      "sha256": "db720fc9c48e9d7a8631f8c2fb19211b5eaf0c961b4bbc6381138b6e7c37cbd6"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/cpu-protocol-matches/metrics.json",
+      "bytes": 1420,
+      "sha256": "f89fd49a1e355328ea91c3cab150bdf5cee4f21220d03410fec653e6ec45ac8a"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/cpu-protocol-matches/games.jsonl",
+      "bytes": 1745153,
+      "sha256": "5b7014a3e34348e5f6e4e76b39246a5e698e9b037f060216ee33715f616e0f3e"
+    },
+    {
+      "path": "runs/recorded-match-openings-real-v1/cpu-protocol-context.json",
+      "bytes": 404,
+      "sha256": "5ae716ec175336890d7dc57d954412aa58385a14aa5f9567b281089b315c6ab4"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/entry.py",
+      "bytes": 8535,
+      "sha256": "9eb421e013763f20c0a25ed2fc1934638bd5aa23bb60a88af83a508de5b3eec7"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/runner.py",
+      "bytes": 666,
+      "sha256": "fb05d41008ad28d27170f619bc7ae2496e56729bc2ba24831e717872f92e5bc6"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/plan.json",
+      "bytes": 9028,
+      "sha256": "343c3d60efffb53da632d11ed1d659f3136d83b02a12b901c2ddb4bbb59dd146"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/exit.json",
+      "bytes": 88,
+      "sha256": "41d9cb13a93b40d99b1892a16a83b78c1d28138a4712a657cddeeb88d7735208"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/verification.json",
+      "bytes": 2693,
+      "sha256": "82b3bd71eeafb67edbddde5a0b522dfdaad40099fcacb69c323225ac156eb1f8"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/manifest.json",
+      "bytes": 23358,
+      "sha256": "1fed2063c41737cdb9598f4169f7b94e2f512bb0cd88a7c41ca57f95d65b578e"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/cpu-protocol-context.json",
+      "bytes": 404,
+      "sha256": "5ae716ec175336890d7dc57d954412aa58385a14aa5f9567b281089b315c6ab4"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/illegal-forfeit-controls.jsonl",
+      "bytes": 6692,
+      "sha256": "c93b017ac230107d829f01e05110f72a15a804bd037d7b5e632d7020da9308fb"
+    },
+    {
+      "path": "runs/recorded-match-openings-readback-v2/history-terminal-controls.jsonl",
+      "bytes": 2444,
+      "sha256": "59c25e0cf90b1ec36ee1e612050cfb467c1027026e3a32682960263c375578e6"
+    },
+    {
+      "path": "runs/recorded-match-openings-milestone-tests-v2/source-test-bindings.json",
+      "bytes": 13603,
+      "sha256": "e6e9fbab5d5dff6f692078119eff027896b80fcdc5bb02e7d17d7983c1f8656f"
+    },
+    {
+      "path": "runs/recorded-match-openings-milestone-tests-v2/exit.json",
+      "bytes": 214,
+      "sha256": "608988bbd9ba79e16a6d2357ec36a2093b193c90f8d90f673b4dd3b829bdbc4d"
+    },
+    {
+      "path": "runs/recorded-match-openings-milestone-tests-v2/log.txt",
+      "bytes": 752,
+      "sha256": "570501682e55ff393f6c623323263edf5d5faa46411f2a1a541de308280af5c6"
+    }
+  ],
+  "frozen_source_readback": {
+    "runs/recorded-match-openings-real-v1": {
+      "revision": "20079a3aeb0996776275b0ee83372fba37b6930d",
+      "source_files": 74,
+      "all_freshly_rehashed": true,
+      "manifest": {
+        "path": "runs/recorded-match-openings-real-v1/source-run/source-manifest.json",
+        "bytes": 7013,
+        "sha256": "24b7481b4e16e50f63ccec706b8fd817a2ed2c37a93d4c9306c36d5415f36278"
+      }
+    },
+    "runs/recorded-match-openings-readback-v2": {
+      "revision": "20079a3aeb0996776275b0ee83372fba37b6930d",
+      "source_files": 74,
+      "all_freshly_rehashed": true,
+      "manifest": {
+        "path": "runs/recorded-match-openings-readback-v2/source-run/source-manifest.json",
+        "bytes": 7013,
+        "sha256": "24b7481b4e16e50f63ccec706b8fd817a2ed2c37a93d4c9306c36d5415f36278"
+      }
+    }
+  },
+  "full_cpu_suite": {
+    "passed": 592,
+    "source_test_bindings": 131,
+    "source_bindings_freshly_unchanged": true,
+    "new_acceptance_cases": 32,
+    "first_suite_589_preserved": true
+  },
+  "foundation_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+  "current_curriculum_snapshot": {
+    "status": "training_course",
+    "stage": "static_future",
+    "courses_completed": 2,
+    "start_step": 2560,
+    "selected_parent": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-7168/adapter.pt",
+    "gpu_sft_started": false
+  },
+  "owned_original_live_queues": {
+    "xqgeneral-clean-search-pilot-launch-v2": {
+      "pid": 401942,
+      "dead": 0
+    },
+    "xqgeneral-clean-sft-capability-launch-v2": {
+      "pid": 90921,
+      "dead": 0
+    },
+    "xqgeneral-clean-sft-sequential-launch-v2": {
+      "pid": 90918,
+      "dead": 0
+    },
+    "xqgeneral-recorded-foundation-clean-v3": {
+      "pid": 90915,
+      "dead": 0
+    }
+  },
+  "actual_selected_SFT_model_matches_executed": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "independent_test_answers_used": false,
+  "original_source_metadata_and_global_isolation_proof_reused": true,
+  "original_game_authenticity_independently_established": false,
+  "opening_geometry_unseen_during_training_proven": false,
+  "new_search_labels_or_trained_distillation_rounds": 0
+}
