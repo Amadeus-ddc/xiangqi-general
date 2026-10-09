@@ -1550,6 +1550,25 @@ is queued for the third course's real step-512 answers and old-course replay;
 third-course QA, four-course completion, clean SFT, trained distillation and
 reliable strategic coaching remain unproven.
 
+The current step-512 CPU observer is v2. Its startup dependency binds the
+original execution declaration to the preserved, byte-identical
+`initial-execution.json`; subsequent real training resumes may replace the live
+`execution.json`. `evidence/static-future-startup-archive-binding-v1.json`
+checks the exact helper extracted from the queued v2 entry against the actual
+already-resumed second course and the third-course startup archive. The correct
+archives are accepted, and the real resumed second-course execution is rejected
+as an initial archive. Every other declared reference is preserved, although
+this metadata check does not hash all model/data references again.
+
+The v1 observer is retired while waiting, before producing raw-readback outputs.
+Its entry, plan and frozen source remain unchanged; the signalled process
+identities are saved before retirement, and bounded exit polling confirms their
+exit and the old tmux session's removal. The four original course/SFT/capability/
+search panes remain alive at three observations before and after the transition;
+both 67-file observer sources are rehashed. Only the waiting CPU observer changes.
+The completed startup proof, curriculum recipe, GPU training and selection are
+preserved. This proves no new third-course raw accuracy or model benefit.
+
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
 color-derived rows. Validation is 288 plus 96, and test is 384 plus 128.

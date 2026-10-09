@@ -1,0 +1,422 @@
+{
+  "schema_version": 1,
+  "kind": "actual_static_future_startup_archive_binding_and_reader_queue",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_training_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_reader_source_revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+  "observer_module_count": 67,
+  "observer_entry_sha256": "2b88c27a83f6898efb27ea35ef926329370beb226dfca5884a45b49b10d09b46",
+  "artifacts": {
+    "runs/static-future-startup-archive-binding-real-readback-v1/entry.py": {
+      "path": "runs/static-future-startup-archive-binding-real-readback-v1/entry.py",
+      "sha256": "561f60e58342f5340425bbaafa580e7840f9ea96fc4ee9320d16a6d7f0f5d1c7",
+      "bytes": 3096
+    },
+    "runs/static-future-startup-archive-binding-real-readback-v1/plan.json": {
+      "path": "runs/static-future-startup-archive-binding-real-readback-v1/plan.json",
+      "sha256": "19483fdb3ae6b6946dc12047ca7549edfa13fd6dab428bc70a296f5fa4919b1b",
+      "bytes": 479
+    },
+    "runs/static-future-startup-archive-binding-real-readback-v1/verification.json": {
+      "path": "runs/static-future-startup-archive-binding-real-readback-v1/verification.json",
+      "sha256": "cc8d10422b91bfa4b36c24d3dc40a0db7b87f4321879fb4fe098e28c6c44aa47",
+      "bytes": 1947
+    },
+    "runs/static-future-startup-archive-binding-real-readback-v1/exit.json": {
+      "path": "runs/static-future-startup-archive-binding-real-readback-v1/exit.json",
+      "sha256": "e89df0eae5ec7db81135aed16463968955c578bcc4f2ec43172eff351f080c17",
+      "bytes": 17
+    },
+    "runs/static-future-first-raw-validation-readback-v2/entry.py": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/entry.py",
+      "sha256": "2b88c27a83f6898efb27ea35ef926329370beb226dfca5884a45b49b10d09b46",
+      "bytes": 11647
+    },
+    "runs/static-future-first-raw-validation-readback-v2/plan.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/plan.json",
+      "sha256": "d62b170f8f2d78d279edae51e1918e38bd27cc0c53c8c7fdf6d3548a0a931a65",
+      "bytes": 1519
+    },
+    "runs/static-future-first-raw-validation-readback-v2/transition-request.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/transition-request.json",
+      "sha256": "81eca3853eab9a70a84cf3fe4d0ad5b6c50ba1f74b133724ff5b49cb8dd24e76",
+      "bytes": 4494
+    },
+    "runs/static-future-first-raw-validation-readback-v2/transition-readback.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/transition-readback.json",
+      "sha256": "cf469c223db557ce518c7245f3a3c68f072f109007c6ff4f9ac0c5594b7070fb",
+      "bytes": 8172
+    },
+    "runs/static-future-first-raw-validation-readback-v2/transition-exit.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/transition-exit.json",
+      "sha256": "e89df0eae5ec7db81135aed16463968955c578bcc4f2ec43172eff351f080c17",
+      "bytes": 17
+    },
+    "runs/static-future-first-raw-validation-readback-v2/source-run/source-manifest.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v2/source-run/source-manifest.json",
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+      "bytes": 6353
+    },
+    "runs/static-future-first-raw-validation-readback-v1/dependency-lifecycle-audit.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v1/dependency-lifecycle-audit.json",
+      "sha256": "7f198881c42e2a803728e69f31ca2049dd2d47e65c90c821d08d2633407a6171",
+      "bytes": 1812
+    },
+    "runs/static-future-first-raw-validation-readback-v1/superseded-by-v2.json": {
+      "path": "runs/static-future-first-raw-validation-readback-v1/superseded-by-v2.json",
+      "sha256": "0ad9b7e0404714f67eb478fe78948e295f986f399ccdfe486cf30866ae218ae2",
+      "bytes": 368
+    },
+    "runs/static-future-best-parent-startup-v1/initial-execution.json": {
+      "path": "runs/static-future-best-parent-startup-v1/initial-execution.json",
+      "sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+      "bytes": 8096
+    },
+    "runs/static-future-best-parent-startup-v1/manifest.json": {
+      "path": "runs/static-future-best-parent-startup-v1/manifest.json",
+      "sha256": "ca7f6e6423735811f3feea581131d613667a2d27401af00f647ab7b0c05221c3",
+      "bytes": 93889
+    }
+  },
+  "actual_archive_binding_verification": {
+    "status": "complete",
+    "kind": "actual_startup_archive_dependency_binding_readback",
+    "evidence_state": "reconstructed_baseline",
+    "cases": [
+      {
+        "course": "dynamic_current",
+        "startup_manifest": "runs/dynamic-current-best-parent-startup-v1/manifest.json",
+        "original_declared_execution_sha256": "e98db00c58df58c462b65176c5857846cdc4a00393864fffd406c450b8f66ec8",
+        "current_live_execution_sha256": "0dc826513e0ee26b4f14cd642171daafb8debf65823af5416833df1b789f5bc5",
+        "preserved_archive_sha256": "e98db00c58df58c462b65176c5857846cdc4a00393864fffd406c450b8f66ec8",
+        "exact_preserved_archive_accepted": true,
+        "mutable_live_execution_excluded": true,
+        "already_resumed_live_execution_differs": true,
+        "wrong_actual_resumed_execution_archive_rejected": true,
+        "all_other_declared_refs_unchanged": true,
+        "registered_ref_count": 8
+      },
+      {
+        "course": "static_future",
+        "startup_manifest": "runs/static-future-best-parent-startup-v1/manifest.json",
+        "original_declared_execution_sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+        "current_live_execution_sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+        "preserved_archive_sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+        "exact_preserved_archive_accepted": true,
+        "mutable_live_execution_excluded": true,
+        "already_resumed_live_execution_differs": false,
+        "wrong_actual_resumed_execution_archive_rejected": null,
+        "all_other_declared_refs_unchanged": true,
+        "registered_ref_count": 392
+      }
+    ],
+    "helper_extracted_from_exact_future_reader_entry": true,
+    "gpu_or_model_inference_executed": false,
+    "all_other_declared_model_data_source_refs_rehashed_by_this_metadata_guard": false,
+    "completed_full_startup_proofs_reused": true,
+    "training_or_completed_startup_evidence_changed": false
+  },
+  "actual_reader_transition_verification": {
+    "status": "complete",
+    "old_reader_session": "xqgeneral-static-future-first-raw-validation-readback-v1",
+    "new_reader_session": "xqgeneral-static-future-first-raw-validation-readback-v2",
+    "owned_old_process_identities": {
+      "413742": {
+        "state": "S",
+        "starttime": "517522561"
+      },
+      "413743": {
+        "state": "S",
+        "starttime": "517522562"
+      },
+      "413744": {
+        "state": "S",
+        "starttime": "517522578"
+      }
+    },
+    "old_unchanged_refs": {
+      "entry.py": {
+        "path": "runs/static-future-first-raw-validation-readback-v1/entry.py",
+        "sha256": "87466489badb65e998229c0338eac2caf6f141236f62cd11f67cc2425f2474b4",
+        "bytes": 9859
+      },
+      "plan.json": {
+        "path": "runs/static-future-first-raw-validation-readback-v1/plan.json",
+        "sha256": "f7f73950def3fbd175b509728d8f534dba0aea042f2dde6864052e5f34058d2e",
+        "bytes": 1290
+      },
+      "source-run/source-manifest.json": {
+        "path": "runs/static-future-first-raw-validation-readback-v1/source-run/source-manifest.json",
+        "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+        "bytes": 6353
+      }
+    },
+    "new_waiting_observations": [
+      {
+        "phase": "before_old_retirement",
+        "index": 0,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v1": {
+            "pane_pid": 413742,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      },
+      {
+        "phase": "before_old_retirement",
+        "index": 1,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v1": {
+            "pane_pid": 413742,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      },
+      {
+        "phase": "before_old_retirement",
+        "index": 2,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v1": {
+            "pane_pid": 413742,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      },
+      {
+        "phase": "after_old_retirement",
+        "index": 0,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      },
+      {
+        "phase": "after_old_retirement",
+        "index": 1,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      },
+      {
+        "phase": "after_old_retirement",
+        "index": 2,
+        "new_reader_state": {
+          "status": "waiting_for_actual_third_course_step_512_raw_check",
+          "producer_session": "xqgeneral-recorded-foundation-clean-v3",
+          "gpu_model_loaded": false
+        },
+        "panes": {
+          "xqgeneral-recorded-foundation-clean-v3": {
+            "pane_pid": 90915,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-sequential-launch-v2": {
+            "pane_pid": 90918,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-sft-capability-launch-v2": {
+            "pane_pid": 90921,
+            "pane_dead": 0
+          },
+          "xqgeneral-clean-search-pilot-launch-v2": {
+            "pane_pid": 401942,
+            "pane_dead": 0
+          },
+          "xqgeneral-static-future-first-raw-validation-readback-v2": {
+            "pane_pid": 422094,
+            "pane_dead": 0
+          }
+        }
+      }
+    ],
+    "old_reader_was_waiting_without_model_or_raw_check_outputs": true,
+    "training_and_sft_capability_search_panes_untouched": true,
+    "old_reader_owned_processes_exited_after_bounded_wait": true,
+    "old_session_absent": true,
+    "signal_process_ids_preserved_before_retirement": true,
+    "all_four_original_non_observer_queues_live_before_and_after": true,
+    "all_actual_sources": {
+      "runs/static-future-first-raw-validation-readback-v1": {
+        "revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+        "source_files_rehashed": 67
+      },
+      "runs/static-future-first-raw-validation-readback-v2": {
+        "revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+        "source_files_rehashed": 67
+      }
+    },
+    "no_new_qa_labels_or_model_inference": true,
+    "initial_stage3_training_or_recipe_restarted": false,
+    "archive_binding_real_guard": {
+      "path": "runs/static-future-startup-archive-binding-real-readback-v1/verification.json",
+      "sha256": "cc8d10422b91bfa4b36c24d3dc40a0db7b87f4321879fb4fe098e28c6c44aa47",
+      "bytes": 1947
+    },
+    "goal_complete": false
+  },
+  "volatile_observation_input_archive_aliases": {
+    "runs/curriculum-human-engine-clean-v3/static_future/training/execution.json": {
+      "path": "runs/static-future-best-parent-startup-v1/initial-execution.json",
+      "sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+      "bytes": 8096
+    }
+  },
+  "cpu_suite": {
+    "tests_passed": 531,
+    "terminal": {
+      "path": "runs/third-course-reader-archive-binding-milestone-tests-v1/exit.json",
+      "sha256": "235ec520df5829b0e2c0db1123dec1666bd90accd573136e0f94244d0d021efb",
+      "bytes": 215
+    },
+    "source_test_bindings": {
+      "path": "runs/third-course-reader-archive-binding-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    },
+    "log": {
+      "path": "runs/third-course-reader-archive-binding-milestone-tests-v1/log.txt",
+      "sha256": "d7562950948cc61c60357e934b619c19f2d19c62acf8bb0f9dc7acaa9c54ea33",
+      "bytes": 672
+    },
+    "all_127_source_and_test_files_freshly_unchanged": true,
+    "recipe_unchanged": true,
+    "suite_rerun_for_this_milestone": true
+  },
+  "scope_limits": {
+    "new_raw_third_course_results_proven_by_this_guard": false,
+    "other_declared_model_data_refs_rehashed_by_metadata_guard": false,
+    "correct_preserved_archive_rehashed_again": true,
+    "all_other_declared_ref_values_preserved": true,
+    "full_startup_proofs_reused": true,
+    "no_false_alias_allowed_for_actual_resumed_execution": true,
+    "existing_gpu_sft_capability_search_jobs_restarted": false,
+    "old_waiting_reader_only_retired": true,
+    "completed_startup_manifests_rewritten": false,
+    "new_accepted_search_labels": 0,
+    "trained_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false
+  }
+}
