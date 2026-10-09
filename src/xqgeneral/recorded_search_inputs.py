@@ -17,7 +17,9 @@ from .symmetry import mirror_fen
 
 
 KINDS = {'recorded_human_match', 'published_recorded_match',
-         'recorded_computer_match', 'recorded_human_computer_match', 'recorded_tactical_line'}
+         'recorded_computer_match', 'recorded_human_computer_match', 'recorded_tactical_line',
+         'recorded_tactical_position'}
+TACTICAL_KINDS = {'recorded_tactical_line', 'recorded_tactical_position'}
 ARTIFACTS = ('manifest.json', 'roots.jsonl', 'counts.json', 'heldout-positions.json')
 TACTICAL_CONTEXT_FIELDS = ('source_initial_fen', 'declared_participants',
     'supplied_history_starts_at_standard_initial_position', 'pre_fragment_game_history_available',
@@ -33,7 +35,7 @@ def candidate_source_kinds(value):
     return set(value)
 
 
-def tactical_source_context(context, initial_fen, headers):
+def tactical_source_context(context, initial_fen, headers, *, position_only=False):
     """Validate the original supplied-history boundary without inventing its past."""
     if (not isinstance(context, dict) or not isinstance(initial_fen, str) or
             not isinstance(headers, dict) or
@@ -44,8 +46,8 @@ def tactical_source_context(context, initial_fen, headers):
         raise ValueError('Tactical source context lost its original FEN or missing-history fields')
     standard = (initial_fen.split()[:2] == START_FEN.split()[:2] and
                 context['source_initial_fen'].split()[4:] == ['0', '1'])
-    if (any(context[name] is not standard for name in
-            ['supplied_history_starts_at_standard_initial_position', 'pre_fragment_game_history_available']) or
+    if (context['supplied_history_starts_at_standard_initial_position'] is not standard or
+            context['pre_fragment_game_history_available'] is not (False if position_only else standard) or
             context['provided_line_is_best_move_label'] is not False or
             context['source_comments_or_analysis_branches_used_as_labels'] is not False):
         raise ValueError('Tactical source context changed its supplied-history or label boundary')
@@ -93,16 +95,26 @@ def checked_game(game, split_seed):
         separators=(',', ':')).encode()).hexdigest()
     if (game['game_id'] != 'recorded-' + identity or
             game['split'] != assigned_split(game['game_id'], split_seed) or
-            game['source_kind'] not in KINDS or not game['moves'] or
+            game['source_kind'] not in KINDS or
+            not game['moves'] and game['source_kind'] != 'recorded_tactical_position' or
             len(game['history']) != len(game['moves']) + 1 or
             game['history'][0] != game['initial_fen']):
         raise ValueError('Canonical game identity, history dimensions or split changed')
-    if game['source_kind'] == 'recorded_tactical_line':
+    if game['source_kind'] == 'recorded_tactical_position' and (
+            game['moves'] != [] or game['history'] != [game['initial_fen']] or
+            type(game['native_terminal'].get('ended')) is not bool):
+        raise ValueError('An isolated source position cannot invent a recorded continuation')
+    if game['source_kind'] in TACTICAL_KINDS:
         tactical_source_context({k: game.get(k) for k in TACTICAL_CONTEXT_FIELDS},
-                                game['initial_fen'], game['headers'])
+                                game['initial_fen'], game['headers'],
+                                position_only=game['source_kind'] == 'recorded_tactical_position')
 
 
 def root_order(game, seed, min_ply):
+    if game['source_kind'] == 'recorded_tactical_position':
+        if min_ply == 0 and game['native_terminal']['ended'] is False:
+            yield 0, 0
+        return
     # The terminal position is after the final move; its preceding decision is a valid root.
     end = len(game['moves'])
     pools = [[], [], []]
@@ -260,7 +272,7 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                             'provenance': ((game.get('provenance') + ';') if game.get('provenance') else '') +
                                           'unused_recorded_search_input',
                             'recorded_continuation_is_best_move_label': False}
-                        if game['source_kind'] == 'recorded_tactical_line':
+                        if game['source_kind'] in TACTICAL_KINDS:
                             row['recorded_source_context'] = {k: game[k] for k in TACTICAL_CONTEXT_FIELDS}
                         priority = hashlib.sha256(f'{seed}/{key}'.encode()).hexdigest()
                         cursor = database.execute('INSERT OR IGNORE INTO roots VALUES (?, ?, ?)',
@@ -272,7 +284,7 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                         accepted += 1
                         accepted_games.add(identity)
                         accepted_kind[game['source_kind']] += 1
-                        if game['source_kind'] == 'recorded_tactical_line':
+                        if game['source_kind'] in TACTICAL_KINDS:
                             accepted_context['from_standard_initial_position' if
                                 game['pre_fragment_game_history_available'] else 'pre_fragment_history_unavailable'] += 1
                         accepted_side['red' if row['fen'].split()[1] == 'w' else 'black'] += 1
@@ -310,6 +322,9 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
         counts.update(distinct_canonical_training_lines=len(accepted_games),
             tactical_candidate_counts_by_supplied_history_boundary=dict(accepted_context),
             supplied_history_context_preserved=True, phase_buckets_relative_to_supplied_line=True)
+    if accepted_kind.get('recorded_tactical_position'):
+        counts['isolated_source_position_candidates'] = accepted_kind['recorded_tactical_position']
+        counts['isolated_source_positions_have_no_recorded_continuation'] = True
     atomic_json(output / 'counts.json', counts)
     atomic_json(output / 'heldout-positions.json', sorted(reserved))
     config = {'games': list(map(str, games)), 'data': str(data), 'footprints': str(footprints),
@@ -366,9 +381,18 @@ def prepared_roots(pool, data, limit, seed, base_identities):
                 row.get('recorded_continuation_is_best_move_label') is not False or
                 'answer' in row or previous is not None and ordered <= previous):
             raise ValueError('Recorded roots changed their original training ownership or order')
-        if row['recorded_source_kind'] == 'recorded_tactical_line':
+        if row['recorded_source_kind'] in TACTICAL_KINDS:
             tactical_source_context(row.get('recorded_source_context'), row['initial_fen'],
-                                    row['recorded_source_headers'])
+                                    row['recorded_source_headers'],
+                                    position_only=row['recorded_source_kind'] == 'recorded_tactical_position')
+        elif 'recorded_source_context' in row:
+            raise ValueError('Tactical source context cannot change to an ordinary match')
+        if row['recorded_source_kind'] == 'recorded_tactical_position' and (
+                type(row.get('ply')) is not int or row['ply'] != 0 or row['moves'] != [] or
+                row['history'] != [row['initial_fen']] or row['fen'] != row['initial_fen'] or
+                row['future_moves'] != [] or row['future_branches'] != [] or
+                history_key(row['history']) != key):
+            raise ValueError('An isolated source position changed its zero-move root contract')
         keys.add(key)
         games[row['game_id']] += 1
         kinds[row['recorded_source_kind']] += 1

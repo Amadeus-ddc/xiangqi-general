@@ -87,7 +87,7 @@ def consolidation_messages(packet, fen, target):
               '只输出JSON对象，唯一字段explanation，为120到240字中文。')
     source_context = content.get('recorded_source_context')
     if isinstance(source_context, dict) and source_context.get('pre_fragment_game_history_available') is False:
-        system += ('来源只提供一个对局片段，起点之前的历史未提供。禁止杜撰此前的走子或布局过程；'
+        system += ('来源只提供一个局面或对局片段，起点之前的历史未提供。禁止杜撰此前的走子或布局过程；'
                    '棋手字段只作来源署名，不据此推断身份、棋风或赛事背景。')
     return [{'role':'system', 'content':system},
             {'role':'user', 'content':json.dumps(content, ensure_ascii=False)}]
