@@ -29,7 +29,7 @@ The current clean recorded-game foundation has completed one of four courses;
 the second course is training. Clean explanation SFT and accepted clean-model
 search labels remain pending. The reviewed initial corpus contains 10758/384/512
 training/validation/test rows, including existing color-derived rows. The joint
-487552-history search pool is candidate material, not accepted distillation
+495306-history search pool is candidate material, not accepted distillation
 labels or evidence of model strength. See `STATUS.md` for verified checkpoints.
 
 The original 80-step checkpoint is a historical pipeline pilot. Both first research arms
@@ -1441,41 +1441,50 @@ tests pass against 125 unchanged source/test bindings; 22 new cases and the
 
 The earlier two-pool inventory found 40 shared history keys and 541 old roots
 inside the new reservations, so those pools were not directly concatenated.
-`evidence/recorded-tactical-search-inputs-full-v1.json` now binds a joint pool
-rebuilt from all seven canonical sources with the full 2738116-position
-root/future/color reservation. It contains 487552 histories from 81694 canonical
-training lines: 87390 source-declared human-match, 387693 published-match,
-3487 human-computer and 8982 tactical histories, with no new color augmentation.
-Every candidate is compared field for field and all seven source files are
-freshly streamed and hashed. The independent reader natively replays all 8982
-tactical histories and recorded futures plus 192 sampled ordinary histories;
-the remaining full-match native proofs are reused from completed imports.
-Native rules are shared and sampling inclusion is not independently rewritten.
-Production takes 546.36 seconds and readback 777.42 seconds. The real adapter
-selects 512 roots, including four tactical roots, checks the full tail and hashes
-all three base course files. No student, teacher, engine or feature cache is
+The completed seven-source pool and its proof remain preserved.
+`evidence/recorded-all-sources-search-inputs-full-v1.json` binds the new joint
+pool rebuilt from all eight canonical sources with the full 2741974-position
+root/future/color reservation. It contains 495306 histories from 89448 canonical
+training identifiers: 87390 source-declared human-match, 387693 published-match,
+3487 human-computer, 8982 tactical-line and 7754 isolated-position histories,
+with no new color augmentation. Identifiers include fragments and zero-move
+positions; they are not all complete matches or independently sourced puzzles.
+Every candidate is compared field for field and all eight source files are
+freshly streamed and hashed. The independent reader natively checks all 8982
+tactical histories and recorded futures, all 7754 isolated positions and 192
+sampled ordinary histories. Remaining full-match native proofs are reused from
+completed imports. Native rules are shared; full-match and fragment sampling
+inclusion is not independently rewritten, while zero-move position inclusion
+is independently recomputed. Production takes 672.47 seconds and readback
+692.01 seconds. The real adapter selects 512 roots, including four tactical-line
+and nine isolated-position roots, preserves the 13 missing-prehistory markers,
+checks the full tail and hashes all three base course files. No student, teacher,
+engine or feature cache is
 loaded. The existing pilot and course/SFT queues keep their frozen contracts.
 Canonical source splits are not proved unseen by earlier training and are not
 new independent benchmark results. Accepted clean-model labels, trained
 search-distillation rounds and model benefit remain zero or unmeasured.
 
-The thirteenth second-course raw check at step 6656 scores 573/640 dynamic
-questions (89.53125%), including 92/128 move-list answers (71.875%). Static
-replay is 729/768 (94.921875%). Relative to step 5632, dynamic predictions
-correct 28 errors and introduce 22; static replay corrects 14 and introduces 29.
-Combined correctness falls from 1311 to 1302. The selected best remains step
-5632 with two checks without improvement. All thirteen checks use identical
+The fourteenth second-course raw check at step 7168 scores 582/640 dynamic
+questions (90.9375%), including 99/128 move-list answers (77.34375%). Static
+replay is 743/768 (96.7447917%). Relative to step 5632, dynamic predictions
+correct 34 errors and introduce 19; static replay corrects 19 and introduces 20.
+Combined correctness increases from 1311 to 1325 (94.1051136%). The selected
+best becomes step 7168 with zero checks without improvement. All fourteen checks use identical
 question identities, text, variants and gold answers. The native reader replays
 1299 histories, checks every candidate contract and hashes the actual 67-module
-execution source; see `evidence/dynamic-current-thirteenth-raw-validation-v1.json`.
+execution source; see `evidence/dynamic-current-fourteenth-raw-validation-v1.json`.
 
-`evidence/dynamic-current-learning-curve-v2.json` binds all thirteen checks and
-a continuous training-log prefix through step 6656. The last complete 512-update
-mean training loss is 0.0247276, versus 0.0273200 at step 6144. The 36 incorrect
-move lists include 10 with missing moves only, 12 with extra moves only and 14
-with both. Declining training loss does not establish future gains or an
+`evidence/dynamic-current-learning-curve-v4.json` binds all fourteen checks and
+a continuous training-log prefix through step 7168. Its vertical marker comes
+from the actual selected-best decision. The last complete 512-update mean
+training loss is 0.0224380, versus 0.0247276 at step 6656. The 29 incorrect
+move lists include six with missing moves only, nine with extra moves only, 13
+with both, and one with an order or duplicate mismatch. Recent validation gains
+are smaller than early gains, but move enumeration continues to improve.
+Declining training loss does not establish future gains or an
 overfitting cause. The existing best-validation policy continues through the
-next scheduled check at 7168; no live training or recipe is changed. Earlier
+next scheduled check at 7680; no live training or recipe is changed. Earlier
 curves and raw errors are preserved. One of four clean courses is complete;
 clean SFT, trained distillation and reliable strategic coaching are unproven.
 
