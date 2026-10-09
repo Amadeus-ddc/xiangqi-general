@@ -304,7 +304,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 第二门已在第 8704 步按三次无改善策略结束，并选用第 7168 步最佳权重：582／640 动态题、743／768 静态回放、1325／1408 综合（94.11%）。末次动态题为 590／640（92.19%），完整走法列表 100／128（78.13%），静态回放 726／768（94.53%），综合 1316／1408（93.47%）；相对最佳，动态净增 8 题，静态净减 17 题。十七次同题、原始正确数、原生答案及候选身份已读回，见 `evidence/dynamic-current-seventeenth-raw-validation-v1.json`；更新曲线见 `evidence/dynamic-current-learning-curve-v6.json`，最后完整 512 步平均损失为 0.017760。近期继续训练的动态收益被旧课回落抵消，实际控制器已按原配方交接，没有手动停训或改训练率。
 
-第三门静态未来已从该最佳权重启动：零更新时全部 258 个张量、139920416 个 FP32 参数逐位相同，新优化器、四卡前 20 次有限非零梯度和 6% 当前静态／8% 当前动态／86% 未来静态混合均已核验，见 `evidence/static-future-best-parent-startup-v1.json`。当前完成课程为 2／4；第 512 步原始验证的独立观察已排好，同时检查前两门回放及未来变化答案。本轮全部 531 项 CPU 测试通过；第三门问答成绩、四门完成、独立对弈棋力和可靠讲解仍待实际验证。
+第三门静态未来已从该最佳权重启动：零更新时全部 258 个张量、139920416 个 FP32 参数逐位相同，新优化器、四卡前 20 次有限非零梯度和 6% 当前静态／8% 当前动态／86% 未来静态混合均已核验，见 `evidence/static-future-best-parent-startup-v1.json`。当前完成课程为 2／4；第 512 步原始验证的独立观察已排好，同时检查前两门回放及未来变化答案。当前观察为 `xqgeneral-static-future-first-raw-validation-readback-v2`，启动执行声明按原 SHA256 绑定保存的 `initial-execution.json`，后续续跑更新的执行文件不影响过去的启动证据；旧 v1 等待观察已退役并保留，详见 `evidence/static-future-startup-archive-binding-v1.json`。全部 531 项 CPU 测试通过；第三门问答成绩、四门完成、独立对弈棋力和可靠讲解仍待实际验证。
 
 ```bash
 python scripts/freeze_run.py --output runs/recorded-foundation-clean-launch-v2/source-run -- \
