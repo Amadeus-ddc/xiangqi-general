@@ -1465,28 +1465,36 @@ Canonical source splits are not proved unseen by earlier training and are not
 new independent benchmark results. Accepted clean-model labels, trained
 search-distillation rounds and model benefit remain zero or unmeasured.
 
-The fourteenth second-course raw check at step 7168 scores 582/640 dynamic
-questions (90.9375%), including 99/128 move-list answers (77.34375%). Static
-replay is 743/768 (96.7447917%). Relative to step 5632, dynamic predictions
-correct 34 errors and introduce 19; static replay corrects 19 and introduces 20.
-Combined correctness increases from 1311 to 1325 (94.1051136%). The selected
-best becomes step 7168 with zero checks without improvement. All fourteen checks use identical
+The sixteenth second-course raw check at step 8192 scores 579/640 dynamic
+questions (90.46875%), including 99/128 move-list answers (77.34375%). Static
+replay is 742/768 (96.6145833%). Relative to step 5632, dynamic predictions
+correct 32 errors and introduce 20; static replay corrects 17 and introduces 19.
+Combined correctness is 1321/1408 (93.8210227%), the same as step 7680's
+581/640 dynamic and 740/768 static results. Neither exceeds step 7168's
+1325/1408 (94.1051136%); the selected best stays at 7168 with two checks
+without improvement. All sixteen checks use identical
 question identities, text, variants and gold answers. The native reader replays
 1299 histories, checks every candidate contract and hashes the actual 67-module
-execution source; see `evidence/dynamic-current-fourteenth-raw-validation-v1.json`.
+execution source; see `evidence/dynamic-current-fifteenth-raw-validation-v1.json`
+and `evidence/dynamic-current-sixteenth-raw-validation-v1.json`.
 
-`evidence/dynamic-current-learning-curve-v4.json` binds all fourteen checks and
-a continuous training-log prefix through step 7168. Its vertical marker comes
+`evidence/dynamic-current-learning-curve-v5.json` binds all sixteen checks and
+a continuous training-log prefix through step 8192. Its vertical marker comes
 from the actual selected-best decision. The last complete 512-update mean
-training loss is 0.0224380, versus 0.0247276 at step 6656. The 29 incorrect
-move lists include six with missing moves only, nine with extra moves only, 13
-with both, and one with an order or duplicate mismatch. Recent validation gains
-are smaller than early gains, but move enumeration continues to improve.
+training loss is 0.0190590, versus 0.0224380 at step 7168. The 29 incorrect
+move lists include 11 with missing moves only, ten with extra moves only and
+eight with both. Recent gains are smaller than early gains and the last two
+checks have no net validation improvement.
 Declining training loss does not establish future gains or an
 overfitting cause. The existing best-validation policy continues through the
-next scheduled check at 7680; no live training or recipe is changed. Earlier
+next scheduled check at 8704; a third check without improvement selects the
+best parent for the third course. No live training or recipe is changed. Earlier
 curves and raw errors are preserved. One of four clean courses is complete;
 clean SFT, trained distillation and reliable strategic coaching are unproven.
+The CPU third-course startup observer waits for the actual completed
+second-course manifest, derives its selected parent at that time and will check
+the zero-update weights and first 20 updates. Its waiting state is not proof
+that the third course has started or inherited the parent correctly.
 
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
