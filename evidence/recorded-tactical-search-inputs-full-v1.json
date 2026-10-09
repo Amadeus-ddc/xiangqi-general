@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "kind": "actual_joint_recorded_and_tactical_search_candidate_pool",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_execution_source_revision": "17f3420e303b5d0b6b2e0582c4ad633b98148544",
+  "artifacts": {
+    "producer_manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/manifest.json",
+      "sha256": "5e58d3c9e33f934b42dea674c0cf3804b754aeee9a7a371eeffada214cf8a2ba",
+      "bytes": 11586
+    },
+    "producer_verification_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/verification.json",
+      "sha256": "97cbec119b2a92b93ac86c44cee0e1e8551643863baaa4fad2b147e013a1be17",
+      "bytes": 2627
+    },
+    "producer_entry_py": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/entry.py",
+      "sha256": "40f5867d31ff96ce49e990f8bd14002ece11dda7073eb2161db29dbdf1acabc1",
+      "bytes": 1360
+    },
+    "producer_plan_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/plan.json",
+      "sha256": "87ef647c310f56d5795ee57f4c304f9faef1410464c8e7c27836ba9ee5386297",
+      "bytes": 2403
+    },
+    "producer_exit_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "producer_source-run_source-manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-v1/source-run/source-manifest.json",
+      "sha256": "bced231caeaeb9e62f8ca006ec2770710805bee95e446a0c8bdcbf8350dafc21",
+      "bytes": 6730
+    },
+    "independent_reader_manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/manifest.json",
+      "sha256": "1b39fa7e52f241aaf7592cd6c0c61da1575f238952b4c78e6477cd218a16bc54",
+      "bytes": 49964
+    },
+    "independent_reader_verification_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/verification.json",
+      "sha256": "5c037155e713c5a29fb59dd840786fbc57db654394baa8c025b03371679c2efa",
+      "bytes": 4617
+    },
+    "independent_reader_entry_py": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/entry.py",
+      "sha256": "5e8a792d71c13a661257e993adf71a13f675c210ebaa1791d5660b2a3e4e60df",
+      "bytes": 18424
+    },
+    "independent_reader_plan_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/plan.json",
+      "sha256": "dea8611f1a9a4e3fe7463a24911390038d0af982bae7ce4f60b9d0ff1367ca99",
+      "bytes": 1146
+    },
+    "independent_reader_exit_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "independent_reader_source-run_source-manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-full-readback-v1/source-run/source-manifest.json",
+      "sha256": "bced231caeaeb9e62f8ca006ec2770710805bee95e446a0c8bdcbf8350dafc21",
+      "bytes": 6730
+    },
+    "actual_consumer_manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/manifest.json",
+      "sha256": "ad7b9acc0e1d99a86c1d09568fa97866702571570f52556f01688f5995e30132",
+      "bytes": 11616
+    },
+    "actual_consumer_verification_json": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/verification.json",
+      "sha256": "de7830990003aa78b8961a3af82333c43a7c7284a26a1d851522bac673870412",
+      "bytes": 1416
+    },
+    "actual_consumer_entry_py": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/entry.py",
+      "sha256": "9b8f11def96b6b595669cf6699b09f02d6ef29e706b853ec93eb365f51b56a88",
+      "bytes": 3863
+    },
+    "actual_consumer_plan_json": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/plan.json",
+      "sha256": "c330f8e0c0dfd1dac56414869935f46004e322dbe1f9baf10690582a8f4b2577",
+      "bytes": 1088
+    },
+    "actual_consumer_exit_json": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "actual_consumer_source-run_source-manifest_json": {
+      "path": "runs/recorded-tactical-search-inputs-real-consumption-v1/source-run/source-manifest.json",
+      "sha256": "bced231caeaeb9e62f8ca006ec2770710805bee95e446a0c8bdcbf8350dafc21",
+      "bytes": 6730
+    },
+    "pool_manifest_json": {
+      "path": "data/recorded-tactical-search-inputs-full-v1/manifest.json",
+      "sha256": "279372a9518174dc6d6dcb506b0064e9641ae3f230d97a9f5a6bffbbd6d93531",
+      "bytes": 16524
+    },
+    "pool_roots_jsonl": {
+      "path": "data/recorded-tactical-search-inputs-full-v1/roots.jsonl",
+      "sha256": "37943c9cf6f57ac7a5e0cddf5fe884ebd424e0f6a99e81d3c08debd57e433a1f",
+      "bytes": 2845157157
+    },
+    "pool_counts_json": {
+      "path": "data/recorded-tactical-search-inputs-full-v1/counts.json",
+      "sha256": "eb14e09f3b0889d0020419f5d9d74629e61af5dc9a4e35369051e040379e5abe",
+      "bytes": 2266
+    },
+    "pool_heldout-positions_json": {
+      "path": "data/recorded-tactical-search-inputs-full-v1/heldout-positions.json",
+      "sha256": "83006cd4cd606ee0fbaebd29145cec759040fec46261079089c3874ce5b572ac",
+      "bytes": 171154879
+    }
+  },
+  "actual_preparation": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 546.3603439517319,
+    "peak_process_rss_kib": 1159016,
+    "candidate_counts": {
+      "candidate_training_histories": 487552,
+      "distinct_original_training_games": 81694,
+      "unique_canonical_source_games": 109937,
+      "canonical_game_splits": {
+        "validation": 11016,
+        "train": 87970,
+        "test": 10951
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_human_match": 87390,
+        "published_recorded_match": 387693,
+        "recorded_human_computer_match": 3487,
+        "recorded_tactical_line": 8982
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-games-ccpd-v3/games.jsonl": 76589,
+        "data/recorded-games-additional-v1/games.jsonl": 386639,
+        "data/modern-recorded-games-v2/games.jsonl": 1054,
+        "data/playstrategy-portable-real-import-v1-parallel/games.jsonl": 76,
+        "data/playstrategy-public-users-native-import-v1/games.jsonl": 14212,
+        "data/recorded-tactical-lines-ccpd-v1/games.jsonl": 8982
+      },
+      "candidate_counts_by_side": {
+        "black": 243851,
+        "red": 243701
+      },
+      "candidate_counts_by_game_phase": {
+        "1": 202187,
+        "2": 207831,
+        "0": 77534
+      },
+      "excluded": {
+        "already_used_or_reserved_game": 4848,
+        "heldout_root_or_recorded_future": 299945,
+        "already_used_full_history": 5924,
+        "duplicate_full_history": 2570
+      },
+      "reserved_game_identifiers": 22009,
+      "reserved_root_and_future_positions": 2738116,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false,
+      "distinct_canonical_training_lines": 81694,
+      "tactical_candidate_counts_by_supplied_history_boundary": {
+        "pre_fragment_history_unavailable": 7744,
+        "from_standard_initial_position": 1238
+      },
+      "supplied_history_context_preserved": true,
+      "phase_buckets_relative_to_supplied_line": true
+    },
+    "gpu_model_loaded": false,
+    "new_distillation_targets_generated": false
+  },
+  "independent_readback": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "seconds": 777.4237617105246,
+    "native_candidate_replay_workers": 8,
+    "every_selected_tactical_supplied_history_context_compared_to_source_record": true,
+    "canonical_training_identifiers_are_lines_not_all_full_matches": true,
+    "native_rules_implementation_shared_with_importer": true,
+    "unknown_pre_fragment_history_reconstructed": false,
+    "phase_buckets_relative_to_supplied_line": true,
+    "canonical_source_splits_claimed_unseen_by_prior_training": false,
+    "sampling_inclusion_algorithm_independently_reimplemented": false,
+    "all_original_candidates_compared_field_for_field": 487552,
+    "all_seven_canonical_source_files_independently_streamed_and_rehashed": true,
+    "all_original_training_ownership_keys_priority_and_per_game_caps_checked": true,
+    "all_candidate_roots_and_recorded_color_futures_disjoint_from_full_reservations": true,
+    "full_canonical_heldout_and_explanation_branch_color_reservations_recomputed": true,
+    "used_course_and_initial_teacher_games_and_history_keys_excluded": true,
+    "canonical_unique_games": 109937,
+    "candidate_counts": {
+      "candidate_training_histories": 487552,
+      "distinct_original_training_games": 81694,
+      "unique_canonical_source_games": 109937,
+      "canonical_game_splits": {
+        "validation": 11016,
+        "train": 87970,
+        "test": 10951
+      },
+      "duplicate_source_games": 1,
+      "candidate_counts_by_source_declared_kind": {
+        "recorded_human_match": 87390,
+        "published_recorded_match": 387693,
+        "recorded_human_computer_match": 3487,
+        "recorded_tactical_line": 8982
+      },
+      "candidate_counts_by_canonical_file": {
+        "data/recorded-games-ccpd-v3/games.jsonl": 76589,
+        "data/recorded-games-additional-v1/games.jsonl": 386639,
+        "data/modern-recorded-games-v2/games.jsonl": 1054,
+        "data/playstrategy-portable-real-import-v1-parallel/games.jsonl": 76,
+        "data/playstrategy-public-users-native-import-v1/games.jsonl": 14212,
+        "data/recorded-tactical-lines-ccpd-v1/games.jsonl": 8982
+      },
+      "candidate_counts_by_side": {
+        "black": 243851,
+        "red": 243701
+      },
+      "candidate_counts_by_game_phase": {
+        "1": 202187,
+        "2": 207831,
+        "0": 77534
+      },
+      "excluded": {
+        "already_used_or_reserved_game": 4848,
+        "heldout_root_or_recorded_future": 299945,
+        "already_used_full_history": 5924,
+        "duplicate_full_history": 2570
+      },
+      "reserved_game_identifiers": 22009,
+      "reserved_root_and_future_positions": 2738116,
+      "existing_used_full_history_keys": 133239,
+      "existing_used_game_identifiers": 5538,
+      "new_color_derived_candidates": 0,
+      "at_most_original_roots_per_game": 6,
+      "complete_canonical_native_import_reused": true,
+      "every_history_natively_replayed_again": false,
+      "all_canonical_heldout_histories_and_color_positions_reserved": true,
+      "all_existing_course_and_explanation_heldout_futures_reserved": true,
+      "heldout_moves_and_structured_answers_used_for_isolation_only": true,
+      "teacher_inference_executed": false,
+      "gpu_or_model_loaded": false,
+      "new_distillation_targets_generated": false,
+      "student_benefit_proven": false,
+      "distinct_canonical_training_lines": 81694,
+      "tactical_candidate_counts_by_supplied_history_boundary": {
+        "pre_fragment_history_unavailable": 7744,
+        "from_standard_initial_position": 1238
+      },
+      "supplied_history_context_preserved": true,
+      "phase_buckets_relative_to_supplied_line": true
+    },
+    "candidate_decade_counts_from_declared_headers": {
+      "2010": 276260,
+      "2000": 89186,
+      "unknown": 56107,
+      "1990": 30853,
+      "2020": 19114,
+      "1980": 12868,
+      "1950": 737,
+      "1960": 897,
+      "1970": 1302,
+      "1930": 138,
+      "1920": 54,
+      "1910": 18,
+      "1940": 18
+    },
+    "native_selected_supplied_pasts_and_recorded_futures_replayed": 9174,
+    "native_full_replay_counts_by_source_declared_kind": {
+      "published_recorded_match": 64,
+      "recorded_human_match": 64,
+      "recorded_human_computer_match": 64,
+      "recorded_tactical_line": 8982
+    },
+    "every_candidate_natively_replayed_again": false,
+    "every_tactical_candidate_natively_replayed_again": true,
+    "full_match_native_sample_per_source_kind_cap": 64,
+    "completed_canonical_native_imports_reused": true,
+    "model_or_feature_cache_loaded": false,
+    "new_distillation_targets_generated": false,
+    "teacher_inference_executed": false,
+    "student_benefit_proven": false,
+    "actual_preparation_source_revision": "17f3420e303b5d0b6b2e0582c4ad633b98148544",
+    "all_71_producer_source_files_rehashed": true
+  },
+  "actual_production_adapter_consumption": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "actual_selected_original_roots": 512,
+    "exact_first_selected_seeded_records_preserved": true,
+    "selection_limit": 512,
+    "selected_counts_by_source_declared_kind": {
+      "published_recorded_match": 406,
+      "recorded_human_match": 98,
+      "recorded_human_computer_match": 4,
+      "recorded_tactical_line": 4
+    },
+    "selected_unknown_pre_fragment_history_roots": 4,
+    "source_context_retained_by_production_adapter": true,
+    "canonical_source_splits_claimed_unseen_by_prior_training": false,
+    "complete_pool_tail_ownership_counts_and_order_checked": true,
+    "actual_additional_reserved_positions": 2738116,
+    "all_three_base_course_split_files_freshly_hashed": true,
+    "base_course_identities": {
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      },
+      "data/research-human-engine-v1/validation.jsonl": {
+        "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+        "bytes": 1059759384
+      },
+      "data/research-human-engine-v1/test.jsonl": {
+        "sha256": "7d33fc8e573046792d695397130c20c7671aa303ea21386a7d739c81386a580d",
+        "bytes": 1035798738
+      }
+    },
+    "seconds": 50.58667970262468,
+    "model_gpu_or_engine_loaded": false,
+    "student_search_or_teacher_generation_executed": false
+  },
+  "scope_limits": {
+    "joint_selection_recomputed_from_all_canonical_sources": true,
+    "prior_completed_pool_rows_concatenated": false,
+    "full_history_keys_unique_within_joint_pool": true,
+    "source_declared_kind_or_identity_authenticated": false,
+    "all_candidate_rows_compared_field_for_field": true,
+    "all_tactical_candidates_freshly_natively_replayed": true,
+    "all_full_match_candidates_freshly_natively_replayed": false,
+    "full_match_native_sample_count": 192,
+    "native_canonical_imports_reused_for_other_full_match_histories": true,
+    "sampling_inclusion_algorithm_independently_reimplemented": false,
+    "canonical_lines_claimed_independent_full_games_or_puzzles": false,
+    "old_uniform_pilot_512_proves_tactical_search_yield": false,
+    "new_student_teacher_or_engine_inference_performed": false,
+    "new_accepted_clean_model_search_labels": 0,
+    "trained_distillation_rounds": 0,
+    "student_strength_or_coaching_benefit_proven": false,
+    "prior_live_training_or_pilot_inputs_modified": false
+  },
+  "unchanged_code_cpu_suite": {
+    "passed": 501,
+    "bindings": {
+      "path": "runs/tactical-search-milestone-tests-v3/source-test-bindings.json",
+      "sha256": "b9148063fe6cf90000e82eca5a21d622c28f84ac9304a8fa53342a2a06524175",
+      "bytes": 12974
+    },
+    "terminal": {
+      "path": "runs/tactical-search-milestone-tests-v3/exit.json",
+      "sha256": "2d0c0db6e0eb24dc09e56073bc3e0e781a25e10b5c3452f76efc149bcc1649a7",
+      "bytes": 117
+    }
+  }
+}

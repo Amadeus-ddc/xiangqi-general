@@ -1,0 +1,1078 @@
+{
+  "schema_version": 1,
+  "kind": "actual_second_course_learning_curve_diagnostic",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifacts": {
+    "manifest_json": {
+      "path": "runs/dynamic-current-learning-curve-v1/manifest.json",
+      "sha256": "edb9f17abd5b197cdf34fea14db87d464787f8a7f9adaba763c9f4903303db53",
+      "bytes": 4857
+    },
+    "analysis_json": {
+      "path": "runs/dynamic-current-learning-curve-v1/analysis.json",
+      "sha256": "6e8a2ee836911e1293e332a20be9bb2b3cc53f468e0e64844050496270a36bf0",
+      "bytes": 23927
+    },
+    "entry_py": {
+      "path": "runs/dynamic-current-learning-curve-v1/entry.py",
+      "sha256": "987d654a9b7ca04a6108ec4eedc0ff26b6304038fba4c6b0cfe4ac2c30aacf86",
+      "bytes": 8792
+    },
+    "plan_json": {
+      "path": "runs/dynamic-current-learning-curve-v1/plan.json",
+      "sha256": "17f7f15c77324266fb5ca9688bd782416f7e49e3e8ee216ed7b7081bcb4e9101",
+      "bytes": 876
+    },
+    "exit_json": {
+      "path": "runs/dynamic-current-learning-curve-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "validation-series_csv": {
+      "path": "runs/dynamic-current-learning-curve-v1/validation-series.csv",
+      "sha256": "48c157754b2f69886b5e4763d721ca69d3bdd05bce8a508f857753cb457ad4cb",
+      "bytes": 917
+    },
+    "learning-curves_png": {
+      "path": "runs/dynamic-current-learning-curve-v1/learning-curves.png",
+      "sha256": "cbd4650880b684625ef5bc996a96b453d65808ad516ccf9cc67fef099f39ff1d",
+      "bytes": 245132
+    },
+    "learning-curves_svg": {
+      "path": "runs/dynamic-current-learning-curve-v1/learning-curves.svg",
+      "sha256": "26f87bd2949dcb705f89eb4629e392b830a9d70c45250384090b9c57e4ba1c6f",
+      "bytes": 296008
+    },
+    "selection-snapshot_json": {
+      "path": "runs/dynamic-current-learning-curve-v1/selection-snapshot.json",
+      "sha256": "eac81e45765f497380c4d6deee1d4b944c0da34881de1a193959fd5936aedae7",
+      "bytes": 24617
+    },
+    "training-prefix_jsonl": {
+      "path": "runs/dynamic-current-learning-curve-v1/training-prefix.jsonl",
+      "sha256": "13f0ea55470ebf3f0b68c7dc2781378adb4b59bbb1e57e1e078002d334a81cdc",
+      "bytes": 1111246
+    }
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "raw_validation_steps": [
+      512,
+      1024,
+      1536,
+      2048,
+      2560,
+      3072,
+      3584,
+      4096,
+      4608,
+      5120,
+      5632,
+      6144
+    ],
+    "all_12_checks_same_1408_ids_game_stage_task_questions_variants_and_gold": true,
+    "all_raw_correctness_and_numerators_recomputed": true,
+    "raw_generation_oracle_repaired": false,
+    "independent_test_answers_used": false,
+    "series": [
+      {
+        "step": 512,
+        "combined_correct": 1066,
+        "combined_n": 1408,
+        "combined_accuracy": 0.7571022727272727,
+        "courses": {
+          "dynamic_current": {
+            "correct": 334,
+            "n": 640,
+            "accuracy": 0.521875
+          },
+          "static_current": {
+            "correct": 732,
+            "n": 768,
+            "accuracy": 0.953125
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 116,
+            "n": 128,
+            "accuracy": 0.90625
+          },
+          "dynamic_current/moves": {
+            "correct": 18,
+            "n": 128,
+            "accuracy": 0.140625
+          },
+          "dynamic_current/checks": {
+            "correct": 73,
+            "n": 128,
+            "accuracy": 0.5703125
+          },
+          "static_current/material": {
+            "correct": 120,
+            "n": 128,
+            "accuracy": 0.9375
+          },
+          "dynamic_current/illegal": {
+            "correct": 111,
+            "n": 128,
+            "accuracy": 0.8671875
+          },
+          "dynamic_current/captures": {
+            "correct": 16,
+            "n": 128,
+            "accuracy": 0.125
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "correct": 115,
+            "n": 128,
+            "accuracy": 0.8984375
+          },
+          "static_current/piece": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          }
+        }
+      },
+      {
+        "step": 1024,
+        "combined_correct": 1165,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8274147727272727,
+        "courses": {
+          "dynamic_current": {
+            "correct": 426,
+            "n": 640,
+            "accuracy": 0.665625
+          },
+          "static_current": {
+            "correct": 739,
+            "n": 768,
+            "accuracy": 0.9622395833333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 36,
+            "n": 128,
+            "accuracy": 0.28125
+          },
+          "dynamic_current/checks": {
+            "correct": 87,
+            "n": 128,
+            "accuracy": 0.6796875
+          },
+          "static_current/material": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "dynamic_current/illegal": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "dynamic_current/captures": {
+            "correct": 51,
+            "n": 128,
+            "accuracy": 0.3984375
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "correct": 118,
+            "n": 128,
+            "accuracy": 0.921875
+          },
+          "static_current/piece": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          }
+        }
+      },
+      {
+        "step": 1536,
+        "combined_correct": 1207,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8572443181818182,
+        "courses": {
+          "dynamic_current": {
+            "correct": 468,
+            "n": 640,
+            "accuracy": 0.73125
+          },
+          "static_current": {
+            "correct": 739,
+            "n": 768,
+            "accuracy": 0.9622395833333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 126,
+            "n": 128,
+            "accuracy": 0.984375
+          },
+          "dynamic_current/moves": {
+            "correct": 38,
+            "n": 128,
+            "accuracy": 0.296875
+          },
+          "dynamic_current/checks": {
+            "correct": 111,
+            "n": 128,
+            "accuracy": 0.8671875
+          },
+          "static_current/material": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "dynamic_current/illegal": {
+            "correct": 125,
+            "n": 128,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/captures": {
+            "correct": 68,
+            "n": 128,
+            "accuracy": 0.53125
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "correct": 118,
+            "n": 128,
+            "accuracy": 0.921875
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 2048,
+        "combined_correct": 1245,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8842329545454546,
+        "courses": {
+          "dynamic_current": {
+            "correct": 503,
+            "n": 640,
+            "accuracy": 0.7859375
+          },
+          "static_current": {
+            "correct": 742,
+            "n": 768,
+            "accuracy": 0.9661458333333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 56,
+            "n": 128,
+            "accuracy": 0.4375
+          },
+          "dynamic_current/checks": {
+            "correct": 112,
+            "n": 128,
+            "accuracy": 0.875
+          },
+          "static_current/material": {
+            "correct": 125,
+            "n": 128,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/illegal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/captures": {
+            "correct": 80,
+            "n": 128,
+            "accuracy": 0.625
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 126,
+            "n": 128,
+            "accuracy": 0.984375
+          },
+          "static_current/rank": {
+            "correct": 121,
+            "n": 128,
+            "accuracy": 0.9453125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 2560,
+        "combined_correct": 1250,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8877840909090909,
+        "courses": {
+          "dynamic_current": {
+            "correct": 517,
+            "n": 640,
+            "accuracy": 0.8078125
+          },
+          "static_current": {
+            "correct": 733,
+            "n": 768,
+            "accuracy": 0.9544270833333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/moves": {
+            "correct": 58,
+            "n": 128,
+            "accuracy": 0.453125
+          },
+          "dynamic_current/checks": {
+            "correct": 117,
+            "n": 128,
+            "accuracy": 0.9140625
+          },
+          "static_current/material": {
+            "correct": 118,
+            "n": 128,
+            "accuracy": 0.921875
+          },
+          "dynamic_current/illegal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/captures": {
+            "correct": 88,
+            "n": 128,
+            "accuracy": 0.6875
+          },
+          "static_current/locate": {
+            "correct": 116,
+            "n": 128,
+            "accuracy": 0.90625
+          },
+          "static_current/count": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "correct": 116,
+            "n": 128,
+            "accuracy": 0.90625
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 3072,
+        "combined_correct": 1264,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8977272727272727,
+        "courses": {
+          "dynamic_current": {
+            "correct": 536,
+            "n": 640,
+            "accuracy": 0.8375
+          },
+          "static_current": {
+            "correct": 728,
+            "n": 768,
+            "accuracy": 0.9479166666666666
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 126,
+            "n": 128,
+            "accuracy": 0.984375
+          },
+          "dynamic_current/moves": {
+            "correct": 70,
+            "n": 128,
+            "accuracy": 0.546875
+          },
+          "dynamic_current/checks": {
+            "correct": 120,
+            "n": 128,
+            "accuracy": 0.9375
+          },
+          "static_current/material": {
+            "correct": 110,
+            "n": 128,
+            "accuracy": 0.859375
+          },
+          "dynamic_current/illegal": {
+            "correct": 126,
+            "n": 128,
+            "accuracy": 0.984375
+          },
+          "dynamic_current/captures": {
+            "correct": 94,
+            "n": 128,
+            "accuracy": 0.734375
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "correct": 121,
+            "n": 128,
+            "accuracy": 0.9453125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 3584,
+        "combined_correct": 1267,
+        "combined_n": 1408,
+        "combined_accuracy": 0.8998579545454546,
+        "courses": {
+          "dynamic_current": {
+            "correct": 530,
+            "n": 640,
+            "accuracy": 0.828125
+          },
+          "static_current": {
+            "correct": 737,
+            "n": 768,
+            "accuracy": 0.9596354166666666
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 61,
+            "n": 128,
+            "accuracy": 0.4765625
+          },
+          "dynamic_current/checks": {
+            "correct": 121,
+            "n": 128,
+            "accuracy": 0.9453125
+          },
+          "static_current/material": {
+            "correct": 123,
+            "n": 128,
+            "accuracy": 0.9609375
+          },
+          "dynamic_current/illegal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/captures": {
+            "correct": 93,
+            "n": 128,
+            "accuracy": 0.7265625
+          },
+          "static_current/locate": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/count": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "correct": 116,
+            "n": 128,
+            "accuracy": 0.90625
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 4096,
+        "combined_correct": 1287,
+        "combined_n": 1408,
+        "combined_accuracy": 0.9140625,
+        "courses": {
+          "dynamic_current": {
+            "correct": 551,
+            "n": 640,
+            "accuracy": 0.8609375
+          },
+          "static_current": {
+            "correct": 736,
+            "n": 768,
+            "accuracy": 0.9583333333333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 77,
+            "n": 128,
+            "accuracy": 0.6015625
+          },
+          "dynamic_current/checks": {
+            "correct": 122,
+            "n": 128,
+            "accuracy": 0.953125
+          },
+          "static_current/material": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "dynamic_current/illegal": {
+            "correct": 126,
+            "n": 128,
+            "accuracy": 0.984375
+          },
+          "dynamic_current/captures": {
+            "correct": 98,
+            "n": 128,
+            "accuracy": 0.765625
+          },
+          "static_current/locate": {
+            "correct": 117,
+            "n": 128,
+            "accuracy": 0.9140625
+          },
+          "static_current/count": {
+            "correct": 125,
+            "n": 128,
+            "accuracy": 0.9765625
+          },
+          "static_current/rank": {
+            "correct": 114,
+            "n": 128,
+            "accuracy": 0.890625
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 4608,
+        "combined_correct": 1292,
+        "combined_n": 1408,
+        "combined_accuracy": 0.9176136363636364,
+        "courses": {
+          "dynamic_current": {
+            "correct": 559,
+            "n": 640,
+            "accuracy": 0.8734375
+          },
+          "static_current": {
+            "correct": 733,
+            "n": 768,
+            "accuracy": 0.9544270833333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 80,
+            "n": 128,
+            "accuracy": 0.625
+          },
+          "dynamic_current/checks": {
+            "correct": 122,
+            "n": 128,
+            "accuracy": 0.953125
+          },
+          "static_current/material": {
+            "correct": 113,
+            "n": 128,
+            "accuracy": 0.8828125
+          },
+          "dynamic_current/illegal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/captures": {
+            "correct": 102,
+            "n": 128,
+            "accuracy": 0.796875
+          },
+          "static_current/locate": {
+            "correct": 115,
+            "n": 128,
+            "accuracy": 0.8984375
+          },
+          "static_current/count": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "correct": 122,
+            "n": 128,
+            "accuracy": 0.953125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 5120,
+        "combined_correct": 1299,
+        "combined_n": 1408,
+        "combined_accuracy": 0.9225852272727273,
+        "courses": {
+          "dynamic_current": {
+            "correct": 559,
+            "n": 640,
+            "accuracy": 0.8734375
+          },
+          "static_current": {
+            "correct": 740,
+            "n": 768,
+            "accuracy": 0.9635416666666666
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 82,
+            "n": 128,
+            "accuracy": 0.640625
+          },
+          "dynamic_current/checks": {
+            "correct": 122,
+            "n": 128,
+            "accuracy": 0.953125
+          },
+          "static_current/material": {
+            "correct": 118,
+            "n": 128,
+            "accuracy": 0.921875
+          },
+          "dynamic_current/illegal": {
+            "correct": 125,
+            "n": 128,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/captures": {
+            "correct": 102,
+            "n": 128,
+            "accuracy": 0.796875
+          },
+          "static_current/locate": {
+            "correct": 117,
+            "n": 128,
+            "accuracy": 0.9140625
+          },
+          "static_current/count": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "correct": 121,
+            "n": 128,
+            "accuracy": 0.9453125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 5632,
+        "combined_correct": 1311,
+        "combined_n": 1408,
+        "combined_accuracy": 0.9311079545454546,
+        "courses": {
+          "dynamic_current": {
+            "correct": 567,
+            "n": 640,
+            "accuracy": 0.8859375
+          },
+          "static_current": {
+            "correct": 744,
+            "n": 768,
+            "accuracy": 0.96875
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 86,
+            "n": 128,
+            "accuracy": 0.671875
+          },
+          "dynamic_current/checks": {
+            "correct": 120,
+            "n": 128,
+            "accuracy": 0.9375
+          },
+          "static_current/material": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "dynamic_current/illegal": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/captures": {
+            "correct": 106,
+            "n": 128,
+            "accuracy": 0.828125
+          },
+          "static_current/locate": {
+            "correct": 124,
+            "n": 128,
+            "accuracy": 0.96875
+          },
+          "static_current/count": {
+            "correct": 127,
+            "n": 128,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "correct": 113,
+            "n": 128,
+            "accuracy": 0.8828125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 6144,
+        "combined_correct": 1306,
+        "combined_n": 1408,
+        "combined_accuracy": 0.9275568181818182,
+        "courses": {
+          "dynamic_current": {
+            "correct": 570,
+            "n": 640,
+            "accuracy": 0.890625
+          },
+          "static_current": {
+            "correct": 736,
+            "n": 768,
+            "accuracy": 0.9583333333333334
+          }
+        },
+        "tasks": {
+          "static_current/empty": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/moves": {
+            "correct": 87,
+            "n": 128,
+            "accuracy": 0.6796875
+          },
+          "dynamic_current/checks": {
+            "correct": 123,
+            "n": 128,
+            "accuracy": 0.9609375
+          },
+          "static_current/material": {
+            "correct": 120,
+            "n": 128,
+            "accuracy": 0.9375
+          },
+          "dynamic_current/illegal": {
+            "correct": 125,
+            "n": 128,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/captures": {
+            "correct": 107,
+            "n": 128,
+            "accuracy": 0.8359375
+          },
+          "static_current/locate": {
+            "correct": 111,
+            "n": 128,
+            "accuracy": 0.8671875
+          },
+          "static_current/count": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "correct": 121,
+            "n": 128,
+            "accuracy": 0.9453125
+          },
+          "static_current/piece": {
+            "correct": 128,
+            "n": 128,
+            "accuracy": 1.0
+          }
+        }
+      }
+    ],
+    "paired_5632_to_6144": {
+      "dynamic_current": {
+        "n": 640,
+        "before_correct": 567,
+        "after_correct": 570,
+        "corrected": 30,
+        "new_errors": 27
+      },
+      "static_current": {
+        "n": 768,
+        "before_correct": 744,
+        "after_correct": 736,
+        "corrected": 17,
+        "new_errors": 25
+      }
+    },
+    "move_list_error_categories_at_6144": {
+      "missing_only": 19,
+      "missing_and_extra": 12,
+      "extra_only": 10
+    },
+    "training_prefix_rows": 6535,
+    "training_loss_windows": [
+      {
+        "from_step": 1,
+        "through_step": 512,
+        "updates": 512,
+        "loss_mean": 1.3837606002925895,
+        "loss_median": 0.8075712323188782,
+        "complete_512_update_window": true
+      },
+      {
+        "from_step": 1537,
+        "through_step": 2048,
+        "updates": 512,
+        "loss_mean": 0.11252272746060044,
+        "loss_median": 0.11026424914598465,
+        "complete_512_update_window": true
+      },
+      {
+        "from_step": 3585,
+        "through_step": 4096,
+        "updates": 512,
+        "loss_mean": 0.04565879443180165,
+        "loss_median": 0.045445267111063004,
+        "complete_512_update_window": true
+      },
+      {
+        "from_step": 4609,
+        "through_step": 5120,
+        "updates": 512,
+        "loss_mean": 0.034093062165993615,
+        "loss_median": 0.033095572143793106,
+        "complete_512_update_window": true
+      },
+      {
+        "from_step": 5633,
+        "through_step": 6144,
+        "updates": 512,
+        "loss_mean": 0.027319972854456864,
+        "loss_median": 0.026368428952991962,
+        "complete_512_update_window": true
+      },
+      {
+        "from_step": 6145,
+        "through_step": 6535,
+        "updates": 391,
+        "loss_mean": 0.024737944261973625,
+        "loss_median": 0.023691141977906227,
+        "complete_512_update_window": false
+      }
+    ],
+    "selected_policy": {
+      "stop": false,
+      "selected_step": 5632,
+      "steps_completed": 6144,
+      "checks_without_improvement": 1,
+      "stopping_reason": null,
+      "selected_accuracy": 0.9311079545454546,
+      "selected_minimum_task_accuracy": 0.671875
+    },
+    "native_answer_and_checkpoint_verification_reused_from_completed_twelfth_reader": true,
+    "not_a_prediction_of_future_accuracy": true,
+    "current_training_modified": false
+  },
+  "interpretation": {
+    "continued_gain_observed_but_rate_slowing": true,
+    "dynamic_gain_2048_to_4096_percentage_points": 7.5,
+    "dynamic_gain_4096_to_6144_percentage_points": 2.96875,
+    "last_512_updates_dynamic_net_correct_change": 3,
+    "last_512_updates_static_net_correct_change": -8,
+    "combined_best_step_at_snapshot": 5632,
+    "recommended_next_action": "Retain current best-validation selection and inspect next two scheduled 512-update checks; reset patience only for measured improvement.",
+    "future_gain_or_overfitting_cause_proven": false,
+    "raw_move_list_errors_are_missing_or_extra_moves_not_only_order": true
+  },
+  "training_stopped_restarted_or_recipe_changed": false
+}

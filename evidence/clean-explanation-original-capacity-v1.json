@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "kind": "actual_clean_initial_explanation_original_and_color_counts",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "manifest": {
+    "path": "runs/clean-explanation-original-capacity-readback-v1/manifest.json",
+    "sha256": "2529ae7c1b60f0dc21ef9efbe48dc82e34e5a6b70edadc29af175b422d9077e9",
+    "bytes": 851
+  },
+  "verification": {
+    "path": "runs/clean-explanation-original-capacity-readback-v1/verification.json",
+    "sha256": "9dafffb2e9e682bf612ccbce54188e3d5fb9d6af0d8633d599eb2b3cb83c5d63",
+    "bytes": 1700
+  },
+  "exit": {
+    "path": "runs/clean-explanation-original-capacity-readback-v1/exit.json",
+    "sha256": "e89df0eae5ec7db81135aed16463968955c578bcc4f2ec43172eff351f080c17",
+    "bytes": 17
+  },
+  "counts": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "split_counts": {
+      "train": {
+        "rows": 10758,
+        "color_derived_rows": 3139,
+        "rows_without_color_derivation_marker": 7619,
+        "distinct_file_game_identifiers": 2716,
+        "file": {
+          "path": "data/astra-explanations-clean-v1/train.jsonl",
+          "sha256": "53af7fabdf41685c6db7b4ef0f91d52351495dece1368c1d2d37381e3c858b3a",
+          "bytes": 78447739
+        }
+      },
+      "validation": {
+        "rows": 384,
+        "color_derived_rows": 96,
+        "rows_without_color_derivation_marker": 288,
+        "distinct_file_game_identifiers": 216,
+        "file": {
+          "path": "data/astra-explanations-clean-v1/validation.jsonl",
+          "sha256": "42016c1563668c16ad6ebfcc8e4fc9fe457ec6e9a7e560935b22192158afdbf4",
+          "bytes": 2659721
+        }
+      },
+      "test": {
+        "rows": 512,
+        "color_derived_rows": 128,
+        "rows_without_color_derivation_marker": 384,
+        "distinct_file_game_identifiers": 274,
+        "file": {
+          "path": "data/astra-explanations-clean-v1/test.jsonl",
+          "sha256": "9d9422acd9311e69a087a81acd06361089547ea7502c2a6cacbe22e0d7432b1d",
+          "bytes": 3590926
+        }
+      }
+    },
+    "all_three_original_label_files_freshly_hashed": true,
+    "original_or_color_derived_status_counted_from_preserved_augmentation_parent": true,
+    "unmarked_rows_claimed_independent_human_games": false,
+    "new_annotations_generated": 0,
+    "native_tokenizer_or_semantic_review_repeated": false,
+    "source_label_bytes_changed": false,
+    "student_or_teacher_loaded": false,
+    "model_training_started": false,
+    "distinct_games_are_file_identifiers_not_authenticated_player_games": true
+  },
+  "paper_reference": {
+    "url": "https://arxiv.org/html/2610.03695v1",
+    "section": "Appendix B.2, Table 12",
+    "raw_seed_positions": 15000,
+    "filtered_total": 8602,
+    "train": 8402,
+    "validation": 200,
+    "epochs": 4
+  },
+  "does_not_establish_matched_quality_or_independent_sample_equivalence": true
+}
