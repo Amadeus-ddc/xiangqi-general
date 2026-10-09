@@ -1545,12 +1545,11 @@ are verified by the separate seventeenth reader rather than replayed again by
 the startup observer. Full feature/train/validation hashes are reused from the
 completed full preflight, with current size and file identity checks. All 531
 CPU tests pass with 127 unchanged source/test identities and an unchanged
-training recipe. Two of four courses are complete. An independent CPU reader
-is queued for the third course's real step-512 answers and old-course replay;
-third-course QA, four-course completion, clean SFT, trained distillation and
-reliable strategic coaching remain unproven.
+training recipe. Two of four courses are complete. The third course's first
+raw step-512 QA and native readback are complete, as described below; four-course completion,
+clean SFT, trained distillation and reliable strategic coaching remain unproven.
 
-The current step-512 CPU observer is v2. Its startup dependency binds the
+The completed step-512 CPU observer is v2. Its startup dependency binds the
 original execution declaration to the preserved, byte-identical
 `initial-execution.json`; subsequent real training resumes may replace the live
 `execution.json`. `evidence/static-future-startup-archive-binding-v1.json`
@@ -1568,6 +1567,31 @@ search panes remain alive at three observations before and after the transition;
 both 67-file observer sources are rehashed. Only the waiting CPU observer changes.
 The completed startup proof, curriculum recipe, GPU training and selection are
 preserved. This proves no new third-course raw accuracy or model benefit.
+
+`evidence/static-future-first-raw-validation-v1.json` records the actual third
+course's first raw step-512 validation: 655/768 future-static answers (85.2865%),
+741/768 static-current replay (96.4844%), 573/640 dynamic-current replay
+(89.5313%), and 1969/2176 overall (90.4871%). Future count/empty/locate/material/
+piece/rank numerators are 125/128/106/85/128/83, each over 128. The independent
+reader checks all 2176 native answers across 1907 histories, including 768 future
+answers in 738 distinct future contexts, the actual selected step-7168 parent,
+finite FP32 checkpoint contracts and all 67 producer source files. Full feature
+and training hashes reuse completed preflight identities rather than being
+computed again. The course remains active under its 2048-update minimum budget.
+
+A separate artifact readback rehashes all 404 declared references (19548722232
+bytes) and recalculates raw correctness and all 17 task numerators. It reuses
+the completed native replay. The real resumed execution differs from the initial
+archive, while the completed first-raw proof excludes the mutable live file.
+The 1408 prior-course IDs and reference answers match the selected second-course
+check, but 954 wording variants change; cross-course aggregate differences do
+not provide a same-wording paired estimate of forgetting. The actual step-1024
+reader is queued with 67 frozen files and three verified waiting observations,
+requiring identical IDs, games, stages, tasks, questions, variants and gold before
+counting corrections and new errors. The four original training/downstream panes
+remain live. Fresh 531-test CPU verification passes with 127 unchanged source/test
+bindings and the unchanged curriculum recipe. There are no independent test
+answers, repaired predictions, completed clean SFT or trained distillation rounds.
 
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
