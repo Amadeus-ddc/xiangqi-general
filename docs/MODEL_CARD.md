@@ -1509,15 +1509,46 @@ move lists include 11 with missing moves only, ten with extra moves only and
 eight with both. Recent gains are smaller than early gains and the last two
 checks have no net validation improvement.
 Declining training loss does not establish future gains or an
-overfitting cause. The existing best-validation policy continues through the
-next scheduled check at 8704; a third check without improvement selects the
-best parent for the third course. No live training or recipe is changed. Earlier
-curves and raw errors are preserved. One of four clean courses is complete;
-clean SFT, trained distillation and reliable strategic coaching are unproven.
-The CPU third-course startup observer waits for the actual completed
-second-course manifest, derives its selected parent at that time and will check
-the zero-update weights and first 20 updates. Its waiting state is not proof
-that the third course has started or inherited the parent correctly.
+overfitting cause. At that sixteen-check snapshot the policy was waiting for
+step 8704 and one of four clean courses was complete. Earlier curves and raw
+errors remain preserved; the following completed handoff supersedes that wait.
+
+The seventeenth check at step 8704 scores 590/640 dynamic questions (92.1875%),
+including 100/128 move-list answers (78.125%), and 726/768 static replay
+(94.53125%). Combined correctness is 1316/1408 (93.4659091%). Relative to the
+selected step 7168, dynamic predictions correct 19 errors and introduce 11,
+while static replay corrects 13 and introduces 30: a net gain of eight dynamic
+answers and loss of seventeen old-course answers. All seventeen checks use the
+same 1408 question identities, text, variants and gold; every raw numerator is
+recomputed. The native reader replays 1299 histories, validates all candidate
+contracts and hashes the 67-file actual execution source. See
+`evidence/dynamic-current-seventeenth-raw-validation-v1.json`.
+
+`evidence/dynamic-current-learning-curve-v6.json` binds the continuous 8704-row
+training prefix and preserves the first sixteen series values exactly. The last
+512-update mean loss is 0.0177602; the 28 incorrect move lists have eleven
+missing-only, ten extra-only and seven mixed errors. The actual controller
+completes the second course after three checks without improvement and selects
+step 7168, whose combined correctness is 1325/1408 (94.1051136%). Late dynamic
+gains are offset by old-course regression. The recipe and live training are not
+manually changed; rule-question accuracy does not establish playing strength.
+
+The third course now starts from that actual selected parent, SHA256
+`1996f8a3aa0bde98414604e9acc8407b40370c8bd80266421124166a9b0a01e0`.
+`evidence/static-future-best-parent-startup-v1.json` verifies the actual completed
+second-course handoff, bitwise inheritance of all 258 tensors and 139920416 FP32
+parameters at update zero, a fresh optimizer, four owned ranks and the first
+twenty updates' finite nonzero gradients. It checks the full execution config
+and 6% static-current / 8% dynamic-current / 86% static-future mixture. All
+second-course candidate contracts and scores are recomputed; native answers
+are verified by the separate seventeenth reader rather than replayed again by
+the startup observer. Full feature/train/validation hashes are reused from the
+completed full preflight, with current size and file identity checks. All 531
+CPU tests pass with 127 unchanged source/test identities and an unchanged
+training recipe. Two of four courses are complete. An independent CPU reader
+is queued for the third course's real step-512 answers and old-course replay;
+third-course QA, four-course completion, clean SFT, trained distillation and
+reliable strategic coaching remain unproven.
 
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
@@ -1558,8 +1589,9 @@ phase bucket does not identify a real game phase. Preparation takes 53.62
 seconds, readback 102.97 seconds and real consumption 22.61 seconds. All 531
 CPU tests pass with 127 unchanged source/test bindings, including 30 new
 position-contract cases. Native rules are loaded; neural models, external
-search engines and feature caches are not used for this preparation. Existing
-pools and four training/waiting queues retain their frozen inputs. Pools are
+search engines and feature caches are not used for this preparation.
+At that isolated-pool preparation snapshot, the existing pools and four
+training/waiting queues retained their frozen inputs. Pools are
 not simply concatenated; joint future mining needs the shared reservations.
 No new clean-model labels, distillation training or model benefit is proved.
 The upstream MIT declaration does not independently authenticate underlying

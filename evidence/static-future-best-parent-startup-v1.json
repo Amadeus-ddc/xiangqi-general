@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "kind": "actual_static_future_best_parent_startup",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_training_and_observer_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "source_file_count": 67,
+  "artifacts": {
+    "entry_py": {
+      "path": "runs/static-future-best-parent-startup-v1/entry.py",
+      "sha256": "9f57783ed654d52f9fdba9db549e244f61590cc9e1f1a4afcf9c424801ba20c2",
+      "bytes": 11454
+    },
+    "plan_json": {
+      "path": "runs/static-future-best-parent-startup-v1/plan.json",
+      "sha256": "071c4902d549153cd06907b4103bb265fac3a5568767acd467cac665a97949be",
+      "bytes": 1084
+    },
+    "manifest_json": {
+      "path": "runs/static-future-best-parent-startup-v1/manifest.json",
+      "sha256": "ca7f6e6423735811f3feea581131d613667a2d27401af00f647ab7b0c05221c3",
+      "bytes": 93889
+    },
+    "verification_json": {
+      "path": "runs/static-future-best-parent-startup-v1/verification.json",
+      "sha256": "0b342f98552e1ec3a0af4d21f5b5ff28317dde3d50fd8578c9654773cdf2fb54",
+      "bytes": 2958
+    },
+    "exit_json": {
+      "path": "runs/static-future-best-parent-startup-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "initial-step-0_pt": {
+      "path": "runs/static-future-best-parent-startup-v1/initial-step-0.pt",
+      "sha256": "5357d81387a193d98268bf534985a7cb7baa22bd798c28937a8cdc78eba29c34",
+      "bytes": 559769491
+    },
+    "initial-execution_json": {
+      "path": "runs/static-future-best-parent-startup-v1/initial-execution.json",
+      "sha256": "8e88cc3ea73ca07069a3e4ec5284a02c5b2fc92d39fcc702586fdc9632a871c8",
+      "bytes": 8096
+    },
+    "initial-config_json": {
+      "path": "runs/static-future-best-parent-startup-v1/initial-config.json",
+      "sha256": "3938e58a47f02b7aed5322c177cb71422815d97ee46828b3d46de3875b939a69",
+      "bytes": 1670
+    },
+    "first-twenty-updates_json": {
+      "path": "runs/static-future-best-parent-startup-v1/first-twenty-updates.json",
+      "sha256": "5e30632829258b4a7d25c7528f0472d37289f1beea79ec929474b20b1d0bf8a4",
+      "bytes": 3715
+    },
+    "source-run_source-manifest_json": {
+      "path": "runs/static-future-best-parent-startup-v1/source-run/source-manifest.json",
+      "sha256": "ef46a168e1a6cc1cf2e9301e6059e71c95e89788eb844c52e9848e2402cddb63",
+      "bytes": 6353
+    }
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "static_future",
+    "actual_updates_verified": 20,
+    "global_batch_size": 256,
+    "world_size": 4,
+    "selected_second_course_parent_step": 7168,
+    "selected_parent_sha256": "1996f8a3aa0bde98414604e9acc8407b40370c8bd80266421124166a9b0a01e0",
+    "second_course_actual_steps": 8704,
+    "second_course_selection_decision": {
+      "stop": true,
+      "selected_step": 7168,
+      "steps_completed": 8704,
+      "checks_without_improvement": 3,
+      "stopping_reason": "validation_plateau",
+      "selected_accuracy": 0.9410511363636364,
+      "selected_minimum_task_accuracy": 0.7734375
+    },
+    "all_second_course_raw_candidate_contracts_and_scores_recomputed": true,
+    "native_second_course_answers_recomputed_again_by_this_observer": false,
+    "actual_controller_course_handoff_verified": true,
+    "actual_zero_update_parameters_bitwise_equal_selected_parent": true,
+    "actual_zero_update_state_checks": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "optimizer_resumed_from_prior_course": false,
+    "first_twenty_gradients_finite_nonzero": true,
+    "first_training_loss": 0.7120528817176819,
+    "twentieth_training_loss": 0.9358932375907898,
+    "actual_owned_worker_assignments": [
+      {
+        "rank": 0,
+        "local_rank": 0,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 1,
+        "local_rank": 1,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 2,
+        "local_rank": 2,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      },
+      {
+        "rank": 3,
+        "local_rank": 3,
+        "world_size": 4,
+        "cuda_visible_devices": "0,1,2,3"
+      }
+    ],
+    "course_replay": {
+      "static_current": 0.06,
+      "dynamic_current": 0.08,
+      "static_future": 0.86
+    },
+    "all_67_actual_producer_and_observer_source_files_freshly_hashed": true,
+    "large_input_hashes_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      },
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/validation.jsonl": {
+        "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+        "bytes": 1059759384
+      }
+    },
+    "full_feature_cache_rehashed_again_by_observer": false,
+    "raw_third_course_gate_completed": false,
+    "clean_courses_completed": 2,
+    "new_sft_started": false,
+    "trained_search_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false,
+    "independent_test_used_for_training_or_selection": false
+  },
+  "independent_second_course_final_raw_answers": {
+    "path": "runs/dynamic-current-seventeenth-raw-validation-readback-v1/manifest.json",
+    "sha256": "48ced67c621354f692600e534edbce30ba0ebacbbe6ca9c68f48aa5c0bc1a28a",
+    "bytes": 49075
+  },
+  "second_course_completed_manifest": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/manifest.json",
+    "sha256": "a03320220fed807dc83eece4b86649c4fd79f9740646f976c729457eca2ef6a7",
+    "bytes": 111334
+  },
+  "unchanged_code_cpu_suite": {
+    "passed": 531,
+    "bindings": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    },
+    "terminal": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/exit.json",
+      "sha256": "7a514ab5ca89c58690a2342ff7b3375459e0615e1db2f0ac78ff6aacb16e1ac9",
+      "bytes": 215
+    },
+    "log": {
+      "path": "runs/second-course-seventeen-checks-milestone-tests-v1/log.txt",
+      "sha256": "ab98806973a608a8a7ba8958025208f775aac5d66b8e9ec54dd0b4a84f43f96a",
+      "bytes": 672
+    },
+    "all_127_source_and_test_files_freshly_unchanged": true,
+    "suite_rerun_for_this_milestone": true
+  },
+  "next_scheduled_third_course_raw_check": {
+    "step": 512,
+    "session": "xqgeneral-static-future-first-raw-validation-readback-v1",
+    "plan": {
+      "path": "runs/static-future-first-raw-validation-readback-v1/plan.json",
+      "sha256": "f7f73950def3fbd175b509728d8f534dba0aea042f2dde6864052e5f34058d2e",
+      "bytes": 1290
+    },
+    "entry": {
+      "path": "runs/static-future-first-raw-validation-readback-v1/entry.py",
+      "sha256": "87466489badb65e998229c0338eac2caf6f141236f62cd11f67cc2425f2474b4",
+      "bytes": 9859
+    },
+    "source_manifest": {
+      "path": "runs/static-future-first-raw-validation-readback-v1/source-run/source-manifest.json",
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+      "bytes": 6353
+    },
+    "source_files_rehashed": 67,
+    "model_loaded": false,
+    "raw_third_course_answers_not_yet_completed": true
+  },
+  "scope_limits": {
+    "complete_zero_update_inheritance_and_first_20_updates_verified": true,
+    "all_second_course_native_answers_recomputed_by_separate_17th_reader": true,
+    "native_second_course_answers_recomputed_again_by_startup_observer": false,
+    "large_feature_train_validation_hashes_reused_from_completed_full_preflight": true,
+    "raw_third_course_gate_completed": false,
+    "clean_courses_completed": 2,
+    "clean_sft_completed": false,
+    "new_accepted_clean_search_labels": 0,
+    "trained_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false,
+    "independent_test_used": false,
+    "existing_training_and_waiting_jobs_restarted": false
+  }
+}
