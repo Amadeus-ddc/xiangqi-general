@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "kind": "actual_dynamic_current_sixteenth_raw_validation",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_qa_and_training_execution_revision": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+  "independent_reader_revision": "22c96f4ca1f35d42cc8caa2a52e5faada7585146",
+  "artifacts": {
+    "manifest_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/manifest.json",
+      "sha256": "c1f0863f5914a1e22d39650b249919dd49511e8722c6ad2037e902f35c5e7fe3",
+      "bytes": 47787
+    },
+    "verification_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/verification.json",
+      "sha256": "5b55978d02ac6cdbcc98e5698ce50520febbdec307cb52a812aec2e050e7eb22",
+      "bytes": 3537
+    },
+    "entry_py": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/entry.py",
+      "sha256": "f283cadcb68bcb6c1583fd59119cc1813437253e27b35a35a6a4955461ee0564",
+      "bytes": 8182
+    },
+    "plan_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/plan.json",
+      "sha256": "cc5e45bbae31ff462bbb98e2e4541ee0350c5c5b22ff1fc7b9f8fa35e06207fa",
+      "bytes": 1049
+    },
+    "exit_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/exit.json",
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2",
+      "bytes": 21
+    },
+    "native-sample-readback_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/native-sample-readback.json",
+      "sha256": "14f5293aae48e1f275a0eaccbf15024d2e4467e84ac020f4f2f50afc30022c83",
+      "bytes": 361676
+    },
+    "source-run_source-manifest_json": {
+      "path": "runs/dynamic-current-sixteenth-raw-validation-readback-v1/source-run/source-manifest.json",
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701",
+      "bytes": 6353
+    }
+  },
+  "actual_selected_best_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-7168/qa/predictions.jsonl",
+    "sha256": "2faa616dc0214510a8b5541960db38be562ae946b75e7766ae940d30f8f10b46",
+    "bytes": 511114
+  },
+  "actual_previous_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-7680/qa/predictions.jsonl",
+    "sha256": "3875ff0487d79d1ea9aaa0125a70227d3b128bf8e7b6ebcb01fbfc4bc814603a",
+    "bytes": 510996
+  },
+  "actual_after_predictions": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-8192/qa/predictions.jsonl",
+    "sha256": "0249aec58e8764cdda876ea05bebfa66e9f3dbca245be24f5104871857e4ce58",
+    "bytes": 511013
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "dynamic_current",
+    "actual_step": 8192,
+    "raw_gate": {
+      "examples": 1408,
+      "accuracy": 0.9382102272727273,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.828125
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.9375
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.984375
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.7734375
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.921875
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.9375
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.9453125
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.9661458333333334,
+          "minimum_task_accuracy": 0.921875,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.9046875,
+          "minimum_task_accuracy": 0.7734375,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "native_answers_recomputed": 1408,
+    "distinct_native_histories_replayed": 1299,
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 5632,
+    "selected_parent_sha256": "56f596cbc3086bbcaf4022b64b8043936a4b9f764b221ec5b22b2e1159ae0173",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "second_course_validation_selection_minimum_steps": 4096,
+    "second_course_completed_by_declared_policy_at_this_check": false,
+    "validation_selection_decision": {
+      "stop": false,
+      "selected_step": 7168,
+      "steps_completed": 8192,
+      "checks_without_improvement": 2,
+      "stopping_reason": null,
+      "selected_accuracy": 0.9410511363636364,
+      "selected_minimum_task_accuracy": 0.7734375
+    },
+    "actual_controller_course_handoff_verified": false,
+    "clean_courses_completed_by_declared_policy_at_this_check": 1,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "full_series_identity_and_statistics_readback": {
+    "path": "runs/dynamic-current-learning-curve-v5/analysis.json",
+    "sha256": "8e6ae1c3aee48a518ad9c2911ae507b761af53cf622125e7564ad7f15b85922e",
+    "bytes": 31686
+  },
+  "validation_selection_snapshot_decision_at_this_check": {
+    "stop": false,
+    "selected_step": 7168,
+    "steps_completed": 8192,
+    "checks_without_improvement": 2,
+    "stopping_reason": null,
+    "selected_accuracy": 0.9410511363636364,
+    "selected_minimum_task_accuracy": 0.7734375
+  },
+  "same_question_checks_compared_in_full_series": 16,
+  "same_question_checks_in_native_reader_history": 16,
+  "first_course_5632_static_sample_is_different": true,
+  "course_finished_by_this_interim_check": false,
+  "new_sft_or_distillation_training_completed": false,
+  "independent_test_used": false,
+  "paired_selected_best_7168_to_8192_recomputed_from_raw_answers": {
+    "dynamic_current": {
+      "examples": 640,
+      "before_correct": 582,
+      "after_correct": 579,
+      "corrected": 17,
+      "new_errors": 20
+    },
+    "static_current": {
+      "examples": 768,
+      "before_correct": 743,
+      "after_correct": 742,
+      "corrected": 15,
+      "new_errors": 16
+    }
+  },
+  "paired_previous_7680_to_8192_recomputed_from_raw_answers": {
+    "dynamic_current": {
+      "examples": 640,
+      "before_correct": 581,
+      "after_correct": 579,
+      "corrected": 17,
+      "new_errors": 19
+    },
+    "static_current": {
+      "examples": 768,
+      "before_correct": 740,
+      "after_correct": 742,
+      "corrected": 16,
+      "new_errors": 14
+    }
+  },
+  "unchanged_code_cpu_suite": {
+    "passed": 531,
+    "bindings": {
+      "path": "runs/tactical-position-milestone-checks-v4/source-test-bindings.json",
+      "sha256": "6e3017bdfc0b4ad09e9aea618a5f34d031ee1d7ca7cee1d28728f40883f38a6f",
+      "bytes": 13189
+    },
+    "terminal": {
+      "path": "runs/tactical-position-milestone-checks-v4/exit.json",
+      "sha256": "8684f06247f1b0f40372c8b974adb595ab0cb495b235c5ce0789e21b459d3cba",
+      "bytes": 116
+    },
+    "all_127_source_and_test_files_freshly_unchanged": true,
+    "suite_rerun_for_this_document_only_update": false
+  }
+}
