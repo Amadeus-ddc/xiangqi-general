@@ -304,7 +304,7 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 第二门已在第 8704 步按三次无改善策略结束，并选用第 7168 步最佳权重：582／640 动态题、743／768 静态回放、1325／1408 综合（94.11%）。末次动态题为 590／640（92.19%），完整走法列表 100／128（78.13%），静态回放 726／768（94.53%），综合 1316／1408（93.47%）；相对最佳，动态净增 8 题，静态净减 17 题。十七次同题、原始正确数、原生答案及候选身份已读回，见 `evidence/dynamic-current-seventeenth-raw-validation-v1.json`；更新曲线见 `evidence/dynamic-current-learning-curve-v6.json`，最后完整 512 步平均损失为 0.017760。近期继续训练的动态收益被旧课回落抵消，实际控制器已按原配方交接，没有手动停训或改训练率。
 
-第三门静态未来从第二门第 7168 步最佳权重启动，初始化逐位相同及新优化器已核验，见 `evidence/static-future-best-parent-startup-v1.json`。完成课程仍为 2／4。最新第 3072 步：未来静态 738／768（96.09%）、静态回放 754／768（98.18%）、动态回放 567／640（88.59%），综合 2059／2176（94.62%），见 `evidence/static-future-sixth-raw-validation-v1.json`。与第 2560 步为同一套题、问法及金标，未来／静态／动态净变化为 +1／−1／+23；吃子枚举从 86 恢复到 102／128，走法枚举从 83 到 88／128。原生入口核验全部 2176 个答案、1907 个历史及 738 个未来上下文，完整缓存／训练身份沿用完成预检。前五次曲线保留在第五次证明中；控制器已选第 3072 步并按原配方继续，第 3584 步观察会话为 `xqgeneral-static-future-seventh-raw-validation-readback-v1`。四门完成、新 SFT、蒸馏和独立棋力／讲解验收仍待执行。
+第三门静态未来从第二门第 7168 步最佳权重启动，初始化逐位相同及新优化器已核验，见 `evidence/static-future-best-parent-startup-v1.json`。完成课程仍为 2／4。最新第 3584 步：未来静态 751／768（97.79%）、静态回放 757／768（98.57%）、动态回放 559／640（87.34%），综合 2067／2176（94.99%），见 `evidence/static-future-seventh-raw-validation-v1.json`。与第 3072 步为同一套题、问法及金标，未来／静态／动态净变化为 +13／+3／−8；吃子枚举 102→103／128、将军 121→122／128，走法枚举 88→79／128。原生入口核验全部 2176 个答案、1907 个历史及 738 个未来上下文，完整缓存／训练身份沿用完成预检。前五次曲线及后续原始下降记录保留；控制器已选第 3584 步并按原配方继续，第 4096 步观察会话为 `xqgeneral-static-future-eighth-raw-validation-readback-v1`。综合改善不代表走法能力全面改善，四门完成、新 SFT、蒸馏和独立棋力／讲解验收仍待执行。
 
 走法枚举诊断覆盖 19 个检查点、2432 份回答，并重新核验同批 128 个完整历史及原生答案，见 `evidence/curriculum-move-enumeration-diagnostic-v1.json`。第二门末次 28 道错误均有实际漏招或多招；第三门第 1024 步 41 道错误只有 1 道纯顺序问题，炮题净回落 7 道。按棋子／答案长度分组和逐走法精确率只作诊断，保留原始严格评分；这不证明错误原因或实际棋力。这份历史诊断止于第 1024 步；最新三类诊断及原生验证见下文及上文证明。
 
@@ -639,6 +639,20 @@ python scripts/freeze_run.py --output runs/clean-sft-capability-launch-v2/source
 该配方固定全部 384 条不同完整历史键的验证记录、批量 4 和每局面 100 万节点独立引擎预算；三组均保留原始生成，以正常、清零和错配专家特征进行配对比较。`evaluate_explanations --memory normal|zero|shuffled` 也可单独使用；每个错配批次须至少两条样本，不能用单条尾批充当消融。正常组全部接受有规则事实和独立评分依据的完整 BF16 教师盲评，原始拒收与条件均分分别保留；不把神经评分视为人工评价或棋力证明。
 
 检查 `validation/state.json`、`commands.jsonl`、各组 `raw-predictions.jsonl`／`judged-predictions.jsonl`、盲评接受／拒收及阶段清单。现有任务存活时继续观察；已退出后可用同一冻结入口与原参数加 `--resume`，复用经哈希核验的完整阶段及教师逐条缓存。未完成的原始评测目录保留并拒绝覆盖，此时须用新输出重做该实验。真实等待守卫见 `evidence/clean-sft-capability-real-wait-guard-v1.json`；17 项新增受控检查及全部 370 项 CPU 测试通过。当前入口只在未完成的新 SFT 前等待，实际能力评测和盲评尚未执行。
+
+干净初始讲解模型的完整对弈基线排在上述配对能力评测之后。`configs/matches-clean-sft-baseline-v1.json` 固定已有 64 个保留验证开局、双方颜色和 100／1000／10000 节点预算，共 384 局，每局最多新增 256 半回合。保留原始讲解首着和错误，非法首着判负，截尾单列；GPU 2 与使用 GPU 0 的搜索试批分开。
+
+```bash
+python scripts/freeze_run.py --output runs/clean-sft-match-baseline-launch-v1/source-run -- \
+  python -u -m xqgeneral.clean_sft_matches \
+  --pipeline runs/clean-sft-sequential-launch-v2/pipeline \
+  --validation runs/clean-sft-capability-launch-v2/validation \
+  --producer-session xqgeneral-clean-sft-capability-launch-v2 \
+  --config configs/matches-clean-sft-baseline-v1.json \
+  --output runs/clean-sft-match-baseline-launch-v1/baseline
+```
+
+该队列核验实际完成的四门后全参数 SFT、同份模型的三组原始验证及开局输入，再启动完整对弈。检查 `baseline/state.json`、`commands.jsonl` 和 `matches/`；原任务退出后，同一冻结命令加 `--resume` 可复用逐回合记录。32 项新增检查及全部 701 项 CPU 测试通过。实际冻结进程已完成输入检查并等待，尚未执行训练学生对弈，见 `evidence/clean-sft-full-match-baseline-real-wait-v1.json`。这份基线用于后续蒸馏比较，最终独立测试仍待最终选模。
 
 对弈对手只读取固定节点预算返回的合法走法并保存完整引擎输出，不要求附带完整评分，也不追加搜索节点。独立质量评分和训练标签继续使用严格评分接口，缺少完整评分时不会被视为有效评分。
 

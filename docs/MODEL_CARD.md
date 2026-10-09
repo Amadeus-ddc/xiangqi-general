@@ -32,13 +32,14 @@ training/validation/test rows, including existing color-derived rows. The joint
 495306-history search pool is candidate material, not accepted distillation
 labels or evidence of model strength. See `STATUS.md` for verified checkpoints.
 
-At third-course step 3072, future-static accuracy is 738/768, static replay
-754/768 and dynamic replay 567/640, for 2059/2176 raw exact answers. On the
-identical questions from step 2560, future/static/dynamic changes are +1/-1/+23.
-Capture enumeration recovers from 86 to 102/128; move enumeration rises from
-83 to 88/128. Selection adopts step 3072 and training continues. Native answers,
-complete histories and checkpoint identity were verified; the previous decline
-is preserved. See `evidence/static-future-sixth-raw-validation-v1.json`.
+At third-course step 3584, future-static accuracy is 751/768, static replay
+757/768 and dynamic replay 559/640, for 2067/2176 raw exact answers. On the
+identical questions from step 3072, future/static/dynamic changes are +13/+3/-8.
+Move enumeration falls from 88 to 79/128 while capture/check enumeration rises
+by one answer each. Selection adopts step 3584; training continues. All 2176
+native answers, full histories and checkpoint identity were verified. Aggregate
+improvement does not establish a broad move-capability gain. See
+`evidence/static-future-seventh-raw-validation-v1.json`.
 
 The original 80-step checkpoint is a historical pipeline pilot. Both first research arms
 completed four 800-step courses, but balanced validation accuracy and ablations
@@ -58,6 +59,15 @@ protocol games. A second resume loaded neither player and changed no match files
 all 515 match outputs were hashed again. The 669 CPU tests passed.
 This control uses no trained-student inference and measures neither student
 strength nor explanation quality. See `evidence/match-resume-real-v1.json`.
+
+A clean initial-model full-match baseline is queued after actual four-course SFT
+and paired capability validation. It uses 64 protected validation openings,
+both colors, three node budgets and up to 256 new plies per game: 384 planned
+matches, with raw failures and censoring retained. The frozen worker passed
+input admission and is waiting; trained-student matches have not executed.
+The 701 CPU tests passed. This baseline will support distillation comparison;
+final independent testing remains pending. See
+`evidence/clean-sft-full-match-baseline-real-wait-v1.json`.
 
 ## Differences from the paper
 
