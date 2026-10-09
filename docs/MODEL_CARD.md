@@ -1633,6 +1633,30 @@ source/test identities and recipe. The completed step-1536 reader is followed by
 the actual waiting step-2048 reader. Two courses are complete; clean SFT,
 trained distillation and independent playing/coaching strength remain unproven.
 
+`evidence/static-future-fourth-raw-validation-v1.json` verifies actual step 2048:
+727/768 future-static answers (94.6615%), 755/768 static replay (98.3073%),
+558/640 dynamic replay (87.1875%) and 2040/2176 overall (93.75%). All 2176 IDs,
+questions, variants and gold match step 1536. Future/static/dynamic answers correct
+28/15/29 prior errors and introduce 20/11/25, for a total net gain of 16. All native
+answers, 1907 histories, 768 future answers, 738 future contexts and 67 producer
+files are verified. Cache/train identities reuse completed full preflight; no
+additional second full-reference hash pass is claimed.
+
+The reusable CPU command separately diagnoses 256 move-list answers and rechecks
+128 native histories and answers while freshly hashing the validation corpus.
+Move-list correctness rises from 76 to 79/128 (61.7188%), with 18 corrections and
+15 new errors. All 49 current errors have missing or extra moves: 50 missing moves
+across 25 answers and 59 extra moves across 43 answers, all illegal. There are no
+format-only failures. Missing moves decrease by 11 but illegal extras increase by
+19; rook strict answers fall by two. This does not establish recovery of rule
+competence. The four-check plot binds 2048 continuous training updates; its first
+three series/windows match the preserved plot, and the last 512-update mean loss
+is 0.0255115. The minimum budget is met, but the course continues with provisional
+best step 2048 and zero stale checks. The step-2560 native reader is waiting with
+67 pinned files. All 560 CPU tests pass with 129 unchanged source/test identities
+and recipe. Two courses are complete; clean SFT, trained distillation and independent
+playing/coaching strength remain unproven.
+
 `evidence/curriculum-move-enumeration-diagnostic-v1.json` diagnoses 2432 preserved
 answers from the second course's 17 checks and the third course's first two
 checks. It freshly scans and hashes all 173272 validation rows and replays the

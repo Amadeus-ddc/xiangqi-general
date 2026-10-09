@@ -1,0 +1,1153 @@
+{
+  "schema_version": 1,
+  "kind": "actual_third_course_fourth_raw_validation_with_move_diagnosis_and_curve",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "actual_step": 2048,
+  "raw_total_correct": 2040,
+  "raw_total_examples": 2176,
+  "raw_correct_by_course": {
+    "dynamic_current": 558,
+    "static_future": 727,
+    "static_current": 755
+  },
+  "raw_task_correct": {
+    "dynamic_current/captures": 102,
+    "static_future/piece": 128,
+    "static_current/locate": 124,
+    "static_future/rank": 109,
+    "static_future/count": 127,
+    "static_current/rank": 123,
+    "static_future/empty": 128,
+    "dynamic_current/checks": 123,
+    "static_current/count": 128,
+    "static_current/piece": 128,
+    "static_current/material": 124,
+    "static_future/locate": 119,
+    "static_future/material": 116,
+    "dynamic_current/illegal": 127,
+    "dynamic_current/moves": 79,
+    "static_current/empty": 128,
+    "dynamic_current/legal": 127
+  },
+  "verification": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "course": "static_future",
+    "actual_step": 2048,
+    "raw_gate": {
+      "examples": 2176,
+      "accuracy": 0.9375,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 128,
+          "accuracy": 0.796875
+        },
+        "dynamic_current/checks": {
+          "n": 128,
+          "accuracy": 0.9609375
+        },
+        "dynamic_current/illegal": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "dynamic_current/legal": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "dynamic_current/moves": {
+          "n": 128,
+          "accuracy": 0.6171875
+        },
+        "static_current/count": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "static_current/material": {
+          "n": 128,
+          "accuracy": 0.96875
+        },
+        "static_current/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 128,
+          "accuracy": 0.9609375
+        },
+        "static_future/count": {
+          "n": 128,
+          "accuracy": 0.9921875
+        },
+        "static_future/empty": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_future/locate": {
+          "n": 128,
+          "accuracy": 0.9296875
+        },
+        "static_future/material": {
+          "n": 128,
+          "accuracy": 0.90625
+        },
+        "static_future/piece": {
+          "n": 128,
+          "accuracy": 1.0
+        },
+        "static_future/rank": {
+          "n": 128,
+          "accuracy": 0.8515625
+        }
+      },
+      "courses": {
+        "static_current": {
+          "examples": 768,
+          "accuracy": 0.9830729166666666,
+          "minimum_task_accuracy": 0.9609375,
+          "passed": false
+        },
+        "dynamic_current": {
+          "examples": 640,
+          "accuracy": 0.871875,
+          "minimum_task_accuracy": 0.6171875,
+          "passed": false
+        },
+        "static_future": {
+          "examples": 768,
+          "accuracy": 0.9466145833333334,
+          "minimum_task_accuracy": 0.8515625,
+          "passed": false
+        }
+      },
+      "passed": false,
+      "validation_only": true,
+      "raw_generation": true,
+      "oracle_used": false
+    },
+    "actual_raw_questions_ids_formats_gold_and_correctness_recomputed": true,
+    "startup_volatile_execution_bound_to_preserved_initial_archive": true,
+    "startup_execution_archive": "runs/static-future-best-parent-startup-v1/initial-execution.json",
+    "startup_mutable_execution_not_registered_as_required_unchanged_input": true,
+    "native_answers_recomputed": 2176,
+    "distinct_native_histories_replayed": 1907,
+    "same_2176_questions_as_actual_previous_third_course_check": true,
+    "previous_third_raw_native_proof_reused": "runs/static-future-third-raw-validation-readback-v1/manifest.json",
+    "paired_previous_1536_to_current_2048_raw_correctness": {
+      "static_current": {
+        "n": 768,
+        "corrected": 15,
+        "new_errors": 11,
+        "previous_correct": 751,
+        "current_correct": 755,
+        "net_correct_change": 4
+      },
+      "dynamic_current": {
+        "n": 640,
+        "corrected": 29,
+        "new_errors": 25,
+        "previous_correct": 554,
+        "current_correct": 558,
+        "net_correct_change": 4
+      },
+      "static_future": {
+        "n": 768,
+        "corrected": 28,
+        "new_errors": 20,
+        "previous_correct": 719,
+        "current_correct": 727,
+        "net_correct_change": 8
+      }
+    },
+    "checkpoint_state": {
+      "trainable_tensors": 258,
+      "trainable_parameters": 139920416,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "selected_parent_step": 7168,
+    "selected_parent_from_actual_completed_second_course_manifest": true,
+    "native_future_answers_recomputed": 768,
+    "distinct_native_future_contexts_replayed": 738,
+    "selected_parent_sha256": "1996f8a3aa0bde98414604e9acc8407b40370c8bd80266421124166a9b0a01e0",
+    "full_feature_cache_and_training_data_rehashed_again": false,
+    "large_input_identities_reused_from_completed_full_preflight": {
+      "data/research-human-engine-v1/features-16.pt": {
+        "sha256": "bd444854bdec837656554de08727d5934991b7b7b53de7cf5729ef32fb936d10",
+        "bytes": 250548260661
+      },
+      "data/research-human-engine-v1/train.jsonl": {
+        "sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "bytes": 17958336456
+      }
+    },
+    "actual_qa_and_training_execution_source": "34154f0aca967b9498c10cd1debbe77f336f4e8b",
+    "all_67_producer_source_files_rehashed": true,
+    "third_course_validation_selection_minimum_steps": 2048,
+    "third_course_completed_by_declared_policy_at_this_check": false,
+    "validation_selection_decision": {
+      "stop": false,
+      "selected_step": 2048,
+      "steps_completed": 2048,
+      "checks_without_improvement": 0,
+      "stopping_reason": null,
+      "selected_accuracy": 0.9375,
+      "selected_minimum_task_accuracy": 0.6171875
+    },
+    "actual_controller_course_handoff_verified": true,
+    "clean_courses_completed_by_declared_policy_at_this_check": 2,
+    "new_sft_started_by_this_observer": false,
+    "trained_search_distillation_rounds": 0,
+    "independent_test_answers_used": false,
+    "oracle_repaired_raw_predictions": false,
+    "student_strength_or_reliable_coaching_proven": false
+  },
+  "paired_move_list_change": {
+    "before": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-1536/qa/predictions.jsonl",
+    "after": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-2048/qa/predictions.jsonl",
+    "summary": {
+      "examples": 128,
+      "before_raw_correct": 76,
+      "after_raw_correct": 79,
+      "corrected": 18,
+      "newly_wrong": 15,
+      "net_correct_change": 3,
+      "before_missing_unique_moves": 61,
+      "after_missing_unique_moves": 50,
+      "before_illegal_extra_unique_moves": 40,
+      "after_illegal_extra_unique_moves": 59
+    },
+    "groups": {
+      "piece_kind": {
+        "a": {
+          "examples": 5,
+          "before_raw_correct": 3,
+          "after_raw_correct": 3,
+          "corrected": 0,
+          "newly_wrong": 0,
+          "net_correct_change": 0,
+          "before_missing_unique_moves": 2,
+          "after_missing_unique_moves": 2,
+          "before_illegal_extra_unique_moves": 2,
+          "after_illegal_extra_unique_moves": 2
+        },
+        "c": {
+          "examples": 42,
+          "before_raw_correct": 19,
+          "after_raw_correct": 20,
+          "corrected": 8,
+          "newly_wrong": 7,
+          "net_correct_change": 1,
+          "before_missing_unique_moves": 28,
+          "after_missing_unique_moves": 20,
+          "before_illegal_extra_unique_moves": 16,
+          "after_illegal_extra_unique_moves": 26
+        },
+        "e": {
+          "examples": 13,
+          "before_raw_correct": 8,
+          "after_raw_correct": 11,
+          "corrected": 3,
+          "newly_wrong": 0,
+          "net_correct_change": 3,
+          "before_missing_unique_moves": 6,
+          "after_missing_unique_moves": 2,
+          "before_illegal_extra_unique_moves": 4,
+          "after_illegal_extra_unique_moves": 2
+        },
+        "h": {
+          "examples": 11,
+          "before_raw_correct": 6,
+          "after_raw_correct": 6,
+          "corrected": 2,
+          "newly_wrong": 2,
+          "net_correct_change": 0,
+          "before_missing_unique_moves": 6,
+          "after_missing_unique_moves": 6,
+          "before_illegal_extra_unique_moves": 4,
+          "after_illegal_extra_unique_moves": 9
+        },
+        "k": {
+          "examples": 3,
+          "before_raw_correct": 2,
+          "after_raw_correct": 2,
+          "corrected": 0,
+          "newly_wrong": 0,
+          "net_correct_change": 0,
+          "before_missing_unique_moves": 1,
+          "after_missing_unique_moves": 0,
+          "before_illegal_extra_unique_moves": 1,
+          "after_illegal_extra_unique_moves": 1
+        },
+        "p": {
+          "examples": 13,
+          "before_raw_correct": 12,
+          "after_raw_correct": 13,
+          "corrected": 1,
+          "newly_wrong": 0,
+          "net_correct_change": 1,
+          "before_missing_unique_moves": 2,
+          "after_missing_unique_moves": 0,
+          "before_illegal_extra_unique_moves": 1,
+          "after_illegal_extra_unique_moves": 0
+        },
+        "r": {
+          "examples": 41,
+          "before_raw_correct": 26,
+          "after_raw_correct": 24,
+          "corrected": 4,
+          "newly_wrong": 6,
+          "net_correct_change": -2,
+          "before_missing_unique_moves": 16,
+          "after_missing_unique_moves": 20,
+          "before_illegal_extra_unique_moves": 12,
+          "after_illegal_extra_unique_moves": 19
+        }
+      },
+      "gold_move_count_bucket": {
+        "1-3": {
+          "examples": 40,
+          "before_raw_correct": 28,
+          "after_raw_correct": 31,
+          "corrected": 5,
+          "newly_wrong": 2,
+          "net_correct_change": 3,
+          "before_missing_unique_moves": 14,
+          "after_missing_unique_moves": 6,
+          "before_illegal_extra_unique_moves": 11,
+          "after_illegal_extra_unique_moves": 11
+        },
+        "4-7": {
+          "examples": 35,
+          "before_raw_correct": 20,
+          "after_raw_correct": 19,
+          "corrected": 5,
+          "newly_wrong": 6,
+          "net_correct_change": -1,
+          "before_missing_unique_moves": 17,
+          "after_missing_unique_moves": 15,
+          "before_illegal_extra_unique_moves": 10,
+          "after_illegal_extra_unique_moves": 26
+        },
+        "8+": {
+          "examples": 53,
+          "before_raw_correct": 28,
+          "after_raw_correct": 29,
+          "corrected": 8,
+          "newly_wrong": 7,
+          "net_correct_change": 1,
+          "before_missing_unique_moves": 30,
+          "after_missing_unique_moves": 29,
+          "before_illegal_extra_unique_moves": 19,
+          "after_illegal_extra_unique_moves": 22
+        }
+      }
+    }
+  },
+  "move_list_diagnostic": {
+    "summary": {
+      "examples": 128,
+      "raw_correct": 79,
+      "raw_accuracy": 0.6171875,
+      "error_categories": {
+        "extra_only": 24,
+        "missing_and_extra": 19,
+        "raw_correct": 79,
+        "missing_only": 6
+      },
+      "parseable_answers": 128,
+      "exact_move_set_answers": 79,
+      "answers_with_duplicate_tokens": 0,
+      "answers_with_missing_moves": 25,
+      "answers_with_extra_moves": 43,
+      "unique_missing_moves": 50,
+      "unique_extra_moves": 59,
+      "unique_illegal_extra_moves": 59,
+      "unique_legal_moves_from_wrong_source": 0,
+      "diagnostic_unique_move_precision": 0.9359391965255157,
+      "diagnostic_unique_move_recall": 0.9451754385964912,
+      "diagnostic_metrics_denominator": "fully parseable answers only; malformed answers remain raw errors"
+    },
+    "by_piece_correct": {
+      "a": {
+        "correct": 3,
+        "examples": 5
+      },
+      "c": {
+        "correct": 20,
+        "examples": 42
+      },
+      "e": {
+        "correct": 11,
+        "examples": 13
+      },
+      "h": {
+        "correct": 6,
+        "examples": 11
+      },
+      "k": {
+        "correct": 2,
+        "examples": 3
+      },
+      "p": {
+        "correct": 13,
+        "examples": 13
+      },
+      "r": {
+        "correct": 24,
+        "examples": 41
+      }
+    },
+    "native_move_lists_recomputed": 128,
+    "diagnostic_answers": 256,
+    "validation_fresh_identity": {
+      "sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+      "bytes": 1059759384
+    },
+    "raw_scores_preserved": true,
+    "shared_native_rule_implementation": true,
+    "no_format_only_errors_at_2048": true
+  },
+  "learning_curve": {
+    "checks": 4,
+    "continuous_training_rows": 2048,
+    "first_three_series_and_windows_match_preserved_v1": true,
+    "series": [
+      {
+        "step": 512,
+        "combined_correct": 1969,
+        "combined_examples": 2176,
+        "combined_accuracy": 0.9048713235294118,
+        "courses": {
+          "static_current": {
+            "examples": 768,
+            "correct": 741,
+            "accuracy": 0.96484375
+          },
+          "dynamic_current": {
+            "examples": 640,
+            "correct": 573,
+            "accuracy": 0.8953125
+          },
+          "static_future": {
+            "examples": 768,
+            "correct": 655,
+            "accuracy": 0.8528645833333334
+          }
+        },
+        "tasks": {
+          "dynamic_current/captures": {
+            "examples": 128,
+            "correct": 102,
+            "accuracy": 0.796875
+          },
+          "static_future/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/locate": {
+            "examples": 128,
+            "correct": 116,
+            "accuracy": 0.90625
+          },
+          "static_future/rank": {
+            "examples": 128,
+            "correct": 83,
+            "accuracy": 0.6484375
+          },
+          "static_future/count": {
+            "examples": 128,
+            "correct": 125,
+            "accuracy": 0.9765625
+          },
+          "static_current/rank": {
+            "examples": 128,
+            "correct": 120,
+            "accuracy": 0.9375
+          },
+          "static_future/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/checks": {
+            "examples": 128,
+            "correct": 123,
+            "accuracy": 0.9609375
+          },
+          "static_current/count": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "examples": 128,
+            "correct": 121,
+            "accuracy": 0.9453125
+          },
+          "static_future/locate": {
+            "examples": 128,
+            "correct": 106,
+            "accuracy": 0.828125
+          },
+          "static_future/material": {
+            "examples": 128,
+            "correct": 85,
+            "accuracy": 0.6640625
+          },
+          "dynamic_current/illegal": {
+            "examples": 128,
+            "correct": 125,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/moves": {
+            "examples": 128,
+            "correct": 97,
+            "accuracy": 0.7578125
+          },
+          "static_current/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "examples": 128,
+            "correct": 126,
+            "accuracy": 0.984375
+          }
+        }
+      },
+      {
+        "step": 1024,
+        "combined_correct": 2005,
+        "combined_examples": 2176,
+        "combined_accuracy": 0.9214154411764706,
+        "courses": {
+          "static_current": {
+            "examples": 768,
+            "correct": 740,
+            "accuracy": 0.9635416666666666
+          },
+          "dynamic_current": {
+            "examples": 640,
+            "correct": 561,
+            "accuracy": 0.8765625
+          },
+          "static_future": {
+            "examples": 768,
+            "correct": 704,
+            "accuracy": 0.9166666666666666
+          }
+        },
+        "tasks": {
+          "dynamic_current/captures": {
+            "examples": 128,
+            "correct": 104,
+            "accuracy": 0.8125
+          },
+          "static_future/piece": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          },
+          "static_current/locate": {
+            "examples": 128,
+            "correct": 115,
+            "accuracy": 0.8984375
+          },
+          "static_future/rank": {
+            "examples": 128,
+            "correct": 105,
+            "accuracy": 0.8203125
+          },
+          "static_future/count": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "examples": 128,
+            "correct": 124,
+            "accuracy": 0.96875
+          },
+          "static_future/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/checks": {
+            "examples": 128,
+            "correct": 122,
+            "accuracy": 0.953125
+          },
+          "static_current/count": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          },
+          "static_current/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "examples": 128,
+            "correct": 118,
+            "accuracy": 0.921875
+          },
+          "static_future/locate": {
+            "examples": 128,
+            "correct": 111,
+            "accuracy": 0.8671875
+          },
+          "static_future/material": {
+            "examples": 128,
+            "correct": 106,
+            "accuracy": 0.828125
+          },
+          "dynamic_current/illegal": {
+            "examples": 128,
+            "correct": 122,
+            "accuracy": 0.953125
+          },
+          "dynamic_current/moves": {
+            "examples": 128,
+            "correct": 87,
+            "accuracy": 0.6796875
+          },
+          "static_current/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "examples": 128,
+            "correct": 126,
+            "accuracy": 0.984375
+          }
+        }
+      },
+      {
+        "step": 1536,
+        "combined_correct": 2024,
+        "combined_examples": 2176,
+        "combined_accuracy": 0.9301470588235294,
+        "courses": {
+          "static_current": {
+            "examples": 768,
+            "correct": 751,
+            "accuracy": 0.9778645833333334
+          },
+          "dynamic_current": {
+            "examples": 640,
+            "correct": 554,
+            "accuracy": 0.865625
+          },
+          "static_future": {
+            "examples": 768,
+            "correct": 719,
+            "accuracy": 0.9361979166666666
+          }
+        },
+        "tasks": {
+          "dynamic_current/captures": {
+            "examples": 128,
+            "correct": 105,
+            "accuracy": 0.8203125
+          },
+          "static_future/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/locate": {
+            "examples": 128,
+            "correct": 120,
+            "accuracy": 0.9375
+          },
+          "static_future/rank": {
+            "examples": 128,
+            "correct": 110,
+            "accuracy": 0.859375
+          },
+          "static_future/count": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "examples": 128,
+            "correct": 126,
+            "accuracy": 0.984375
+          },
+          "static_future/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/checks": {
+            "examples": 128,
+            "correct": 120,
+            "accuracy": 0.9375
+          },
+          "static_current/count": {
+            "examples": 128,
+            "correct": 125,
+            "accuracy": 0.9765625
+          },
+          "static_current/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "examples": 128,
+            "correct": 124,
+            "accuracy": 0.96875
+          },
+          "static_future/locate": {
+            "examples": 128,
+            "correct": 117,
+            "accuracy": 0.9140625
+          },
+          "static_future/material": {
+            "examples": 128,
+            "correct": 108,
+            "accuracy": 0.84375
+          },
+          "dynamic_current/illegal": {
+            "examples": 128,
+            "correct": 125,
+            "accuracy": 0.9765625
+          },
+          "dynamic_current/moves": {
+            "examples": 128,
+            "correct": 76,
+            "accuracy": 0.59375
+          },
+          "static_current/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          }
+        }
+      },
+      {
+        "step": 2048,
+        "combined_correct": 2040,
+        "combined_examples": 2176,
+        "combined_accuracy": 0.9375,
+        "courses": {
+          "static_current": {
+            "examples": 768,
+            "correct": 755,
+            "accuracy": 0.9830729166666666
+          },
+          "dynamic_current": {
+            "examples": 640,
+            "correct": 558,
+            "accuracy": 0.871875
+          },
+          "static_future": {
+            "examples": 768,
+            "correct": 727,
+            "accuracy": 0.9466145833333334
+          }
+        },
+        "tasks": {
+          "dynamic_current/captures": {
+            "examples": 128,
+            "correct": 102,
+            "accuracy": 0.796875
+          },
+          "static_future/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/locate": {
+            "examples": 128,
+            "correct": 124,
+            "accuracy": 0.96875
+          },
+          "static_future/rank": {
+            "examples": 128,
+            "correct": 109,
+            "accuracy": 0.8515625
+          },
+          "static_future/count": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          },
+          "static_current/rank": {
+            "examples": 128,
+            "correct": 123,
+            "accuracy": 0.9609375
+          },
+          "static_future/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/checks": {
+            "examples": 128,
+            "correct": 123,
+            "accuracy": 0.9609375
+          },
+          "static_current/count": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/piece": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "static_current/material": {
+            "examples": 128,
+            "correct": 124,
+            "accuracy": 0.96875
+          },
+          "static_future/locate": {
+            "examples": 128,
+            "correct": 119,
+            "accuracy": 0.9296875
+          },
+          "static_future/material": {
+            "examples": 128,
+            "correct": 116,
+            "accuracy": 0.90625
+          },
+          "dynamic_current/illegal": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          },
+          "dynamic_current/moves": {
+            "examples": 128,
+            "correct": 79,
+            "accuracy": 0.6171875
+          },
+          "static_current/empty": {
+            "examples": 128,
+            "correct": 128,
+            "accuracy": 1.0
+          },
+          "dynamic_current/legal": {
+            "examples": 128,
+            "correct": 127,
+            "accuracy": 0.9921875
+          }
+        }
+      }
+    ],
+    "loss_windows": [
+      {
+        "from_step": 1,
+        "through_step": 512,
+        "loss_mean": 0.2707925997528946
+      },
+      {
+        "from_step": 513,
+        "through_step": 1024,
+        "loss_mean": 0.06840312102940516
+      },
+      {
+        "from_step": 1025,
+        "through_step": 1536,
+        "loss_mean": 0.03587878009057022
+      },
+      {
+        "from_step": 1537,
+        "through_step": 2048,
+        "loss_mean": 0.02551147678605048
+      }
+    ],
+    "png": {
+      "path": "runs/static-future-learning-curve-v2/learning-curves.png",
+      "bytes": 248472,
+      "sha256": "16338474da8d7d85892bdd884565414f13a49e116e8fbb7c175f1894183223b7"
+    },
+    "svg": {
+      "path": "runs/static-future-learning-curve-v2/learning-curves.svg",
+      "bytes": 183641,
+      "sha256": "990b278215aab280232df45a5ec03c004f1dddff30137aac6ce1c45740c14dcc"
+    },
+    "visual_inspection_performed": true
+  },
+  "additional_full_reference_hash_pass_executed": false,
+  "frozen_sources": {
+    "runs/static-future-fourth-raw-validation-readback-v2": {
+      "source_files": 67,
+      "freshly_rehashed": true,
+      "manifest": {
+        "path": "runs/static-future-fourth-raw-validation-readback-v2/source-run/source-manifest.json",
+        "bytes": 6353,
+        "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701"
+      }
+    },
+    "runs/move-enumeration-step2048-real-v1": {
+      "source_files": 73,
+      "freshly_rehashed": true,
+      "manifest": {
+        "path": "runs/move-enumeration-step2048-real-v1/source-run/source-manifest.json",
+        "bytes": 6920,
+        "sha256": "efa1e51e8ba58e7b2448204d1a69c535c3966722c77daeeca39fe44f93083b96"
+      }
+    },
+    "runs/static-future-fifth-raw-validation-readback-v1": {
+      "source_files": 67,
+      "freshly_rehashed": true,
+      "manifest": {
+        "path": "runs/static-future-fifth-raw-validation-readback-v1/source-run/source-manifest.json",
+        "bytes": 6353,
+        "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701"
+      }
+    }
+  },
+  "cpu_suite": {
+    "passed": 560,
+    "source_test_bindings": 129,
+    "source_tests_and_recipe_unchanged_since_completed_suite": true,
+    "exit": {
+      "path": "runs/static-future-fourth-raw-milestone-tests-v1/exit.json",
+      "bytes": 214,
+      "sha256": "1968226ab6777896a72975d5cd171071f6d37cc495981bb48d0f8166a7a7e154"
+    }
+  },
+  "runtime_snapshot": {
+    "controller": {
+      "status": "training_course",
+      "stage": "static_future",
+      "courses_completed": 2,
+      "start_step": 2048,
+      "selected_parent": "runs/curriculum-human-engine-clean-v3/dynamic_current/candidates/step-7168/adapter.pt",
+      "gpu_sft_started": false
+    },
+    "owned_live_panes": {
+      "xqgeneral-recorded-foundation-clean-v3": {
+        "pane_pid": 90915,
+        "pane_dead": 0
+      },
+      "xqgeneral-clean-sft-sequential-launch-v2": {
+        "pane_pid": 90918,
+        "pane_dead": 0
+      },
+      "xqgeneral-clean-sft-capability-launch-v2": {
+        "pane_pid": 90921,
+        "pane_dead": 0
+      },
+      "xqgeneral-clean-search-pilot-launch-v2": {
+        "pane_pid": 401942,
+        "pane_dead": 0
+      },
+      "xqgeneral-static-future-fifth-raw-validation-readback-v1": {
+        "pane_pid": 481471,
+        "pane_dead": 0
+      }
+    },
+    "next_step_2560_observer_waiting": true,
+    "next_observer_entry": {
+      "path": "runs/static-future-fifth-raw-validation-readback-v1/entry.py",
+      "bytes": 13360,
+      "sha256": "a04d21b763a32a66d66060604f3c801ca58f28b70bef52802cf7000d3703992c"
+    },
+    "foundation_recipe": {
+      "path": "configs/foundation-human-engine-clean-v3.json",
+      "bytes": 3495,
+      "sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/entry.py",
+      "bytes": 13361,
+      "sha256": "cac7ef26f6afe110b8c1e04cc0888cbd04516e35d22eab579de6dfa75ce5e447"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/plan.json",
+      "bytes": 1784,
+      "sha256": "c58630b4b34959ca8c026cd59a597204b607a944fe9881908b7ef103b7665600"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/manifest.json",
+      "bytes": 104387,
+      "sha256": "678c6b17b5658afbfe44e7ae93924b079b50ed1d94a72c68530ccb2951489f27"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/verification.json",
+      "bytes": 5415,
+      "sha256": "f3c8370ce880d42e9c1e1a50a99019e335d0fc6235b1368d816cfa3d55818ffa"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/native-sample-readback.json",
+      "bytes": 555434,
+      "sha256": "d744f61fa86bc55990abd978c4d67a464f91066462e2698bc4b8a3684b61e171"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-validation-readback-v2/exit.json",
+      "bytes": 21,
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/entry.py",
+      "bytes": 7914,
+      "sha256": "d97f37c4325b64e32e43186a11b9f41c4ca896dda86b5852898080df18c3a599"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/plan.json",
+      "bytes": 4349,
+      "sha256": "58373c10bd5fc0fd01ae53320731e5c3a620912136cfb94201148f93ba0523bf"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/analysis.json",
+      "bytes": 12048,
+      "sha256": "10c074ad181ee8d4f0e0a5ceab21ca80f385d50e00874ab7e4cbfbde95858bfe"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/manifest.json",
+      "bytes": 3652,
+      "sha256": "e9358014f7eed0b3252a166a68169a9e4c5cd8291c3f5a7e622872d484645e3d"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/exit.json",
+      "bytes": 21,
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/training-prefix.jsonl",
+      "bytes": 339358,
+      "sha256": "bd105e44da7d19a51d65a26a0fbaa5aea866b3b834fe31769d14e48a93ef1ce6"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/learning-curves.png",
+      "bytes": 248472,
+      "sha256": "16338474da8d7d85892bdd884565414f13a49e116e8fbb7c175f1894183223b7"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/learning-curves.svg",
+      "bytes": 183641,
+      "sha256": "990b278215aab280232df45a5ec03c004f1dddff30137aac6ce1c45740c14dcc"
+    },
+    {
+      "path": "runs/static-future-learning-curve-v2/validation-series.csv",
+      "bytes": 546,
+      "sha256": "5039551d463a34eb700f7b94f9f2737dbe79d2f99cab57d1b50da6386c0ca6a8"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/runner.py",
+      "bytes": 2474,
+      "sha256": "92f52556ab571b6431a713cd061f72edf86965571c780b0f46ee597925c9c21f"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/plan.json",
+      "bytes": 3563,
+      "sha256": "cbe1c50c099dc6b75a38a18bb51ddbf000309bfd5934cb42ca63f8a55da81364"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/verification.json",
+      "bytes": 340,
+      "sha256": "e8b2a9816b9082f274cf8e2b9f92804c8da1c20531901ea1ddb8e83c569bab1e"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/exit.json",
+      "bytes": 52,
+      "sha256": "18cee9d1009834319c87681bf54e5e76501d2dd5b4896f5df4f838b574683c18"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/diagnostic/analysis.json",
+      "bytes": 26481,
+      "sha256": "dd35c0804924a5648cea14ab56fd51a9552aea07cb0483a96cd6322092592de2"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/diagnostic/item-diagnostics.jsonl",
+      "bytes": 215457,
+      "sha256": "b79b2bc4e23e6d19ae9d66e2f5fb3a1f266eea4c5cb46f5923ab77f7eab76879"
+    },
+    {
+      "path": "runs/move-enumeration-step2048-real-v1/diagnostic/manifest.json",
+      "bytes": 10106,
+      "sha256": "4be37a87922950529494efd05c114f3fa6a6e57e96d248e085d73f910d617f3e"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-milestone-tests-v1/runner.py",
+      "bytes": 1208,
+      "sha256": "9ec9e46cb226d3ea2e21b7f243aac8ff897effcfa6b8c2767978e67efeca683f"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-milestone-tests-v1/plan.json",
+      "bytes": 743,
+      "sha256": "763454429d762215429e47521c57f54340aa7880fd66b4c1be93d59400f74672"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-milestone-tests-v1/source-test-bindings.json",
+      "bytes": 13396,
+      "sha256": "4299142431ff830ea4d099a9065606727352e6489d291b67f5a50288977d8743"
+    },
+    {
+      "path": "runs/static-future-fourth-raw-milestone-tests-v1/exit.json",
+      "bytes": 214,
+      "sha256": "1968226ab6777896a72975d5cd171071f6d37cc495981bb48d0f8166a7a7e154"
+    },
+    {
+      "path": "runs/static-future-fifth-raw-validation-readback-v1/entry.py",
+      "bytes": 13360,
+      "sha256": "a04d21b763a32a66d66060604f3c801ca58f28b70bef52802cf7000d3703992c"
+    },
+    {
+      "path": "runs/static-future-fifth-raw-validation-readback-v1/plan.json",
+      "bytes": 1669,
+      "sha256": "a15c37701ff1154867101d1fb21dc4f9783fc53cc7131645384d761b7c832b06"
+    },
+    {
+      "path": "runs/static-future-fifth-raw-validation-readback-v1/source-run/source-manifest.json",
+      "bytes": 6353,
+      "sha256": "fe01a551482ef0f1c425e25b4b032392e443a3efc08930dc60883ca56fd56701"
+    },
+    {
+      "path": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-2048/qa/predictions.jsonl",
+      "bytes": 811636,
+      "sha256": "a11126f839209272f712c924bd5495fe67d0c70560f4bb0abeb2baaa18483f13"
+    },
+    {
+      "path": "runs/curriculum-human-engine-clean-v3/static_future/candidates/step-2048/qa/manifest.json",
+      "bytes": 10859,
+      "sha256": "9ea5cfb0ed0a8c20114d2e74b34dbc0fd2f8785acd95638a306cd43cfffed9d3"
+    }
+  ],
+  "scope_limits": {
+    "independent_test_used": false,
+    "oracle_repaired_predictions": false,
+    "training_or_downstream_queues_restarted": false,
+    "training_recipe_changed": false,
+    "third_course_completed": false,
+    "clean_courses_completed": 2,
+    "clean_sft_completed": false,
+    "trained_distillation_rounds": 0,
+    "strong_play_or_reliable_coaching_proven": false,
+    "piece_groups_prove_error_causation": false,
+    "goal_complete": false
+  }
+}
