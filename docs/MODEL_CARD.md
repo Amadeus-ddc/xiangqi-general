@@ -32,6 +32,12 @@ training/validation/test rows, including existing color-derived rows. The joint
 495306-history search pool is candidate material, not accepted distillation
 labels or evidence of model strength. See `STATUS.md` for verified checkpoints.
 
+At third-course step 2560, future-static accuracy is 737/768, static replay
+755/768 and dynamic replay 544/640, for 2036/2176 raw exact answers. On the
+identical questions from step 2048, future/static/dynamic changes are +10/0/-14;
+selection retains step 2048 and training continues. Five verified checks and
+the contiguous training log are in `evidence/static-future-fifth-raw-validation-v1.json`.
+
 The original 80-step checkpoint is a historical pipeline pilot. Both first research arms
 completed four 800-step courses, but balanced validation accuracy and ablations
 do not establish a reliable expert benefit. All original roots were black to
@@ -1754,3 +1760,22 @@ not simply concatenated; joint future mining needs the shared reservations.
 No new clean-model labels, distillation training or model benefit is proved.
 The upstream MIT declaration does not independently authenticate underlying
 puzzle rights. Raw and derived files are excluded from source releases.
+
+The reusable enumeration diagnostic now supports `--task-type captures|checks`
+with the existing `moves` default. An actual CPU run diagnoses 768 preserved
+answers from third-course steps 2048 and 2560, rechecks 384 native answers and
+freshly hashes all 173272 validation rows for each of three task scans. Capture
+strict answers fall from 102/128 to 86/128: seven corrections and 23 new errors.
+Of the final 42 errors, 41 have set errors and one is ordering only. Missing
+captures increase from 31 to 47, including rook captures from five to 21;
+25 of 27 extra moves are illegal and two are legal non-captures. Current move
+answers rise from 79/128 to 83/128 while missing moves grow from 50 to 60;
+check answers fall from 123/128 to 120/128. Task filtering distinguishes legal
+moves outside the requested task from illegal moves, without repairing raw
+answers. Default step-2048 move summaries and groups match the prior proof.
+`evidence/enumeration-task-diagnostic-real-v1.json` binds the 74-file execution
+snapshot to the tested code commit and shared producer rule helpers. All 624
+CPU tests pass, including 32 added cases; 129 other source/test identities and
+the training recipe are unchanged. Checkpoint ancestry reuses completed native
+readers. These groups do not establish causation, playing strength or coaching
+quality; no student, teacher, engine search or independent test was run.
