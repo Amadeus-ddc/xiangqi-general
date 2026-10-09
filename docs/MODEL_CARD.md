@@ -1608,12 +1608,46 @@ The second reader checks all 2176 native answers, including 768 future answers,
 artifact reader hashes all 416 declared references (20110006159 bytes), recomputes
 raw correctness, all 17 task numerators and the paired counts, and reuses the
 completed native proof. Full cache/train identities reuse completed preflight
-proof. The step-1536 reader is actually waiting, with three observations of all
-four original queues and the new 67-file reader. Fresh 531-test CPU verification
+proof. At the second-check milestone the step-1536 reader was waiting, with three
+observations of all four original queues and the new 67-file reader. Fresh 531-test
+CPU verification
 passes with 127 unchanged source/test identities and the unchanged recipe. The
 third course continues under its 2048-update minimum; no four-course completion,
 clean SFT, trained distillation, independent playing strength or reliable coaching
 is established by these validation results.
+
+`evidence/static-future-third-raw-validation-v1.json` verifies actual step 1536:
+719/768 future-static answers (93.6198%), 751/768 static replay (97.7865%),
+554/640 dynamic replay (86.5625%) and 2024/2176 overall (93.0147%). All questions,
+wording variants and gold match step 1024. Future answers correct 34 prior errors
+and introduce 19; static replay corrects 18 and introduces seven, while dynamic
+replay corrects 32 and introduces 39. Current per-piece move enumeration corrects
+15 and introduces 26 errors, falling by 11 to 76/128 (59.375%). The overall gain
+of 19 retains that regression. All 2176 native answers, 1907 histories, 768 future
+answers, 738 future contexts and the actual checkpoint are verified. Large
+cache/train identities reuse completed preflight; there is no additional second
+pass over all declared references. `evidence/static-future-learning-curve-v1.json`
+binds three identical-question checks and the continuous 1536-update log; the
+last 512-update mean loss is 0.0358788. Fresh 531 CPU tests pass with 127 unchanged
+source/test identities and recipe. The completed step-1536 reader is followed by
+the actual waiting step-2048 reader. Two courses are complete; clean SFT,
+trained distillation and independent playing/coaching strength remain unproven.
+
+`evidence/curriculum-move-enumeration-diagnostic-v1.json` diagnoses 2432 preserved
+answers from the second course's 17 checks and the third course's first two
+checks. It freshly scans and hashes all 173272 validation rows and replays the
+128 selected full histories and native per-piece move-list answers. Strict raw
+scores stay unchanged. Second-course selected/latest raw correctness is 99/128
+and 100/128; complete move-set correctness is 100/128 at both. All 28 latest errors have missing
+or extra moves, with 29 missing and 25 extra moves across 18/17 answers. All extra
+moves are illegal in their native board context. At third-course step 1024,
+only one of 41 errors is solely ordering; 40 have move-set errors. Cannon answers
+fall from 31/42 to 24/42, with one correction and eight new errors. Piece and
+answer-length groups are descriptive, and per-move precision/recall are diagnostic
+rather than strict scores or playing strength. The actual step-2048 reader is
+waiting with 67 pinned source files and requires the completed step-1536 native
+proof. A title-literal preparation failure never launched a job and is preserved;
+the reader uses a fresh v2 directory. Training and recipes remain unchanged.
 
 Fresh counts and hashes of the clean initial-label files separate training's
 10758 rows into 7619 rows without a color-derivation marker and 3139 existing
