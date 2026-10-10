@@ -1,0 +1,142 @@
+{
+  "kind": "paper_dense_bridge_cpu_contract",
+  "status": "complete",
+  "date": "2026-10-10",
+  "base_commit": "282c358eb8cad9f0a25dc0e7e5e640cd6e771ef8",
+  "architecture": {
+    "name": "flamingo_dense",
+    "attention_heads": 16,
+    "attention_width": "decoder_hidden_size",
+    "ffn_width": "2 * decoder_hidden_size",
+    "activation": "squared_relu",
+    "attention_gate_init": 0,
+    "ff_gate_init": 0,
+    "output_projection_init": "random",
+    "expert_memory_squares": 90
+  },
+  "paper_source": {
+    "revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "flamingo_py_sha256": "030888f2d23294c477b63fab8239d71b4de3358bb4ed82364ed8bf1ac7191b2d",
+    "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/models/flamingo.py",
+    "initialization_choice": "paper_zero_gates_with_random_output_projections; differs from released default alpha=1 and zero attention output"
+  },
+  "verification": {
+    "focused_cpu_cases_passed": 64,
+    "new_dense_cases": 29,
+    "canonical_cpu_cases_passed": 788,
+    "canonical_seconds": 307.64345305785537,
+    "source_test_bindings": 138,
+    "source_test_bindings_unchanged": true,
+    "zero_gate_first_gradients_nonzero": true,
+    "expert_projections_learn_after_gate_opens": true,
+    "memory_permutation_changes_output_after_training": true,
+    "frozen_decoder_weights_unchanged": true,
+    "fp32_master_cpu_bfloat16_compute_supported": true,
+    "complete_dense_handoff_checks_every_shape_dtype_and_value": true,
+    "full_sft_preserves_foundation_architecture_and_base_weights": true,
+    "historical_default_state_bitwise_unchanged": true,
+    "changed_bridge_family_and_heads_refused_on_resume_and_initialization": true,
+    "merged_teacher_benchmark_changes_preserved": true
+  },
+  "author_numerical_parity": {
+    "forward_backward_cases": [
+      {
+        "attention_gate": 0.0,
+        "ff_gate": 0.0,
+        "all_forward_values_bitwise_equal": true,
+        "all_14_parameter_gradients_bitwise_equal": true,
+        "input_gradients_bitwise_equal": true,
+        "first_attention_gate_gradient_nonzero": true,
+        "first_ff_gate_gradient_nonzero": true
+      },
+      {
+        "attention_gate": 0.2,
+        "ff_gate": -0.1,
+        "all_forward_values_bitwise_equal": true,
+        "all_14_parameter_gradients_bitwise_equal": true,
+        "input_gradients_bitwise_equal": true,
+        "first_attention_gate_gradient_nonzero": true,
+        "first_ff_gate_gradient_nonzero": true
+      }
+    ],
+    "parameter_shape_checks": [
+      {
+        "decoder_width": 2048,
+        "expert_width": 1024,
+        "blocks": 16,
+        "heads": 16,
+        "bridge_parameters": 469925920,
+        "all_14_parameter_shapes_match_author": true,
+        "meta_tensors_only": true
+      },
+      {
+        "decoder_width": 2560,
+        "expert_width": 512,
+        "blocks": 16,
+        "heads": 16,
+        "bridge_parameters": 671268896,
+        "all_14_parameter_shapes_match_author": true,
+        "meta_tensors_only": true
+      }
+    ],
+    "base_model_weights_loaded": false,
+    "author_training_ran": false
+  },
+  "qwen_px0_geometry": {
+    "decoder_width": 2560,
+    "expert_width": 512,
+    "decoder_layers": 36,
+    "bridge_blocks": 16,
+    "bridge_parameters": 671268896,
+    "board_embedding_parameters": 537600,
+    "total_trainable_parameters": 671806496,
+    "trainable_tensors": 226,
+    "large_shape_method": "meta_tensors_without_allocating_weights"
+  },
+  "protected_runtime": {
+    "frozen_roots_checked": 11,
+    "frozen_modules_checked": 759,
+    "all_original_sha256_match": true,
+    "foundation_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "running_training_recipe_changed": false,
+    "running_frozen_source_changed": false,
+    "shared_root_changes_preserved": true
+  },
+  "artifacts": {
+    "cpu_run": "runs/paper-dense-bridge-combined-cpu-v1",
+    "cpu_log_sha256": "deb2e068fcb74bf531bc3255cf7256cfa6693bd09727fba6566aea26d4b988a2",
+    "cpu_entry_sha256": "c75bd890e7a7b3d2ad6b6c760b0d60ff4d5197e0c0f3526ab03c451e1a2b9d29",
+    "source_test_bindings_sha256": "9ea578a80e2845ef699cc3703ad0cf6a5218b33a6f52a952a387c9b913fd09a6",
+    "author_comparison": "runs/paper-dense-bridge-author-parity-v1",
+    "author_comparison_sha256": "3e1795d570066a6cdd8c17ac629358ba9ded072eb93359242272e57f2cea3046"
+  },
+  "source_sha256": {
+    "src/xqgeneral/bridge.py": "cf112573feb560ddd7a656e2db1c887fff2e3c3a3951a1a04207492a1a3514fb",
+    "src/xqgeneral/modeling.py": "65b453dd3ffcf4922c195b0db387e4b6452e19a6a9c20d350317e77960dd4331",
+    "src/xqgeneral/sft.py": "a77454e75f6e0c098a7af698c91001a6d55b5dda81ec6b2aa8e7a9cfa207ad12",
+    "src/xqgeneral/training.py": "8b781406a54181f6d2ba036a7e49329a8c0f5835fc857b091494affe84dcc090",
+    "tests/test_dense_bridge.py": "39ecf7854697a10391d55c31d26caac569a05bcdc85252fa2de7f5adc1c8047e"
+  },
+  "limitations": {
+    "gpu_full_model_load_or_training": false,
+    "full_dense_ddp_resume_verified": false,
+    "dense_curriculum_completed": false,
+    "dense_explanation_sft_completed": false,
+    "dense_strength_or_prose_measured": false,
+    "goal_complete": false
+  },
+  "original_dense_cpu_suite": {
+    "base_commit": "be0f6a03f29bddf60415cdc84635017e48cd003e",
+    "cases_passed": 753,
+    "seconds": 387.7872866811231,
+    "source_test_bindings": 136,
+    "artifacts": {
+      "cpu_run": "runs/paper-dense-bridge-cpu-v1",
+      "cpu_log_sha256": "49f58b1cd78a055bcc8bac11f2b4fc4eada87beaf315a6523839193007ff5724",
+      "cpu_entry_sha256": "c75bd890e7a7b3d2ad6b6c760b0d60ff4d5197e0c0f3526ab03c451e1a2b9d29",
+      "source_test_bindings_sha256": "3211e921846cd42818c07744b4ca33bc47f3cf39413cecd853dc88bbe1c20fdf",
+      "author_comparison": "runs/paper-dense-bridge-author-parity-v1",
+      "author_comparison_sha256": "3e1795d570066a6cdd8c17ac629358ba9ded072eb93359242272e57f2cea3046"
+    }
+  }
+}

@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from pathlib import Path
 import torch
 from torch import nn
-from .bridge import BoardLanguageModel, GatedBridge
+from .bridge import BoardLanguageModel, bridge_settings, make_bridge
 
 
 class TextLanguageModel(nn.Module):
@@ -29,6 +29,8 @@ def configure_trainable_precision(model, precision):
 
 
 def load_model(config, expert_dim=512, device="cuda"):
+    mode = config.get('mode', 'bridge')
+    settings = bridge_settings(config) if mode == 'bridge' else None
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(config['model_path'], local_files_only=True)
     tokenizer.pad_token = tokenizer.eos_token
@@ -37,13 +39,13 @@ def load_model(config, expert_dim=512, device="cuda"):
              config.get('decoder_training', 'frozen') != 'full' else torch.float32)
     base = AutoModelForCausalLM.from_pretrained(config['model_path'], local_files_only=True,
                                                dtype=dtype, attn_implementation='sdpa').to(device)
-    mode = config.get('mode', 'bridge')
     decoder_training = config.get('decoder_training', 'frozen')
     if decoder_training not in {'frozen', 'full'}:
         raise ValueError('Decoder training must be explicitly frozen or full')
     if mode == 'bridge':
         model = BoardLanguageModel(base, expert_dim, config['decoder_bridge_positions'], config['bridge_width'],
-                                   freeze_decoder=decoder_training == 'frozen')
+                                   freeze_decoder=decoder_training == 'frozen',
+                                   bridge_architecture=settings['architecture'], bridge_heads=settings['heads'])
     elif mode == 'text_lora':
         from peft import LoraConfig, get_peft_model
         base = get_peft_model(base, LoraConfig(r=config.get('lora_rank', 16), lora_alpha=config.get('lora_rank', 16) * 2,
@@ -79,8 +81,9 @@ def foundation_state_summary(checkpoint, base_config):
             any(type(p) is not int or not 0 <= p < base_config['num_hidden_layers'] for p in positions)):
         raise ValueError('Handoff requires the complete latent FP32 foundation architecture')
     hidden = base_config['hidden_size']
+    settings = bridge_settings(config)
     with torch.device('meta'):
-        bridge = GatedBridge(hidden, 512, config['bridge_width'])
+        bridge = make_bridge(hidden, 512, config['bridge_width'], settings['architecture'], settings['heads'])
     expected = {f'bridges.{i}.{name}': parameter.shape
                 for i in range(len(positions)) for name, parameter in bridge.named_parameters()}
     expected.update({name: (len(PAIRS), hidden) for name in
@@ -117,9 +120,12 @@ def load_trainable(model, checkpoint):
 
 def initialize_trainable(model, checkpoint, config):
     saved = checkpoint['config']
-    architecture = ['mode', 'decoder_bridge_positions', 'bridge_width', 'board_tokens', 'model_revision', 'board_text']
+    architecture = ['mode', 'decoder_bridge_positions', 'bridge_width', 'board_tokens', 'model_revision',
+                    'board_text', 'expert_feature_depths']
     if any(saved.get(k) != config.get(k) for k in architecture):
         raise ValueError('Initialization architecture differs from the selected checkpoint')
+    if saved.get('mode', 'bridge') == 'bridge' and bridge_settings(saved) != bridge_settings(config):
+        raise ValueError('Initialization bridge architecture or attention heads differ from the selected checkpoint')
     expanding = saved.get('decoder_training', 'frozen') == 'frozen' and config.get('decoder_training') == 'full'
     if not expanding:
         load_trainable(model, checkpoint)
