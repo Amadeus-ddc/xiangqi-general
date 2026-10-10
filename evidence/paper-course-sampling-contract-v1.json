@@ -1,0 +1,36 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "constructed_source_roots": 6,
+  "questions": 398,
+  "counts": {
+    "train": 198,
+    "validation": 100,
+    "test": 100
+  },
+  "all_26_groups_present_in_each_split": true,
+  "real_generation_and_readback_cli_completed": true,
+  "sampling_profile": "author_answer_frequency_xiangqi_v1",
+  "complete_answer_class_frequency_summary_equal": true,
+  "frequency_groups": 24,
+  "global_answer_class_frequency_shaping_applied": true,
+  "author_training_query_multiplicity_applied": true,
+  "training_and_heldout_frequency_counts_independent": true,
+  "source_bytes_unchanged": true,
+  "producer_manifest_sha256": "50b8ceb4a928708bcea75abe1d02b9f0eeae9b93353384cbe3536ef79c3fa39b",
+  "readback_manifest_sha256": "90c9cd3bed998de6ff144f8e18e839dc7fea6ae5a53d933f1b0ea28f24d4db3d",
+  "seconds": 4.271199065260589,
+  "real_recorded_matches_imported": false,
+  "production_corpus_generated": false,
+  "paper_difficult_source_mix_applied": false,
+  "feature_cache_or_token_preflight_complete": false,
+  "student_or_teacher_loaded": false,
+  "student_training_executed": false,
+  "student_strength_or_prose_quality_measured": false,
+  "execution_frozen_source_modules": 79,
+  "source_sha256": {
+    "src/xqgeneral/course_sampling.py": "a06baeabb43eb7bd9c449ad50012a8facef4fc57824478a39d4ca90061b70bd6",
+    "src/xqgeneral/course_tasks.py": "a84ce3df3cfa0481863d69a48c776c460abef9b847a982134f38b9b09c4f5a2c",
+    "src/xqgeneral/paper_curriculum.py": "56b25bdb724b99a2e0bfabf41cdb891e3cd8d0140bb0ff14358c0f31ac7d52f4"
+  }
+}

@@ -7,6 +7,7 @@ from pathlib import Path
 import random
 
 from .course_tasks import PAPER_PROFILE, PAPER_TASKS, paper_records, validate_context
+from .course_sampling import SAMPLING_PROFILE, make_sampler
 from .curriculum_data import verify_splits
 from .engine_selfplay import context_positions
 from .evidence import atomic_json, digest, iter_jsonl, manifest, position_key
@@ -65,7 +66,7 @@ def reference_contract(datasets):
     return inputs, games, positions
 
 
-def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_positions=None):
+def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_positions=None, sampler=None):
     """Deterministic questions without assigning or changing a source game's split."""
     features, games = set(), {}
     for name in roots:
@@ -88,17 +89,20 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
             line = root.get('future_moves', [])
             if line:
                 selected['future_moves'] = line[:rng.randrange(1, len(line) + 1)]
-            rows = paper_records(selected, rng)
+            rows = paper_records(selected, rng, sampler)
             if color_mirror:
                 rows += [mirrored_qa(row) for row in list(rows)]
+            if sampler is not None:
+                sampler.observe(rows)
             yield root, rows
 
 
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
-          reference_data=()):
+          reference_data=(), sampling_profile=None):
     output = Path(output)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
+    sampler = make_sampler(sampling_profile)
     inputs = checked_sources(roots, source_manifests)
     reference_inputs, prior_games, prior_positions = reference_contract(reference_data)
     inputs += reference_inputs
@@ -109,7 +113,7 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     counts, task_counts, root_counts, horizons = Counter(), Counter(), Counter(), Counter()
     ids, games = set(), set()
     try:
-        for root, records in question_groups(roots, seed, color_mirror, prior_games, prior_positions):
+        for root, records in question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler):
             root_counts[root['split']] += 1
             games.add(root['game_id'])
             for row in records:
@@ -151,6 +155,9 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     config = {'roots': list(map(str, roots)), 'source_manifests': list(map(str, source_manifests)),
               'output': str(output), 'seed': seed, 'color_mirror': color_mirror, 'task_profile': PAPER_PROFILE,
               'reference_data': list(map(str, reference_data))}
+    if sampler is not None:
+        result.update(sampler.verification())
+        config['sampling_profile'] = sampling_profile
     atomic_json(output / 'manifest.json', manifest(DATA_KIND, config, inputs, paths.values(), result))
     if public_evidence:
         atomic_json(public_evidence, dict(result, manifest_sha256=digest(output / 'manifest.json')))
@@ -172,6 +179,7 @@ def readback(data, output):
         if digest(name) != item['sha256'] or Path(name).stat().st_size != item['bytes']:
             raise ValueError('Completed paper source or question bytes changed')
     config = proof['config']
+    sampler = make_sampler(config.get('sampling_profile'))
     checked_sources(config['roots'], config['source_manifests'])
     _, prior_games, prior_positions = reference_contract(config['reference_data'])
     paths = {split: data / f'{split}.jsonl' for split in SPLITS}
@@ -179,7 +187,7 @@ def readback(data, output):
     checked, counts = 0, Counter()
     try:
         for _, records in question_groups(config['roots'], config['seed'], config['color_mirror'],
-                                         prior_games, prior_positions):
+                                         prior_games, prior_positions, sampler):
             for row in records:
                 if handles[row['split']].readline() != json.dumps(row, ensure_ascii=False) + '\n':
                     raise ValueError('Question bytes differ from their complete native source root')
@@ -193,9 +201,16 @@ def readback(data, output):
     split_proof = verify_splits(row for path in paths.values() for row in iter_jsonl(path))
     if counts != proof['verification']['counts'] or split_proof != proof['verification']['split_verification']:
         raise ValueError('Source readback counts or complete future isolation changed')
+    adaptive = sampler is not None
+    if proof['verification'].get('global_answer_class_frequency_shaping_applied') is not adaptive:
+        raise ValueError('Stored answer frequency shaping differs from the declared sampling profile')
+    if adaptive and any(proof['verification'].get(k) != v for k, v in sampler.verification().items()):
+        raise ValueError('Stored answer frequencies or distinct-query policy differ from native source readback')
     result = {'status': 'complete', 'task_profile': PAPER_PROFILE, 'questions_regenerated_and_compared': checked,
               'counts': dict(counts), 'split_verification': split_proof, 'all_source_and_question_bytes_checked': True,
               'student_model_loaded': False, 'student_training_executed': False, 'student_strength_measured': False}
+    if adaptive:
+        result.update(sampler.verification())
     output.mkdir(parents=True)
     atomic_json(output / 'verification.json', result)
     atomic_json(output / 'manifest.json', manifest('paper_curriculum_complete_source_readback',
@@ -215,10 +230,13 @@ def main():
     parser.add_argument('--seed', type=int, default=20261071)
     parser.add_argument('--no-color-mirror', action='store_true')
     parser.add_argument('--public-evidence')
+    parser.add_argument('--sampling-profile', choices=[SAMPLING_PROFILE])
     args = parser.parse_args()
+    if args.readback and args.sampling_profile is not None:
+        parser.error('Readback uses its saved sampling profile; do not override it')
     result = (readback(args.readback, args.output) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
-                    not args.no_color_mirror, args.public_evidence, args.reference_data))
+                    not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile))
     print(json.dumps(result), flush=True)
 
 

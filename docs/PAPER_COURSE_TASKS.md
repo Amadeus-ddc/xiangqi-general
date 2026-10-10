@@ -43,6 +43,7 @@ python scripts/freeze_run.py --output runs/paper-data-v1/source-run -- \
   python -m xqgeneral.paper_curriculum \
     --roots PREPARED_ROOTS.jsonl --source-manifests COMPLETED_SOURCE_MANIFEST.json \
     --reference-data data/research-human-engine-v1 \
+    --sampling-profile author_answer_frequency_xiangqi_v1 \
     --output data/paper-courses-v1
 
 python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
@@ -57,11 +58,19 @@ python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
 
 同时保存内容正确率、格式有效率、规范标签相同率及整段原文相同率。正文没有通过这份标签评分而获得事实／战略正确性，`prose_graded` 始终为 `false`；可靠教学仍需要独立讲解评测。旧题仍按原来的整段标准化文本相等评分。
 
+## 累计答案频率与多问题
+
+显式选择 `author_answer_frequency_xiangqi_v1` 后，频率计数按分割、当前／未来课程和题型独立维护。格子题同时按实际答案棋子类型、查询坐标及局面内类型数量降权；未来格子题先按累计频率选择改变／未改变组。定位题按答案坐标的累计频率加权，并把缺席棋子的空答案作为同一类。走法题按行棋方存活棋子类型平衡，攻击／保护题保持约一半空格、一半按占用类型平衡。行、列、对角线、计数及其他动态题不读取这些频率。
+
+训练集每根的请求数照作者四份实际 YAML：格子四题、定位／行／列各两题、对角线三题、走法及攻击／保护各四题，其余各一题；验证和测试每类一题。每根同类问题不重复查询实体，并按实际可用实体数截断，终局仍可查询不能移动的将帅。计数在该根的不同问题及颜色镜像全部写入后更新，镜像根据实际最终棋盘重新计算答案类别。完整读回重建每条记录以及全部计数，拒绝被改动的采样配置或频率摘要。
+
+未传该参数的已完成第一版题型数据保持原来的单题、局面内平衡合同。新选项完成了累计频率与每根问题数，不代表已经实现作者每题型不同的根数量、难例来源混合或完整采样分布。
+
 ## 验证与剩余差异
 
 [原生控制对照](../evidence/paper-course-controllers-native-v1.json) 检查 773 个局面的全部格子，共 69570 次比较，零差异；[八个控制局面](../evidence/paper-course-controller-fixtures-v1.json) 可在无模型、无 vendor 的 CPU CI 中重算。运行入口为 `scripts/build_native_controllers.py` 与 `scripts/verify_native_controllers.py`，编译使用固定、未修改的 Pikafish，运行不加载权重。失败的构造局面检查保留在忽略的运行目录中。
 
-这次完成题型语义、生成／隔离／读回及评测接口。尚未声称复制完整采样分布：每个根目前每类生成一题，棋子采用局面内类型平衡，未来格内棋子题按改变／未改变分组；没有作者跨局面累计答案频率的自适应权重。也尚未制作并按作者配置混合 80% 有将军着法、100% 被将军，以及将死／近将死将军／普通将军／困毙／随机 30%／20%／10%／5%／35% 的难例来源池。这个比例来自实际 YAML，原题型文件的旧注释有不同数字。
+题型语义、生成／隔离／读回、原始评测及显式累计频率／多题采样已实现。完整采样分布仍待制作：尚未按题型分配不同的根数量，也尚未按作者配置混合 80% 有将军着法、100% 被将军，以及将死／近将死将军／普通将军／困毙／随机 30%／20%／10%／5%／35% 的难例来源池。这个比例来自实际 YAML，原题型文件的旧注释有不同数字。
 
 正式大数据、有限数据遍历、按词元的训练损失、新课程的验证选模策略，以及全宽桥接的完整四课训练仍需完成。没有用这份新合同训练学生，也没有证明棋力或讲解收益。
 

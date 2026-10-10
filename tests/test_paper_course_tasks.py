@@ -11,6 +11,7 @@ from xqgeneral.course_tasks import (
     paper_question, paper_records, recipe_profile, task_groups, validate_query,
 )
 from xqgeneral.curriculum_data import STAGES
+from xqgeneral.course_sampling import CHANGED, EMPTY, SAME, FrequencySampler, TRAIN_QUERIES
 from xqgeneral.evaluate_qa import balanced_rows, prediction_record, qa_summary
 from xqgeneral.evidence import atomic_json, history_key, manifest, write_jsonl
 from xqgeneral.foundation_preflight import native_answer, native_context, validate_task
@@ -321,3 +322,79 @@ def test_sft_keeps_the_declared_foundation_profile_and_accepts_the_legacy_defaul
         prepare_config(saved, dict(recipe, task_profile='legacy'), 'parent.pt', 'output')
     assert prepare_config({'mode': 'bridge'}, dict(recipe, task_profile='legacy'),
                           'parent.pt', 'output')['task_profile'] == 'legacy'
+
+
+@pytest.mark.parametrize('split', ['train', 'validation', 'test'])
+def test_author_queries_are_distinct_and_heldout_uses_one_question_per_task(split):
+    sampler = FrequencySampler()
+    source = root(split=split)
+    groups = sampler.query_groups(source, source['fen'], random.Random(7), False)
+    for task, requested in TRAIN_QUERIES.items():
+        if task == 'parries':  # The initial board is not in check.
+            continue
+        queries = [q for group in groups for t, q in group if t == task]
+        assert len(queries) == (requested if split == 'train' else 1)
+        assert len({json.dumps(q, sort_keys=True) for q in queries}) == len(queries)
+
+
+def test_native_answer_classes_use_final_board_and_counters_are_split_and_task_local():
+    sampler = FrequencySampler()
+    examples = [row('piece', {'square': 'b0'}, future=['b0c2', 'b9c7']),
+                row('locate', {'symbol': 'H'}, future=['b0c2', 'b9c7']),
+                row('moves', {'source': 'b0'}, future=['b0c2', 'b9c7']),
+                row('controllers', {'square': 'b0'}, future=['b0c2', 'b9c7'])]
+    sampler.observe(examples)
+    counts = sampler.verification()['answer_class_frequency_by_split_stage_task']
+    assert counts['train/static_future/piece'] == {CHANGED: 1, EMPTY: 1, 'square:b0': 1}
+    assert counts['train/static_future/locate'] == {'square:c2': 1, 'square:h0': 1}
+    assert counts['train/dynamic_future/moves'] == {'piece:H': 1}
+    assert counts['train/dynamic_future/controllers'] == {EMPTY: 1}
+    assert not any(k.startswith(('validation/', 'test/')) or '/static_current/' in k for k in counts)
+
+
+def test_observed_training_answers_cannot_change_heldout_question_sampling():
+    sampler = FrequencySampler()
+    heldout = root(split='validation')
+    before = sampler.query_groups(heldout, heldout['fen'], random.Random(17), False)
+    sampler.observe([row('piece', {'square': 'a3'}), row('moves', {'source': 'a3'})] * 1000)
+    after = sampler.query_groups(heldout, heldout['fen'], random.Random(17), False)
+    assert before == after
+
+
+def test_cumulative_frequency_downweights_common_species_and_future_unchanged_answers():
+    source = root(future=['b0c2', 'b9c7'])
+    target = replay(source['fen'], source['future_moves'])[-1]
+    board = piece_map(source['fen'])
+    sampler = FrequencySampler()
+    sampler.frequencies[('train', 'static_current', 'piece')]['piece:P'] = 100000
+    sampler.frequencies[('train', 'dynamic_current', 'moves')]['piece:P'] = 100000
+    sampler.frequencies[('train', 'static_future', 'piece')][SAME] = 100000
+    pawns, changed = Counter(), 0
+    for seed in range(100):
+        static, dynamic = sampler.query_groups(source, source['fen'], random.Random(seed), False)
+        for task, query in static + dynamic:
+            if task in ('piece', 'moves'):
+                square = query.get('square', query.get('source'))
+                pawns[task] += board.get(square) == 'P'
+        static, _ = sampler.query_groups(source, target, random.Random(seed), True)
+        changed += sum(board.get(q['square']) != piece_map(target).get(q['square'])
+                       for task, q in static if task == 'piece')
+    assert pawns['piece'] < 3 and pawns['moves'] < 3
+    assert changed > 350  # Four changed squares are available, queried without replacement.
+
+
+def test_terminal_move_queries_are_capped_without_dropping_immobile_general():
+    sampler = FrequencySampler()
+    records = paper_records(root(MATE), random.Random(7), sampler)
+    moves = [r for r in records if r['task_type'] == 'moves']
+    assert len(moves) == 1 and moves[0]['query'] == {'source': 'e9'}
+    assert native_tag(moves[0]) == '无'
+    sampler.observe(records)
+    assert sampler.verification()['answer_class_frequency_by_split_stage_task'][
+        'train/dynamic_current/moves'] == {'piece:k': 1}
+
+
+def test_sampling_verification_does_not_expose_mutable_training_policy():
+    proof = FrequencySampler().verification()
+    proof['training_queries_requested_per_root_by_task']['piece'] = 90
+    assert TRAIN_QUERIES['piece'] == 4
