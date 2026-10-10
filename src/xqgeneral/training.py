@@ -18,6 +18,7 @@ from .modeling import initialize_trainable, load_model, load_trainable, trainabl
 from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
 from .finite_training import data_profile, prepare_finite_epochs
+from .training_index import IndexedTrainingRows, index_paths, training_row_indexes
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
@@ -126,6 +127,20 @@ def load_training_rows(paths, stages):
     return rows
 
 
+def training_metadata(rows):
+    return rows.iter_metadata() if isinstance(rows, IndexedTrainingRows) else iter(rows)
+
+
+def select_validation_rows(rows, stages, seed, maximum):
+    rng = random.Random(seed)
+    if isinstance(rows, IndexedTrainingRows):
+        pool = [i for i, row in enumerate(rows.iter_metadata()) if row['stage'] in stages]
+        chosen = rng.sample(pool, min(maximum, len(pool)))
+        return rows.get_batch(chosen)
+    pool = [row for row in rows if row['stage'] in stages]
+    return rng.sample(pool, min(maximum, len(pool)))
+
+
 def sample_batch(rows, mixture, rng, global_batch_size, rank=0, world=1, pools=None):
     if global_batch_size % world:
         raise ValueError('Global batch size must be divisible by world size')
@@ -185,6 +200,8 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     from .course_tasks import row_profile
+    if saved.get('row_index_paths', {}) != requested.get('row_index_paths', {}):
+        raise ValueError('Resume training row index paths differ; initialize a new experiment')
     if data_profile(saved) != data_profile(requested):
         raise ValueError('Resume training data traversal differs; initialize a new experiment instead')
     if saved.get('mixture_seed', 0) != requested.get('mixture_seed', 0):
@@ -223,6 +240,7 @@ def main():
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text())
     data_profile(config)
+    index_roots = training_row_indexes(config)
     normalization = config.get('loss_normalization', 'token')
     if normalization not in {'token', 'example'}:
         raise ValueError('Loss normalization must be token or example')
@@ -260,6 +278,7 @@ def main():
     data_path = Path(config.get('data_path', 'data'))
     data_roots = [data_path, *[Path(p) for p in config.get('replay_data_paths', [])]]
     input_paths = [config['feature_path'], *[p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]]
+    input_paths += [p for directory in index_roots.values() for p in index_paths(directory)]
     if config.get('init_from'):
         input_paths.append(config['init_from'])
     input_hashes = {str(p): digest(p) for p in input_paths} if rank == 0 else None
@@ -268,24 +287,25 @@ def main():
         dist.broadcast_object_list(objects, src=0)
         input_hashes = objects[0]
     mixture = config.get('mixture', {s: 1.0 for s in config['stages']})
-    rows = {s: load_training_rows([p / f'{s}.jsonl' for p in data_roots], mixture)
+    rows = {s: (IndexedTrainingRows(index_roots[s], [p / f'{s}.jsonl' for p in data_roots], mixture,
+                                   split=s, verified_hashes=input_hashes) if s in index_roots else
+                load_training_rows([p / f'{s}.jsonl' for p in data_roots], mixture))
             for s in ['train', 'validation']}
     if not rows['train'] or not rows['validation']:
         raise ValueError('Training and validation sets must both be nonempty')
     if config.get('task_profile') == 'paper_xiangqi_v1':
         from .course_tasks import row_profile
         from .curriculum_data import STAGES
-        if any(row_profile(row) != config['task_profile'] for records in rows.values() for row in records
+        if any(row_profile(row) != config['task_profile'] for records in rows.values() for row in training_metadata(records)
                if row['stage'] in STAGES):
             raise ValueError('Foundation training data differs from its declared task profile')
     for records in rows.values():
-        if any(r['feature_key'] not in indices for r in records):
+        if any(r['feature_key'] not in indices for r in training_metadata(records)):
             raise ValueError('Dataset contains a missing expert history context')
-    validation_pool = [r for r in rows['validation'] if r['stage'] in config.get('validation_stages', mixture)]
-    if not validation_pool:
+    validation = select_validation_rows(rows['validation'], config.get('validation_stages', mixture),
+                                        config['seed'], config['validation_examples'])
+    if not validation:
         raise ValueError('Selected validation stages have no examples')
-    validation = random.Random(config['seed']).sample(validation_pool,
-                   min(config['validation_examples'], len(validation_pool)))
     finite_epochs = prepare_finite_epochs(rows['train'], mixture, config, world)
     model, tokenizer = load_model(config, cache['features'][0].shape[-1], device)
     pools = None if finite_epochs is not None else sample_groups(rows['train'])
