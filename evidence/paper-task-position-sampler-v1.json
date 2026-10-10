@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "kind": "paper_task_position_budget_source_mix_contract",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "Canonical CPU contract, fixed-author collection controls and constructed native source regeneration; formal expanded data, feature cache and student training remain pending.",
+  "position_sampling_profile": "author_task_position_budget_mix_xiangqi_v1",
+  "canonical_cpu_tests_passed": 938,
+  "new_position_sampling_cases_passed": 30,
+  "source_test_bindings_verified": 150,
+  "all_canonical_source_test_bytes_unchanged": true,
+  "canonical_elapsed_seconds": 501.788697803393,
+  "source_sha256": {
+    "src/xqgeneral/course_position_sampling.py": "f2dbbe9a2e3728a418ada9911d4120fa7f5df9ea5dcb0d8967abc9f990f4e31d",
+    "src/xqgeneral/course_source_semantics.py": "172ba9b7a059a54cf0a2494c58c7fbd6766f14c7d8013caf5dcd988d3ea8e78d",
+    "src/xqgeneral/course_sampling.py": "8161b1a8c0d8a584e71aaca436f675223f08a7ac7421f064291e303d1b6c9080",
+    "src/xqgeneral/course_tasks.py": "a9037592cd897d2470deb6bc592e64da6f0f642dec14d649c147802139bcce24",
+    "src/xqgeneral/paper_curriculum.py": "89c6086c64d38822cfcc061c65a6a7ec863214c47d6dff55f3defc0462899ac1",
+    "src/xqgeneral/recorded_course_pools.py": "9367d3408d3b2d63b282b331d6551d149e6c9c0999ae81f538c82b3ba050bb6f",
+    "tests/test_course_position_sampling.py": "f66810318aa7a83fd672f6ca671373546428ff2734fdde4d64d28b609ea5bd98"
+  },
+  "author_controls": {
+    "author_revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "author_source_bindings": {
+      "datagen/build_qa_dataset.py": {
+        "sha256": "d76c7e5dc193ae0c685d6aee98ac2f3a0882e80e6ba351486a57932d503b574c",
+        "bytes": 41280
+      },
+      "datagen/sample_positions.py": {
+        "sha256": "c32345eb5f567c5c25f6fe3395f9414a0dea2eb35330c33ec9f16a995a6db2d6",
+        "bytes": 46992
+      },
+      "configs/sample_instances/stage1.yaml": {
+        "sha256": "9669c3c6c27f7b999e20538414df651590b949213fadb9934975212978087d2b",
+        "bytes": 2449
+      },
+      "configs/sample_instances/stage2.yaml": {
+        "sha256": "a97d315b44c865cf53a1626e99d69b9a5a82db4f893a56fc3aef2d036540210f",
+        "bytes": 3498
+      },
+      "configs/sample_instances/stage3.yaml": {
+        "sha256": "87e30e4c186aa08752f4065d302f302eb5d1a954dc7360611307f22c39b84564",
+        "bytes": 2220
+      },
+      "configs/sample_instances/stage4.yaml": {
+        "sha256": "85837d183c9827ae911bc23ea1475ef48250f3cf6a26e9b5007a30fa37e5712c",
+        "bytes": 3719
+      }
+    },
+    "unmodified_interleaver_cases_matched": 8,
+    "unmodified_single_source_collect_order_matched": true,
+    "same_rng_stream_as_complete_author_run": false
+  },
+  "constructed_native_control": {
+    "real_recorded_games": false,
+    "production_questions": 412,
+    "production_counts": {
+      "test": 104,
+      "validation": 104,
+      "train": 204
+    },
+    "selected_task_contexts_by_split": {
+      "test": 52,
+      "validation": 52,
+      "train": 52
+    },
+    "all_26_tasks_present_in_each_split": true,
+    "all_requested_probe_budgets_filled": true,
+    "questions_regenerated_and_compared": 412,
+    "finite_shortfall_questions": 960,
+    "finite_shortfall_questions_regenerated_and_compared": 960,
+    "large_requested_probe_budgets_filled": false,
+    "all_control_input_output_bindings_rehashed": true,
+    "control_binding_count": 12,
+    "frozen_source_modules_rehashed": 83,
+    "control_seconds": 30.56265479605645,
+    "verification_sha256": "595406b2f6d9a74db5b9bc62acf3bde1a53cee7dfd70a805b32d83f55a57aab3"
+  },
+  "contract": {
+    "per_task_root_budgets_applied": true,
+    "paper_difficult_source_mix_applied": true,
+    "future_horizon_locked_before_difficulty_selection": true,
+    "bound_generated_terminal_descendant_variants_available_to_future_tasks": true,
+    "query_board_and_color_disjoint_across_tasks_within_each_course_split": true,
+    "source_streams_are_finite_and_never_cycled": true,
+    "single_source_root_selection_shuffled_before_answer_frequency_rendering": true,
+    "mixed_source_root_selection_keeps_weighted_interleave_order": true,
+    "exhausted_sources_dropped_and_remaining_weights_renormalized": true,
+    "actual_selection_shortfalls_reported": true
+  },
+  "author_default_budgets_requested_is_actual_capacity_proven": false,
+  "task_query_position_dedup_uses_board_side_and_color_not_clock_variants": true,
+  "independent_test_used_for_training_or_selection": false,
+  "formal_expanded_question_corpus_complete": false,
+  "feature_cache_extended": false,
+  "student_or_teacher_loaded_by_this_milestone": false,
+  "student_training_executed_by_this_milestone": false,
+  "student_strength_or_prose_quality_measured": false,
+  "additional_author_exhaustive_static_test_mode_implemented": false,
+  "existing_curriculum_process_inspection": {
+    "observed_utc": "2026-10-10T12:41:08.396432+00:00",
+    "completed_courses": 3,
+    "stage": "dynamic_future",
+    "gpu_sft_started": false,
+    "last_completed_validation_step": 3072,
+    "current_course_correct": 416,
+    "current_course_examples": 640,
+    "combined_correct": 2425,
+    "combined_examples": 2816,
+    "best_combined_validation_step": 2048,
+    "snapshot_is_independent_strength_or_prose_evaluation": false,
+    "raw_generation": true,
+    "oracle_used": false,
+    "original_recipe_sha256_unchanged": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "original_frozen_source_modules_reverified": 67
+  },
+  "goal_complete": false,
+  "native_control_final_source_asts_verified_equal": true,
+  "canonical_cpu_thread_limits": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  }
+}

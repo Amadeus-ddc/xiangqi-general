@@ -7,32 +7,17 @@ import multiprocessing
 from pathlib import Path
 
 from .course_tasks import validate_context
+from .course_source_semantics import NEAR_MATE_PLIES, native_classes, root_footprint
 from .evidence import atomic_json, digest, history_key, iter_jsonl, manifest, position_key
 from .paper_curriculum import SPLITS, checked_sources, reference_contract
 from .recorded_coach import footprint_records
 from .recorded_search_inputs import TACTICAL_CONTEXT_FIELDS, TACTICAL_KINDS, tactical_source_context
-from .rules import adjudicate, gives_check, in_check, legal_moves, replay
+from .rules import adjudicate, in_check, legal_moves, replay
 from .symmetry import mirror_fen
 
 DATA_KIND = 'recorded_native_terminal_course_root_pools'
 POOL_PROFILE = 'recorded_terminal_targets_xiangqi_v1'
 MAX_FUTURE = 8
-NEAR_MATE_PLIES = 6
-
-
-def native_classes(fen, mate_distance=None):
-    """Classes describe the queried board; near-mate needs an actual source witness."""
-    moves, check = legal_moves(fen), in_check(fen)
-    classes = ['generic']
-    if any(gives_check(fen, move) for move in moves):
-        classes.append('have_check')
-    if check:
-        classes.append('in_check')
-    if not moves:
-        classes.append('mate' if check else 'stalemate')
-    if check and mate_distance is not None and 1 <= mate_distance <= NEAR_MATE_PLIES:
-        classes.append('near_mate_check')
-    return classes
 
 
 def terminal_candidates(game, split):
@@ -149,17 +134,6 @@ def candidate_groups(games, owners, workers):
                 yield source, job.result()
         for source, job in pending:
             yield source, job.result()
-
-
-def root_footprint(root):
-    """Reserve the maximum future, the entire actual mate witness, and both colors."""
-    line = (root.get('paper_generated_terminal_witness') or
-            root['paper_recorded_mate_witness'] or root['future_moves'])
-    fens = replay(root['fen'], line)
-    if root.get('extension_is_recorded_source_move') is False:
-        # A generated one-ply descendant retains its supplied parent board.
-        fens += root['history']
-    return {position_key(fen) for fen in fens} | {position_key(mirror_fen(fen)) for fen in fens}
 
 
 def prepared_records(games, owners, old_features, prior_games, prior_positions, workers, counters):

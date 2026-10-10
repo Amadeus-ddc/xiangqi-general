@@ -44,6 +44,8 @@ python scripts/freeze_run.py --output runs/paper-data-v1/source-run -- \
     --roots PREPARED_ROOTS.jsonl --source-manifests COMPLETED_SOURCE_MANIFEST.json \
     --reference-data data/research-human-engine-v1 \
     --sampling-profile author_answer_frequency_xiangqi_v1 \
+    --position-sampling-profile author_task_position_budget_mix_xiangqi_v1 \
+    --position-workers 8 \
     --output data/paper-courses-v1
 
 python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
@@ -64,7 +66,31 @@ python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
 
 训练集每根的请求数照作者四份实际 YAML：格子四题、定位／行／列各两题、对角线三题、走法及攻击／保护各四题，其余各一题；验证和测试每类一题。每根同类问题不重复查询实体，并按实际可用实体数截断，终局仍可查询不能移动的将帅。计数在该根的不同问题及颜色镜像全部写入后更新，镜像根据实际最终棋盘重新计算答案类别。完整读回重建每条记录以及全部计数，拒绝被改动的采样配置或频率摘要。
 
-未传该参数的已完成第一版题型数据保持原来的单题、局面内平衡合同。新选项完成了累计频率与每根问题数，不代表已经实现作者每题型不同的根数量、难例来源混合或完整采样分布。
+未传该参数的已完成第一版题型数据保持原来的单题、局面内平衡合同。累计频率选项本身只控制答案分布与每根问题数；每题型根数量和难例混合使用下面的独立选项。
+
+## 每题型根预算与难例混合
+
+同时声明 `author_task_position_budget_mix_xiangqi_v1` 和累计答案频率选项后，按作者四份固定 YAML 的每题型根预算选择局面，然后只生成该题型的请求问题。当前／未来课程各自使用同一份根预算；每类验证请求 100 根、测试请求 1000 根。
+
+| 题型 | 每门相应训练课的请求根数 |
+|---|---:|
+| `piece` | 457143 |
+| `locate`、`file`、`rank` | 各 914286 |
+| `diagonal` | 609524 |
+| `counts`、`materials` | 各 1828572 |
+| `moves`、`controllers` | 各 457143 |
+| `captures`、`checks`、`parries` | 各 1828572 |
+| `mate` | 360000 |
+
+将军题混合普通来源 20% 与存在合法将军着法的来源 80%；解将题全部来自被将军的目标；将死判断混合已将死、记录中近将死且被将军、普通被将军、困毙和普通来源，比例为 30%／20%／10%／5%／35%。类别由原生规则和明确的真实／生成终局依据重新计算。普通来源也可能有将军等性质，来源比例不等于正例答案比例。
+
+未来课为每根选择一个符合来源类别的合法目标步数，随后保持该步数，不再随机裁到另一类目标。同一给定局面的不同合法一步终局，由保留的父根与后继完整历史重新绑定，可供未来将死／困毙来源选择；生成变化仍沿用原局面身份和未知前史标记。
+
+来源按作者的平滑加权顺序交织，耗尽即移除，余下来源按相对权重继续；不循环或有放回填满预算。普通单来源先按有限文件顺序取根，再打乱选中根的顺序，之后才生成受累计答案频率影响的问题。混合来源保持交织顺序。报告每类请求／实际根数、缺口、实际来源数量、去重及耗尽来源；配置比例被应用不意味着耗尽后仍能满足原比例。
+
+每门课每个分割的不同题型不重复使用同一查询棋盘及其颜色对应；作者按完整查询 FEN 去重，本地按棋盘加行棋方去重，时钟差异不增加独立容量。完整源未来、全部分支、终局依据与颜色范围在选样前参与旧分割隔离。来源 JSON 存在临时 SQLite 目录，原生类别可按有界并行工人计算，单／多工人输出一致，结束删除临时目录。读回重新建库、选根、生成全部问题并核对精确顺序及报告；共享采样和原生规则实现，不宣称独立重写。
+
+可用 `--task-position-budgets BUDGETS.json` 显式适配实际容量。文件必须完整声明三个分割、四门课及其全部题型的正整数根数；省略则请求作者预算。实际容量不足保持缺口，正式训练仍需要完整题型覆盖、验证容量、缓存和词元预检。独立测试不参与训练或选模。
 
 ## 真实终局与近将死来源
 
@@ -115,14 +141,14 @@ python -m xqgeneral.tactical_course_pools --readback data/tactical-terminal-pool
   --workers 8 --output runs/tactical-terminal-pools-v1/full-source-readback
 ```
 
-这一步提供有来源的终局根，尚未兑现每题型根预算或将所选未来步数与难例比例绑定，也没有生成特征缓存、神经讲解或新学生权重。
+这一步提供有来源的终局根；按题型预算和所选未来步数与难例类别绑定由上面的课程选样入口完成。正式数据和特征缓存须另行验收。
 
 ## 验证与剩余差异
 
 [原生控制对照](../evidence/paper-course-controllers-native-v1.json) 检查 773 个局面的全部格子，共 69570 次比较，零差异；[八个控制局面](../evidence/paper-course-controller-fixtures-v1.json) 可在无模型、无 vendor 的 CPU CI 中重算。运行入口为 `scripts/build_native_controllers.py` 与 `scripts/verify_native_controllers.py`，编译使用固定、未修改的 Pikafish，运行不加载权重。失败的构造局面检查保留在忽略的运行目录中。
 
-题型语义、生成／隔离／读回、原始评测及显式累计频率／多题采样已实现。完整采样分布仍待制作：尚未按题型分配不同的根数量，也尚未按作者配置混合 80% 有将军着法、100% 被将军，以及将死／近将死将军／普通将军／困毙／随机 30%／20%／10%／5%／35% 的难例来源池。这个比例来自实际 YAML，原题型文件的旧注释有不同数字。
+题型语义、生成／隔离／读回、原始评测、累计答案频率、多问题以及每题型根预算／难例来源混合已实现，见 [采样合同证据](../evidence/paper-task-position-sampler-v1.json)。混合比例来自实际 YAML，原题型文件的旧注释有不同数字。CPU 合同和构造原生局面控制不等于已制作完整正式数据集；来源扩容、实际容量和分布仍需验收。
 
-正式大数据、有限数据遍历、按词元的训练损失、新课程的验证选模策略，以及全宽桥接的完整四课训练仍需完成。没有用这份新合同训练学生，也没有证明棋力或讲解收益。
+正式大数据、训练中的有限数据遍历、按词元的训练损失、新课程的验证选模策略，以及全宽桥接的完整四课训练仍需完成。作者额外的静态全实体测试模式尚未加入本采样合同。没有用这份新合同训练学生，也没有证明棋力或讲解收益。
 
 来源：[作者题型源码](https://github.com/queen-project/queen/tree/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/tasks)、[第二课实际配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage2.yaml)、[Pikafish 控制关系](https://github.com/official-pikafish/Pikafish/blob/1c66b9b21cf2f280ce3b3ffa80c1c6609f2b29ff/src/position.cpp)。

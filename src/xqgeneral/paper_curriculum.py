@@ -5,9 +5,11 @@ import hashlib
 import json
 from pathlib import Path
 import random
+from tempfile import TemporaryDirectory
 
 from .course_tasks import PAPER_PROFILE, PAPER_TASKS, paper_records, validate_context
 from .course_sampling import SAMPLING_PROFILE, make_sampler
+from .course_position_sampling import POSITION_PROFILE, PositionCatalog, catalog_inputs, position_budgets, position_verification
 from .curriculum_data import verify_splits
 from .engine_selfplay import context_positions
 from .evidence import atomic_json, digest, iter_jsonl, manifest, position_key
@@ -97,12 +99,40 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
             yield root, rows
 
 
+def position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
+                             budgets, report, scratch, workers):
+    """Select one task and one locked horizon, then render only those questions."""
+    with TemporaryDirectory(prefix='native-position-catalog-', dir=scratch) as directory:
+        catalog = PositionCatalog(Path(directory) / 'sources.sqlite', prior_games=prior_games, prior_positions=prior_positions)
+        try:
+            sources = (root for name in roots for root in iter_jsonl(name))
+            for root, targets in catalog_inputs(sources, workers):
+                catalog.add(root, targets)
+            catalog.finish()
+            for root, stage, task in catalog.selections(budgets, seed, report):
+                rng = random.Random(int(hashlib.sha256(f'{seed}/{stage}/{task}/{root["feature_key"]}'.encode()).hexdigest(), 16))
+                rows = paper_records(root, rng, sampler, only_stage=stage, only_task=task)
+                if color_mirror:
+                    rows += [mirrored_qa(row) for row in list(rows)]
+                sampler.observe(rows)
+                yield root, rows
+        finally:
+            catalog.close()
+
+
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
-          reference_data=(), sampling_profile=None):
+          reference_data=(), sampling_profile=None, position_sampling_profile=None,
+          task_position_budgets=None, position_workers=1):
     output = Path(output)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
     sampler = make_sampler(sampling_profile)
+    if (position_sampling_profile not in (None, POSITION_PROFILE) or
+            type(position_workers) is not int or position_workers < 1 or
+            position_sampling_profile is None and (task_position_budgets is not None or position_workers != 1) or
+            position_sampling_profile is not None and sampler is None):
+        raise ValueError('Task position sampling requires its declared profile, answer sampler and positive workers')
+    budgets = position_budgets(task_position_budgets) if position_sampling_profile else None
     inputs = checked_sources(roots, source_manifests)
     reference_inputs, prior_games, prior_positions = reference_contract(reference_data)
     inputs += reference_inputs
@@ -112,8 +142,12 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     handles = {split: path.open('x', encoding='utf-8') for split, path in paths.items()}
     counts, task_counts, root_counts, horizons = Counter(), Counter(), Counter(), Counter()
     ids, games = set(), set()
+    position_report = {}
+    groups = (position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
+                                      budgets, position_report, output, position_workers) if budgets is not None else
+              question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler))
     try:
-        for root, records in question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler):
+        for root, records in groups:
             root_counts[root['split']] += 1
             games.add(root['game_id'])
             for row in records:
@@ -158,6 +192,11 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     if sampler is not None:
         result.update(sampler.verification())
         config['sampling_profile'] = sampling_profile
+    if budgets is not None:
+        result.update(position_verification(budgets, position_report))
+        result['source_roots_by_split_are_selected_task_contexts'] = True
+        config.update(position_sampling_profile=position_sampling_profile,
+                      task_position_budgets=budgets, position_workers=position_workers)
     atomic_json(output / 'manifest.json', manifest(DATA_KIND, config, inputs, paths.values(), result))
     if public_evidence:
         atomic_json(public_evidence, dict(result, manifest_sha256=digest(output / 'manifest.json')))
@@ -180,14 +219,24 @@ def readback(data, output):
             raise ValueError('Completed paper source or question bytes changed')
     config = proof['config']
     sampler = make_sampler(config.get('sampling_profile'))
+    profile = config.get('position_sampling_profile')
+    if profile not in (None, POSITION_PROFILE) or profile and sampler is None:
+        raise ValueError('Completed corpus position sampling profile changed')
+    budgets = position_budgets(config.get('task_position_budgets')) if profile else None
+    if not profile and any(k in config for k in ('task_position_budgets', 'position_workers')):
+        raise ValueError('Undeclared completed position budget settings')
     checked_sources(config['roots'], config['source_manifests'])
     _, prior_games, prior_positions = reference_contract(config['reference_data'])
     paths = {split: data / f'{split}.jsonl' for split in SPLITS}
     handles = {split: path.open(encoding='utf-8') for split, path in paths.items()}
     checked, counts = 0, Counter()
+    position_report = {}
+    output.mkdir(parents=True)
+    groups = (position_question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games,
+        prior_positions, sampler, budgets, position_report, output, config['position_workers']) if profile else
+        question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games, prior_positions, sampler))
     try:
-        for _, records in question_groups(config['roots'], config['seed'], config['color_mirror'],
-                                         prior_games, prior_positions, sampler):
+        for _, records in groups:
             for row in records:
                 if handles[row['split']].readline() != json.dumps(row, ensure_ascii=False) + '\n':
                     raise ValueError('Question bytes differ from their complete native source root')
@@ -206,12 +255,17 @@ def readback(data, output):
         raise ValueError('Stored answer frequency shaping differs from the declared sampling profile')
     if adaptive and any(proof['verification'].get(k) != v for k, v in sampler.verification().items()):
         raise ValueError('Stored answer frequencies or distinct-query policy differ from native source readback')
+    if budgets is not None and any(proof['verification'].get(k) != v for k, v in position_verification(budgets, position_report).items()):
+        raise ValueError('Stored task position budgets, source proportions or shortfalls changed')
+    if budgets is None and proof['verification'].get('paper_difficult_source_mix_applied') is not False:
+        raise ValueError('Undeclared difficult position mix changed')
     result = {'status': 'complete', 'task_profile': PAPER_PROFILE, 'questions_regenerated_and_compared': checked,
               'counts': dict(counts), 'split_verification': split_proof, 'all_source_and_question_bytes_checked': True,
               'student_model_loaded': False, 'student_training_executed': False, 'student_strength_measured': False}
     if adaptive:
         result.update(sampler.verification())
-    output.mkdir(parents=True)
+    if budgets is not None:
+        result.update(position_verification(budgets, position_report))
     atomic_json(output / 'verification.json', result)
     atomic_json(output / 'manifest.json', manifest('paper_curriculum_complete_source_readback',
         {'data': str(data), 'output': str(output)}, [proof_path, *proof['inputs'], *proof['outputs']],
@@ -231,12 +285,18 @@ def main():
     parser.add_argument('--no-color-mirror', action='store_true')
     parser.add_argument('--public-evidence')
     parser.add_argument('--sampling-profile', choices=[SAMPLING_PROFILE])
+    parser.add_argument('--position-sampling-profile', choices=[POSITION_PROFILE])
+    parser.add_argument('--task-position-budgets', help='Explicit complete JSON position budgets; omitted uses author YAML counts')
+    parser.add_argument('--position-workers', type=int, default=1)
     args = parser.parse_args()
-    if args.readback and args.sampling_profile is not None:
-        parser.error('Readback uses its saved sampling profile; do not override it')
+    if args.readback and any((args.sampling_profile, args.position_sampling_profile, args.task_position_budgets,
+                              args.position_workers != 1)):
+        parser.error('Readback uses its saved sampling and worker profiles; do not override them')
     result = (readback(args.readback, args.output) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
-                    not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile))
+                    not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile,
+                    args.position_sampling_profile, json.loads(Path(args.task_position_budgets).read_text())
+                    if args.task_position_budgets else None, args.position_workers))
     print(json.dumps(result), flush=True)
 
 
