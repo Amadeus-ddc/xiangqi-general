@@ -10,10 +10,17 @@ from .evidence import atomic_json, digest, load_jsonl
 
 def prepare_config(saved, recipe, source_path, output):
     """Compile the same SFT budget and architecture used by the guarded launcher."""
+    from .bridge import bridge_settings
     architecture = ['model_path', 'model_revision', 'mode', 'decoder_bridge_positions', 'bridge_width',
                     'board_tokens', 'expert_feature_depths', 'lora_rank', 'board_text']
     if any(k in recipe and recipe[k] != saved.get(k) for k in architecture):
         raise ValueError('SFT architecture must preserve the selected checkpoint configuration')
+    bridge_keys = ['bridge_architecture', 'bridge_heads']
+    if saved.get('mode', 'bridge') == 'bridge':
+        requested = dict(saved, **{k: recipe[k] for k in bridge_keys if k in recipe})
+        if bridge_settings(requested) != bridge_settings(saved):
+            raise ValueError('SFT bridge architecture and attention heads must preserve the selected checkpoint')
+    architecture += bridge_keys
     if type(recipe.get('require_clean_foundation_handoff', False)) is not bool:
         raise ValueError('Clean foundation handoff requirement must be a boolean')
     world, batch = recipe.get('ddp_world_size', 1), recipe['batch_size']

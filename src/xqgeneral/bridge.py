@@ -4,6 +4,74 @@ from torch import nn
 from torch.nn import functional as F
 
 
+def bridge_settings(config):
+    """Canonical architecture identity, including defaults in historical configs."""
+    architecture = config.get('bridge_architecture', 'bottleneck')
+    if architecture not in {'bottleneck', 'flamingo_dense'}:
+        raise ValueError('Unknown bridge architecture')
+    heads = config.get('bridge_heads', 6 if architecture == 'bottleneck' else 16)
+    if type(heads) is not int or heads < 1:
+        raise ValueError('Bridge head count must be a positive integer')
+    return {'architecture': architecture, 'heads': heads}
+
+
+class SquaredReLU(nn.Module):
+    def forward(self, hidden):
+        return F.relu(hidden).square()
+
+
+class DenseBridge(nn.Module):
+    """Paper Flamingo block: decoder-width attention and a 2x ReLU-squared FFN.
+
+    Both gates start at zero and output projections retain random initialization.
+    This chooses the paper initialization, rather than the released code's
+    alternative nonzero gate and zero attention-output projection.
+    """
+    def __init__(self, decoder_dim, expert_dim, heads=16):
+        super().__init__()
+        if (any(type(n) is not int or n < 1 for n in (decoder_dim, expert_dim, heads)) or
+                decoder_dim % heads):
+            raise ValueError('Dense bridge dimensions must be positive and decoder width divisible by heads')
+        self.width, self.expert_dim, self.heads = decoder_dim, expert_dim, heads
+        self.query_norm = nn.LayerNorm(decoder_dim)
+        self.memory_norm = nn.LayerNorm(expert_dim)
+        self.q = nn.Linear(decoder_dim, decoder_dim, bias=False)
+        self.k = nn.Linear(expert_dim, decoder_dim, bias=False)
+        self.v = nn.Linear(expert_dim, decoder_dim, bias=False)
+        self.out = nn.Linear(decoder_dim, decoder_dim, bias=False)
+        self.ff_norm = nn.LayerNorm(decoder_dim)
+        self.ff = nn.Sequential(nn.Linear(decoder_dim, 2 * decoder_dim, bias=False),
+                                SquaredReLU(), nn.Linear(2 * decoder_dim, decoder_dim, bias=False))
+        self.alpha_attention = nn.Parameter(torch.zeros(1))
+        self.alpha_ff = nn.Parameter(torch.zeros(1))
+
+    def forward(self, hidden, memory):
+        if hidden.ndim != 3 or hidden.shape[-1] != self.width:
+            raise ValueError('Dense bridge expects batch x text x decoder-width hidden states')
+        batch, text, _ = hidden.shape
+        if memory.shape != (batch, 90, self.expert_dim):
+            raise ValueError('Dense bridge requires one 90-square expert context per text example')
+        query = self.q(self.query_norm(hidden)).view(batch, text, self.heads, -1).transpose(1, 2)
+        normalized = self.memory_norm(memory)
+        key = self.k(normalized).view(batch, 90, self.heads, -1).transpose(1, 2)
+        value = self.v(normalized).view(batch, 90, self.heads, -1).transpose(1, 2)
+        attended = F.scaled_dot_product_attention(query, key, value).transpose(1, 2).reshape(batch, text, self.width)
+        hidden = hidden + self.alpha_attention.tanh().to(hidden.dtype) * self.out(attended)
+        return hidden + self.alpha_ff.tanh().to(hidden.dtype) * self.ff(self.ff_norm(hidden))
+
+
+def make_bridge(decoder_dim, expert_dim, width, architecture='bottleneck', heads=None):
+    config = {'bridge_architecture': architecture}
+    if heads is not None:
+        config['bridge_heads'] = heads
+    settings = bridge_settings(config)
+    if architecture == 'flamingo_dense':
+        if width != decoder_dim:
+            raise ValueError('Paper dense attention width must equal the decoder width')
+        return DenseBridge(decoder_dim, expert_dim, settings['heads'])
+    return GatedBridge(decoder_dim, expert_dim, width, settings['heads'])
+
+
 class GatedBridge(nn.Module):
     """A smaller pilot of Queen's gated cross-attention, keeping 90 memory tokens."""
     def __init__(self, decoder_dim, expert_dim, width=384, heads=6):
@@ -40,14 +108,16 @@ class GatedBridge(nn.Module):
 
 
 class BoardLanguageModel(nn.Module):
-    def __init__(self, base, expert_dim, positions=(3, 11, 19, 27), width=384, freeze_decoder=True):
+    def __init__(self, base, expert_dim, positions=(3, 11, 19, 27), width=384, freeze_decoder=True,
+                 bridge_architecture='bottleneck', bridge_heads=None):
         super().__init__()
         self.base = base
         self.freeze_decoder = freeze_decoder
         if freeze_decoder:
             self.base.requires_grad_(False)
         self.positions = tuple(positions)
-        self.bridges = nn.ModuleList([GatedBridge(base.config.hidden_size, expert_dim, width) for _ in positions])
+        self.bridges = nn.ModuleList([make_bridge(base.config.hidden_size, expert_dim, width,
+                                                 bridge_architecture, bridge_heads) for _ in positions])
         self.memory = None
         self.handles = []
         layers = base.model.layers

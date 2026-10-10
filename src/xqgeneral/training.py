@@ -201,6 +201,10 @@ def compatible_resume(saved, requested):
             'board_text']
     if any(saved.get(k) != requested.get(k) for k in keys):
         raise ValueError('Resume configuration differs; initialize a new experiment instead')
+    if saved.get('mode', 'bridge') == 'bridge':
+        from .bridge import bridge_settings
+        if bridge_settings(saved) != bridge_settings(requested):
+            raise ValueError('Resume bridge architecture or attention heads differ; initialize a new experiment instead')
 
 
 def main():
