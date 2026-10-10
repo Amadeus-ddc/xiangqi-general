@@ -9,6 +9,7 @@ import time
 from .evidence import atomic_json, load_jsonl, manifest, write_jsonl
 from .curriculum_data import STAGES
 from .course_tasks import PAPER_PROFILE, grade_answer, row_profile
+from .feature_store import feature_paths
 
 
 def balanced_rows(rows, per_task, seed, stages=None):
@@ -117,7 +118,7 @@ def main():
              'split': args.split, 'seconds': time.monotonic() - start}
     atomic_json(dest / 'metrics.json', proof)
     atomic_json(dest / 'manifest.json', manifest('balanced_board_qa', vars(args),
-                [args.checkpoint, path, args.features], [dest / 'predictions.jsonl', dest / 'metrics.json'], proof))
+                [args.checkpoint, path, *feature_paths(args.features)], [dest / 'predictions.jsonl', dest / 'metrics.json'], proof))
     print(json.dumps(proof), flush=True)
 
 

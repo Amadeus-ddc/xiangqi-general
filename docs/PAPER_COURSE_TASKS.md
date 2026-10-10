@@ -177,3 +177,5 @@ python -m xqgeneral.tactical_course_pools --readback data/tactical-terminal-pool
 正式大数据、训练中的有限数据遍历、按词元的训练损失、新课程的验证选模策略，以及全宽桥接的完整四课训练仍需完成。作者额外的静态全实体测试模式尚未加入本采样合同。没有用这份新合同训练学生，也没有证明棋力或讲解收益。
 
 来源：[作者题型源码](https://github.com/queen-project/queen/tree/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/tasks)、[第二课实际配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage2.yaml)、[Pikafish 控制关系](https://github.com/official-pikafish/Pikafish/blob/1c66b9b21cf2f280ce3b3ffa80c1c6609f2b29ff/src/position.cpp)。
+
+新组合的当前课选模、容量适配和真实预训练四卡恢复已另行验证；完整数据准备与正式训练状态见 [新四课实验](PAPER_FOUNDATION_EXPERIMENT.md)。以上原冻结运行及历史审计结论保留。

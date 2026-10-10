@@ -1815,3 +1815,5 @@ CPU tests pass, including 32 added cases; 129 other source/test identities and
 the training recipe are unchanged. Checkpoint ancestry reuses completed native
 readers. These groups do not establish causation, playing strength or coaching
 quality; no student, teacher, engine search or independent test was run.
+
+The [fresh paper-aligned curriculum recipe](PAPER_FOUNDATION_EXPERIMENT.md) combines the full-width bridge with finite indexed/sharded data, answer-token loss and current-course checkpoint selection. A real pretrained four-GPU eight-update/four-plus-four resume control is bitwise identical; this does not establish curriculum completion, strength or coaching quality. Complete native recorded-source regeneration is finished, and the preserved preparation queue is generating the full question corpus. Formal curriculum training and final model acceptance remain unfinished.

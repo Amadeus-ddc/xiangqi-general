@@ -1,0 +1,110 @@
+{
+  "train": {
+    "static_current": {
+      "piece": 114286,
+      "locate": 228572,
+      "file": 228572,
+      "rank": 228572,
+      "diagonal": 152381,
+      "counts": 457143,
+      "materials": 457143
+    },
+    "dynamic_current": {
+      "moves": 114286,
+      "controllers": 114286,
+      "captures": 457143,
+      "checks": 457143,
+      "parries": 457143,
+      "mate": 10000
+    },
+    "static_future": {
+      "piece": 114286,
+      "locate": 228572,
+      "file": 228572,
+      "rank": 228572,
+      "diagonal": 152381,
+      "counts": 457143,
+      "materials": 457143
+    },
+    "dynamic_future": {
+      "moves": 114286,
+      "controllers": 114286,
+      "captures": 457143,
+      "checks": 457143,
+      "parries": 457143,
+      "mate": 10000
+    }
+  },
+  "validation": {
+    "static_current": {
+      "piece": 100,
+      "locate": 100,
+      "file": 100,
+      "rank": 100,
+      "diagonal": 100,
+      "counts": 100,
+      "materials": 100
+    },
+    "dynamic_current": {
+      "moves": 100,
+      "controllers": 100,
+      "captures": 100,
+      "checks": 100,
+      "parries": 100,
+      "mate": 100
+    },
+    "static_future": {
+      "piece": 100,
+      "locate": 100,
+      "file": 100,
+      "rank": 100,
+      "diagonal": 100,
+      "counts": 100,
+      "materials": 100
+    },
+    "dynamic_future": {
+      "moves": 100,
+      "controllers": 100,
+      "captures": 100,
+      "checks": 100,
+      "parries": 100,
+      "mate": 100
+    }
+  },
+  "test": {
+    "static_current": {
+      "piece": 1000,
+      "locate": 1000,
+      "file": 1000,
+      "rank": 1000,
+      "diagonal": 1000,
+      "counts": 1000,
+      "materials": 1000
+    },
+    "dynamic_current": {
+      "moves": 1000,
+      "controllers": 1000,
+      "captures": 1000,
+      "checks": 1000,
+      "parries": 1000,
+      "mate": 1000
+    },
+    "static_future": {
+      "piece": 1000,
+      "locate": 1000,
+      "file": 1000,
+      "rank": 1000,
+      "diagonal": 1000,
+      "counts": 1000,
+      "materials": 1000
+    },
+    "dynamic_future": {
+      "moves": 1000,
+      "controllers": 1000,
+      "captures": 1000,
+      "checks": 1000,
+      "parries": 1000,
+      "mate": 1000
+    }
+  }
+}
