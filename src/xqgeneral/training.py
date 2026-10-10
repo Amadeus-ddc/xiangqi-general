@@ -183,6 +183,9 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
+    from .course_tasks import row_profile
+    if row_profile(saved) != row_profile(requested):
+        raise ValueError('Resume task profile differs; initialize a new experiment instead')
     if saved.get('loss_normalization', 'token') != requested.get('loss_normalization', 'token'):
         raise ValueError('Resume loss normalization differs; initialize a new experiment instead')
     if saved.get('deterministic_training', False) != requested.get('deterministic_training', False):
@@ -263,6 +266,12 @@ def main():
             for s in ['train', 'validation']}
     if not rows['train'] or not rows['validation']:
         raise ValueError('Training and validation sets must both be nonempty')
+    if config.get('task_profile') == 'paper_xiangqi_v1':
+        from .course_tasks import row_profile
+        from .curriculum_data import STAGES
+        if any(row_profile(row) != config['task_profile'] for records in rows.values() for row in records
+               if row['stage'] in STAGES):
+            raise ValueError('Foundation training data differs from its declared task profile')
     for records in rows.values():
         if any(r['feature_key'] not in indices for r in records):
             raise ValueError('Dataset contains a missing expert history context')

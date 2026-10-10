@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "native_vendor_revision": "1c66b9b21cf2f280ce3b3ffa80c1c6609f2b29ff",
+  "positions": 773,
+  "squares_compared": 69570,
+  "mismatches": 0,
+  "controlled_positions": 8,
+  "input_fens_sha256": "626d6ef124f9ee956072670886c10cd8d5488bb1aa944c86494c4c03bda862a1",
+  "native_output_sha256": "43052df54ccd959b265e0c8b012c38b3c0be5efc74f40200895dfd249b22f2da",
+  "fixture_sha256": "76e874a106993470c161a8ef57dbf7c72f730a5fa870e25ae32b7107ec6feb88",
+  "controller_geometry_ignores_pins": true,
+  "native_weights_loaded": false,
+  "student_model_loaded": false,
+  "training_executed": false,
+  "student_strength_measured": false
+}

@@ -193,7 +193,7 @@ def export_curriculum(curriculum, output):
         for record in records:
             if record['id'] not in natively_checked:
                 row = validation_by_id[record['id']]
-                native_context(row);validate_task(row)
+                native_context(row);validate_task(row, recipe.get('task_profile', 'legacy'))
                 context = row['feature_key'], tuple(row.get('future_moves', []))
                 if context not in continuations_checked:
                     continuation_positions(row, {'pv': list(context[1])})

@@ -7,7 +7,8 @@ from pathlib import Path
 import torch
 
 from .evidence import atomic_json, digest, history_key, manifest, position_key
-from .foundation_preflight import clean_recipe
+from .course_tasks import PAPER_PROFILE, recipe_profile
+from .foundation_preflight import clean_recipe, corpus_preserves_prefix
 from .human_games import assigned_split
 from .symmetry import mirror_fen, mirror_move
 
@@ -114,6 +115,47 @@ def checked_preserved_cache(cache, previous):
     return count
 
 
+def checked_course_sources(data, data_proof, contexts, cached_keys, expected_contexts, output):
+    """Route source reconstruction through the declared data producer contract."""
+    data = Path(data)
+    question_keys, recorded = checked_question_contexts(contexts, cached_keys, expected_contexts)
+    profile = data_proof['config'].get('task_profile', 'legacy')
+    corpus_preserves_prefix(data_proof, profile)
+    if profile == PAPER_PROFILE:
+        from .paper_curriculum import readback
+        result = readback(data, output)
+        source_proof_path = Path(output) / 'manifest.json'
+        result = {'all_supplied_paper_roots_and_question_bytes_regenerated': True,
+                  'paper_questions_regenerated': result['questions_regenerated_and_compared'],
+                  'paper_source_counts': result['counts'], 'task_profile': PAPER_PROFILE}
+        return question_keys, result, [source_proof_path]
+    source_games, source_inputs = {}, []
+    for folder in data_proof['config']['games']:
+        source, source_proof_path = Path(folder) / 'games.jsonl', Path(folder) / 'manifest.json'
+        source_proof = json.loads(source_proof_path.read_text())
+        if source_proof['status'] != 'complete' or digest(source) != source_proof['outputs'][str(source)]['sha256']:
+            raise ValueError('Original recorded game source differs from its completed import')
+        source_inputs.extend([source, source_proof_path])
+        for game in rows(source):
+            source_games.setdefault(game['game_id'], game)
+    footprint_root = Path(data_proof['config']['footprints'])
+    footprint_path, footprint_proof_path = footprint_root / 'positions.json', footprint_root / 'manifest.json'
+    footprint_proof = json.loads(footprint_proof_path.read_text())
+    if (footprint_proof['status'] != 'complete' or
+            digest(footprint_path) != footprint_proof['outputs'][str(footprint_path)]['sha256']):
+        raise ValueError('Reserved prior complete future footprints changed')
+    prior = {key: set(value) for key, value in json.loads(footprint_path.read_text()).items()}
+    roots_path = data / 'recorded-roots.jsonl'
+    if digest(roots_path) != data_proof['outputs'][str(roots_path)]['sha256']:
+        raise ValueError('Recorded course roots changed after production generation')
+    result = checked_recorded_roots(rows(roots_path), source_games, recorded, cached_keys,
+                                   prior, data_proof['config']['split_seed'])
+    if (result['roots_by_split'] != data_proof['verification']['original_recorded_roots_by_split'] or
+            sum(result['roots_by_split'].values()) != data_proof['verification']['original_recorded_roots']):
+        raise ValueError('Recorded root coverage differs from the completed production corpus')
+    return question_keys, result, [roots_path, footprint_path, footprint_proof_path, *source_inputs]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True)
@@ -128,6 +170,7 @@ def main():
         raise ValueError('Use a fresh readback output and positive CPU thread budget')
     recipe = json.loads(recipe_path.read_text())
     clean_recipe(recipe)
+    profile = recipe_profile(recipe)
     proof_path = Path(args.preflight) / 'manifest.json'
     proof = json.loads(proof_path.read_text())
     if Path(proof['config']['config']).resolve() != recipe_path.resolve():
@@ -138,6 +181,7 @@ def main():
     data = Path(recipe['data_path'])
     data_proof_path = data / 'manifest.json'
     data_proof = json.loads(data_proof_path.read_text())
+    corpus_preserves_prefix(data_proof, profile)
     cache_proof_path = Path(recipe['feature_path']).with_suffix('.manifest.json')
     cache_proof = json.loads(cache_proof_path.read_text())
     counts = data_proof['verification']['counts']
@@ -168,34 +212,10 @@ def main():
             len(cache['keys']) != cache_proof['verification']['roots'] or
             len(cache['keys']) != observed['cache_keys']):
         raise ValueError('Cache keys or expert depths differ from the completed preflight')
-    source_games, source_inputs = {}, []
-    for folder in data_proof['config']['games']:
-        source, source_proof_path = Path(folder) / 'games.jsonl', Path(folder) / 'manifest.json'
-        source_proof = json.loads(source_proof_path.read_text())
-        if source_proof['status'] != 'complete' or digest(source) != source_proof['outputs'][str(source)]['sha256']:
-            raise ValueError('Original recorded game source differs from its completed import')
-        source_inputs.extend([source, source_proof_path])
-        for game in rows(source):
-            # This is the same declared canonical source priority as generation.
-            source_games.setdefault(game['game_id'], game)
     contexts_path = Path(args.preflight) / 'unique-contexts.jsonl'
-    question_keys, recorded = checked_question_contexts(
-        rows(contexts_path), cached_keys, observed['actual_unique_histories_natively_replayed'])
-    footprint_root = Path(data_proof['config']['footprints'])
-    footprint_path, footprint_proof_path = footprint_root / 'positions.json', footprint_root / 'manifest.json'
-    footprint_proof = json.loads(footprint_proof_path.read_text())
-    if (footprint_proof['status'] != 'complete' or
-            digest(footprint_path) != footprint_proof['outputs'][str(footprint_path)]['sha256']):
-        raise ValueError('Reserved prior complete future footprints changed')
-    prior = {key: set(value) for key, value in json.loads(footprint_path.read_text()).items()}
-    roots_path = data / 'recorded-roots.jsonl'
-    if digest(roots_path) != data_proof['outputs'][str(roots_path)]['sha256']:
-        raise ValueError('Recorded course roots changed after production generation')
-    recorded_result = checked_recorded_roots(rows(roots_path), source_games, recorded, cached_keys,
-                                             prior, data_proof['config']['split_seed'])
-    if (recorded_result['roots_by_split'] != data_proof['verification']['original_recorded_roots_by_split'] or
-            sum(recorded_result['roots_by_split'].values()) != data_proof['verification']['original_recorded_roots']):
-        raise ValueError('Recorded root coverage differs from the completed production corpus')
+    question_keys, source_result, source_inputs = checked_course_sources(
+        data, data_proof, rows(contexts_path), cached_keys,
+        observed['actual_unique_histories_natively_replayed'], root / 'question-source-readback')
     old_cache_path = Path(cache_proof['config']['base_cache'])
     old_proof_path = Path(cache_proof['config']['base_proof'])
     old_proof = json.loads(old_proof_path.read_text())
@@ -219,10 +239,10 @@ def main():
               'official_remote_independently_requeried': False,
               'decoder_literal_board_text': None, 'course_or_sft_checkpoint_loaded': False,
               'student_training_performed_by_readback': False, 'student_improvement_measured': False,
-              **recorded_result}
+              **source_result}
     atomic_json(root / 'verification.json', result)
-    inputs = [recipe_path, proof_path, base_path, data_proof_path, cache_proof_path, contexts_path, roots_path,
-              footprint_path, footprint_proof_path, *source_inputs, old_cache_path, old_proof_path]
+    inputs = [recipe_path, proof_path, base_path, data_proof_path, cache_proof_path, contexts_path,
+              *source_inputs, old_cache_path, old_proof_path]
     atomic_json(root / 'manifest.json', manifest('recorded_foundation_source_and_cache_readback', vars(args),
                                                inputs, [root / 'verification.json'], result))
     atomic_json(args.public_evidence, dict(result, manifest_sha256=digest(root / 'manifest.json')))

@@ -8,6 +8,7 @@ import re
 import time
 from .evidence import atomic_json, load_jsonl, manifest, write_jsonl
 from .curriculum_data import STAGES
+from .course_tasks import PAPER_PROFILE, grade_answer, row_profile
 
 
 def balanced_rows(rows, per_task, seed, stages=None):
@@ -34,8 +35,29 @@ def qa_summary(records):
     groups = defaultdict(list)
     for r in records:
         groups[f"{r['stage']}/{r['task_type']}"].append(r['correct'])
-    return {'examples': len(records), 'accuracy': sum(r['correct'] for r in records) / len(records),
-            'by_task': {k: {'n': len(v), 'accuracy': sum(v) / len(v)} for k, v in sorted(groups.items())}}
+    summary = {'examples': len(records), 'accuracy': sum(r['correct'] for r in records) / len(records),
+               'by_task': {k: {'n': len(v), 'accuracy': sum(v) / len(v)} for k, v in sorted(groups.items())}}
+    profiles = {row_profile(r) for r in records}
+    if len(profiles) != 1:
+        raise ValueError('Raw QA cannot mix task profiles')
+    if profiles == {PAPER_PROFILE}:
+        summary.update(task_profile=PAPER_PROFILE, prose_graded=False)
+        for key in ('answer_format_valid', 'canonical_tag_correct', 'raw_exact_correct'):
+            summary[key + '_rate'] = sum(r[key] for r in records) / len(records)
+    return summary
+
+
+def prediction_record(row, answer):
+    """Retain raw text and apply only the declared answer-comparison contract."""
+    result = {'id': row['id'], 'game_id': row['game_id'], 'stage': row['stage'],
+              'task_type': row['task_type'], 'question': row['question'],
+              'question_variant': row.get('question_variant', 0),
+              'expected': row['answer'], 'generated': answer}
+    if row_profile(row) == PAPER_PROFILE:
+        result.update(task_profile=PAPER_PROFILE, **grade_answer(row['answer'], answer, row['task_type']))
+    else:
+        result['correct'] = normalized(answer) == normalized(row['answer'])
+    return result
 
 
 def main():
@@ -61,6 +83,10 @@ def main():
     rows = balanced_rows(load_jsonl(path), args.per_task, args.seed, args.stages)
     if not rows or args.batch_size < 1:
         raise ValueError('QA evaluation requires nonempty selected tasks and a positive batch size')
+    profiles = {row_profile(row) for row in rows}
+    if len(profiles) != 1:
+        raise ValueError('QA evaluation requires one declared task profile')
+    profile = next(iter(profiles))
     if args.question_formats == 3:
         from .selfplay_grounding import question_variant
         counts = defaultdict(int)
@@ -72,18 +98,18 @@ def main():
             varied.append(dict(row, question=question_variant(row, variant), question_variant=variant))
         rows = varied
     model = Predictor(args.checkpoint, feature_cache=args.features)
+    if profile != row_profile(model.config):
+        raise ValueError('Evaluation data and checkpoint task profiles differ')
+    if profile == PAPER_PROFILE:
+        args.task_profile = profile
     start, results = time.monotonic(), []
     for offset in range(0, len(rows), args.batch_size):
         batch = rows[offset:offset + args.batch_size]
         if args.memory == 'shuffled' and len(batch) == 1:
             raise ValueError('Select a sample/batch size without a singleton shuffle batch')
         outputs = model.generate_batch(batch, args.max_new_tokens, args.memory)
-        for row, answer in zip(batch, outputs):
-            results.append({'id': row['id'], 'game_id': row['game_id'], 'stage': row['stage'],
-                            'task_type': row['task_type'], 'question': row['question'],
-                            'question_variant': row.get('question_variant', 0),
-                            'expected': row['answer'], 'generated': answer,
-                            'correct': normalized(answer) == normalized(row['answer'])})
+        for row, answer in zip(batch, outputs, strict=True):
+            results.append(prediction_record(row, answer))
         print(json.dumps({'evaluated': len(results), 'seconds': time.monotonic() - start}), flush=True)
     dest.mkdir(parents=True)
     write_jsonl(dest / 'predictions.jsonl', results)
