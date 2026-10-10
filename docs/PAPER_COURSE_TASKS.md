@@ -66,6 +66,31 @@ python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
 
 未传该参数的已完成第一版题型数据保持原来的单题、局面内平衡合同。新选项完成了累计频率与每根问题数，不代表已经实现作者每题型不同的根数量、难例来源混合或完整采样分布。
 
+## 真实终局与近将死来源
+
+`recorded_course_pools` 从已完成原生导入的完整棋谱恢复实际将死／困毙终局，以及此前至多十四个半回合的真实历史根。既有 `recorded_curriculum` 为旧合法走法题裁掉了终局，不能直接用它的根池统计将死容量。新入口读取旧根清单中预先确定的棋局分割，源档案的默认分割不能覆盖它；未进入该清单的棋局不自动加入。
+
+每根最多提供八步实际未来，并逐步记录对应目标的 `generic`、`have_check`、`in_check`、`mate`、`stalemate` 等类别。`near_mate_check` 要求该目标正在被将军，且原棋谱确实在接下来一至六个半回合内到达将死；保留真实主线作为依据。这表示记录中距将死的距离，不能据此断言最优应对下必然被将死。将死与困毙都需要原生确认没有合法着法；仍有合法棋盘着法的历史重复等终止另行计数，不充作终局难例。
+
+完整历史、每个前缀、最大未来和将死依据均从原谱复演。最大未来、整个将死依据和颜色对应共同参与旧分割隔离；结构化旧讲解的主变化及所有分支也可显式保留。旧根重复和跨分割候选记入排除清单，不挪动棋局分割。完整读回重新读取所有输入／产物、重建每个根、目标类别与排除理由，并比较精确顺序；选样实现和原生规则共享，不宣称独立重写。目标出现次数不等于独立局面或完整棋局数。
+
+```bash
+python scripts/freeze_run.py --output runs/terminal-pools-v1/source-run -- \
+  python -m xqgeneral.recorded_course_pools \
+    --games IMPORTED_GAMES.jsonl --game-manifests COMPLETED_GAME_MANIFEST.json \
+    --owners PREASSIGNED_RECORDED_ROOTS.jsonl --owner-manifest COMPLETED_ROOT_MANIFEST.json \
+    --reference-data PRIOR_COURSE_DATA \
+    --explanation-reference-data PRIOR_STRUCTURED_LABEL_DATA \
+    --workers 8 --output data/recorded-terminal-pools-v1
+
+python -m xqgeneral.recorded_course_pools --readback data/recorded-terminal-pools-v1 \
+  --workers 8 --output runs/terminal-pools-v1/full-source-readback
+```
+
+该数据池仍是原生来源准备。按题型分配根预算、锁定所选未来目标后兑现难例比例、补齐来源容量、生成正式课程题和扩展缓存必须随后完成；原棋谱走法不作为最优走法标签，也没有生成神经讲解。
+
+[来源容量与 CPU 合同证据](../evidence/paper-course-source-pools-v1.json) 完整核查原有 45834 个记录根及其未来、22720 局实战档案，以及 2259 条战术主线和 9683 个独立战术局面。实战档案有 257 个将死／3 个困毙，已分割旧根对应的棋局仅提供 83／1；战术主线另有 238／1，独立战术局面没有终局。不同来源尚未共同隔离，不能直接相加为独立容量；困毙来源尤其不足。24 项新增案例和标准 883 项 CPU 检查通过；正式新根池生产／完整读回仍需另行完成。
+
 ## 验证与剩余差异
 
 [原生控制对照](../evidence/paper-course-controllers-native-v1.json) 检查 773 个局面的全部格子，共 69570 次比较，零差异；[八个控制局面](../evidence/paper-course-controller-fixtures-v1.json) 可在无模型、无 vendor 的 CPU CI 中重算。运行入口为 `scripts/build_native_controllers.py` 与 `scripts/verify_native_controllers.py`，编译使用固定、未修改的 Pikafish，运行不加载权重。失败的构造局面检查保留在忽略的运行目录中。
