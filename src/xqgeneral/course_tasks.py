@@ -316,13 +316,18 @@ def paper_queries(fen, rng, initial_board=None):
     return static, dynamic
 
 
-def paper_records(root, rng, sampler=None):
+def paper_records(root, rng, sampler=None, *, only_stage=None, only_task=None):
     """Use an already split, complete native root and its actual future line."""
     if root['split'] not in ('train', 'validation', 'test') or not isinstance(root['game_id'], str):
         raise ValueError('Paper questions require a preassigned native game split')
+    if ((only_stage is None) != (only_task is None) or only_stage is not None and
+            (only_stage not in PAPER_TASKS or only_task not in PAPER_TASKS[only_stage])):
+        raise ValueError('A selected paper task requires its matching declared stage')
     validate_context(root, check_future=True)
     rows = []
     for future in (False, True):
+        if only_stage is not None and only_stage.endswith('_future') != future:
+            continue
         line = root.get('future_moves', []) if future else []
         if future and not line:
             continue
@@ -331,11 +336,18 @@ def paper_records(root, rng, sampler=None):
         for move in line:
             origins.pop(move[2:], None)
             origins[move[2:]] = origins.pop(move[:2])
-        static, dynamic = (paper_queries(fen, rng, piece_map(root['fen']) if future else None)
-                           if sampler is None else sampler.query_groups(root, fen, rng, future))
+        if sampler is None:
+            static, dynamic = paper_queries(fen, rng, piece_map(root['fen']) if future else None)
+        elif only_stage is None:
+            static, dynamic = sampler.query_groups(root, fen, rng, future)
+        else:
+            static, dynamic = sampler.query_groups(root, fen, rng, future,
+                only_kind=only_stage.split('_')[0], only_task=only_task)
         for kind, tasks in [('static', static), ('dynamic', dynamic)]:
             stage = f"{kind}_{'future' if future else 'current'}"
             for task, query in tasks:
+                if only_stage is not None and (stage != only_stage or task != only_task):
+                    continue
                 if future and task == 'moves':
                     query = dict(query, source=origins[query['source']])
                 row = dict(root, stage=stage, task_type=task, task_profile=PAPER_PROFILE, query=query,

@@ -36,7 +36,7 @@ class FrequencySampler:
     def __init__(self):
         self.frequencies = defaultdict(Counter)
 
-    def query_groups(self, root, fen, rng, future):
+    def query_groups(self, root, fen, rng, future, *, only_kind=None, only_task=None):
         split = root['split']
         if split not in ('train', 'validation', 'test'):
             raise ValueError('Adaptive questions require a preassigned source split')
@@ -47,6 +47,8 @@ class FrequencySampler:
         for kind in ('static', 'dynamic'):
             stage, questions = kind + '_' + suffix, []
             for task in PAPER_TASKS[stage]:
+                if only_kind is not None and kind != only_kind or only_task is not None and task != only_task:
+                    continue
                 if task == 'parries' and not in_check(fen):
                     continue
                 frequency = self.frequencies[(split, stage, task)] if task in SHAPED_TASKS else {}
