@@ -10,6 +10,7 @@ from .course_tasks import validate_context
 from .evidence import atomic_json, digest, history_key, iter_jsonl, manifest, position_key
 from .paper_curriculum import SPLITS, checked_sources, reference_contract
 from .recorded_coach import footprint_records
+from .recorded_search_inputs import TACTICAL_CONTEXT_FIELDS, TACTICAL_KINDS, tactical_source_context
 from .rules import adjudicate, gives_check, in_check, legal_moves, replay
 from .symmetry import mirror_fen
 
@@ -37,6 +38,11 @@ def native_classes(fen, mate_distance=None):
 def terminal_candidates(game, split):
     """Use complete actual histories, including their final native terminal board."""
     moves, history = game['moves'], game['history']
+    context = {}
+    if game['source_kind'] in TACTICAL_KINDS:
+        context = tactical_source_context({key: game.get(key) for key in TACTICAL_CONTEXT_FIELDS},
+            game['initial_fen'], game['headers'],
+            position_only=game['source_kind'] == 'recorded_tactical_position')
     if (split not in SPLITS or len(history) != len(moves) + 1 or
             not history or history[0] != game['initial_fen']):
         raise ValueError('Recorded terminal source has an invalid history or assigned split')
@@ -78,7 +84,7 @@ def terminal_candidates(game, split):
                 'provenance': game['provenance'] + ';actual_recorded_native_terminal_course_pool',
                 'paper_source_pool_profile': POOL_PROFILE, 'paper_source_targets': targets,
                 'paper_recorded_mate_witness': witness,
-                'recorded_continuation_is_best_move_label': False}
+                'recorded_continuation_is_best_move_label': False, **context}
         if replay(root['fen'], future) != history[ply:ply + len(future) + 1]:
             raise ValueError('Recorded terminal future differs from the actual game')
         if witness and replay(root['fen'], witness) != history[ply:]:
@@ -147,8 +153,12 @@ def candidate_groups(games, owners, workers):
 
 def root_footprint(root):
     """Reserve the maximum future, the entire actual mate witness, and both colors."""
-    line = root['paper_recorded_mate_witness'] or root['future_moves']
+    line = (root.get('paper_generated_terminal_witness') or
+            root['paper_recorded_mate_witness'] or root['future_moves'])
     fens = replay(root['fen'], line)
+    if root.get('extension_is_recorded_source_move') is False:
+        # A generated one-ply descendant retains its supplied parent board.
+        fens += root['history']
     return {position_key(fen) for fen in fens} | {position_key(mirror_fen(fen)) for fen in fens}
 
 

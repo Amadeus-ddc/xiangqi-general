@@ -91,6 +91,32 @@ python -m xqgeneral.recorded_course_pools --readback data/recorded-terminal-pool
 
 [来源容量与 CPU 合同证据](../evidence/paper-course-source-pools-v1.json) 完整核查原有 45834 个记录根及其未来、22720 局实战档案，以及 2259 条战术主线和 9683 个独立战术局面。实战档案有 257 个将死／3 个困毙，已分割旧根对应的棋局仅提供 83／1；战术主线另有 238／1，独立战术局面没有终局。不同来源尚未共同隔离，不能直接相加为独立容量；困毙来源尤其不足。24 项新增案例和标准 883 项 CPU 检查通过；正式新根池生产／完整读回仍需另行完成。
 
+## 战术主线与合法终局延伸
+
+`tactical_course_pools` 接收完成原生导入、按固定种子预分割的战术主线和独立战术局面。主线终局沿用真实记录的走子和将死依据，并保留给定起点、棋手缺失和片段前历史是否可用。独立局面枚举所有合法一步着法，只有实际到达将死／困毙且原生胜方一致时才收取；不读取源解答来制造标签。
+
+生成延伸沿用原局面身份和分割，声明 `extension_is_recorded_source_move=false`，使用 `paper_generated_terminal_witness` 和 `plies_before_generated_mate`，不冒充 `paper_recorded_mate_witness`。同一父局面的多种终局只保留一个重复历史根，其他终局后继可分别收取；重复父根和隔离冲突逐项记录。每个生成终局的给定父局面也参与颜色／分割保留。棋谱中的距将死步数和生成主线的距离均不证明最优防守下强制将死。
+
+已完成的 `recorded_coach_footprints` 可以复用：重新绑定全部原始课程／讲解文件及清单字节，核对组成集合、合并集合和计数，再显式补全颜色对应。原缓存的原生未来解析不在这里重跑。额外旧课程和结构化讲解照常复演未来；所有声明的原生来源档案完整历史和颜色也参与保留，沿用已有棋局归属，否则使用既定分割种子。不同分割共享的原谱位置标为歧义并排除新候选，不擅自选择归属。完整读回重新导出全部原生战术目标、来源字段、顺序、尾部和排除原因。
+
+全部 9683 个给定局面的原生一步枚举发现 238 个将死和 51 个困毙后继；这些是隔离前观察，多个后继可能来自同一个局面，不能相加为新增独立棋局。已有战术主线的 238 个实际将死与一个困毙也须共同隔离后才能计入新池。正式生产／读回的完成状态见 [状态](../STATUS.md)。
+
+```bash
+python scripts/freeze_run.py --output runs/tactical-terminal-pools-v1/source-run -- \
+  python -m xqgeneral.tactical_course_pools \
+    --games data/recorded-tactical-lines-ccpd-v1 data/recorded-tactical-positions-pwa-v1 \
+    --footprints COMPLETED_NATIVE_FORECAST_MANIFEST.json \
+    --reference-data OTHER_PRIOR_COURSE_DATA \
+    --explanation-reference-data OTHER_PRIOR_STRUCTURED_LABEL_DATA \
+    --reservation-games ALL_COMPLETED_CANONICAL_IMPORT_DIRECTORIES \
+    --owners PREASSIGNED_RECORDED_ROOTS.jsonl --owner-manifest COMPLETED_ROOT_MANIFEST.json \
+    --workers 8 --output data/tactical-terminal-pools-v1
+python -m xqgeneral.tactical_course_pools --readback data/tactical-terminal-pools-v1 \
+  --workers 8 --output runs/tactical-terminal-pools-v1/full-source-readback
+```
+
+这一步提供有来源的终局根，尚未兑现每题型根预算或将所选未来步数与难例比例绑定，也没有生成特征缓存、神经讲解或新学生权重。
+
 ## 验证与剩余差异
 
 [原生控制对照](../evidence/paper-course-controllers-native-v1.json) 检查 773 个局面的全部格子，共 69570 次比较，零差异；[八个控制局面](../evidence/paper-course-controller-fixtures-v1.json) 可在无模型、无 vendor 的 CPU CI 中重算。运行入口为 `scripts/build_native_controllers.py` 与 `scripts/verify_native_controllers.py`，编译使用固定、未修改的 Pikafish，运行不加载权重。失败的构造局面检查保留在忽略的运行目录中。
