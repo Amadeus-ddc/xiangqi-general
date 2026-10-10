@@ -92,6 +92,31 @@ python -m xqgeneral.paper_curriculum --readback data/paper-courses-v1 \
 
 可用 `--task-position-budgets BUDGETS.json` 显式适配实际容量。文件必须完整声明三个分割、四门课及其全部题型的正整数根数；省略则请求作者预算。实际容量不足保持缺口，正式训练仍需要完整题型覆盖、验证容量、缓存和词元预检。独立测试不参与训练或选模。
 
+## 完整实战的全历史根
+
+`recorded_full_course_pools` 从完成原生导入的完整人类、电脑、人机及公开实战中检查每个历史前缀，不设每局抽样上限。根保留实际完整过去和最多八步记录未来；原谱将死前十四步以内保留实际将死主线。完整棋盘终局保留，仍有合法走子的 AXF 历史终止点及其后历史不生成问题，未来也不能触达该终止点。记录主线不作为最佳走法标签，不虚构缺失的更早历史。
+
+既有根清单中的棋局归属优先于源档案的默认分割。完整旧课程的根／未来／颜色范围、结构化讲解的 PV／分支，以及全部声明来源的历史／颜色范围参与隔离；共享开局在多个分割出现时排除相关根，不重新分配棋局。相同完整历史在新池只保留一次。同一分割的既有实战历史可重新用于新题型，但不能跨到另一个分割。
+
+新池替代旧普通实战根和旧完整实战终局根，不直接叠加这两份重叠来源。战术局面仍由独立战术入口处理。完整读回重新执行全部源棋局的原生历史／前缀终止检查，逐字节比较根、排除记录及完整计数；规则和根选择实现与生产共享。
+
+```bash
+python scripts/freeze_run.py --output runs/full-recorded-pools-v1/source-run -- \
+  python -m xqgeneral.recorded_full_course_pools \
+    --games FULL_MATCH_IMPORT_1 FULL_MATCH_IMPORT_2 \
+    --footprints COMPLETED_NATIVE_FORECAST_MANIFEST.json \
+    --reference-data data/move-quality-selfplay-v3 data/move-planning-selfplay-v3 \
+    --explanation-reference-data data/astra-explanations-clean-v1 \
+    --owners data/research-human-engine-v1/recorded-roots.jsonl \
+    --owner-manifest data/research-human-engine-v1/manifest.json \
+    --reservation-games ALL_CANONICAL_IMPORT_1 ALL_CANONICAL_IMPORT_2 \
+    --workers 8 --output data/full-recorded-pools-v1
+python -m xqgeneral.recorded_full_course_pools --readback data/full-recorded-pools-v1 \
+  --workers 8 --output runs/full-recorded-pools-v1/full-source-readback
+```
+
+路径占位符应展开为全部实际来源；长任务放在 tmux 中。全库容量扫描核对了八份完成导入：107678 个完整实战标识、8413544 个提供的历史局面观察值，其中原生最终棋盘有 3716 个将死、60 个困毙。按档案默认分割，训练侧有 6734815 个观察值；这些包含重复且尚未按既有归属和隔离过滤，不能当成独立可用根数或已经填满作者预算。六份完整来源的 9 盘实战、600 个历史根及全部实际后续另作原生抽样核验。全库根生产／读回已启动；完整正式 QA、缓存、词元预检及新训练仍待完成。见 `evidence/paper-full-recorded-roots-v1.json`。
+
 ## 真实终局与近将死来源
 
 `recorded_course_pools` 从已完成原生导入的完整棋谱恢复实际将死／困毙终局，以及此前至多十四个半回合的真实历史根。既有 `recorded_curriculum` 为旧合法走法题裁掉了终局，不能直接用它的根池统计将死容量。新入口读取旧根清单中预先确定的棋局分割，源档案的默认分割不能覆盖它；未进入该清单的棋局不自动加入。
