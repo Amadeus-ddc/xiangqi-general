@@ -65,7 +65,8 @@ class FiniteMixtureEpochs:
         self.global_micro = world * micro
         groups = {stage: [] for stage in mixture}
         seen = set()
-        for index, row in enumerate(rows):
+        metadata = rows.iter_metadata() if hasattr(rows, 'iter_metadata') else rows
+        for index, row in enumerate(metadata):
             if row['stage'] not in groups:
                 continue
             identity = row.get('id')
@@ -87,7 +88,8 @@ class FiniteMixtureEpochs:
         self.padded_per_epoch = (-self.size) % self.global_micro if world > 1 else 0
         identity = hashlib.sha256()
         for index in self.selected:
-            identity.update(json.dumps([int(index), rows[int(index)]['id']],
+            row = rows.row_metadata(int(index)) if hasattr(rows, 'row_metadata') else rows[int(index)]
+            identity.update(json.dumps([int(index), row['id']],
                                        ensure_ascii=False, separators=(',', ':')).encode() + b'\n')
         self.selection_sha256 = identity.hexdigest()
         self._epoch, self._order = None, None
@@ -138,7 +140,8 @@ class FiniteMixtureEpochs:
 
     def batch(self, step, rank=0):
         indices, report = self.batch_indices(step, rank)
-        return [self.rows[index] for index in indices], report
+        records = self.rows.get_batch(indices) if hasattr(self.rows, 'get_batch') else [self.rows[index] for index in indices]
+        return records, report
 
 
 def prepare_finite_epochs(rows, mixture, config, world):

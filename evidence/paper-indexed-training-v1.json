@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "kind": "indexed_training_jsonl_verified_milestone",
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete",
+  "verified_date": "2026-10-11",
+  "profile": "indexed_training_jsonl_v1",
+  "traversal_profile": "author_finite_mixture_epochs_xiangqi_v1",
+  "behavior": {
+    "original_filtered_source_order_preserved": true,
+    "original_payloads_preserved": true,
+    "metadata_only_selection": true,
+    "only_requested_payloads_loaded": true,
+    "complete_sha256_and_byte_bindings": true,
+    "source_and_index_change_guards": true,
+    "exact_finite_data_resume_contract_preserved": true,
+    "duplicate_ids_rejected": true,
+    "independent_test_index_forbidden": true,
+    "explicit_new_recipe_required": true
+  },
+  "tests": {
+    "new_index_tests": 54,
+    "status": "complete",
+    "returncode": 0,
+    "source_test_bindings": 156,
+    "source_and_tests_unchanged": true,
+    "passed": 1058,
+    "pytest_seconds": 468.85,
+    "wrapper_seconds": 473.69137116428465,
+    "focused_seconds": 2.94
+  },
+  "full_existing_corpus_control": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "phases": {
+      "train": {
+        "rows": 2831004,
+        "rows_by_stage": {
+          "static_current": 772092,
+          "dynamic_current": 643410,
+          "static_future": 772092,
+          "dynamic_future": 643410
+        },
+        "build_seconds": 156.73162614461035,
+        "source_bytes": 17958336456,
+        "source_sha256": "ed9ba5bf7ce7b4ff58b457a8599e89bc8efd8df130b541596bbc634be4507dc8",
+        "readback_seconds": 473.3657148024067,
+        "every_original_payload_metadata_and_byte_span_equal": true,
+        "finite_four_course_mixture": {
+          "profile": "author_finite_mixture_epochs_xiangqi_v1",
+          "anchor_stage": "dynamic_future",
+          "source_rows_by_stage": {
+            "static_current": 772092,
+            "dynamic_current": 643410,
+            "static_future": 772092,
+            "dynamic_future": 643410
+          },
+          "selected_rows_by_stage": {
+            "static_current": 48256,
+            "dynamic_current": 48256,
+            "static_future": 64341,
+            "dynamic_future": 643410
+          },
+          "requested_weights": {
+            "static_current": 0.06,
+            "dynamic_current": 0.06,
+            "static_future": 0.08,
+            "dynamic_future": 0.8
+          },
+          "realized_weights": {
+            "static_current": 0.06000027354236114,
+            "dynamic_current": 0.06000027354236114,
+            "static_future": 0.07999995026502525,
+            "dynamic_future": 0.7999995026502524
+          },
+          "rows_per_epoch": 804263,
+          "mixture_seed": 0,
+          "epoch_seed": 41,
+          "selected_row_id_and_index_sha256": "a99336eec24a6b48cee99341ac0202e5001705b3b717db4e64f0a96a595bfbff",
+          "global_batch_size": 256,
+          "world_size": 4,
+          "micro_batch_size": 4,
+          "optimizer_steps_per_epoch": 3142,
+          "padded_rows_per_epoch": 9,
+          "tail_policy": "pad_distributed_microbatch_from_epoch_start",
+          "old_course_subsets_reselected_each_epoch": false,
+          "task_types_resampled_uniformly": false,
+          "independent_test_used": false
+        }
+      },
+      "validation": {
+        "rows": 173272,
+        "rows_by_stage": {
+          "static_current": 47256,
+          "dynamic_current": 39380,
+          "static_future": 47256,
+          "dynamic_future": 39380
+        },
+        "build_seconds": 9.296413610689342,
+        "source_bytes": 1059759384,
+        "source_sha256": "8b5cf48d6c7b3afd348fde6df1825fb30ca8373b7d3b14469fe1ef7d1788f9ca",
+        "readback_seconds": 28.177950333803892,
+        "every_original_payload_metadata_and_byte_span_equal": true
+      }
+    },
+    "original_source_manifest_sha256": "d1ed1d46b2cff8c170e31535f25e49b909964e9999f8befc709bb222f6bbcf2a",
+    "complete_actual_original_payload_readback": true,
+    "frozen_modules_rehashed": 86,
+    "seconds": 690.9612905224785,
+    "process_peak_rss_kib": 1510540,
+    "native_gold_and_history_validation_repeated": false,
+    "models_loaded": false,
+    "student_training_executed": false,
+    "new_paper_corpus_or_cache_completed": false,
+    "goal_complete": false
+  },
+  "constructed_cuda_control": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "constructed_tensor_model": true,
+    "actual_cuda_training_entry_used": true,
+    "gpu": 3,
+    "continuous_updates": 8,
+    "resume_after_update": 4,
+    "memory_vs_indexed_vs_resumed_parameters_optimizer_rng_and_traces_bitwise_equal": true,
+    "indexed_input_hashes_bind_all_index_artifacts": true,
+    "frozen_modules_rehashed": 86,
+    "seconds": 12.712303567677736,
+    "pretrained_models_loaded": false,
+    "student_training_executed": false,
+    "new_paper_corpus_complete": false,
+    "goal_complete": false
+  },
+  "final_fresh_readback": {
+    "status": "complete",
+    "all_declared_inputs_outputs_and_sources_rehashed": true,
+    "verified_files": 451,
+    "frozen_modules_per_control": 86,
+    "production_frozen_modules": 67,
+    "production_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "sqlite_version": "3.37.2",
+    "student_training_with_new_storage_executed": false,
+    "goal_complete": false
+  },
+  "private_control_artifact_bindings": {
+    "real-corpus": {
+      "entry.py": {
+        "sha256": "6da805f75940ec85d74ff25610837697d1b4981238ab677075b30f699db7008b",
+        "bytes": 5817
+      },
+      "manifest.json": {
+        "sha256": "54a59c9cf8cd48fb10bb87f7ba73d825e94fa316ed04ed86fb271acdade44cce",
+        "bytes": 16032
+      },
+      "verification.json": {
+        "sha256": "020bbee5ed4b05dedd51bb40ce15ab8a4ce1d8c947645efa8b91894bd1b28d3f",
+        "bytes": 3052
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      }
+    },
+    "cuda-control": {
+      "entry.py": {
+        "sha256": "f4b2f728811e644df9d8289c5e4ea71fabb6ef25126e4be40f5e67890f12177f",
+        "bytes": 7662
+      },
+      "manifest.json": {
+        "sha256": "63988786738d5274e9e74ada0bdef075de754bfe1b31ad36dc2e722c50bffc06",
+        "bytes": 19494
+      },
+      "verification.json": {
+        "sha256": "ff7896ea1d3770df78081f2b7cc7c5e7c1f3e51ed1ee81c3dae5992128a5d09e",
+        "bytes": 571
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      }
+    }
+  },
+  "private_publication_artifact_bindings": {
+    "canonical.json": {
+      "sha256": "01dee5bd5c2144a9f2c477dd65185f7b54f428ed481849d347b24dc1042f1f88",
+      "bytes": 202
+    },
+    "canonical.log": {
+      "sha256": "14c6e2e6e54a0ef9d15157deebb63722d92c54a7d165ebb3578a82319c488edb",
+      "bytes": 1233
+    },
+    "source-test-before.json": {
+      "sha256": "7d370889252409a8d0cd53592712c8da6a95534f889449d00ee294b87b9e760f",
+      "bytes": 16286
+    },
+    "source-test-after.json": {
+      "sha256": "7d370889252409a8d0cd53592712c8da6a95534f889449d00ee294b87b9e760f",
+      "bytes": 16286
+    },
+    "focused.log": {
+      "sha256": "9232ea0b788ad083ea772c18ae8a4f162db58f30ee51388fbfa2b64b6350c999",
+      "bytes": 99
+    },
+    "readback.py": {
+      "sha256": "7b44ac017d272e08db424ea865caaab94b4bad74eb539295ff0b3621260b3b70",
+      "bytes": 4081
+    },
+    "readback.json": {
+      "sha256": "dac6943b8af2e892fd27e8664a026a5463019b82f1d9be35845a66fcf983b472",
+      "bytes": 117916
+    },
+    "readback.log": {
+      "sha256": "523db74031b5c3f46af4485286dc301d76b651da3636089b591e8599ac508181",
+      "bytes": 572
+    }
+  },
+  "changed_source_bindings": {
+    "src/xqgeneral/training_index.py": {
+      "sha256": "cc643484e7b3c4cbb7179dda904320c712acf3418bbf2d4d3a9ba06675e1850b",
+      "bytes": 15332
+    },
+    "src/xqgeneral/finite_training.py": {
+      "sha256": "e4ff0cc2f215718a06a8af74440c99294bc0a962b9255f0c92c281a2853c8e1e",
+      "bytes": 8628
+    },
+    "src/xqgeneral/training.py": {
+      "sha256": "596d0ab5a9c3480ffbac146ae700b5b21c58f080f02fae5a255730b827f53a67",
+      "bytes": 32115
+    },
+    "tests/test_training_index.py": {
+      "sha256": "db7aa3ad008f65ef16755f33e22edad96f799e6db31e50c9dd1e7223b27dcca8",
+      "bytes": 11159
+    }
+  },
+  "limitations": [
+    "Corpus control did not recompute native rule labels or replay all histories; it inherited their validation from unchanged original source bytes.",
+    "RSS is for indexing, full payload readback and finite selection, not full neural model training.",
+    "CUDA control used a constructed tensor model, not a pretrained student or expert.",
+    "Expanded 26-type formal corpus, scalable expert feature storage and multi-GPU neural training/resume remain incomplete.",
+    "No new curriculum training, explanation training, strength/coaching acceptance or trained distillation is proven by this milestone."
+  ],
+  "current_production_recipe_and_67_frozen_modules_unchanged": true,
+  "goal_complete": false
+}
