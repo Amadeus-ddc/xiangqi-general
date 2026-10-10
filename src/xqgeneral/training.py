@@ -17,6 +17,7 @@ from .evidence import atomic_json, code_identity, digest, manifest
 from .modeling import initialize_trainable, load_model, load_trainable, trainable_state
 from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
+from .finite_training import data_profile, prepare_finite_epochs
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
@@ -184,6 +185,10 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     from .course_tasks import row_profile
+    if data_profile(saved) != data_profile(requested):
+        raise ValueError('Resume training data traversal differs; initialize a new experiment instead')
+    if saved.get('mixture_seed', 0) != requested.get('mixture_seed', 0):
+        raise ValueError('Resume finite mixture seed differs; initialize a new experiment instead')
     if row_profile(saved) != row_profile(requested):
         raise ValueError('Resume task profile differs; initialize a new experiment instead')
     if saved.get('loss_normalization', 'token') != requested.get('loss_normalization', 'token'):
@@ -217,6 +222,7 @@ def main():
     parser.add_argument('--stop-after', type=int, help='Save an incomplete checkpoint at this absolute step for controlled resume verification')
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text())
+    data_profile(config)
     normalization = config.get('loss_normalization', 'token')
     if normalization not in {'token', 'example'}:
         raise ValueError('Loss normalization must be token or example')
@@ -280,8 +286,9 @@ def main():
         raise ValueError('Selected validation stages have no examples')
     validation = random.Random(config['seed']).sample(validation_pool,
                    min(config['validation_examples'], len(validation_pool)))
+    finite_epochs = prepare_finite_epochs(rows['train'], mixture, config, world)
     model, tokenizer = load_model(config, cache['features'][0].shape[-1], device)
-    pools = sample_groups(rows['train'])
+    pools = None if finite_epochs is not None else sample_groups(rows['train'])
     parameters = [p for p in model.parameters() if p.requires_grad]
     groups = defaultdict(list)
     for name, parameter in model.named_parameters():
@@ -305,6 +312,8 @@ def main():
             raise ValueError('Exact resume requires the same preserved execution source')
         if resume['world_size'] != world:
             raise ValueError('Exact optimizer resume requires the same DDP world size')
+        if finite_epochs is not None:
+            finite_epochs.check_resume(resume.get('data_state'), resume['step'])
         load_trainable(model, resume)
         optimizer.load_state_dict(resume['optimizer'])
         for state in optimizer.state.values():
@@ -341,6 +350,8 @@ def main():
         atomic_json(dest / 'execution.json', {'code': execution_code, 'input_hashes': input_hashes,
                                             'resumed_from_step': begin, 'initial_loss': initial_loss,
                                             'compute_contract': compute_contract})
+        if finite_epochs is not None:
+            atomic_json(dest / 'training_data.json', finite_epochs.contract())
         handle = (dest / 'training.jsonl').open('a' if resume else 'w')
     if world > 1:
         state = [best_loss, best_step]
@@ -353,7 +364,11 @@ def main():
     patience_count = resume.get('patience_count', 0) if resume else 0
     for step in range(begin, config['steps']):
         wrapped.train()
-        records = sample_batch(rows['train'], mixture, rng, config['batch_size'], rank, world, pools)
+        if finite_epochs is None:
+            records = sample_batch(rows['train'], mixture, rng, config['batch_size'], rank, world, pools)
+            data_batch = None
+        else:
+            records, data_batch = finite_epochs.batch(step, rank)
         inputs = batch_inputs(tokenizer, records, config['max_tokens'], device, config.get('mode', 'bridge'),
                               config.get('board_tokens', False), config.get('board_text'))
         local_tokens = (inputs['labels'][:, 1:] != -100).sum().to(dtype=torch.float32)
@@ -410,6 +425,8 @@ def main():
         if rank == 0:
             item = {'step': completed, 'loss': value, 'gradient_norm': float(norm), 'supervised_tokens': tokens_seen,
                     'lr': optimizer.param_groups[0]['lr'], 'seconds': time.monotonic() - started}
+            if data_batch is not None:
+                item['data_batch'] = data_batch
             handle.write(json.dumps(item) + '\n')
             handle.flush()
             if completed % 20 == 0 or completed == 1:
@@ -444,7 +461,8 @@ def main():
                             'random_state': rng.getstate(), 'torch_rng_state': torch.get_rng_state(),
                             'cuda_rng_states': cuda_states, 'world_size': world, 'input_hashes': input_hashes,
                             'initial_loss': initial_loss, 'patience_count': patience_count, 'code': execution_code,
-                            'compute_contract': compute_contract})
+                            'compute_contract': compute_contract,
+                            **({'data_state': finite_epochs.state_at(completed)} if finite_epochs is not None else {})})
         if args.stop_after and completed >= args.stop_after and completed < config['steps']:
             incomplete = True
             break
@@ -499,8 +517,11 @@ def main():
         if config.get('init_from'):
             inputs.append(config['init_from'])
         result['feature_cache_sha256'] = input_hashes[config['feature_path']]
+        if finite_epochs is not None:
+            result['training_data_state'] = finite_epochs.state_at(completed)
         atomic_json(dest / 'manifest.json', manifest('model_training', config, inputs,
-                    [dest / 'adapter.pt', dest / 'examples.json', dest / 'training.jsonl'], result, code=execution_code))
+                    [dest / 'adapter.pt', dest / 'examples.json', dest / 'training.jsonl',
+                     *([dest / 'training_data.json'] if finite_epochs is not None else [])], result, code=execution_code))
         atomic_json(dest / 'metrics.json', result)
         print(json.dumps(result), flush=True)
     if world > 1:
