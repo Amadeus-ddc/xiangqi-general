@@ -16,6 +16,7 @@ from .explanations import continuation_positions
 from .foundation_preflight import clean_recipe, native_answer, native_context, validate_task
 from .gated_curriculum import raw_gate_from_artifacts, training_config
 from .modeling import foundation_state_summary
+from .training import training_input_paths
 
 
 class Artifacts:
@@ -206,8 +207,7 @@ def export_curriculum(curriculum, output):
                 saved['code'] != snapshot['training_code'] or
                 saved['input_hashes'] != snapshot['training_input_hashes']):
             raise ValueError('Selected checkpoint differs from its frozen training contract')
-        inputs = [recipe['feature_path'], *[str(Path(recipe['data_path']) / f'{s}.jsonl') for s in ['train', 'validation']]]
-        if index:inputs.append(str(courses[index - 1][0]))
+        inputs = [str(p) for p in training_input_paths(proof['config'])]
         if set(saved['input_hashes']) != set(inputs):
             raise ValueError('Selected checkpoint has an unexpected training input lineage')
         for path, sha in saved['input_hashes'].items():

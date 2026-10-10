@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "kind": "sharded_expert_feature_storage_verified_milestone",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_date": "2026-10-11",
+  "profile": "sharded_expert_features_xiangqi_v1",
+  "behavior": {
+    "existing_base_cache_referenced_without_rewriting": true,
+    "preserved_base_key_order": true,
+    "new_features_generated_in_bounded_shards": true,
+    "all_history_keys_unique": true,
+    "source_production_bytes_expert_and_encoder_pinned": true,
+    "stored_feature_dtype": "float16",
+    "stored_wdl_dtype": "float32",
+    "checkpoint_lineage_binds_all_storage_and_row_indexes": true,
+    "exact_finite_data_state_resume_checked": true,
+    "source_and_storage_mutation_rejected": true,
+    "current_frozen_production_unchanged": true
+  },
+  "tests": {
+    "new_feature_tests": 54,
+    "new_missing_rng_rejection_test": 1,
+    "status": "complete",
+    "returncode": 0,
+    "source_test_bindings": 159,
+    "source_and_tests_unchanged": true,
+    "passed": 1113,
+    "pytest_seconds": 449.56,
+    "wrapper_seconds": 453.51798614673316
+  },
+  "actual_cuda_tensor_training_control": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "constructed_tensor_model": true,
+    "actual_cuda_training_entry_used": true,
+    "gpu": 3,
+    "continuous_updates": 8,
+    "resume_after_update": 4,
+    "monolithic_vs_sharded_vs_resumed_parameters_optimizer_rng_and_traces_bitwise_equal": true,
+    "sharded_input_hashes_bind_all_storage_and_row_index_artifacts": true,
+    "frozen_modules_rehashed": 88,
+    "seconds": 4.746599061414599,
+    "pretrained_models_loaded": false,
+    "student_training_executed": false,
+    "new_paper_corpus_complete": false,
+    "goal_complete": false
+  },
+  "full_preserved_cache_and_actual_native_px0_control": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "existing_base_roots": 169904,
+    "all_base_key_order_equal": true,
+    "all_original_fp16_feature_elements_bitwise_equal_and_finite": 125266821120,
+    "all_original_fp32_wdl_elements_bitwise_equal_and_finite": 509712,
+    "new_native_training_histories": 16,
+    "native_sample_histories_replayed": true,
+    "actual_pinned_px0_gpu_extraction_and_independent_repeat_bitwise_equal": true,
+    "new_shard_rows": [
+      8,
+      8
+    ],
+    "original_base_cache_file_referenced_without_tensor_copy": true,
+    "all_original_source_signatures_unchanged": true,
+    "frozen_modules_rehashed": 88,
+    "expert_sha256": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c",
+    "native_full_source_audit_inherited_from_completed_tactical_pool": true,
+    "native_full_source_audit_reexecuted": false,
+    "student_or_teacher_loaded": false,
+    "new_paper_question_corpus_or_full_new_feature_cache_complete": false,
+    "goal_complete": false,
+    "seconds": 520.3672357369214,
+    "process_peak_rss_kib": 32166520
+  },
+  "private_control_artifact_bindings": {
+    "cuda-control": {
+      "entry.py": {
+        "sha256": "9e40c0b926a54f48b8304baf41d9091b28cbeeb3d1f69d2739f54932df74ca92",
+        "bytes": 8572
+      },
+      "manifest.json": {
+        "sha256": "c2a5de4e10655e592a4db70243b2efa6ce402e03414cb019722b8d28a40b8691",
+        "bytes": 21419
+      },
+      "verification.json": {
+        "sha256": "0882dfd83242708cee4ba44009b03cdde81038863f0d23cf5f42c20d80414d79",
+        "bytes": 590
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      }
+    },
+    "real-px0": {
+      "entry.py": {
+        "sha256": "587dc7ccaf86365ecba5a5f93830cfec68c0da41f874fd6a067040d88b86ff3a",
+        "bytes": 8009
+      },
+      "manifest.json": {
+        "sha256": "de21f6185fc125f9cee66f559dbeea4fa761b51fb078aef81fce758484edbd67",
+        "bytes": 14338
+      },
+      "verification.json": {
+        "sha256": "1a068bdcde61e33547065b588a6ee4ff68d3ffcebfadc952c5973c35cfa143f9",
+        "bytes": 1061
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      }
+    }
+  },
+  "private_canonical_artifact_bindings": {
+    "canonical.py": {
+      "sha256": "2ea6388a1353fdc91081278fe3547aa4ad0f9b5a5477796f1539e2e8b490e370",
+      "bytes": 1667
+    },
+    "canonical.json": {
+      "sha256": "d6eec9c0084c020331b80d3b5b71b7ccce4ba163b7c0572dc23ee5721ca985f5",
+      "bytes": 202
+    },
+    "canonical.log": {
+      "sha256": "0f51a2cd99c927fd9a92d241fd1d54b4dc44479f75e0f5a115415e747514a30b",
+      "bytes": 1313
+    },
+    "source-test-before.json": {
+      "sha256": "9faf94d4f6d029f8a4817f713da6c8589ab7a913962c7f73e4ac4f1e6cf13158",
+      "bytes": 16601
+    },
+    "source-test-after.json": {
+      "sha256": "9faf94d4f6d029f8a4817f713da6c8589ab7a913962c7f73e4ac4f1e6cf13158",
+      "bytes": 16601
+    }
+  },
+  "changed_source_test_bindings": {
+    "src/xqgeneral/feature_store.py": {
+      "sha256": "850f4a11634fad488100ccd4e8e078c8d300206b44526757ac3ebe641d42d052",
+      "bytes": 15423
+    },
+    "src/xqgeneral/cache_feature_store.py": {
+      "sha256": "5d91f3031f4a547c0fd91fc0c3952bbabfd7b5fe358ec35fb992ecfc097a2d19",
+      "bytes": 6549
+    },
+    "src/xqgeneral/training.py": {
+      "sha256": "a05a75f087f71c9043c81cadc638df561f0939067bb8b48e663344241ee9e36e",
+      "bytes": 32711
+    },
+    "src/xqgeneral/inference.py": {
+      "sha256": "2d113dba524375d3576504d33331baa30b17cf43c083d4b284c201a6eaae44f8",
+      "bytes": 6246
+    },
+    "src/xqgeneral/foundation_preflight.py": {
+      "sha256": "3bb529e36c2ac3f34fac18160b0fc19d96fa4e1e53c4190802c48d3f53b02bcc",
+      "bytes": 18876
+    },
+    "src/xqgeneral/foundation_readback.py": {
+      "sha256": "f1b155d0db417634c05ab507c105a33054ab56cde41146f7f57cc986573fbe62",
+      "bytes": 16005
+    },
+    "src/xqgeneral/foundation_handoff.py": {
+      "sha256": "8940ffba84f829ff9cd8307d409c0f04b6a776e8b6e7a834669490abddc5c46e",
+      "bytes": 17984
+    },
+    "src/xqgeneral/explanation_preflight.py": {
+      "sha256": "7828325c21a5abfa06f0a648b3fcf0eb8c8f3aaac9c1413f473b37417e6de7ec",
+      "bytes": 10570
+    },
+    "src/xqgeneral/sft_preflight.py": {
+      "sha256": "c7c62c9b1fd309a6c2c6a6a9ca916f83a4b5e177038e2bfe84a053b4eb48dc3b",
+      "bytes": 18496
+    },
+    "src/xqgeneral/sft_pipeline.py": {
+      "sha256": "8947393580fb33424e938b40c188691adfac460aacf886b86e3b125df6fb6c2e",
+      "bytes": 9683
+    },
+    "tests/test_feature_store.py": {
+      "sha256": "4c3c664555388bcada5527644fededcedfa0050b037b1b790b64019fcec5c343",
+      "bytes": 18998
+    },
+    "tests/test_sft_pipeline.py": {
+      "sha256": "5ac9f14473deb8d2de31bfea23ecc96ad0669835858893fbe9a7a722dce93dce",
+      "bytes": 18148
+    }
+  },
+  "limitations": [
+    "CUDA optimizer control used a constructed tensor model; no pretrained student or teacher was loaded.",
+    "Native GPU control extracted 16 new training histories into two eight-row shards, not the full expanded curriculum cache.",
+    "Complete tactical source native auditing was inherited from unchanged completed source evidence; only the 16 sampled histories were replayed here.",
+    "The full base readback RSS includes touched mmap pages and is not the memory or throughput of neural training.",
+    "Expanded 26-type formal question corpus/cache, real multi-GPU dense-bridge training/resume, four curricula, SFT, trained search distillation and final strength/coaching acceptance remain incomplete."
+  ],
+  "goal_complete": false,
+  "fresh_reverification": {
+    "status": "complete",
+    "canonical_passed": 1113,
+    "source_test_bindings_unchanged": 159,
+    "frozen_modules_each_control": 88,
+    "all_declared_control_storage_and_output_bindings_freshly_rehashed": true,
+    "verified_files": 293,
+    "original_production_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "original_production_frozen_modules_rehashed": 67,
+    "seconds": 224.67657576780766,
+    "goal_complete": false
+  },
+  "private_fresh_readback_artifact_binding": {
+    "sha256": "092fe4717898cae56c8315a795ff2beb33759178904c72aedaaed20025a53793",
+    "bytes": 79261
+  }
+}
