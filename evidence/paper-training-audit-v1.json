@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "kind": "primary_source_training_recipe_audit",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-10T02:52:04.374437+00:00",
+  "paper": {
+    "url": "https://arxiv.org/html/2610.03695v1",
+    "version": "v1",
+    "local_html_sha256": "630a91986dd1c16b1dd6b38fead31714793784acb90c729626143098e05aef1e"
+  },
+  "author_revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+  "author_files_remotely_read_and_byte_matched": 32,
+  "author_file_bindings": [
+    {
+      "path": "configs/train/stage1/flamingo.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage1/flamingo.yaml",
+      "bytes": 1593,
+      "sha256": "c2997eb8dc98a41469a150bc3d5448c72a925ce970a3c525eb23b3395191d371"
+    },
+    {
+      "path": "configs/train/stage2/flamingo.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage2/flamingo.yaml",
+      "bytes": 2039,
+      "sha256": "8cd0f27c212a39e577ed1b515bc0f70da70ce488bb273f2b1d8f48625b54d731"
+    },
+    {
+      "path": "configs/train/stage3/flamingo.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage3/flamingo.yaml",
+      "bytes": 2028,
+      "sha256": "fd978d66302e187b2d1170616dcd2fa9deb9aea3b4491514f40533434a6b4851"
+    },
+    {
+      "path": "configs/train/stage4/flamingo.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage4/flamingo.yaml",
+      "bytes": 2059,
+      "sha256": "50502190106ee1e176cbcb314b5ab991a2d5afbef71f4d7b742bcfcae00fd46f"
+    },
+    {
+      "path": "configs/train/sol_distill.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/sol_distill.yaml",
+      "bytes": 1450,
+      "sha256": "84ece09c8ca0cbba179c161688bf2ac42ee595fefb582e5a1f4a14ec9d891fb4"
+    },
+    {
+      "path": "train.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/train.py",
+      "bytes": 34849,
+      "sha256": "e5077df3175e5a3477f7cd4d95c794f0bd9b0203da7bd9cd0461b434db19181a"
+    },
+    {
+      "path": "utils/eval_utils.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/utils/eval_utils.py",
+      "bytes": 16064,
+      "sha256": "02de570bc23f5c542aa5b521dc93aed7b2eb4cd64630e3b4750dfb1d164b99cb"
+    },
+    {
+      "path": "configs/sample_instances/stage2.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage2.yaml",
+      "bytes": 3498,
+      "sha256": "a97d315b44c865cf53a1626e99d69b9a5a82db4f893a56fc3aef2d036540210f"
+    },
+    {
+      "path": "configs/sample_instances/stage1.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage1.yaml",
+      "bytes": 2449,
+      "sha256": "9669c3c6c27f7b999e20538414df651590b949213fadb9934975212978087d2b"
+    },
+    {
+      "path": "configs/sample_instances/stage3.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage3.yaml",
+      "bytes": 2220,
+      "sha256": "87e30e4c186aa08752f4065d302f302eb5d1a954dc7360611307f22c39b84564"
+    },
+    {
+      "path": "configs/sample_instances/stage4.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_instances/stage4.yaml",
+      "bytes": 3719,
+      "sha256": "85837d183c9827ae911bc23ea1475ef48250f3cf6a26e9b5007a30fa37e5712c"
+    },
+    {
+      "path": "configs/train/self_distill.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/self_distill.yaml",
+      "bytes": 1455,
+      "sha256": "543ef5554493845fe864a2f0480bd43506351d1c855ea9ea918a4b95ffaad8ed"
+    },
+    {
+      "path": "configs/self_distill/iteration/recipe.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/recipe.yaml",
+      "bytes": 707,
+      "sha256": "77b34ee595190b5552fbd42b39833ddbd39bccb11d824e5694e47ac2cb57a140"
+    },
+    {
+      "path": "configs/self_distill/iteration/mine.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/mine.yaml",
+      "bytes": 1050,
+      "sha256": "7bc5d323a74616be9e2d5b5510d5da94a515d73ce65ece7543932cfe1ad5cac0"
+    },
+    {
+      "path": "configs/self_distill/iteration/consolidate.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/consolidate.yaml",
+      "bytes": 637,
+      "sha256": "bdf1871d3b8fb42b42716bb022be53e47a7cd56d31c37b1383bdb92487006808"
+    },
+    {
+      "path": "configs/self_distill/iteration/human.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/human.yaml",
+      "bytes": 194,
+      "sha256": "28243fabf1a1d6ccc6bbb9c8a4687200a82a57dc5b0c5682854f5bcf2593124c"
+    },
+    {
+      "path": "configs/self_distill/iteration/puzzles.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/puzzles.yaml",
+      "bytes": 819,
+      "sha256": "e0ebc0cdda52eb6eb40bfa1722eb2df6563b6b178480b7780bb498827a99697a"
+    },
+    {
+      "path": "configs/self_distill/iteration/play.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/play.yaml",
+      "bytes": 881,
+      "sha256": "07defa13b06637f13456a757bce71f6796d424de85a4685722ee12a8e4080533"
+    },
+    {
+      "path": "configs/self_distill/iteration/packing.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/packing.yaml",
+      "bytes": 466,
+      "sha256": "9617a87081110c241e4bd75053be46a59d6a62a9c1710129762f5aacf3c7241a"
+    },
+    {
+      "path": "configs/self_distill/iteration/rebalance.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/rebalance.yaml",
+      "bytes": 363,
+      "sha256": "5d9a67a456db01a5c10f7f75c89d6b2657d39c4c6e92bd46720637e9adb195cd"
+    },
+    {
+      "path": "configs/sample_positions/random.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_positions/random.yaml",
+      "bytes": 140,
+      "sha256": "45656064b02fe4229dcc9fd74d2b9394bb201ad9cfd10b5ac9449308e5cc9906"
+    },
+    {
+      "path": "configs/sample_positions/forward.yaml",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/sample_positions/forward.yaml",
+      "bytes": 452,
+      "sha256": "ba4f50545940a70462379be6f65ce032212d9a939b1e4501ff97c7f533a4b759"
+    },
+    {
+      "path": "scripts/datagen/stage2/mix_stage2.sbatch",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/scripts/datagen/stage2/mix_stage2.sbatch",
+      "bytes": 777,
+      "sha256": "c623d2836a4a83367c9ad81a625376383ac934372c51bfb2b0545ea1912ef349"
+    },
+    {
+      "path": "scripts/datagen/stage3/mix_stage3.sbatch",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/scripts/datagen/stage3/mix_stage3.sbatch",
+      "bytes": 962,
+      "sha256": "edd867e1c0c57f8efcef0bc4ba55dd566ca962de8dd3098161f218789b2bc0c9"
+    },
+    {
+      "path": "scripts/datagen/stage4/mix_stage4.sbatch",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/scripts/datagen/stage4/mix_stage4.sbatch",
+      "bytes": 1032,
+      "sha256": "189c6d01ed202072ff50b9b41a3104ee7669856ca73fd4d0db9ba75318ddb21e"
+    },
+    {
+      "path": "models/flamingo.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/models/flamingo.py",
+      "bytes": 24946,
+      "sha256": "030888f2d23294c477b63fab8239d71b4de3358bb4ed82364ed8bf1ac7191b2d"
+    },
+    {
+      "path": "models/base.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/models/base.py",
+      "bytes": 8760,
+      "sha256": "89326ece0db697a2360b75a41e47d33dcdb94b8e8316ed72c99ee8ee153eb031"
+    },
+    {
+      "path": "utils/training_utils.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/utils/training_utils.py",
+      "bytes": 14199,
+      "sha256": "b4f48e9bee14c626068f0e9ec19b08fe9b312f4911a8116487dd10449c14c867"
+    },
+    {
+      "path": "datagen/mix_arrows.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/mix_arrows.py",
+      "bytes": 4886,
+      "sha256": "4f5ca6d7d365fd446cd228ea4b06c52901d9e430ce02d4f411b666a597306474"
+    },
+    {
+      "path": "datagen/build_qa_dataset.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/build_qa_dataset.py",
+      "bytes": 41280,
+      "sha256": "d76c7e5dc193ae0c685d6aee98ac2f3a0882e80e6ba351486a57932d503b574c"
+    },
+    {
+      "path": "datagen/self_distill/recursion.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/self_distill/recursion.py",
+      "bytes": 43677,
+      "sha256": "2be9d4de09a6842e908e64f2f187a9ac85c1045af4ee90a1d2a5c8ce5739664d"
+    },
+    {
+      "path": "datagen/self_distill/score_play_positions.py",
+      "url": "https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/self_distill/score_play_positions.py",
+      "bytes": 12367,
+      "sha256": "e051e9f46df27e0ac63260599c3f3129c17559029571495cd66d4be50fa19075"
+    }
+  ],
+  "private_readback_archives": {
+    "runs/paper-curriculum-selection-audit-v2/author-configs-remote-readback.json": "488402bd590b139bf79183cd1d7b5d918f126fa3fe97e88b791e040b426fe0b4",
+    "runs/paper-training-audit-v1/author-training-source-readback.json": "7dde9670fce11ddc56089cd9feaecf5a2087841c216c737069c3e2ff2cadcab7"
+  },
+  "local_recipe": {
+    "path": "configs/foundation-human-engine-clean-v3.json",
+    "sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "training_mixtures": [
+      {
+        "static_current": 1
+      },
+      {
+        "static_current": 0.1,
+        "dynamic_current": 0.9
+      },
+      {
+        "static_current": 0.06,
+        "dynamic_current": 0.08,
+        "static_future": 0.86
+      },
+      {
+        "static_current": 0.06,
+        "dynamic_current": 0.06,
+        "static_future": 0.08,
+        "dynamic_future": 0.8
+      }
+    ],
+    "max_updates": [
+      50000,
+      60000,
+      30000,
+      100000
+    ],
+    "effective_batch_size": 256,
+    "loss_normalization": "example",
+    "selection": {
+      "metric": "balanced_raw_qa_accuracy",
+      "tie_breaker": "minimum_task_accuracy_then_earliest",
+      "patience": 3
+    }
+  },
+  "live_third_course_training": {
+    "config": "runs/curriculum-human-engine-clean-v3/static_future/training/config.json",
+    "config_sha256": "3938e58a47f02b7aed5322c177cb71422815d97ee46828b3d46de3875b939a69",
+    "mixture": {
+      "static_current": 0.06,
+      "dynamic_current": 0.08,
+      "static_future": 0.86
+    },
+    "validation_stages": [
+      "static_current",
+      "dynamic_current",
+      "static_future"
+    ],
+    "frozen_training_source": "runs/recorded-foundation-clean-launch-v2/source-run/source/xqgeneral/training.py",
+    "frozen_training_source_sha256": "6be133621581479e8cc3f151f43ce7492e439ca06a59cd9c96bbae5dd07d989e",
+    "frozen_source_files_freshly_hashed": 67,
+    "old_courses_loaded_and_sampled_for_backward": true,
+    "claim_is_config_and_executed_source_readback_not_saved_per_batch_telemetry": true
+  },
+  "paper_curriculum": {
+    "max_updates": [
+      50000,
+      60000,
+      30000,
+      100000
+    ],
+    "maximum_total_sample_presentations_at_batch_256": 61440000,
+    "bridge_learning_rates": [
+      0.0001,
+      8e-05,
+      7.5e-05,
+      0.0002
+    ],
+    "embedding_learning_rate_multiplier": 0.1,
+    "effective_batch_size": 256,
+    "warmup_fraction": 0.05,
+    "cosine_final_lr_fraction": 0.05,
+    "early_stopping_stated": true,
+    "exact_stopping_steps_published": false,
+    "combined_replay_selection_formula_published": false,
+    "public_config_eval_every": 2000,
+    "public_config_validation_current_course_only": true,
+    "public_config_chain_selected_updates": [
+      20000,
+      32000,
+      22000,
+      48000
+    ],
+    "public_trainer_has_automatic_accuracy_patience_selection": false,
+    "configured_qa_requests": [
+      {
+        "course": 1,
+        "per_task_configured_requests": {
+          "piece_on_square": 1828572,
+          "square_of_piece": 1828572,
+          "piece_on_file": 1828572,
+          "piece_on_rank": 1828572,
+          "piece_on_diagonal": 1828572,
+          "piece_count": 1828572,
+          "material_count": 1828572
+        },
+        "configured_new_course_qa_requests": 12800004,
+        "counts_are_pre_generation_requests_not_measured_unique_examples": true
+      },
+      {
+        "course": 2,
+        "per_task_configured_requests": {
+          "piece_moves": 1828572,
+          "square_attackers": 1828572,
+          "capture_moves": 1828572,
+          "checking_moves": 1828572,
+          "check_parries": 1828572,
+          "is_checkmate": 360000
+        },
+        "configured_new_course_qa_requests": 9502860,
+        "counts_are_pre_generation_requests_not_measured_unique_examples": true
+      },
+      {
+        "course": 3,
+        "per_task_configured_requests": {
+          "piece_on_square": 1828572,
+          "square_of_piece": 1828572,
+          "piece_on_file": 1828572,
+          "piece_on_rank": 1828572,
+          "piece_on_diagonal": 1828572,
+          "piece_count": 1828572,
+          "material_count": 1828572
+        },
+        "configured_new_course_qa_requests": 12800004,
+        "counts_are_pre_generation_requests_not_measured_unique_examples": true
+      },
+      {
+        "course": 4,
+        "per_task_configured_requests": {
+          "piece_moves": 1828572,
+          "square_attackers": 1828572,
+          "capture_moves": 1828572,
+          "checking_moves": 1828572,
+          "check_parries": 1828572,
+          "is_checkmate": 360000
+        },
+        "configured_new_course_qa_requests": 9502860,
+        "counts_are_pre_generation_requests_not_measured_unique_examples": true
+      }
+    ]
+  },
+  "public_conflicts_with_paper": {
+    "third_course_lr": {
+      "paper": 7.5e-05,
+      "public_config": 2.5e-05
+    },
+    "initial_sft_updates": {
+      "paper": 2100,
+      "public_config": 4000
+    },
+    "iteration_max_updates": {
+      "paper": 30000,
+      "public_config": 10000
+    },
+    "play_games": {
+      "paper": 6250,
+      "representative_recipe": 2000
+    },
+    "human_positions_per_game": {
+      "paper_maximum": 6,
+      "representative_config": 5
+    },
+    "high_score_downsample_factor": {
+      "paper": 5,
+      "representative_config": 4
+    },
+    "alpha_initialization": {
+      "paper": 0,
+      "public_default": 1
+    }
+  },
+  "local_adaptations_requiring_followup": [
+    "narrower_bridge_and_feed_forward_capacity",
+    "incomplete_transferable_curriculum_task_coverage_and_special_position_balancing",
+    "example_average_loss_instead_of_author_token_average",
+    "replacement_sampling_instead_of_finite_shuffled_epoch_traversal",
+    "combined_replay_validation_selection_and_512_update_cadence",
+    "absolute_red_black_board_tokens_instead_of_author_player_opponent_reflection",
+    "shorter_SFT_and_generation_limits_need_revalidation_for_new_labels",
+    "pilot_sampling_settings_not_equal_to_author_released_generation_recipe"
+  ],
+  "user_authorized_overrides": [
+    "Chinese_xiangqi_expert_and_language_model",
+    "GPT_6_Astra_Low_initial_teacher",
+    "round_count_and_scale_adapted_to_measured_quality"
+  ],
+  "local_qa_records": {
+    "train": 2831004,
+    "validation": 173272,
+    "test": 167536
+  },
+  "validation_only_counterfactual_policy_comparison": {
+    "dynamic_current": {
+      "all_raw_correctness_recomputed": true,
+      "checks": 17,
+      "current_course_only_highest_accuracy_then_earlier": {
+        "step": 8704,
+        "current_course_accuracy": 0.921875,
+        "current_course_correct": 590,
+        "combined_accuracy": 0.9346590909090909,
+        "combined_correct": 1316
+      },
+      "combined_highest_accuracy_then_earlier": {
+        "step": 7168,
+        "current_course_accuracy": 0.909375,
+        "current_course_correct": 582,
+        "combined_accuracy": 0.9410511363636364,
+        "combined_correct": 1325
+      },
+      "current_course_only_is_counterfactual_not_author_selection_verified": true,
+      "series": [
+        {
+          "step": 512,
+          "current_course_accuracy": 0.521875,
+          "current_course_correct": 334,
+          "combined_accuracy": 0.7571022727272727,
+          "combined_correct": 1066
+        },
+        {
+          "step": 1024,
+          "current_course_accuracy": 0.665625,
+          "current_course_correct": 426,
+          "combined_accuracy": 0.8274147727272727,
+          "combined_correct": 1165
+        },
+        {
+          "step": 1536,
+          "current_course_accuracy": 0.73125,
+          "current_course_correct": 468,
+          "combined_accuracy": 0.8572443181818182,
+          "combined_correct": 1207
+        },
+        {
+          "step": 2048,
+          "current_course_accuracy": 0.7859375,
+          "current_course_correct": 503,
+          "combined_accuracy": 0.8842329545454546,
+          "combined_correct": 1245
+        },
+        {
+          "step": 2560,
+          "current_course_accuracy": 0.8078125,
+          "current_course_correct": 517,
+          "combined_accuracy": 0.8877840909090909,
+          "combined_correct": 1250
+        },
+        {
+          "step": 3072,
+          "current_course_accuracy": 0.8375,
+          "current_course_correct": 536,
+          "combined_accuracy": 0.8977272727272727,
+          "combined_correct": 1264
+        },
+        {
+          "step": 3584,
+          "current_course_accuracy": 0.828125,
+          "current_course_correct": 530,
+          "combined_accuracy": 0.8998579545454546,
+          "combined_correct": 1267
+        },
+        {
+          "step": 4096,
+          "current_course_accuracy": 0.8609375,
+          "current_course_correct": 551,
+          "combined_accuracy": 0.9140625,
+          "combined_correct": 1287
+        },
+        {
+          "step": 4608,
+          "current_course_accuracy": 0.8734375,
+          "current_course_correct": 559,
+          "combined_accuracy": 0.9176136363636364,
+          "combined_correct": 1292
+        },
+        {
+          "step": 5120,
+          "current_course_accuracy": 0.8734375,
+          "current_course_correct": 559,
+          "combined_accuracy": 0.9225852272727273,
+          "combined_correct": 1299
+        },
+        {
+          "step": 5632,
+          "current_course_accuracy": 0.8859375,
+          "current_course_correct": 567,
+          "combined_accuracy": 0.9311079545454546,
+          "combined_correct": 1311
+        },
+        {
+          "step": 6144,
+          "current_course_accuracy": 0.890625,
+          "current_course_correct": 570,
+          "combined_accuracy": 0.9275568181818182,
+          "combined_correct": 1306
+        },
+        {
+          "step": 6656,
+          "current_course_accuracy": 0.8953125,
+          "current_course_correct": 573,
+          "combined_accuracy": 0.9247159090909091,
+          "combined_correct": 1302
+        },
+        {
+          "step": 7168,
+          "current_course_accuracy": 0.909375,
+          "current_course_correct": 582,
+          "combined_accuracy": 0.9410511363636364,
+          "combined_correct": 1325
+        },
+        {
+          "step": 7680,
+          "current_course_accuracy": 0.9078125,
+          "current_course_correct": 581,
+          "combined_accuracy": 0.9382102272727273,
+          "combined_correct": 1321
+        },
+        {
+          "step": 8192,
+          "current_course_accuracy": 0.9046875,
+          "current_course_correct": 579,
+          "combined_accuracy": 0.9382102272727273,
+          "combined_correct": 1321
+        },
+        {
+          "step": 8704,
+          "current_course_accuracy": 0.921875,
+          "current_course_correct": 590,
+          "combined_accuracy": 0.9346590909090909,
+          "combined_correct": 1316
+        }
+      ]
+    },
+    "static_future": {
+      "all_raw_correctness_recomputed": true,
+      "checks": 15,
+      "current_course_only_highest_accuracy_then_earlier": {
+        "step": 7168,
+        "current_course_accuracy": 0.9934895833333334,
+        "current_course_correct": 763,
+        "combined_accuracy": 0.9558823529411765,
+        "combined_correct": 2080
+      },
+      "combined_highest_accuracy_then_earlier": {
+        "step": 7168,
+        "current_course_accuracy": 0.9934895833333334,
+        "current_course_correct": 763,
+        "combined_accuracy": 0.9558823529411765,
+        "combined_correct": 2080
+      },
+      "current_course_only_is_counterfactual_not_author_selection_verified": true,
+      "series": [
+        {
+          "step": 512,
+          "current_course_accuracy": 0.8528645833333334,
+          "current_course_correct": 655,
+          "combined_accuracy": 0.9048713235294118,
+          "combined_correct": 1969
+        },
+        {
+          "step": 1024,
+          "current_course_accuracy": 0.9166666666666666,
+          "current_course_correct": 704,
+          "combined_accuracy": 0.9214154411764706,
+          "combined_correct": 2005
+        },
+        {
+          "step": 1536,
+          "current_course_accuracy": 0.9361979166666666,
+          "current_course_correct": 719,
+          "combined_accuracy": 0.9301470588235294,
+          "combined_correct": 2024
+        },
+        {
+          "step": 2048,
+          "current_course_accuracy": 0.9466145833333334,
+          "current_course_correct": 727,
+          "combined_accuracy": 0.9375,
+          "combined_correct": 2040
+        },
+        {
+          "step": 2560,
+          "current_course_accuracy": 0.9596354166666666,
+          "current_course_correct": 737,
+          "combined_accuracy": 0.9356617647058824,
+          "combined_correct": 2036
+        },
+        {
+          "step": 3072,
+          "current_course_accuracy": 0.9609375,
+          "current_course_correct": 738,
+          "combined_accuracy": 0.9462316176470589,
+          "combined_correct": 2059
+        },
+        {
+          "step": 3584,
+          "current_course_accuracy": 0.9778645833333334,
+          "current_course_correct": 751,
+          "combined_accuracy": 0.9499080882352942,
+          "combined_correct": 2067
+        },
+        {
+          "step": 4096,
+          "current_course_accuracy": 0.9739583333333334,
+          "current_course_correct": 748,
+          "combined_accuracy": 0.9434742647058824,
+          "combined_correct": 2053
+        },
+        {
+          "step": 4608,
+          "current_course_accuracy": 0.96875,
+          "current_course_correct": 744,
+          "combined_accuracy": 0.9434742647058824,
+          "combined_correct": 2053
+        },
+        {
+          "step": 5120,
+          "current_course_accuracy": 0.9869791666666666,
+          "current_course_correct": 758,
+          "combined_accuracy": 0.9522058823529411,
+          "combined_correct": 2072
+        },
+        {
+          "step": 5632,
+          "current_course_accuracy": 0.9791666666666666,
+          "current_course_correct": 752,
+          "combined_accuracy": 0.9517463235294118,
+          "combined_correct": 2071
+        },
+        {
+          "step": 6144,
+          "current_course_accuracy": 0.9791666666666666,
+          "current_course_correct": 752,
+          "combined_accuracy": 0.9503676470588235,
+          "combined_correct": 2068
+        },
+        {
+          "step": 6656,
+          "current_course_accuracy": 0.9830729166666666,
+          "current_course_correct": 755,
+          "combined_accuracy": 0.9535845588235294,
+          "combined_correct": 2075
+        },
+        {
+          "step": 7168,
+          "current_course_accuracy": 0.9934895833333334,
+          "current_course_correct": 763,
+          "combined_accuracy": 0.9558823529411765,
+          "combined_correct": 2080
+        },
+        {
+          "step": 7680,
+          "current_course_accuracy": 0.9856770833333334,
+          "current_course_correct": 757,
+          "combined_accuracy": 0.9476102941176471,
+          "combined_correct": 2062
+        }
+      ]
+    }
+  },
+  "report": {
+    "path": "docs/PAPER_REPRODUCTION.md",
+    "sha256": "cbf8398f8f0292e4cae46b358c1ef7fcc34f1a310199424ab66985cb0346e297"
+  },
+  "training_recipe_or_running_source_modified": false,
+  "producer_restarted": false,
+  "new_SFT_or_distillation_executed": false,
+  "independent_test_used_for_model_selection": false,
+  "raw_answers_repaired": false,
+  "goal_complete": false,
+  "scope_limits": [
+    "Primary source and local configuration audit; not an original-training replay.",
+    "Public checkpoint references do not identify exact final training updates or the original selection rule.",
+    "Configured QA request counts are not measured generated unique examples.",
+    "This audit does not establish final student playing strength or teaching quality.",
+    "Recorded local policy comparisons reuse saved validation answers only; no test model evaluation was run."
+  ]
+}
