@@ -12,6 +12,7 @@ import torch
 
 from .board_tokens import PAIRS
 from .curriculum_data import MATERIAL, verify_splits
+from .course_tasks import PAPER_PROFILE, paper_answer, recipe_profile, row_profile, task_groups, validate_context, validate_query
 from .evidence import atomic_json, digest, history_key, manifest
 from .extend_features import validate_cache
 from .gated_curriculum import TASKS, validate_recipe
@@ -31,7 +32,24 @@ def clean_recipe(recipe):
         raise ValueError('Production foundation requires board tokens and mapped expert features')
 
 
+def corpus_preserves_prefix(data_proof, profile):
+    """Require the declared producer contract before accepting a new task corpus."""
+    if profile == PAPER_PROFILE:
+        from .paper_curriculum import DATA_KIND
+        if (data_proof.get('kind') != DATA_KIND or row_profile(data_proof['config']) != profile or
+                data_proof['verification'].get('task_profile') != profile or
+                data_proof['verification'].get('all_supplied_roots_and_futures_natively_verified') is not True or
+                data_proof['verification'].get('prior_corpus_isolation_verified') is not True):
+            raise ValueError('Paper recipe requires its completed declared native question producer')
+        return False
+    if row_profile(data_proof['config']) != profile or not data_proof['config'].get('base_data'):
+        raise ValueError('Legacy recorded curriculum requires its preserved base-data prefix')
+    return True
+
+
 def native_context(row):
+    if row_profile(row) == PAPER_PROFILE:
+        return validate_context(row)
     history = replay(row['initial_fen'], row['moves'])
     if (history != row['history'] or history[-1] != row['fen'] or
             history_key(history) != row['feature_key']):
@@ -48,6 +66,8 @@ def checked_moves(fen):
 
 def native_answer(row):
     """Recompute an answer from rule state, independently of stored labels."""
+    if row_profile(row) == PAPER_PROFILE:
+        return paper_answer(row)
     target = replay(row['fen'], row.get('future_moves', []))[-1]
     board, query, task = piece_map(target), row['query'], row['task_type']
     if task in ('piece', 'empty'):
@@ -75,7 +95,13 @@ def native_answer(row):
     raise ValueError(f'Unknown foundation task: {task}')
 
 
-def validate_task(row):
+def validate_task(row, expected_profile=None):
+    profile = row_profile(row)
+    if expected_profile is not None and profile != expected_profile:
+        raise ValueError('Course row differs from the recipe task profile')
+    if profile == PAPER_PROFILE:
+        validate_query(row)
+        return
     if row['stage'] in TASKS and row['task_type'] in TASKS[row['stage']]:
         return
     # Preserve the four historical independent-test terminal probes. They never
@@ -160,11 +186,13 @@ def main():
         raise ValueError('Use a fresh preflight output and positive worker/sample budgets')
     recipe = json.loads(recipe_path.read_text())
     clean_recipe(recipe)
+    profile = recipe_profile(recipe)
     data = Path(recipe['data_path'])
     data_proof_path, cache_proof_path = data / 'manifest.json', Path(recipe['feature_path']).with_suffix('.manifest.json')
     data_proof, cache_proof = [json.loads(p.read_text()) for p in (data_proof_path, cache_proof_path)]
     if data_proof['status'] != 'complete' or cache_proof['status'] != 'complete':
         raise ValueError('Production data and expert feature extension must both be complete')
+    preserves_prefix = corpus_preserves_prefix(data_proof, profile)
     root.mkdir(parents=True)
     paths = [data / f'{s}.jsonl' for s in ('train', 'validation', 'test')]
     source_hashes = {}
@@ -191,7 +219,7 @@ def main():
             for row in iter_rows(data):
                 if row['id'] in ids or row['feature_key'] not in keys:
                     raise ValueError('Duplicate label identity or missing expert full-history key')
-                validate_task(row)
+                validate_task(row, profile)
                 ids.add(row['id'])
                 counts[f"{row['split']}/{row['stage']}"] += 1
                 task_counts[f"{row['split']}/{row['stage']}/{row['task_type']}"] += 1
@@ -205,6 +233,8 @@ def main():
                     identity = {k: row[k] for k in ('initial_fen', 'moves', 'history', 'fen', 'feature_key')}
                     if row.get('recorded_source_kind'):
                         identity['recorded_source_kind'] = row['recorded_source_kind']
+                    if profile == PAPER_PROFILE:
+                        identity['task_profile'] = profile
                     contexts.write(json.dumps(identity, ensure_ascii=False) + '\n')
                 if row['split'] == 'train':
                     kind = 'recorded' if row.get('recorded_source_kind') else 'previous_engine_or_seeded'
@@ -237,10 +267,12 @@ def main():
     if any(sum(n for group, n in counts.items() if group.startswith(split + '/')) != number
            for split, number in expected_counts.items()):
         raise ValueError('Preflight split counts differ from the completed course manifest')
-    for stage, tasks in TASKS.items():
+    for stage, tasks in task_groups(profile).items():
         for task in tasks:
             if task_counts[f'validation/{stage}/{task}'] < recipe['raw_qa_gates']['per_task']:
                 raise ValueError('Validation lacks enough records for a declared raw QA task')
+            if profile == PAPER_PROFILE and not task_counts[f'train/{stage}/{task}']:
+                raise ValueError('Training lacks records for a declared paper QA task')
     tokens = {'status': 'complete', 'train_validation_records_tokenized': checked,
               'extra_validation_format_encodings': extra, 'maximum_tokens_by_stage': lengths,
               'source_data_sha256': source_hashes, 'source_recipe_sha256': digest(recipe_path)}
@@ -271,15 +303,16 @@ def main():
     if split_proof != data_proof['verification']['split_verification']:
         raise ValueError('Independent root/future split verification differs from production generation')
     # The combined corpus preserves every prior engine question byte as a prefix.
-    base = Path(data_proof['config']['base_data'])
-    for path in paths:
-        original = base / path.name
-        with original.open('rb') as source, path.open('rb') as destination:
-            for block in iter(lambda: source.read(4 * 1024 * 1024), b''):
-                if destination.read(len(block)) != block:
-                    raise ValueError('Combined course changed a preserved engine question byte')
-        if digest(original) != data_proof['inputs'][str(original)]['sha256']:
-            raise ValueError('Preserved prior engine corpus changed')
+    if preserves_prefix:
+        base = Path(data_proof['config']['base_data'])
+        for path in paths:
+            original = base / path.name
+            with original.open('rb') as source, path.open('rb') as destination:
+                for block in iter(lambda: source.read(4 * 1024 * 1024), b''):
+                    if destination.read(len(block)) != block:
+                        raise ValueError('Combined course changed a preserved engine question byte')
+            if digest(original) != data_proof['inputs'][str(original)]['sha256']:
+                raise ValueError('Preserved prior engine corpus changed')
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
               'total_rule_records': len(ids), 'records_by_split_stage': dict(counts),
               'records_by_source_kind': dict(source_kinds), 'actual_future_horizons': dict(horizons),
@@ -288,10 +321,12 @@ def main():
               'cache_sha256': feature_sha, 'native_answer_samples': len(samples),
               'native_answer_samples_by_source_and_task': dict(native_counts),
               'native_sample_is_not_full_label_accuracy': True, 'split_verification': split_proof,
-              'previous_engine_file_bytes_preserved_as_prefix': True,
+              'previous_engine_file_bytes_preserved_as_prefix': preserves_prefix,
               'decoder_literal_board_text': None, 'fresh_bridge_and_token_initialization_required': True,
               'independent_test_used_for_training_or_selection': False,
               'actual_student_training_started': False, 'student_improvement_measured': False}
+    if profile == PAPER_PROFILE:
+        result['task_profile'] = profile
     atomic_json(root / 'verification.json', result)
     inputs = [recipe_path, data_proof_path, cache_proof_path, *paths, recipe['feature_path'], weights]
     outputs = [root / 'verification.json', root / 'token-verification.json', contexts_path, root / 'native-answer-sample.json']

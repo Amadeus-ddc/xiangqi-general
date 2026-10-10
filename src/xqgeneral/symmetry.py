@@ -45,6 +45,18 @@ def mirrored_qa(row, context=None):
         history = replay(initial, moves)
     else:
         initial, moves, history = context
+    from .course_tasks import PAPER_PROFILE, mirror_query, paper_answer, paper_question, row_profile
+    if row_profile(row) == PAPER_PROFILE:
+        result = dict(row, id=row['id'] + '-color-mirror', fen=history[-1], initial_fen=initial,
+                      moves=moves, history=history, feature_key=history_key(history),
+                      query=mirror_query(row['query']),
+                      future_moves=[mirror_move(m) for m in row.get('future_moves', [])],
+                      provenance=row['provenance'] + ';color_rank_symmetry', augmentation_parent=row['id'])
+        if 'future_branches' in row:
+            result['future_branches'] = [[mirror_move(m) for m in line] for line in row['future_branches']]
+        result['question'] = paper_question(result, result.get('question_variant', 0))
+        result['answer'] = paper_answer(result)
+        return result
     query = dict(row['query'])
     for key in ['square', 'source']:
         if key in query:

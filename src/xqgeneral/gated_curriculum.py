@@ -9,23 +9,20 @@ import sys
 import torch
 
 from .curriculum_data import STAGES
+from .course_tasks import LEGACY_TASKS, PAPER_PROFILE, grade_answer, recipe_profile, row_profile, task_groups
 from .evaluate_qa import balanced_rows, normalized, qa_summary
 from .evidence import atomic_json, digest, load_jsonl, manifest
 from .select_checkpoint import snapshot_checkpoint
 from .selfplay_grounding import question_variant
 
 
-TASKS = {
-    'static_current': ('piece', 'count', 'locate', 'empty', 'material', 'rank'),
-    'dynamic_current': ('legal', 'illegal', 'moves', 'captures', 'checks'),
-    'static_future': ('piece', 'count', 'locate', 'empty', 'material', 'rank'),
-    'dynamic_future': ('legal', 'illegal', 'moves', 'captures', 'checks'),
-}
+TASKS = LEGACY_TASKS
 CONTROL_KEYS = {'course_mixtures', 'course_budgets', 'raw_qa_gates', 'ddp_world_size', 'output', 'purpose',
                 'validation_selection', 'initial_course_import'}
 
 
 def validate_recipe(recipe):
+    recipe_profile(recipe)
     if 'validation_selection' in recipe:
         from .curriculum_selection import validate_policy
         validate_policy(recipe['validation_selection'])
@@ -59,21 +56,28 @@ def validate_recipe(recipe):
             raise ValueError('Raw QA targets must be between zero and one')
 
 
-def raw_qa_gate(records, stages, targets, per_task):
+def raw_qa_gate(records, stages, targets, per_task, task_profile='legacy'):
     """No aggregate score can hide a missing task or a broken capture course."""
-    expected = {f'{stage}/{task}' for stage in stages for task in TASKS[stage]}
+    tasks = task_groups(task_profile)
+    if any(row_profile(r) != task_profile for r in records):
+        raise ValueError('Raw validation records differ from the declared task profile')
+    expected = {f'{stage}/{task}' for stage in stages for task in tasks[stage]}
     groups = Counter(f"{r['stage']}/{r['task_type']}" for r in records)
     if set(groups) != expected or any(n != per_task for n in groups.values()):
         raise ValueError('Raw validation must cover every introduced task with the declared count')
     if len({r['id'] for r in records}) != len(records):
         raise ValueError('Raw validation contains duplicate example identities')
-    if any(r['correct'] != (normalized(r['generated']) == normalized(r['expected'])) for r in records):
-        raise ValueError('Stored raw correctness differs from the actual generated answer')
+    for record in records:
+        measured = (grade_answer(record['expected'], record['generated'], record['task_type'])
+                    if task_profile == PAPER_PROFILE else
+                    {'correct': normalized(record['generated']) == normalized(record['expected'])})
+        if any(type(record.get(k)) is not bool or record[k] != value for k, value in measured.items()):
+            raise ValueError('Stored raw correctness differs from the actual generated answer')
     summary, courses = qa_summary(records), {}
     for stage in stages:
         selected = [r for r in records if r['stage'] == stage]
         accuracy = sum(r['correct'] for r in selected) / len(selected)
-        minimum = min(summary['by_task'][f'{stage}/{task}']['accuracy'] for task in TASKS[stage])
+        minimum = min(summary['by_task'][f'{stage}/{task}']['accuracy'] for task in tasks[stage])
         target = targets[stage]
         courses[stage] = {'examples': len(selected), 'accuracy': accuracy, 'minimum_task_accuracy': minimum,
                           'passed': accuracy >= target['accuracy'] and minimum >= target['minimum_task_accuracy']}
@@ -85,6 +89,9 @@ def raw_gate_from_artifacts(proof, metrics, records, checkpoint, stages, gates,
                             data_path=None, feature_path=None, validation_rows=None):
     """Recompute a raw gate from artifacts whose freshness is checked by the caller."""
     config = proof['config']
+    profile = row_profile(gates)
+    if row_profile(config) != profile:
+        raise ValueError('Raw evaluation and gates task profiles differ')
     if (proof['status'] != 'complete' or config['checkpoint'] != str(checkpoint) or
             config['split'] != 'validation' or config['memory'] != 'normal' or config['stages'] != list(stages) or
             config['per_task'] != gates['per_task'] or config['question_formats'] != gates['question_formats'] or
@@ -107,12 +114,18 @@ def raw_gate_from_artifacts(proof, metrics, records, checkpoint, stages, gates,
             counts[key] += 1
             question = question_variant(row, variant) if gates['question_formats'] == 3 else row['question']
             if (any(row[k] != prediction[k] for k in ['id', 'game_id', 'stage', 'task_type']) or
+                    row_profile(row) != profile or row_profile(prediction) != profile or
                     row['answer'] != prediction['expected'] or question != prediction['question'] or
                     variant != prediction['question_variant']):
                 raise ValueError('Raw validation questions or native expected answers changed')
-    result = raw_qa_gate(records, stages, gates['targets'], gates['per_task'])
+    result = raw_qa_gate(records, stages, gates['targets'], gates['per_task'], profile)
     if metrics['by_task'] != result['by_task'] or metrics['accuracy'] != result['accuracy']:
         raise ValueError('Raw predictions disagree with the evaluation summary')
+    if profile == PAPER_PROFILE:
+        keys = ('task_profile', 'prose_graded', 'answer_format_valid_rate',
+                'canonical_tag_correct_rate', 'raw_exact_correct_rate')
+        if any(metrics.get(k) != result[k] for k in keys):
+            raise ValueError('Raw tag/prose metrics disagree with the evaluation summary')
     return result
 
 

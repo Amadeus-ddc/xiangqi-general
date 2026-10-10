@@ -108,6 +108,79 @@ def gives_check(fen, move):
     return bool(pyffish.gives_check(VARIANT, fen, [to_fairy(move)]))
 
 
+@lru_cache(maxsize=16384)
+def validate_position(fen):
+    """Reject malformed/illegal supplied positions before calling move functions."""
+    if not isinstance(fen, str) or len(fen.split()) != 6 or fen.split()[1] not in ('w', 'b'):
+        raise ValueError('A complete native Xiangqi FEN is required')
+    board = piece_map(fen)
+    if sum(p == 'K' for p in board.values()) != 1 or sum(p == 'k' for p in board.values()) != 1:
+        raise ValueError('Native Xiangqi positions require both generals')
+    # validate_fen takes FEN before variant (unlike the move APIs).
+    if pyffish.validate_fen(fen, VARIANT) != pyffish.FEN_OK:
+        raise ValueError('Supplied Xiangqi FEN fails native position validation')
+    return fen
+
+
+@lru_cache(maxsize=16384)
+def in_check(fen):
+    return bool(pyffish.gives_check(VARIANT, fen, []))
+
+
+def _controls(board, source, piece, target):
+    """Capture geometry without king-safety filtering, including cannon screens."""
+    x, y = ord(source[0]) - 97, int(source[1])
+    tx, ty = ord(target[0]) - 97, int(target[1])
+    dx, dy = tx - x, ty - y
+    if dx == dy == 0:
+        return False
+    red, kind = piece.isupper(), piece.lower()
+    if kind in ('r', 'c'):
+        if dx and dy:
+            return False
+        step_x, step_y = (dx > 0) - (dx < 0), (dy > 0) - (dy < 0)
+        distance = max(abs(dx), abs(dy))
+        blockers = sum(f'{chr(97 + x + step_x * n)}{y + step_y * n}' in board
+                       for n in range(1, distance))
+        return blockers == (1 if kind == 'c' else 0)
+    if kind == 'h':
+        if (abs(dx), abs(dy)) not in ((1, 2), (2, 1)):
+            return False
+        leg = (x + ((dx > 0) - (dx < 0)), y) if abs(dx) == 2 else (x, y + ((dy > 0) - (dy < 0)))
+        return f'{chr(97 + leg[0])}{leg[1]}' not in board
+    if kind == 'e':
+        return (abs(dx) == abs(dy) == 2 and (ty <= 4 if red else ty >= 5) and
+                f'{chr(97 + x + dx // 2)}{y + dy // 2}' not in board)
+    if kind in ('a', 'k'):
+        palace = 3 <= tx <= 5 and (0 <= ty <= 2 if red else 7 <= ty <= 9)
+        return palace and (abs(dx) == abs(dy) == 1 if kind == 'a' else abs(dx) + abs(dy) == 1)
+    if kind == 'p':
+        return (dx == 0 and dy == (1 if red else -1)) or (
+            dy == 0 and abs(dx) == 1 and (y >= 5 if red else y <= 4))
+    raise ValueError('Unknown Xiangqi controller')
+
+
+@lru_cache(maxsize=16384)
+def square_controllers(fen, square):
+    """Return attackers/defenders as immutable (square, symbol) pairs.
+
+    Like Pikafish attackers_to, this is geometric control, not legal moves.
+    Pinned pieces count. Empty targets have attackers from both colors and no
+    defenders; cannon control requires one screen, even for an empty target.
+    Flying-general check detection belongs to in_check, not this SEE relation.
+    """
+    if not re.fullmatch(r'[a-i][0-9]', square):
+        raise ValueError('Controller query requires a Xiangqi square')
+    board = piece_map(fen)
+    occupant = board.get(square)
+    attackers, defenders = [], []
+    for source, piece in sorted(board.items()):
+        if _controls(board, source, piece, square):
+            destination = defenders if occupant and occupant.isupper() == piece.isupper() else attackers
+            destination.append((source, piece))
+    return tuple(attackers), tuple(defenders)
+
+
 def adjudicate(initial_fen, moves):
     """Use full history and claim optional engine-rule outcomes in the match protocol."""
     history = replay(initial_fen, moves)

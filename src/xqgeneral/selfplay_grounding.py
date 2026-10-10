@@ -22,6 +22,9 @@ def question_variant(row, variant):
     """Vary the request while preserving the native answer and output contract."""
     if variant not in (0, 1, 2):
         raise ValueError('Question variant must be zero, one or two')
+    from .course_tasks import PAPER_PROFILE, paper_question, row_profile
+    if row_profile(row) == PAPER_PROFILE:
+        return paper_question(row, variant)
     if variant == 0:
         return row['question']
     fields, task = row['query'], row['task_type']
