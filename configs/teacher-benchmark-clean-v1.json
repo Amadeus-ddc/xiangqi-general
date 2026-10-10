@@ -1,0 +1,10 @@
+{
+  "pilot_config": "configs/search-clean-sft-pilot-v2.json",
+  "teacher_config": "configs/teachers.json",
+  "sample_limit": 8,
+  "batch_sizes": [1, 2, 4],
+  "max_new_tokens": 1536,
+  "warmup_new_tokens": 32,
+  "cuda_visible_devices": "3",
+  "minimum_free_gib": 70
+}

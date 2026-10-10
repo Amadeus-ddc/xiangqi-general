@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "kind": "real_bf16_teacher_batch_benchmark_wait",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "artifact_references": [
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/entry.py",
+      "bytes": 2629,
+      "sha256": "0b5675f44082caa8ebf028cead322066eadb9bc0f47ffff0cb5747a6aff68597"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/plan.json",
+      "bytes": 431,
+      "sha256": "f7e3b2fd964803ed43201adfffcbb9a82a63d7fe1983e82f9e9e3cbfd497632e"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/manifest.json",
+      "bytes": 10989,
+      "sha256": "f9d8da02f2bfd24c15c49a3bf32b7ed063bf692f0cb553fdeaa409b86a99a6c1"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/exit.json",
+      "bytes": 21,
+      "sha256": "81868a6e94ffc0178bf833deb1c9013d9fab4ee95ddb876a5e8ec4f1d26376d2"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/process-exit.json",
+      "bytes": 17,
+      "sha256": "e89df0eae5ec7db81135aed16463968955c578bcc4f2ec43172eff351f080c17"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/observations.json",
+      "bytes": 402,
+      "sha256": "fdfd587f4aa42dad5a20486cb4a3a845d5e8715e170d036942ab2bbdd3a91406"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/source-run/source-manifest.json",
+      "bytes": 7205,
+      "sha256": "1a089b6a19d59cdd414c3d7e8fd8c141b04183d135210f2fa1a9a09c95daef94"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/probe/contract.json",
+      "bytes": 16927,
+      "sha256": "a5f7abec2f3a9c6c72d1b551617818783818a96e5750a3191888e29cab0142a7"
+    },
+    {
+      "path": "runs/teacher-benchmark-real-wait-guard-v1/probe/state.json",
+      "bytes": 233,
+      "sha256": "cbe4202ece85e7a7e49a0ead417c657cef19df7c3742775c9db14a4b7a537e70"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/plan.json",
+      "bytes": 1600,
+      "sha256": "5569ccd364647e17d7965a44fb594527848c19541bcf64f1541b32b7ca6c4c56"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/runner.py",
+      "bytes": 1557,
+      "sha256": "9106b4ce1092e5d9586c23a54d24f5328c4c55a991d037aab8213da411c60666"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/launch.json",
+      "bytes": 344,
+      "sha256": "bf3204e25fa87bc2a668235c8f08e5a4c38b25de6d7b7055b00d9967794c12d7"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/source-run/source-manifest.json",
+      "bytes": 7205,
+      "sha256": "1a089b6a19d59cdd414c3d7e8fd8c141b04183d135210f2fa1a9a09c95daef94"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/benchmark/contract.json",
+      "bytes": 16927,
+      "sha256": "a5f7abec2f3a9c6c72d1b551617818783818a96e5750a3191888e29cab0142a7"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/waiting-state-snapshot.json",
+      "bytes": 233,
+      "sha256": "cbe4202ece85e7a7e49a0ead417c657cef19df7c3742775c9db14a4b7a537e70"
+    },
+    {
+      "path": "runs/teacher-benchmark-clean-launch-v1/waiting-readback.json",
+      "bytes": 510,
+      "sha256": "fac9a6048df0be433a9aaac102eb337e8e6788889766fb6276d9c03977730863"
+    },
+    {
+      "path": "runs/teacher-benchmark-milestone-tests-v1/plan.json",
+      "bytes": 509,
+      "sha256": "1639406a8b9620eecd6a79dcd4bd705c207693179c0a74dfedd6d79f6b879a72"
+    },
+    {
+      "path": "runs/teacher-benchmark-milestone-tests-v1/source-test-bindings.json",
+      "bytes": 14230,
+      "sha256": "6645c8c2d49f5f88a66b7e5988790102dfa81c0236a785b24222a66ec73e4fea"
+    },
+    {
+      "path": "runs/teacher-benchmark-milestone-tests-v1/exit.json",
+      "bytes": 215,
+      "sha256": "e1e27e9335c4770740dd6be18784ef785d182c9663b8056a95e4c0d81c797095"
+    },
+    {
+      "path": "runs/teacher-benchmark-milestone-tests-v1/log.txt",
+      "bytes": 912,
+      "sha256": "ac9f10eac13483632ddf49b96869b2b13a0128509d03507e144d4b846fde252c"
+    }
+  ],
+  "verification": {
+    "real_benchmark_admission_and_wait_protocol_executed": true,
+    "producer_live": true,
+    "teacher_model_loaded": false,
+    "cuda_initialized": false,
+    "benchmark_generation_executed": false,
+    "neural_throughput_measured": false,
+    "new_training_labels": 0,
+    "trained_distillation_rounds": 0,
+    "source_files_verified": 76,
+    "local_code_commit": "d3c354662393afba4fc8105a13cb98124b723fd8",
+    "existing_queues_modified": false,
+    "independent_test_used": false
+  },
+  "queued_session": "xqgeneral-teacher-benchmark-clean-launch-v1",
+  "queued_source_files": 76,
+  "benchmark_config": "configs/teacher-benchmark-clean-v1.json",
+  "configured_sample_limit": 8,
+  "configured_batch_sizes": [
+    1,
+    2,
+    4
+  ],
+  "generation_budget": 1536,
+  "warmup_budget": 32,
+  "cuda_visible_devices": "3",
+  "minimum_free_gib": 70,
+  "cpu_suite": {
+    "passed": 759,
+    "new_benchmark_cases_passed": 35,
+    "source_test_bindings": 137,
+    "seconds": 345.97965626139194
+  },
+  "scope_limits": {
+    "real_neural_throughput_or_answer_differences_measured": false,
+    "zero_yield_skips_teacher_and_cuda": true,
+    "resumed_comparisons_reuse_completed_groups": true,
+    "completed_results_do_not_repeat_inference": true,
+    "benchmark_output_is_not_training_labels": true,
+    "strategic_prose_or_student_strength_proven": false,
+    "current_courses_and_other_queues_modified": false,
+    "independent_test_used": false
+  }
+}

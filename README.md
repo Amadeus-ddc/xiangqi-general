@@ -123,6 +123,19 @@ python -m xqgeneral.collect_search --queries runs/search-v1/mining/queries.jsonl
 
 `local_teacher` 默认逐条生成，支持 `--batch-size 4` 的左侧填充批量推理；按每条回答的实际结束词元裁切，提示词元数不包含填充。批量和生成预算写入续跑合同，改动后须使用新输出目录；中断续跑跳过已保存的查询。`search_pilot` 的新配置可显式设置正整数 `teacher_batch_size`，默认逐条调用及旧合同保持兼容。23 项新增检查、相关 41 项及全部 724 项 CPU 测试通过；完整 BF16 教师的实际批量吞吐和回答差异尚未测量，当前已冻结队列继续使用原入口。
 
+`teacher_benchmark` 等待现有干净搜索的真实挖掘产物，核验四门后 SFT、三组能力验证、同一被评测父模型、全部原始查询和保留集隔离。它按提示长度抽取至多八个不同训练查询，一次加载完整 BF16 教师，在相同 1536 词元预算下比较串行／两条／四条批量。GPU 3 至少空闲 70GiB 后才加载；生成计时排除加载和暖身，记录 CUDA 同步耗时、实际词元、峰值显存和逐条回答差异。逐组保存，中断续跑复用完成组；完整结果复读只核验产物，零搜索产出直接跳过 GPU。速度和字符串一致率不替代结构与语义验收。
+
+当前测速会话为 `xqgeneral-teacher-benchmark-clean-launch-v1`，已有 76 份冻结源码并存活等待；35 项新增检查和全部 759 项 CPU 测试通过，实际等待守卫未初始化 CUDA 或加载教师，见 `evidence/teacher-benchmark-real-wait-v1.json`。真实吞吐、回答差异和学生收益仍待测量，原搜索配置及队列保持其固定合同。新实验入口：
+
+```bash
+python scripts/freeze_run.py --output runs/new-teacher-benchmark/source-run -- \
+  python -m xqgeneral.teacher_benchmark \
+  --pilot runs/clean-search-pilot-launch-v2/pilot \
+  --producer-session xqgeneral-clean-search-pilot-launch-v2 \
+  --config configs/teacher-benchmark-clean-v1.json \
+  --output runs/new-teacher-benchmark/benchmark
+```
+
 `search_inputs` 逐行读训练文件，保存每个完整历史的首份原记录，再按原搜索种子排序；可用 `--source-preflight COMPLETE_MANIFEST.json` 核对已完成预检中的训练文件身份。候选保留原始字段、棋局分割和已有颜色派生标记，不产生蒸馏标签。搜索入口支持上述完整候选池，核验数据、种子、输出哈希与源码合同后取前 `--limit` 条；省略候选池时仍逐行提取，选取顺序相同。旧搜索任务继续使用各自冻结源码；变动源码、数据或预算须使用新输出。
 
 现有课程训练集的完整提取已完成：2831004 条／约 17.96GB 生成 128682 个完整历史候选，包含已有 64341 个颜色派生历史。生产约 202 秒、峰值进程内存约 2.37GiB；独立入口重读全部训练行、重算 SHA256，逐字段匹配全部首记录和完整排序，检查缓存键／头部，并抽样复演 320 个原生历史。见 `evidence/search-inputs-human-engine-full-v1.json`。这份候选池只覆盖当前课程用过的局面；未用棋谱的新增候选见下段，学生对局和搜索筛选后的合格标签另行计数。新训练仍按四门 → 初始讲解 → 搜索蒸馏的顺序执行。
