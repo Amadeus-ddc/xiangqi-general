@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "kind": "paper_source_pool_contract_and_source_capacity",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "Native recorded-terminal source implementation, canonical CPU checks and complete source-capacity inventories; formal root production and model training are not included.",
+  "pool_profile": "recorded_terminal_targets_xiangqi_v1",
+  "canonical_cpu_tests_passed": 883,
+  "new_native_pool_cases_passed": 24,
+  "source_test_bindings_verified": 145,
+  "native_pool_source_sha256": "85c8d2e39d33707a0b0ea1dc34536d4133d4ccfcb45a2dd3ec40b88b10867748",
+  "native_pool_tests_sha256": "d038ec351aea8a0f9f545e6a58b15b1aead50b104b3dbfc9ae3e9463848d2681",
+  "all_inventory_input_output_bindings_read_back": true,
+  "real_recorded_game_terminal_inventory": {
+    "manifest_sha256": "d46c768544943143333b96ac06244f6d7dbd3f9bb6da8c523ac5e54906b27c8d",
+    "verification": {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "unique_source_games": 22720,
+      "source_games_by_kind": {
+        "recorded_human_match": 22585,
+        "recorded_computer_match": 22,
+        "recorded_human_computer_match": 21,
+        "published_recorded_match": 92
+      },
+      "previously_assigned_games": 6118,
+      "assigned_games_by_split_kind": {
+        "validation/recorded_human_match": 619,
+        "train/recorded_human_match": 4752,
+        "test/recorded_human_match": 613,
+        "validation/recorded_computer_match": 3,
+        "train/recorded_computer_match": 16,
+        "test/recorded_computer_match": 3,
+        "train/recorded_human_computer_match": 15,
+        "test/recorded_human_computer_match": 2,
+        "validation/recorded_human_computer_match": 4,
+        "validation/published_recorded_match": 13,
+        "train/published_recorded_match": 65,
+        "test/published_recorded_match": 13
+      },
+      "native_terminal_counts_by_source_kind": {
+        "recorded_human_match/checkmate": 251,
+        "recorded_human_match/other_native_ending": 96,
+        "recorded_computer_match/checkmate": 6,
+        "recorded_human_match/stalemate": 2,
+        "recorded_computer_match/stalemate": 1,
+        "published_recorded_match/other_native_ending": 1
+      },
+      "assigned_native_terminal_counts_by_split": {
+        "train/checkmate": 58,
+        "train/other_native_ending": 25,
+        "validation/checkmate": 12,
+        "test/checkmate": 13,
+        "test/other_native_ending": 3,
+        "validation/other_native_ending": 3,
+        "train/stalemate": 1
+      },
+      "actual_in_check_prefixes_before_known_mate_by_split_distance": {
+        "train/2": 28,
+        "train/6": 22,
+        "train/4": 22,
+        "unassigned/2": 100,
+        "unassigned/4": 80,
+        "test/2": 8,
+        "test/6": 5,
+        "unassigned/6": 56,
+        "train/3": 2,
+        "unassigned/5": 11,
+        "validation/2": 10,
+        "train/5": 3,
+        "unassigned/1": 3,
+        "unassigned/3": 11,
+        "train/1": 1,
+        "test/3": 1,
+        "validation/6": 6,
+        "validation/4": 7,
+        "test/5": 1,
+        "test/4": 3
+      },
+      "all_declared_terminal_outcomes_natively_recomputed": true,
+      "all_previously_assigned_games_found": true,
+      "source_bytes_unchanged": true,
+      "source_root_or_question_corpus_generated": false,
+      "prior_root_future_color_isolation_rechecked": false,
+      "feature_cache_extended": false,
+      "student_or_teacher_loaded": false,
+      "student_training_executed": false,
+      "student_strength_or_prose_quality_measured": false,
+      "seconds": 109.99412479996681
+    }
+  },
+  "real_tactical_game_terminal_inventory": {
+    "manifest_sha256": "7cd784896ce4e5dd90d2c425962f685254d645530361ecfb9ae4828a9910d29f",
+    "verification": {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "games_checked": 11942,
+      "games_by_split_kind": {
+        "train/recorded_tactical_line": 1805,
+        "validation/recorded_tactical_line": 236,
+        "test/recorded_tactical_line": 218,
+        "validation/recorded_tactical_position": 966,
+        "train/recorded_tactical_position": 7754,
+        "test/recorded_tactical_position": 963
+      },
+      "native_terminal_classes_by_split_kind": {
+        "train/recorded_tactical_line/mate": 174,
+        "validation/recorded_tactical_line/mate": 34,
+        "test/recorded_tactical_line/mate": 30,
+        "train/recorded_tactical_line/stalemate": 1
+      },
+      "distinct_terminal_board_side_pairs_by_split_class": {
+        "train/mate": 172,
+        "validation/mate": 34,
+        "test/mate": 30,
+        "train/stalemate": 1
+      },
+      "actual_in_check_prefixes_before_known_mate_by_split_distance": {
+        "train/2": 138,
+        "train/4": 90,
+        "train/6": 65,
+        "validation/2": 28,
+        "validation/4": 25,
+        "validation/6": 16,
+        "train/3": 4,
+        "train/5": 6,
+        "test/6": 11,
+        "test/2": 26,
+        "test/4": 17,
+        "validation/5": 1,
+        "test/5": 1
+      },
+      "source_missing_pre_fragment_history_counts": {
+        "train/False": 9342,
+        "validation/False": 1170,
+        "test/False": 1159,
+        "train/True": 217,
+        "validation/True": 32,
+        "test/True": 22
+      },
+      "all_source_native_outcomes_recomputed": true,
+      "input_bytes_unchanged": true,
+      "prior_corpus_isolation_rechecked": false,
+      "source_roots_or_questions_generated": false,
+      "models_loaded": false,
+      "goal_complete": false,
+      "seconds": 336.26096954289824
+    }
+  },
+  "prior_complete_recorded_root_inventory": {
+    "manifest_sha256": "b7fe1396e1cbc2780d6c31afb4ecb7256832ecc7fea3cf86f0e43c0fe977add3",
+    "verification": {
+      "status": "complete",
+      "evidence_state": "reconstructed_baseline",
+      "source_roots": 45834,
+      "root_counts_by_split": {
+        "validation": 3602,
+        "test": 3558,
+        "train": 38674
+      },
+      "source_game_counts_by_split": {
+        "train": 4848,
+        "validation": 639,
+        "test": 631
+      },
+      "unique_full_history_targets_by_split": {
+        "validation": 30026,
+        "test": 29549,
+        "train": 212106
+      },
+      "unique_target_fens": 269494,
+      "root_class_observations": {
+        "validation/generic": 3602,
+        "validation/have_check": 1956,
+        "validation/in_check": 164,
+        "test/have_check": 1917,
+        "test/generic": 3558,
+        "test/in_check": 202,
+        "train/have_check": 19585,
+        "train/generic": 38674,
+        "train/in_check": 1657
+      },
+      "actual_future_class_observations": {
+        "validation/generic": 26424,
+        "validation/have_check": 14002,
+        "validation/in_check": 1474,
+        "test/generic": 25991,
+        "test/have_check": 13823,
+        "test/in_check": 1422,
+        "train/generic": 292577,
+        "train/have_check": 149278,
+        "train/in_check": 13633
+      },
+      "actual_near_mate_check_observations": {},
+      "observation_counts_are_not_unique_source_positions": true,
+      "root_and_supplied_future_natively_verified": true,
+      "source_bytes_unchanged": true,
+      "serial_parallel_control_equal": true,
+      "paper_difficult_pool_corpus_generated": false,
+      "prior_corpus_isolation_rechecked": false,
+      "feature_cache_extended": false,
+      "student_or_teacher_loaded": false,
+      "student_training_executed": false,
+      "student_strength_or_prose_quality_measured": false,
+      "seconds": 3061.9700731523335
+    }
+  },
+  "native_pool_contract": {
+    "preassigned_game_ownership_preserved": true,
+    "terminal_current_roots_supported": true,
+    "actual_future_horizons_zero_to_eight": true,
+    "near_mate_requires_in_check_and_one_to_six_actual_plies_before_recorded_mate": true,
+    "near_mate_is_a_proof_of_forced_mate": false,
+    "maximum_actual_mate_witness_reserved_beyond_queried_future": true,
+    "old_structured_explanation_pvs_and_branches_reserved_when_supplied": true,
+    "native_terminal_prefix_validation": true,
+    "readback_reconstructs_all_roots_targets_and_exclusions": true,
+    "bounded_ordered_native_workers": true
+  },
+  "complete_formal_root_corpus_verified": false,
+  "per_task_root_budgets_applied": false,
+  "paper_difficult_source_mix_applied": false,
+  "question_corpus_generated": false,
+  "feature_cache_extended": false,
+  "student_or_teacher_loaded": false,
+  "student_training_executed": false,
+  "student_strength_or_prose_quality_measured": false,
+  "independent_test_used_for_training_or_selection": false,
+  "goal_complete": false
+}
