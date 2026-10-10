@@ -1,6 +1,7 @@
 """Reusable, oracle-free model inference with explicit history contracts."""
 import torch
-from .evidence import history_key
+from .evidence import digest, history_key
+from .feature_store import FeatureStore, gather_features, open_feature_cache
 from .expert import FrozenPx0, encode_history
 from .modeling import load_checkpoint
 from .rules import replay
@@ -16,7 +17,11 @@ class Predictor:
         cache_mmap = self.config.get('feature_cache_mmap', False)
         if type(cache_mmap) is not bool:
             raise ValueError('feature_cache_mmap must be a boolean')
-        self.cache = torch.load(feature_cache, map_location='cpu', weights_only=True, mmap=cache_mmap) if feature_cache else None
+        self.cache = open_feature_cache(feature_cache, mmap=cache_mmap) if feature_cache else None
+        if isinstance(self.cache, FeatureStore):
+            if (digest(weights) != self.cache.proof['verification']['expert_sha256'] or
+                    self.config.get('expert_feature_depths') != self.cache['depths']):
+                raise ValueError('Inference feature store and pinned expert contract differ')
         self.indices = {k: i for i, k in enumerate(self.cache['keys'])} if self.cache else {}
         self.expert = FrozenPx0(weights).to(device) if self.config.get('mode', 'bridge') == 'bridge' else None
 
@@ -31,8 +36,7 @@ class Predictor:
             raise ValueError('Inference board differs from the final history position')
         key = history_key(history)
         if key in self.indices:
-            return [f[self.indices[key]:self.indices[key] + 1].to(self.device, torch.bfloat16)
-                    for f in self.cache['features']]
+            return gather_features(self.cache, [self.indices[key]], self.device)
         depths = self.config.get('expert_feature_depths')
         kwargs = {'depths': depths} if depths is not None else {}
         features, _ = self.expert(encode_history(history).unsqueeze(0).to(self.device), **kwargs)

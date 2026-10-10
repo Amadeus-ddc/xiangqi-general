@@ -11,6 +11,7 @@ import torch
 from .board_tokens import PAIRS
 from .evidence import atomic_json, digest, manifest
 from .extend_features import validate_cache
+from .feature_store import feature_paths, feature_proof_path, is_feature_store, open_feature_cache
 from .foundation_preflight import bounded_results, clean_recipe
 from .recorded_coach import SPLITS, checked_manifest, check_artifacts
 from .reviewed_explanations import source_contract
@@ -73,20 +74,21 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
     if data_proof['verification'].get('all_training_rows_have_inline_or_supplemental_acceptance') is not True:
         raise ValueError('All training labels require completed upstream acceptance')
     completed = json.loads(completed_path.read_text())
-    cache_path = Path(recipe['feature_path']);cache_manifest = cache_path.with_suffix('.manifest.json')
+    cache_path = Path(recipe['feature_path']);cache_manifest = feature_proof_path(cache_path)
     cache_proof = json.loads(cache_manifest.read_text())
     if (completed.get('status') != 'complete' or
             completed.get('kind') != 'recorded_engine_clean_latent_foundation_preflight' or
             cache_proof.get('status') != 'complete'):
         raise ValueError('Completed foundation preflight and cache production proofs are required')
     check_artifacts(completed, [config_path, cache_manifest], 'inputs')
-    expected = cache_proof['outputs'].get(str(cache_path))
+    expected = ({'sha256': digest(cache_path), 'bytes': cache_path.stat().st_size}
+                if is_feature_store(cache_path) else cache_proof['outputs'].get(str(cache_path)))
     if (expected is None or completed['inputs'].get(str(cache_path)) != expected or
             completed['verification'].get('cache_sha256') != expected['sha256'] or
             completed['verification'].get('source_recipe_sha256') != digest(config_path) or
             cache_path.stat().st_size != expected['bytes']):
         raise ValueError('Feature cache identity differs from completed production and full preflight')
-    cache = torch.load(cache_path, map_location='cpu', weights_only=True, mmap=True)
+    cache = open_feature_cache(cache_path, mmap=True)
     validate_cache(cache, recipe['expert_feature_depths'])
     if len(cache['features']) != len(recipe['decoder_bridge_positions']):
         raise ValueError('Expert depths and latent bridge positions differ')
@@ -119,6 +121,8 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
         raise ValueError('Explanation labels changed during token preflight')
     for path, sha in tokenizer_hashes.items():
         if digest(path) != sha:raise ValueError('Local tokenizer assets changed during preflight')
+    if hasattr(cache, 'check_unchanged'):
+        cache.check_unchanged()
     summary = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
         'reviewed_label_rows': len(rows), 'by_split': counts,
         'train_validation_rows_tokenized': len(eligible), 'tokenized_rows_by_split': dict(token_counts),
@@ -129,7 +133,7 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
         'existing_cache_contexts': len(cache['keys']), 'cache_depths': cache['depths'],
         'existing_cache_header_dimensions_and_precision_checked': True,
         'complete_cache_producer_and_full_foundation_preflight_reused': True,
-        'full_feature_cache_rehashed_again_by_this_preflight': False,
+        'full_feature_cache_rehashed_again_by_this_preflight': is_feature_store(cache_path),
         'feature_tensor_values_recomputed_or_verified_by_this_preflight': False,
         'local_tokenizer_assets_freshly_hash_bound': True, 'pinned_model_revision': recipe['model_revision'],
         'decoder_literal_board_text': None, 'model_weights_loaded_or_training_started': False,
@@ -140,10 +144,11 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
     proof = manifest('latent_only_reviewed_explanation_data_preflight',
         {'data': str(data), 'foundation_config': str(config_path), 'foundation_preflight': str(completed_path),
          'workers': workers, 'max_tokens': max_tokens},
-        [data_manifest, *paths, config_path, completed_path, cache_manifest, *tokenizer_paths],
+        [data_manifest, *paths, config_path, completed_path, cache_manifest,
+         *(feature_paths(cache_path) if is_feature_store(cache_path) else []), *tokenizer_paths],
         [observations, root / 'verification.json'], summary)
     proof['cache_header_only_input'] = {'path': str(cache_path), **expected,
-                                       'fresh_full_bytes_hash_verified_by_this_preflight': False}
+                                       'fresh_full_bytes_hash_verified_by_this_preflight': is_feature_store(cache_path)}
     atomic_json(root / 'manifest.json', proof)
     return summary
 

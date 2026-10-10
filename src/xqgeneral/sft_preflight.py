@@ -11,7 +11,9 @@ from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, 
 from .foundation_handoff import Artifacts
 from .modeling import expanded_initialization_reference
 from .sft import checked_parent, prepare_config, training_command
-from .training import atomic_checkpoint, compatible_resume
+from .training import atomic_checkpoint, compatible_resume, training_input_paths
+from .feature_store import feature_paths
+from .training_index import build_index, index_paths, IndexedTrainingRows
 
 RESUME_FIELDS = ['step', 'world_size', 'trainable', 'optimizer', 'random_state', 'torch_rng_state',
     'cuda_rng_states', 'tokens_seen', 'initial_loss', 'input_hashes', 'code', 'compute_contract',
@@ -30,7 +32,8 @@ def identical(a, b):
 def compare_resume(continuous, resumed):
     roots = [Path(continuous), Path(resumed)]
     a, b = [torch.load(p / 'latest.pt', map_location='cpu', weights_only=True, mmap=True) for p in roots]
-    failures = [k for k in RESUME_FIELDS if not identical(a[k], b[k])]
+    fields = RESUME_FIELDS + (['data_state'] if 'data_state' in a or 'data_state' in b else [])
+    failures = [k for k in fields if k not in a or k not in b or not identical(a[k], b[k])]
     logs = [[{k: v for k, v in json.loads(line).items() if k != 'seconds'}
              for line in (p / 'training.jsonl').read_text().splitlines()] for p in roots]
     if logs[0] != logs[1]:failures.append('step_logs')
@@ -77,6 +80,23 @@ def probe_data(recipe, token_proof, output):
         write_jsonl(Path(output) / (split + '.jsonl'), rows)
         result[split] = {'ids': [row['id'] for row in rows], 'maximum_tokens': max(item['tokens'] for item in selected)}
     return result
+
+
+def probe_row_indexes(common, root):
+    """Bind cloned longest-example sources instead of reusing full-corpus offsets."""
+    if 'row_index_paths' not in common:
+        return common
+    roots = [Path(common['data_path']), *[Path(p) for p in common.get('replay_data_paths', [])]]
+    indexes = {}
+    for split in common['row_index_paths']:
+        directory = Path(root) / (split + '-probe-index')
+        paths = [p / (split + '.jsonl') for p in roots]
+        if not directory.exists():
+            build_index(paths, directory, split=split)
+        else:
+            IndexedTrainingRows(directory, paths, common['mixture'], split=split).close()
+        indexes[split] = str(directory)
+    return dict(common, row_index_paths=indexes)
 
 
 def verify_updated_probe(root, initial_path, expected_inputs, config, execution_code):
@@ -162,6 +182,11 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         'token_preflight_sha256': digest(token_manifest), 'base_assets': base_assets, 'code': code_identity()}
     cache = Artifacts()
     cache.add(formal['feature_path'], {key: cache_item[key] for key in ['sha256', 'bytes']})
+    for path in feature_paths(formal['feature_path'])[1:]:
+        name = str(path)
+        if name not in token['inputs']:
+            raise ValueError('Token preflight must bind every feature storage shard')
+        cache.add(name, token['inputs'][name])
     cache.verify()
     if root.exists():
         if not resume or json.loads((root / 'contract.json').read_text()) != contract:
@@ -172,9 +197,9 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     selected = probe_data(recipe, token, root / 'data')
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
                   validation_examples=12, generation_examples=0, purpose='Four-GPU full-decoder actual 4 versus 2+2 probe; no independent test or completed SFT claim')
-    expected_inputs = {str(p): digest(p) for p in [root / 'data/train.jsonl',
-                       root / 'data/validation.jsonl', Path(source)]}
-    expected_inputs[formal['feature_path']] = cache_item['sha256']
+    common = probe_row_indexes(common, root)
+    expected_inputs = {str(p): cache.expected[str(p)]['sha256'] if str(p) in cache.expected else digest(p)
+                       for p in training_input_paths(common)}
     initial = root / 'zero-init.pt';initial_manifest = root / 'zero-init.manifest.json'
     if not initial.exists():
         torch.manual_seed(common['seed'])
@@ -221,6 +246,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     atomic_json(root / 'verification.json', result)
     outputs = [initial, initial_manifest, root / 'verification.json', root / 'data/train.jsonl', root / 'data/validation.jsonl',
                root / 'continuous.config.json', root / 'resumed.config.json']
+    outputs += [p for directory in common.get('row_index_paths', {}).values() for p in index_paths(directory)]
     for run in ['continuous', 'resumed']:
         outputs += [root / run / name for name in ['latest.pt', 'training.jsonl', 'config.json', 'execution.json']]
         outputs += sorted((root / run).glob('resources-step-*-rank-*.json'))

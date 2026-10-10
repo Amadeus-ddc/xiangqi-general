@@ -15,6 +15,7 @@ from .curriculum_data import MATERIAL, verify_splits
 from .course_tasks import PAPER_PROFILE, paper_answer, recipe_profile, row_profile, task_groups, validate_context, validate_query
 from .evidence import atomic_json, digest, history_key, manifest
 from .extend_features import validate_cache
+from .feature_store import feature_paths, feature_proof_path, is_feature_store, open_feature_cache
 from .gated_curriculum import TASKS, validate_recipe
 from .rules import adjudicate, gives_check, legal_moves, piece_map, piece_name, replay
 from .selfplay_grounding import question_variant
@@ -188,7 +189,7 @@ def main():
     clean_recipe(recipe)
     profile = recipe_profile(recipe)
     data = Path(recipe['data_path'])
-    data_proof_path, cache_proof_path = data / 'manifest.json', Path(recipe['feature_path']).with_suffix('.manifest.json')
+    data_proof_path, cache_proof_path = data / 'manifest.json', feature_proof_path(recipe['feature_path'])
     data_proof, cache_proof = [json.loads(p.read_text()) for p in (data_proof_path, cache_proof_path)]
     if data_proof['status'] != 'complete' or cache_proof['status'] != 'complete':
         raise ValueError('Production data and expert feature extension must both be complete')
@@ -201,12 +202,12 @@ def main():
         if source_hashes[str(path)] != data_proof['outputs'][str(path)]['sha256']:
             raise ValueError('Completed course question bytes changed')
     feature_sha = digest(recipe['feature_path'])
-    if feature_sha != cache_proof['outputs'][recipe['feature_path']]['sha256']:
+    if not is_feature_store(recipe['feature_path']) and feature_sha != cache_proof['outputs'][recipe['feature_path']]['sha256']:
         raise ValueError('Completed production feature cache bytes changed')
     weights = cache_proof['config']['weights']
     if digest(weights) != cache_proof['verification']['expert_sha256']:
         raise ValueError('Pinned expert weights changed')
-    cache = torch.load(recipe['feature_path'], map_location='cpu', weights_only=True, mmap=True)
+    cache = open_feature_cache(recipe['feature_path'], mmap=True)
     validate_cache(cache, recipe['expert_feature_depths'])
     if len(cache['features']) != len(recipe['decoder_bridge_positions']):
         raise ValueError('Bridge and expert-cache layer dimensions differ')
@@ -313,6 +314,8 @@ def main():
                         raise ValueError('Combined course changed a preserved engine question byte')
             if digest(original) != data_proof['inputs'][str(original)]['sha256']:
                 raise ValueError('Preserved prior engine corpus changed')
+    if hasattr(cache, 'check_unchanged'):
+        cache.check_unchanged()
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
               'total_rule_records': len(ids), 'records_by_split_stage': dict(counts),
               'records_by_source_kind': dict(source_kinds), 'actual_future_horizons': dict(horizons),
@@ -328,7 +331,7 @@ def main():
     if profile == PAPER_PROFILE:
         result['task_profile'] = profile
     atomic_json(root / 'verification.json', result)
-    inputs = [recipe_path, data_proof_path, cache_proof_path, *paths, recipe['feature_path'], weights]
+    inputs = [recipe_path, data_proof_path, cache_proof_path, *paths, *feature_paths(recipe['feature_path']), weights]
     outputs = [root / 'verification.json', root / 'token-verification.json', contexts_path, root / 'native-answer-sample.json']
     atomic_json(root / 'manifest.json', manifest('recorded_engine_clean_latent_foundation_preflight', vars(args), inputs, outputs, result))
     atomic_json(args.public_evidence, dict(result, readback_manifest_sha256=digest(root / 'manifest.json')))

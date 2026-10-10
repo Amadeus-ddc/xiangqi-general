@@ -234,7 +234,7 @@ def test_preflight_resume_requires_unchanged_recipe_and_executed_source(tmp_path
     assert len(runner.jobs)==count
 
 
-@pytest.mark.parametrize('problem', ['moments', 'group_shape', 'zero_gradient', 'missing_resource', 'wrong_code', 'changed_config', 'resume_mismatch'])
+@pytest.mark.parametrize('problem', ['moments', 'group_shape', 'zero_gradient', 'missing_resource', 'wrong_code', 'changed_config', 'resume_mismatch', 'missing_rng'])
 def test_self_consistent_short_runs_cannot_hide_invalid_actual_probe(tmp_path, monkeypatch, problem):
     curriculum, recipe, token = setup_data(tmp_path);install_runner(monkeypatch)
     handoff=tmp_path/'handoff';export_curriculum(curriculum,handoff)
@@ -244,13 +244,14 @@ def test_self_consistent_short_runs_cannot_hide_invalid_actual_probe(tmp_path, m
     if problem == 'resume_mismatch':
         path=probe/'resumed/latest.pt';d=torch.load(path,weights_only=True)
         d['trainable']['base.decoder.weight']=torch.ones(99);torch.save(d,path)
-    elif problem in ['moments','group_shape','wrong_code','changed_config']:
+    elif problem in ['moments','group_shape','wrong_code','changed_config','missing_rng']:
         for run in ['continuous','resumed']:
             path=probe/run/'latest.pt';d=torch.load(path,weights_only=True)
             if problem=='moments':d['optimizer']['state'][0]['exp_avg'].fill_(float('inf'))
             elif problem=='group_shape':d['optimizer']['state'][0]['exp_avg']=torch.ones(99)
             elif problem=='wrong_code':d['code']={'revision':'unrelated','source_sha256':{}}
-            else:d['config']['batch_size']=32
+            elif problem=='changed_config':d['config']['batch_size']=32
+            else:d.pop('torch_rng_state')
             torch.save(d,path)
     elif problem=='zero_gradient':
         for run in ['continuous','resumed']:

@@ -9,6 +9,7 @@ import torch
 from .evidence import atomic_json, digest, history_key, manifest, position_key
 from .course_tasks import PAPER_PROFILE, recipe_profile
 from .foundation_preflight import clean_recipe, corpus_preserves_prefix
+from .feature_store import feature_proof_path, open_feature_cache
 from .human_games import assigned_split
 from .symmetry import mirror_fen, mirror_move
 
@@ -107,10 +108,13 @@ def checked_preserved_cache(cache, previous):
             len(cache['features']) != len(previous['features'])):
         raise ValueError('Extended cache changed the previous key order or expert layers')
     for index, (new, old) in enumerate(zip(cache['features'], previous['features'], strict=True)):
-        if new.dtype != old.dtype or not torch.equal(new[:count], old):
+        if new.dtype != old.dtype or any(not torch.equal(new[start:min(start + 512, count)], old[start:min(start + 512, count)])
+                                        for start in range(0, count, 512)):
             raise ValueError(f'Extended cache changed previous feature values at layer {index}')
         print(json.dumps({'previous_feature_layer_bitwise_preserved': index}), flush=True)
-    if cache['wdl'].dtype != previous['wdl'].dtype or not torch.equal(cache['wdl'][:count], previous['wdl']):
+    if cache['wdl'].dtype != previous['wdl'].dtype or any(
+            not torch.equal(cache['wdl'][start:min(start + 512, count)], previous['wdl'][start:min(start + 512, count)])
+            for start in range(0, count, 512)):
         raise ValueError('Extended cache changed previous WDL values')
     return count
 
@@ -182,7 +186,7 @@ def main():
     data_proof_path = data / 'manifest.json'
     data_proof = json.loads(data_proof_path.read_text())
     corpus_preserves_prefix(data_proof, profile)
-    cache_proof_path = Path(recipe['feature_path']).with_suffix('.manifest.json')
+    cache_proof_path = feature_proof_path(recipe['feature_path'])
     cache_proof = json.loads(cache_proof_path.read_text())
     counts = data_proof['verification']['counts']
     if (data_proof['status'] != 'complete' or cache_proof['status'] != 'complete' or
@@ -206,7 +210,7 @@ def main():
             any(Path(f['path']).parent.resolve() != Path(recipe['model_path']).resolve() for f in base['files'])):
         raise ValueError('Base identity differs from the untouched pinned pretrained model slot')
     checked_artifacts(base_proof)
-    cache = torch.load(recipe['feature_path'], map_location='cpu', weights_only=True, mmap=True)
+    cache = open_feature_cache(recipe['feature_path'], mmap=True)
     cached_keys = set(cache['keys'])
     if (cache['depths'] != recipe['expert_feature_depths'] or len(cached_keys) != len(cache['keys']) or
             len(cache['keys']) != cache_proof['verification']['roots'] or
@@ -219,14 +223,17 @@ def main():
     old_cache_path = Path(cache_proof['config']['base_cache'])
     old_proof_path = Path(cache_proof['config']['base_proof'])
     old_proof = json.loads(old_proof_path.read_text())
+    old_bindings = {str(Path(p).resolve()): v for p, v in old_proof['outputs'].items()}
     if (old_proof['status'] != 'complete' or
-            digest(old_cache_path) != old_proof['outputs'][str(old_cache_path)]['sha256']):
+            digest(old_cache_path) != old_bindings[str(old_cache_path.resolve())]['sha256']):
         raise ValueError('Previous immutable expert cache changed')
     previous = torch.load(old_cache_path, map_location='cpu', weights_only=True, mmap=True)
     torch.set_num_threads(args.cpu_threads)
     preserved_count = checked_preserved_cache(cache, previous)
     if preserved_count != cache_proof['verification']['base_roots']:
         raise ValueError('Previous cache key coverage differs from extension generation')
+    if hasattr(cache, 'check_unchanged'):
+        cache.check_unchanged()
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
               'total_rule_records': observed['total_rule_records'], 'records_by_split': counts,
               'train_validation_records_tokenized': observed['train_validation_records_tokenized'],

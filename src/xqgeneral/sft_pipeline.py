@@ -13,6 +13,7 @@ from .curriculum_selection import CURRICULUM_KIND
 from .foundation_handoff import Artifacts, export_curriculum
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
+from .feature_store import feature_paths
 
 
 def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30):
@@ -65,9 +66,9 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
                 raise ValueError('Preserved handoff belongs to another curriculum')
             checked_parent(source, True)
         else:export_curriculum(curriculum, handoff)
-        cache_path = recipe['feature_path'];cache_signature = Artifacts.signature(cache_path)
+        cache_signatures = {str(p): Artifacts.signature(p) for p in feature_paths(recipe['feature_path'])}
         def unchanged_cache():
-            if Artifacts.signature(cache_path) != cache_signature:
+            if any(Artifacts.signature(path) != signature for path, signature in cache_signatures.items()):
                 raise ValueError('The verified feature cache changed during sequential SFT execution')
         stage = 'four_gpu_full_decoder_preflight';atomic_json(root / 'state.json', {'status': stage})
         preflight = root / 'preflight'

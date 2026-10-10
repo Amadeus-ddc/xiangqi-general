@@ -19,6 +19,7 @@ from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
 from .finite_training import data_profile, prepare_finite_epochs
 from .training_index import IndexedTrainingRows, index_paths, training_row_indexes
+from .feature_store import FeatureStore, feature_paths, gather_features, is_feature_store, open_feature_cache
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
@@ -103,7 +104,7 @@ def select_features(cache, indices, records, device, zero=False, rotate=False):
     keys = [indices[r['feature_key']] for r in records]
     if rotate:
         keys = keys[1:] + keys[:1]
-    features = [level[keys].to(device=device, dtype=torch.bfloat16) for level in cache['features']]
+    features = gather_features(cache, keys, device)
     return [torch.zeros_like(f) for f in features] if zero else features
 
 
@@ -139,6 +140,16 @@ def select_validation_rows(rows, stages, seed, maximum):
         return rows.get_batch(chosen)
     pool = [row for row in rows if row['stage'] in stages]
     return rng.sample(pool, min(maximum, len(pool)))
+
+
+def training_input_paths(config):
+    roots = [Path(config.get('data_path', 'data')), *[Path(p) for p in config.get('replay_data_paths', [])]]
+    paths = [*feature_paths(config['feature_path']),
+             *[p / f'{split}.jsonl' for p in roots for split in ['train', 'validation']],
+             *[p for directory in training_row_indexes(config).values() for p in index_paths(directory)]]
+    if config.get('init_from'):
+        paths.append(config['init_from'])
+    return paths
 
 
 def sample_batch(rows, mixture, rng, global_batch_size, rank=0, world=1, pools=None):
@@ -269,23 +280,20 @@ def main():
     cache_mmap = config.get('feature_cache_mmap', False)
     if type(cache_mmap) is not bool:
         raise ValueError('feature_cache_mmap must be a boolean')
-    cache = torch.load(config['feature_path'], map_location='cpu', weights_only=True, mmap=cache_mmap)
-    if len(cache['features']) != len(config['decoder_bridge_positions']):
-        raise ValueError('Cached expert levels do not match bridge positions')
-    if config.get('expert_feature_depths') and list(cache['depths']) != config['expert_feature_depths']:
-        raise ValueError('Expert layer contract differs from the cached features')
-    indices = {key: i for i, key in enumerate(cache['keys'])}
     data_path = Path(config.get('data_path', 'data'))
     data_roots = [data_path, *[Path(p) for p in config.get('replay_data_paths', [])]]
-    input_paths = [config['feature_path'], *[p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]]
-    input_paths += [p for directory in index_roots.values() for p in index_paths(directory)]
-    if config.get('init_from'):
-        input_paths.append(config['init_from'])
+    input_paths = training_input_paths(config)
     input_hashes = {str(p): digest(p) for p in input_paths} if rank == 0 else None
     if world > 1:
         objects = [input_hashes]
         dist.broadcast_object_list(objects, src=0)
         input_hashes = objects[0]
+    cache = open_feature_cache(config['feature_path'], mmap=cache_mmap, verified_hashes=input_hashes)
+    if len(cache['features']) != len(config['decoder_bridge_positions']):
+        raise ValueError('Cached expert levels do not match bridge positions')
+    if config.get('expert_feature_depths') and list(cache['depths']) != config['expert_feature_depths']:
+        raise ValueError('Expert layer contract differs from the cached features')
+    indices = {key: i for i, key in enumerate(cache['keys'])}
     mixture = config.get('mixture', {s: 1.0 for s in config['stages']})
     rows = {s: (IndexedTrainingRows(index_roots[s], [p / f'{s}.jsonl' for p in data_roots], mixture,
                                    split=s, verified_hashes=input_hashes) if s in index_roots else
@@ -454,6 +462,8 @@ def main():
         check = completed % config.get('eval_every', 100) == 0 or completed == config['steps'] or completed == args.stop_after
         stop = False
         if check:
+            if isinstance(cache, FeatureStore):
+                cache.check_unchanged()
             if world > 1:
                 dist.barrier()
             if rank == 0:
@@ -536,6 +546,9 @@ def main():
         inputs = [p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]
         if config.get('init_from'):
             inputs.append(config['init_from'])
+        inputs += [p for directory in index_roots.values() for p in index_paths(directory)]
+        if is_feature_store(config['feature_path']):
+            inputs += feature_paths(config['feature_path'])
         result['feature_cache_sha256'] = input_hashes[config['feature_path']]
         if finite_epochs is not None:
             result['training_data_state'] = finite_epochs.state_at(completed)
