@@ -25,7 +25,9 @@ The separately declared [native paper task profile](PAPER_COURSE_TASKS.md) imple
 
 A separately implemented [paper-form dense bridge](PAPER_DENSE_BRIDGE.md) uses decoder-width attention, 16 heads, a 2x ReLU-squared FFN and zero gates with randomly initialized output projections. CPU checks cover learning after the initially closed gates, frozen-decoder preservation, BF16 computation with FP32 trainable parameters, checkpoint handoff and SFT architecture inheritance. Historical configurations keep their original default. The 16-block Qwen/Px0 geometry plus both board embeddings has 671,806,496 trainable parameters; large-shape checks use meta tensors. Full GPU training, throughput and student strength with this architecture have not been measured. See `evidence/paper-dense-bridge-cpu-v1.json`.
 
-The current clean route has completed two of four courses. Independently verified third-course update 7680 scores 757/768 future-static, 756/768 static replay and 549/640 dynamic replay answers, with 84/128 exact move lists. Combined correctness is 2062/2176, below update 7168's 2080/2176; the selected checkpoint remains at 7168 with one check without improvement. All fifteen same-question raw checks and the latest 2176 native answers were read back. The failed update-4096 observer and its source are preserved; the replacement checks declared scheduled steps without restarting training. See `evidence/static-future-fifteenth-raw-validation-v1.json`; the update-8192 observer is queued. Initial clean SFT, trained search distillation and final strength/coaching acceptance remain pending.
+Tactical terminal sources preserve the original split, source identity, declared participants and unavailable pre-fragment history. Actual recorded endings retain their recorded mate witnesses; exhaustive legal one-ply extensions from supplied puzzle positions instead declare generated witnesses and never become recorded moves, additional independent games or best-move labels. Completed native course/structured-label forecasts may be reused with every original input freshly bound; this producer adds missing color counterparts and rejects ownership conflicts. Additional prior corpora and all declared canonical source histories also participate in reservation. Source regeneration and exact readback cover native classes, provenance, duplicates and exclusions. Full formal pool production, per-task root budgets and mixtures, feature caches and student training remain separate acceptance steps.
+
+At a preserved snapshot with two courses complete, independently verified third-course update 7680 scores 757/768 future-static, 756/768 static replay and 549/640 dynamic replay answers, with 84/128 exact move lists. Combined correctness is 2062/2176, below update 7168's 2080/2176; the selected checkpoint remains at 7168 with one check without improvement. All fifteen same-question raw checks and the latest 2176 native answers were read back. The failed update-4096 observer and its source are preserved; the replacement checks declared scheduled steps without restarting training. See `evidence/static-future-fifteenth-raw-validation-v1.json`; the update-8192 observer is queued. Initial clean SFT, trained search distillation and final strength/coaching acceptance remain pending.
 
 Optional BF16 teacher batching has passed CPU protocol and resume checks. A CI collection failure exposed an optional Transformers import in a tensor fixture; the PyTorch-only replacement passes all 18 affected cases with Transformers blocked and all 724 canonical CPU tests. Production code was unchanged by that fix. Real batched neural throughput and answer differences remain unmeasured. Existing frozen queues keep their original execution sources.
 
@@ -37,8 +39,11 @@ test results are in run manifests. Synthetic legal games are split before QA
 creation, and root/future positions are checked for overlap. Validation selects
 checkpoints. Test games do not train or select checkpoints.
 
-The current clean recorded-game foundation has completed two of four courses;
-the third course is training. Clean explanation SFT and accepted clean-model
+At the 2026-10-10 process/log snapshot, the existing clean recorded-game foundation
+has completed three of four courses; the fourth course is running. Its latest
+completed update-2560 validation scores 418/640 current-course and 2457/2816
+combined answers. This is a legacy-profile progress observation, not independent
+strength or prose acceptance; see `evidence/paper-tactical-terminal-pools-v1.json`. Clean explanation SFT and accepted clean-model
 search labels remain pending. The reviewed initial corpus contains 10758/384/512
 training/validation/test rows, including existing color-derived rows. The joint
 495306-history search pool is candidate material, not accepted distillation
