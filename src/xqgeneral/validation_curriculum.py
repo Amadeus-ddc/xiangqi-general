@@ -106,7 +106,7 @@ def run_curriculum(recipe_path, *, resume=False, prepare_only=False):
                         raise ValueError('Evaluate the actual latest update')
                     evaluate_candidate(candidate, candidate / 'adapter.pt', STAGES[:index + 1], recipe)
                 history = read_history(candidates, step, expected, training_code, STAGES[:index + 1], recipe, artifacts)
-                decision = selection_decision(history, recipe['validation_selection'], recipe['course_budgets'][index])
+                decision = selection_decision(history, recipe['validation_selection'], recipe['course_budgets'][index], stage=stage)
                 verify_pending(artifacts)
                 atomic_json(stage_root / 'selection-progress.json', {'stage': stage, 'decision': decision,
                     'reference_targets_are_required': False, 'history': history})
@@ -144,7 +144,7 @@ def run_curriculum(recipe_path, *, resume=False, prepare_only=False):
                     completed.append(result)
                     atomic_json(root / 'state.json', {'status': 'course_completed', 'courses_completed': len(completed),
                         'stage': stage, 'actual_steps': step, 'selected_step': chosen['step'],
-                        'selected_accuracy': chosen['gate']['accuracy'],
+                        'selected_accuracy': decision['selected_accuracy'],
                         'reference_targets_passed': chosen['gate']['passed'], 'next_course_permitted': True,
                         'gpu_sft_started': False, 'independent_test_used': False})
                     break

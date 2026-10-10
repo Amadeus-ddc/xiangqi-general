@@ -51,6 +51,11 @@ def validate_recipe(recipe):
         if (any(type(budget[k]) is not int or budget[k] < 1 for k in ['steps', 'minimum_steps', 'qa_every']) or
                 budget['minimum_steps'] > budget['steps'] or budget['learning_rate'] <= 0):
             raise ValueError('Invalid foundation course budget')
+        if ('selection_start_step' in budget and
+                (recipe.get('validation_selection', {}).get('metric') != 'current_course_raw_qa_accuracy' or
+                 type(budget['selection_start_step']) is not int or
+                 not 0 < budget['selection_start_step'] <= budget['minimum_steps'])):
+            raise ValueError('Separate candidate/stopping minima require the current-course policy')
         target = gates['targets'][stage]
         if any(not 0 < target[k] <= 1 for k in ['accuracy', 'minimum_task_accuracy']):
             raise ValueError('Raw QA targets must be between zero and one')
@@ -147,6 +152,8 @@ def training_config(recipe, index, root, parent):
                   min_steps=budget['steps'], patience=budget['steps'] + 1,
                   learning_rate=budget['learning_rate'], token_learning_rate=budget['learning_rate'] / 10,
                   output=str(root / stage / 'training'))
+    if recipe.get('validation_selection', {}).get('metric') == 'current_course_raw_qa_accuracy':
+        config['validation_stages'] = [stage]
     if parent:
         config['init_from'] = str(parent)
     return config

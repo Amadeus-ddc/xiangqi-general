@@ -18,6 +18,7 @@ from .rules import in_check, legal_moves, replay
 from .symmetry import mirror_fen
 
 POSITION_PROFILE = 'author_task_position_budget_mix_xiangqi_v1'
+SCARCE_FIRST_PROFILE = 'scarce_dynamic_tasks_first_xiangqi_v1'
 SPLITS = ('train', 'validation', 'test')
 TRAIN_POSITIONS = {'piece': 457143, 'locate': 914286, 'file': 914286, 'rank': 914286,
                    'diagonal': 609524, 'counts': 1828572, 'materials': 1828572,
@@ -29,6 +30,15 @@ MIXES = {'checks': (('generic', .2), ('have_check', .8)),
          'parries': (('in_check', 1.),),
          'mate': (('mate', .30), ('near_mate_check', .20), ('in_check', .10),
                   ('stalemate', .05), ('generic', .35))}
+
+
+def task_order(profile=None):
+    """Reserve rare native dynamic queries before generic tasks consume them."""
+    if profile not in (None, SCARCE_FIRST_PROFILE):
+        raise ValueError('Unknown task position ordering profile')
+    return {stage: (('mate', 'parries', 'checks', 'moves', 'controllers', 'captures')
+                    if profile and stage.startswith('dynamic') else tuple(tasks))
+            for stage, tasks in PAPER_TASKS.items()}
 
 
 def position_budgets(value=None):
@@ -241,9 +251,9 @@ class PositionCatalog:
             root['paper_complete_source_targets'] = root.pop('paper_source_targets')
         return root
 
-    def selections(self, budgets, seed, report):
+    def selections(self, budgets, seed, report, task_order_profile=None):
         for split in ('test', 'validation', 'train'):
-            for stage, tasks in PAPER_TASKS.items():
+            for stage, tasks in task_order(task_order_profile).items():
                 seen = set()
                 for task in tasks:
                     requested = budgets[split][stage][task]
@@ -274,8 +284,12 @@ class PositionCatalog:
                         'exhausted_sources': dict(counters['exhausted'])}
 
 
-def position_verification(budgets, report):
-    return {'position_sampling_profile': POSITION_PROFILE,
+def position_verification(budgets, report, task_order_profile=None):
+    order = task_order(task_order_profile)
+    return {**({'task_order_profile': task_order_profile,
+                'task_order_by_stage': {s: list(t) for s, t in order.items()},
+                'task_order_is_local_capacity_adaptation': True} if task_order_profile else {}),
+            'position_sampling_profile': POSITION_PROFILE,
             'requested_positions_by_split_stage_task': budgets,
             'task_position_selection': report,
             'per_task_root_budgets_applied': True, 'paper_difficult_source_mix_applied': True,

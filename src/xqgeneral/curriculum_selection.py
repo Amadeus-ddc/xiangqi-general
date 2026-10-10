@@ -9,19 +9,27 @@ from .evidence import load_jsonl
 COURSE_KIND = 'validation_selected_foundation_course'
 CURRICULUM_KIND = 'four_course_validation_selected_curriculum'
 HANDOFF_KIND = 'validation_selected_foundation_handoff'
+CURRENT_COURSE_METRIC = 'current_course_raw_qa_accuracy'
 
 
 def validate_policy(policy):
     if (set(policy) != {'metric', 'tie_breaker', 'patience'} or
-            policy['metric'] != 'balanced_raw_qa_accuracy' or
-            policy['tie_breaker'] != 'minimum_task_accuracy_then_earliest' or
+            (policy['metric'], policy['tie_breaker']) not in {
+                ('balanced_raw_qa_accuracy', 'minimum_task_accuracy_then_earliest'),
+                (CURRENT_COURSE_METRIC, 'earliest')} or
             type(policy['patience']) is not int or policy['patience'] < 1):
         raise ValueError('Declare the raw-validation metric, tie breaker and positive patience')
 
 
-def selection_decision(history, policy, budget):
+def selection_decision(history, policy, budget, *, stage=None):
     """Select by held-out raw answers, never NLL or the most recent training update."""
     validate_policy(policy)
+    current_only = policy['metric'] == CURRENT_COURSE_METRIC
+    if current_only and stage not in STAGES:
+        raise ValueError('Current-course selection requires its explicit course identity')
+    start = budget.get('selection_start_step', budget['minimum_steps']) if current_only else budget['minimum_steps']
+    if type(start) is not int or not 0 < start <= budget['minimum_steps']:
+        raise ValueError('Selection must begin by the declared minimum stopping step')
     if not history:
         raise ValueError('Checkpoint selection requires actual validation candidates')
     steps = [row['step'] for row in history]
@@ -39,21 +47,39 @@ def selection_decision(history, policy, budget):
         if any(type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1
                for value in [gate['accuracy'], *[task['accuracy'] for task in gate['by_task'].values()]]):
             raise ValueError('Raw validation accuracies must be finite fractions')
-    eligible = [row for row in history if row['step'] >= budget['minimum_steps']]
+        if current_only:
+            tasks = {k: v for k, v in gate['by_task'].items() if k.startswith(stage + '/')}
+            course = gate.get('courses', {}).get(stage)
+            if (not tasks or not isinstance(course, dict) or
+                    any(type(v.get('n')) is not int or v['n'] < 1 for v in tasks.values()) or
+                    type(course.get('examples')) is not int or
+                    course['examples'] != sum(v['n'] for v in tasks.values())):
+                raise ValueError('Current-course metric must bind its complete raw task counts')
+            accuracy = sum(v['accuracy'] * v['n'] for v in tasks.values()) / course['examples']
+            if (type(course.get('accuracy')) not in (int, float) or
+                    not math.isfinite(course['accuracy']) or
+                    not math.isclose(course['accuracy'], accuracy, rel_tol=0., abs_tol=1e-12)):
+                raise ValueError('Current-course metric differs from the raw task answers')
+    eligible = [row for row in history if row['step'] >= start]
     if not eligible:
         return {'stop': False, 'selected_step': None, 'steps_completed': steps[-1],
                 'checks_without_improvement': 0, 'stopping_reason': None}
     def score(row):
+        if current_only:
+            return row['gate']['courses'][stage]['accuracy'], -row['step']
         return row['gate']['accuracy'], min(t['accuracy'] for t in row['gate']['by_task'].values()), -row['step']
     best = max(eligible, key=score)
     stale = sum(row['step'] > best['step'] for row in eligible)
-    reason = ('reference_targets_met' if best['gate']['passed'] else
+    reason = ('reference_targets_met' if not current_only and best['gate']['passed'] else
               'validation_plateau' if stale >= policy['patience'] else
               'maximum_budget' if steps[-1] == budget['steps'] else None)
+    if current_only and steps[-1] < budget['minimum_steps']:
+        reason = None
     return {'stop': reason is not None, 'selected_step': best['step'], 'steps_completed': steps[-1],
             'checks_without_improvement': stale, 'stopping_reason': reason,
-            'selected_accuracy': best['gate']['accuracy'],
-            'selected_minimum_task_accuracy': score(best)[1]}
+            'selected_accuracy': score(best)[0],
+            'selected_minimum_task_accuracy': min(t['accuracy'] for k, t in best['gate']['by_task'].items()
+                                                 if not current_only or k.startswith(stage + '/'))}
 
 
 def course_contract(recipe, index, root, parent, artifacts, execution_code):
@@ -115,9 +141,8 @@ def read_history(candidate_root, through_step, expected_config, training_code, s
             raise ValueError('Validation candidate differs from the declared frozen training snapshot')
         artifacts.add(checkpoint, {'sha256': snapshot['adapter_sha256'], 'bytes': checkpoint.stat().st_size})
         saved = torch.load(checkpoint, map_location='cpu', weights_only=True, mmap=True)
-        inputs = [recipe['feature_path'], *[str(Path(recipe['data_path']) / f'{s}.jsonl') for s in ['train', 'validation']]]
-        if expected_config.get('init_from'):
-            inputs.append(expected_config['init_from'])
+        from .training import training_input_paths
+        inputs = [str(p) for p in training_input_paths(expected_config)]
         if (saved['config'] != expected_config or saved['selected_step'] != step or
                 saved['code'] != training_code or saved['input_hashes'] != snapshot['training_input_hashes'] or
                 set(saved['input_hashes']) != set(inputs)):
@@ -128,7 +153,8 @@ def read_history(candidate_root, through_step, expected_config, training_code, s
         qa = artifacts.proof(candidate / 'qa/manifest.json', 'balanced_board_qa')
         if qa['code'] != training_code:
             raise ValueError('Raw evaluation must use the candidate training execution source')
-        required_inputs = [checkpoint, Path(recipe['data_path']) / 'validation.jsonl', Path(recipe['feature_path'])]
+        from .feature_store import feature_paths
+        required_inputs = [checkpoint, Path(recipe['data_path']) / 'validation.jsonl', *feature_paths(recipe['feature_path'])]
         required_outputs = [candidate / 'qa/predictions.jsonl', candidate / 'qa/metrics.json']
         if (any(str(p) not in qa['inputs'] for p in required_inputs) or
                 any(str(p) not in qa['outputs'] for p in required_outputs)):
@@ -150,7 +176,7 @@ def read_history(candidate_root, through_step, expected_config, training_code, s
 
 def validate_course_selection(result):
     selection = result['selection']
-    decision = selection_decision(selection['history'], selection['policy'], selection['budget'])
+    decision = selection_decision(selection['history'], selection['policy'], selection['budget'], stage=result['stage'])
     chosen = next(row for row in selection['history'] if row['step'] == decision['selected_step']) if decision['stop'] else None
     if (not decision['stop'] or selection['decision'] != decision or
             result['actual_steps'] != decision['steps_completed'] or result['selected_step'] != decision['selected_step'] or

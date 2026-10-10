@@ -68,6 +68,7 @@ def test_invalid_selection_evidence_and_policy_rejected(problem):
 
 
 def raw_candidate(candidate, saved, step, recipe, stages, wrong=0):
+    from xqgeneral.feature_store import feature_paths
     candidate.mkdir(parents=True, exist_ok=True)
     checkpoint = candidate / 'adapter.pt'
     torch.save(dict(saved, selected_step=step), checkpoint)
@@ -90,7 +91,7 @@ def raw_candidate(candidate, saved, step, recipe, stages, wrong=0):
     arguments = {'checkpoint': str(checkpoint), 'data': recipe['data_path'], 'features': recipe['feature_path'],
         'split': 'validation', 'memory': 'normal', 'stages': list(stages), 'per_task': 3, 'seed': 13, 'question_formats': 3}
     atomic_json(qa / 'manifest.json', manifest('balanced_board_qa', arguments,
-        [checkpoint, Path(recipe['data_path']) / 'validation.jsonl', recipe['feature_path']],
+        [checkpoint, Path(recipe['data_path']) / 'validation.jsonl', *feature_paths(recipe['feature_path'])],
         [qa / 'predictions.jsonl', qa / 'metrics.json'], metrics, code=saved['code']))
     atomic_json(candidate / 'gate.json', raw_qa_gate(records, stages, recipe['raw_qa_gates']['targets'], 3))
 

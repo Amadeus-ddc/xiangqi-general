@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "kind": "paper_aligned_foundation_integration_and_pretrained_ddp_resume",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_date": "2026-10-11",
+  "behavior": {
+    "fresh_full_width_recipe": true,
+    "finite_epoch_mixture_and_indexed_sharded_storage": true,
+    "answer_token_normalized_loss": true,
+    "current_course_primary_selection": true,
+    "prior_courses_replayed_in_training_and_reported_separately": true,
+    "earliest_tie_and_minimum_stopping_steps_are_local_rules": true,
+    "reference_targets_are_diagnostics_not_primary_stopping_rules": true,
+    "all_storage_and_index_lineage_bound_in_candidate_history_and_raw_evaluation": true,
+    "scarce_dynamic_order_is_explicit_local_capacity_adaptation": true
+  },
+  "tests": {
+    "status": "complete",
+    "returncode": 0,
+    "source_test_bindings": 160,
+    "source_and_tests_unchanged": true,
+    "passed": 1133,
+    "pytest_seconds": 622.72,
+    "wrapper_seconds": 626.691744194366
+  },
+  "new_acceptance_tests": 20,
+  "pretrained_four_gpu_control": {
+    "status": "complete",
+    "evidence_state": "reconstructed_baseline",
+    "pretrained_student_loaded": true,
+    "expert_loaded": false,
+    "actual_pinned_px0_features_used": true,
+    "teacher_loaded": false,
+    "constructed_tensor_model_used": false,
+    "actual_training_entry_used": true,
+    "world_size": 4,
+    "continuous_updates": 8,
+    "resume_after_update": 4,
+    "all_parameters_optimizer_rng_data_state_and_traces_bitwise_equal": true,
+    "all_32_zero_initialized_bridge_gates_opened": true,
+    "foundation_state": {
+      "trainable_tensors": 226,
+      "trainable_parameters": 671806496,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    "original_game_splits_preserved_before_question_generation": true,
+    "native_training_questions": 21,
+    "native_validation_questions": 14,
+    "original_source_and_weight_files_unchanged": true,
+    "frozen_modules_rehashed": 88,
+    "rank_zero_peak_allocated_gib_by_run": {
+      "continuous": 23.304731369018555,
+      "resumed": 23.332707405090332
+    },
+    "concurrent_original_training_prevents_isolated_throughput_claim": true,
+    "seconds": 699.7733694594353,
+    "formal_paper_curriculum_training_completed": false,
+    "strength_or_coaching_quality_measured": false,
+    "goal_complete": false
+  },
+  "data_preparation_queue": {
+    "session": "xqgeneral-paper-curriculum-preparation-v3",
+    "configuration_inputs_pinned_in_run": true,
+    "expected_chain": [
+      "complete native recorded source audit",
+      "full 26-type questions",
+      "complete native question readback",
+      "full Px0 feature-store extraction",
+      "training and validation row indexes",
+      "full token/native preflight",
+      "source/cache/pinned-base readback",
+      "verified fresh four-course training"
+    ],
+    "ordinary_training_task_root_budgets_fraction_of_author": 0.25,
+    "training_mate_roots_requested_per_course": 10000,
+    "actual_capacity_and_source_mix_shortfalls_will_be_reported": true,
+    "validation_roots_requested_per_type": 100,
+    "test_roots_requested_per_type": 1000,
+    "color_mirror": false,
+    "models_loaded_by_orchestrator": false,
+    "formal_data_and_training_started": false,
+    "observed_state": {
+      "status": "generating_full_native_paper_questions",
+      "models_loaded_by_orchestrator": false
+    },
+    "observed_utc": "2026-10-10T23:06:04.579257+00:00",
+    "source_native_regeneration_complete": true,
+    "source_roots_by_split": {
+      "train": 5099559,
+      "validation": 602056,
+      "test": 600220
+    },
+    "root_counts_are_distinct_query_boards": false,
+    "previous_queue_failed_before_question_generation": true,
+    "manifest_dispatch_reproduction_and_source_tamper_rejection_passed": true,
+    "formal_data_generation_started": true,
+    "formal_curriculum_training_started": false
+  },
+  "private_artifact_bindings": {
+    "canonical": {
+      "canonical.py": {
+        "sha256": "2ea6388a1353fdc91081278fe3547aa4ad0f9b5a5477796f1539e2e8b490e370",
+        "bytes": 1667
+      },
+      "canonical.json": {
+        "sha256": "40e6d823cd2b9c1d01fc261881a92f153917100496134bc61563466c0a1a2340",
+        "bytes": 200
+      },
+      "canonical.log": {
+        "sha256": "5b5e8afc8adfaf367875a386b36b849650f4b6c21f48d9fd0808a9026df26d5c",
+        "bytes": 1313
+      },
+      "source-test-before.json": {
+        "sha256": "342ab64266c15ad7f358ac8742abff9bd9f476b3574c2f41dce8738d2b531d23",
+        "bytes": 16705
+      },
+      "source-test-after.json": {
+        "sha256": "342ab64266c15ad7f358ac8742abff9bd9f476b3574c2f41dce8738d2b531d23",
+        "bytes": 16705
+      }
+    },
+    "real-ddp": {
+      "entry.py": {
+        "sha256": "1824d3c1edbe3c5a202a7be84269cd865025744ea46a8ebb186e58d25a403b29",
+        "bytes": 11200
+      },
+      "plan.json": {
+        "sha256": "07484b764395964f593295714547041e0b5d0d8273dfda0aa10cc2ec1eb92ae2",
+        "bytes": 759
+      },
+      "manifest.json": {
+        "sha256": "778c9b28d69c111f01f87b85aa0e46988b529c89c4573be2df3825640eb89a1d",
+        "bytes": 24567
+      },
+      "verification.json": {
+        "sha256": "5a6dc131dea1b641136dec038cdd9e9e3d437edf4fff2922c07d8433728275ac",
+        "bytes": 1309
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      }
+    },
+    "preparation-queue": {
+      "entry.py": {
+        "sha256": "01615c0033cabe1f57057d5ad0b52a62add842281566b2a5fcdc97169ab8ba72",
+        "bytes": 10222
+      },
+      "plan.json": {
+        "sha256": "7c0901cc4eeadad284c5e35940bf7a37ccb57b6db5bcdb33aa9f62731f48a732",
+        "bytes": 2427
+      },
+      "supersession.json": {
+        "sha256": "9da20a02cda7709feea87309685826ec381919c4ca86e68bc1739334fde2082b",
+        "bytes": 326
+      },
+      "inputs/foundation-template.json": {
+        "sha256": "3c03836f07740179c785afb9acd18f153cf45fc9461d59da15fed5fdc8ed6252",
+        "bytes": 3768
+      },
+      "inputs/task-position-budgets.json": {
+        "sha256": "c2ea3bc28bd89509040dcc8fe4969dbfe0c5aee2a800d97f349aee047ea159fd",
+        "bytes": 2188
+      },
+      "source-run/source-manifest.json": {
+        "sha256": "b67ff989b043198c09b9bd4196302a309a107627be97af6b8f32c8d51364f18a",
+        "bytes": 8372
+      }
+    },
+    "retired-preparation-queue-v2": {
+      "entry.py": {
+        "sha256": "a944c042190fccd16c4af0f27892db6c63734ca51e09c525d74307372fa9957f",
+        "bytes": 10195
+      },
+      "plan.json": {
+        "sha256": "c51d31c18f0c71e18d62ff6629948ee6badbfa103aefe72cab948d9791bd1680",
+        "bytes": 2357
+      },
+      "supersession.json": {
+        "sha256": "fa83e22e817177bd0d7b26da1f78b92e09784739a56059dc30f1c0730547f674",
+        "bytes": 535
+      },
+      "inputs/foundation-template.json": {
+        "sha256": "3c03836f07740179c785afb9acd18f153cf45fc9461d59da15fed5fdc8ed6252",
+        "bytes": 3768
+      },
+      "inputs/task-position-budgets.json": {
+        "sha256": "c2ea3bc28bd89509040dcc8fe4969dbfe0c5aee2a800d97f349aee047ea159fd",
+        "bytes": 2188
+      }
+    },
+    "final-readback": {
+      "readback.py": {
+        "sha256": "9b8fbf0fad93c3f0dcae9ec62c03486da4a9e63cea1db34079ee0c2e6e92e240",
+        "bytes": 5028
+      },
+      "readback.json": {
+        "sha256": "6b626857cdb10fab014b12c6c879807d3cca2252e061a14f480ac5493584f924",
+        "bytes": 112803
+      },
+      "readback.log": {
+        "sha256": "7af4fc28a3579122b7d3e088280c1e2797a3fd0fa71127b5222e7130ec113b58",
+        "bytes": 806
+      },
+      "readback-source-run/source-manifest.json": {
+        "sha256": "b67ff989b043198c09b9bd4196302a309a107627be97af6b8f32c8d51364f18a",
+        "bytes": 8372
+      }
+    },
+    "queue-routing-reproduction": {
+      "reproduce.py": {
+        "sha256": "bf3180511f071e8f777015c20520285b84481da7b517fc873feacf0a7ce0b12a",
+        "bytes": 1054
+      },
+      "before.log": {
+        "sha256": "b21d78d5f6770b6adf77f3130391299a6e34be969440c43c1e07de0f8851ff19",
+        "bytes": 981
+      },
+      "after.log": {
+        "sha256": "8014f215c80296f6b78e42e8f636c1e7cfa55729abad27cfb37d98e39c07a926",
+        "bytes": 85
+      },
+      "verification.json": {
+        "sha256": "0f960305c25a479843fbac4eb65e97a3a70f2aa7f4f5c4189910038e6b3e4093",
+        "bytes": 391
+      }
+    },
+    "full-recorded-source": {
+      "verification.json": {
+        "sha256": "a9db522608947ef304fd350f7925dacc311db7ca18a9d331aa8987cb757183ad",
+        "bytes": 3980
+      },
+      "exit.json": {
+        "sha256": "1e3f6691f455051e8adb15d961e4bf3c7a17e83dd88b2afdd13315cc288250bb",
+        "bytes": 22
+      },
+      "pools/manifest.json": {
+        "sha256": "282c0a3f2346a3656ed2fb90f8daf077f2acae9ff02b18201e574f7f5e98933a",
+        "bytes": 24620
+      },
+      "readback/manifest.json": {
+        "sha256": "3619b96c6884ea6a3ad419ef97952be3ab6c21d2b9d18e55f7e2971396179915",
+        "bytes": 20715
+      },
+      "source-run/source-manifest.json": {
+        "sha256": "85e532777648d1704d5242bc70c9df16f1ef4dad4622139d44af30ce5e0053ca",
+        "bytes": 7995
+      }
+    }
+  },
+  "limitations": [
+    "The real model control used 21 native training and 14 native validation questions for eight updates; it is not completed curriculum or strength/coaching validation.",
+    "Rank-zero peak allocation is measured for microbatch one on short native probes while original training ran; formal microbatch four and full corpus throughput are not established.",
+    "The complete recorded source regeneration has finished; full questions and feature-cache preparation remain unfinished, and requested root budgets and class ratios may have capacity shortfalls.",
+    "Earliest ties, planning-anchor minimum stopping steps, quarter-scale general budgets, smaller mate budget and scarce-first ordering are local adaptations, not paper-reported stopping rules.",
+    "Initial explanation SFT, search distillation and final strength/prose acceptance remain required."
+  ],
+  "goal_complete": false,
+  "final_fresh_readback": {
+    "status": "complete",
+    "canonical_passed": 1133,
+    "source_test_bindings_unchanged": 160,
+    "real_pretrained_control_all_storage_and_outputs_freshly_rehashed": true,
+    "full_recorded_native_producer_and_readback_bindings_freshly_rehashed": true,
+    "native_regeneration_inherited_same_bytes_without_new_replay": true,
+    "verified_files": 418,
+    "original_production_recipe_sha256": "e10e5df6ee2152898c04c0c84ee3bf38dcf150492b8dac1918216a899293d0b5",
+    "original_production_frozen_modules_rehashed": 67,
+    "control_queue_frozen_modules_each": 88,
+    "full_source_frozen_modules_rehashed": 84,
+    "queue_actual_handle_live": true,
+    "queue_phase_observed": "generating_full_native_paper_questions",
+    "source_root_counts": {
+      "train": 5099559,
+      "validation": 602056,
+      "test": 600220
+    },
+    "seconds": 318.3526780195534,
+    "goal_complete": false
+  }
+}
