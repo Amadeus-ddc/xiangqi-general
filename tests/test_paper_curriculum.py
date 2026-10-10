@@ -6,6 +6,7 @@ import sys
 import pytest
 
 from xqgeneral.course_tasks import PAPER_PROFILE, native_tag
+from xqgeneral.course_sampling import SAMPLING_PROFILE
 from xqgeneral.curriculum_data import STAGES
 from xqgeneral.evidence import atomic_json, digest, history_key, load_jsonl, manifest, write_jsonl
 from xqgeneral.foundation_preflight import corpus_preserves_prefix
@@ -206,3 +207,50 @@ def test_raw_qa_cli_uses_tag_grading_and_keeps_unmodified_generation(tmp_path, m
     assert metrics['accuracy'] == 1 and metrics['raw_exact_correct_rate'] == 0
     assert metrics['prose_graded'] is False
     assert json.loads((output / 'manifest.json').read_text())['config']['task_profile'] == PAPER_PROFILE
+
+
+def test_adaptive_native_producer_readback_covers_multiplied_train_and_single_heldout_queries(tmp_path):
+    roots, proof, _ = source_fixture(tmp_path)
+    data = tmp_path / 'adaptive'
+    result = build([roots], [proof], data, seed=7, sampling_profile=SAMPLING_PROFILE)
+    assert result['counts'] == {'train': 198, 'validation': 100, 'test': 100}
+    assert result['global_answer_class_frequency_shaping_applied'] is True
+    assert result['author_training_query_multiplicity_applied'] is True
+    assert result['paper_difficult_source_mix_applied'] is False
+    assert result['all_declared_tasks_present_by_split'] == {'train': True, 'validation': True, 'test': True}
+    counts = result['answer_class_frequency_by_split_stage_task']
+    assert sum(n for k, n in counts['train/static_current/piece'].items() if k.startswith('square:')) == 16
+    assert sum(n for k, n in counts['validation/static_current/piece'].items() if k.startswith('square:')) == 4
+    checked = readback(data, tmp_path / 'readback')
+    assert checked['questions_regenerated_and_compared'] == 398
+    assert checked['answer_class_frequency_by_split_stage_task'] == counts
+    assert json.loads((data / 'manifest.json').read_text())['config']['sampling_profile'] == SAMPLING_PROFILE
+
+
+@pytest.mark.parametrize('tamper', ['frequency', 'query_counts', 'shaping_flag', 'profile'])
+def test_readback_rejects_tampered_sampling_contract_without_loading_a_student(tmp_path, tamper):
+    roots, proof, _ = source_fixture(tmp_path)
+    data = tmp_path / 'adaptive'
+    build([roots], [proof], data, sampling_profile=SAMPLING_PROFILE)
+    path = data / 'manifest.json'
+    manifest_proof = json.loads(path.read_text())
+    v = manifest_proof['verification']
+    if tamper == 'frequency':
+        v['answer_class_frequency_by_split_stage_task']['train/static_current/piece']['square:a0'] = 999
+    elif tamper == 'query_counts':
+        v['training_queries_requested_per_root_by_task']['piece'] = 90
+    elif tamper == 'shaping_flag':
+        v['global_answer_class_frequency_shaping_applied'] = False
+    else:
+        manifest_proof['config']['sampling_profile'] = 'unrecognized-policy'
+    atomic_json(path, manifest_proof)
+    with pytest.raises(ValueError, match='frequenc|sampling profile'):
+        readback(data, tmp_path / 'invalid-readback')
+
+
+def test_unknown_sampling_profile_cannot_start_a_new_corpus(tmp_path):
+    roots, proof, _ = source_fixture(tmp_path)
+    output = tmp_path / 'invalid'
+    with pytest.raises(ValueError, match='sampling profile'):
+        build([roots], [proof], output, sampling_profile='unrecognized-policy')
+    assert not output.exists()

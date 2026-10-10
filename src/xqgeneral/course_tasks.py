@@ -316,7 +316,7 @@ def paper_queries(fen, rng, initial_board=None):
     return static, dynamic
 
 
-def paper_records(root, rng):
+def paper_records(root, rng, sampler=None):
     """Use an already split, complete native root and its actual future line."""
     if root['split'] not in ('train', 'validation', 'test') or not isinstance(root['game_id'], str):
         raise ValueError('Paper questions require a preassigned native game split')
@@ -331,7 +331,8 @@ def paper_records(root, rng):
         for move in line:
             origins.pop(move[2:], None)
             origins[move[2:]] = origins.pop(move[:2])
-        static, dynamic = paper_queries(fen, rng, piece_map(root['fen']) if future else None)
+        static, dynamic = (paper_queries(fen, rng, piece_map(root['fen']) if future else None)
+                           if sampler is None else sampler.query_groups(root, fen, rng, future))
         for kind, tasks in [('static', static), ('dynamic', dynamic)]:
             stage = f"{kind}_{'future' if future else 'current'}"
             for task, query in tasks:
