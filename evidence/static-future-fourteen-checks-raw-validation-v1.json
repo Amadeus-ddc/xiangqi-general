@@ -274,23 +274,23 @@
   "independent_test_used": false,
   "cpu_suite": {
     "passed": 724,
-    "seconds": 313.7667323127389,
+    "seconds": 304.1953133046627,
     "source_test_bindings": 135,
     "artifacts": [
       {
-        "path": "runs/batched-teacher-milestone-tests-v1/source-test-bindings.json",
+        "path": "runs/batched-teacher-milestone-tests-v3/source-test-bindings.json",
         "bytes": 14017,
-        "sha256": "b96498eb916dfca4ebdfc6cc0d353df9c52df9f6adfafa99e9dba5575ac59097"
+        "sha256": "a5578cf8ca04393d834840e522a2ba20cdd040b1db1fd9bcf3cda22f550434a2"
       },
       {
-        "path": "runs/batched-teacher-milestone-tests-v1/exit.json",
+        "path": "runs/batched-teacher-milestone-tests-v3/exit.json",
         "bytes": 214,
-        "sha256": "4fbf841c3b584d9481e31f38c3e46a216ff976b65ae68f61538b164a69bc6538"
+        "sha256": "34999f4588a09280e4a6fc9307f76fe8b530e7ca8b5a178b37acf5c3a75c0c72"
       },
       {
-        "path": "runs/batched-teacher-milestone-tests-v1/log.txt",
+        "path": "runs/batched-teacher-milestone-tests-v3/log.txt",
         "bytes": 912,
-        "sha256": "e654af4d1e807b57a8abe9387fd2f285792c4670638fa7cd7a88b604bb1d19bc"
+        "sha256": "7522074068835f2b6fe9ee05a519796601f0ff3e6cfa8c375d917791468bb85f"
       }
     ]
   },
@@ -300,7 +300,14 @@
     "default_single_query_contract_preserved": true,
     "batched_neural_teacher_inference_executed": false,
     "gpu_throughput_or_equal_neural_answers_proven": false,
-    "active_frozen_teacher_and_search_queues_changed": false
+    "active_frozen_teacher_and_search_queues_changed": false,
+    "optional_transformers_absent_focused_tests_passed": 18,
+    "cpu_fixture_has_no_optional_transformers_import": true,
+    "optional_dependency_repro": {
+      "path": "runs/github-batched-teacher-fourteen-checks-v1/dependency-repro.json",
+      "bytes": 1624,
+      "sha256": "781f7ad0f5641595dd2b3d60006e188e148929e8c130515322d23c1b3400f1e4"
+    }
   },
   "scope_limits": {
     "native_rules_shared_with_existing_independent_preflight": true,

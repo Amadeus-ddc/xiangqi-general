@@ -3,10 +3,14 @@ from types import SimpleNamespace
 
 import pytest
 import torch
-from transformers import BatchEncoding
 
 from xqgeneral import local_teacher
 from xqgeneral.evidence import digest, load_jsonl, write_jsonl
+
+
+class TensorInputs(dict):
+    def to(self, device):
+        return TensorInputs({key: tensor.to(device) for key, tensor in self.items()})
 
 
 class Tokenizer:
@@ -21,7 +25,7 @@ class Tokenizer:
                               return_attention_mask=True, return_tensors='pt')
         rows = [[int(x) for x in text.split()] for text in texts]
         width = max(map(len, rows))
-        return BatchEncoding({'input_ids': torch.tensor([[0] * (width - len(r)) + r for r in rows]),
+        return TensorInputs({'input_ids': torch.tensor([[0] * (width - len(r)) + r for r in rows]),
             'attention_mask': torch.tensor([[0] * (width - len(r)) + [1] * len(r) for r in rows])})
 
     def decode(self, tokens, skip_special_tokens):
