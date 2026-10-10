@@ -17,6 +17,8 @@ def pilot_spec(config, bound):
     for key in ['limit', 'nodes', 'teacher_max_new_tokens']:
         if type(config[key]) is not int or config[key] <= 0:
             raise ValueError('Positive integer search pilot budgets are required')
+    if type(config.get('teacher_batch_size', 1)) is not int or config.get('teacher_batch_size', 1) <= 0:
+        raise ValueError('A positive integer teacher batch size is required')
     if (type(config['max_depth']) is not int or config['max_depth'] < 0 or
             type(config['seed']) is not int or config['child_contract'] not in {'full', 'move_eval'}):
         raise ValueError('Invalid recursive search pilot configuration')
@@ -174,6 +176,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             consolidation = root / 'consolidation'
             args = {'config': evaluation['teacher_config'], 'input': str(mining / 'queries.jsonl'),
                     'output': str(consolidation), 'max_new_tokens': config['teacher_max_new_tokens']}
+            if config.get('teacher_batch_size', 1) != 1:
+                args['batch_size'] = config['teacher_batch_size']
             teacher_proof = completed_stage('local_teacher', args, 'local_teacher_inference', consolidation, True)
             responses = load_jsonl(consolidation / 'responses.jsonl')
             if (len(responses) != len(queries) or len({row['id'] for row in responses}) != len(responses) or

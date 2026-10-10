@@ -98,6 +98,8 @@ class ControlledChain:
                 self.identity = response()['teacher']
             def generate(self, *args):
                 return {key: response()[key] for key in ['text', 'hit_generation_limit']}
+            def generate_batch(self, messages, budget):
+                return [self.generate(message, budget) for message in messages]
         from xqgeneral import inference
         monkeypatch.setattr(inference, 'Predictor', Predictor)
         monkeypatch.setattr(search_distillation, 'Pikafish', Oracle)
@@ -137,6 +139,35 @@ class ControlledChain:
                     handle.write('{}\n')
             atomic_json(path, proof)
         return SimpleNamespace(returncode=0)
+
+
+def test_configured_teacher_batch_passes_through_real_cli_collection(tmp_path, monkeypatch):
+    pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    settings['teacher_batch_size'] = 4
+    atomic_json(config, settings)
+    chain = ControlledChain(monkeypatch, query)
+    output = tmp_path / 'pilot'
+    result = search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output)
+    command = next(c for c in chain.commands if 'xqgeneral.local_teacher' in c)
+    assert command[command.index('--batch-size') + 1] == '4'
+    proof = json.loads((output / 'consolidation/manifest.json').read_text())
+    assert proof['config']['batch_size'] == proof['verification']['configured_batch_size'] == 4
+    assert result['accepted_structured_training_labels'] == 1
+    assert result == search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output, resume=True)
+    assert len(chain.commands) == 3
+
+
+@pytest.mark.parametrize('size', [0, -1, True, 1.5])
+def test_invalid_teacher_batch_size_rejected_before_models(tmp_path, monkeypatch, size):
+    pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    settings['teacher_batch_size'] = size
+    atomic_json(config, settings)
+    chain = ControlledChain(monkeypatch, query)
+    with pytest.raises(ValueError, match='positive integer teacher batch'):
+        search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, tmp_path / 'pilot')
+    assert not chain.commands and chain.student_loads == chain.teacher_loads == 0
 
 
 def test_actual_cli_chain_counts_labels_and_preserves_original_heldouts(tmp_path, monkeypatch):

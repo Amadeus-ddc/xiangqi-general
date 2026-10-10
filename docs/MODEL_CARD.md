@@ -19,6 +19,10 @@ Raw model generations must be evaluated before correction or oracle assistance.
 
 ## Training and evaluation
 
+The current clean route has completed two of four courses. Independently verified third-course update 7168 scores 763/768 future-static, 758/768 static replay and 559/640 dynamic replay answers, with 82/128 exact move lists. All fourteen same-question raw checks and the latest native answers were read back. The failed update-4096 observer is preserved; its fixed-count condition was replaced by declared scheduled steps, without restarting training. See `evidence/static-future-fourteen-checks-raw-validation-v1.json`. Initial clean SFT, trained search distillation and final strength/coaching acceptance remain pending.
+
+Optional BF16 teacher batching has passed CPU protocol and resume checks; real batched neural throughput and answer differences remain unmeasured. Existing frozen queues keep their original execution sources.
+
 Pinned source/model identities are in `configs/sources.json`; per-experiment
 configuration, hashes, code revisions, validation selection, and independent
 test results are in run manifests. Synthetic legal games are split before QA
