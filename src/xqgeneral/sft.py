@@ -5,7 +5,8 @@ import math
 from pathlib import Path
 import subprocess
 import sys
-from .evidence import atomic_json, digest, load_jsonl
+from .evidence import atomic_json, digest, iter_jsonl
+from .finite_training import FINITE_PROFILE, data_profile, mixture_counts
 
 
 def prepare_config(saved, recipe, source_path, output):
@@ -42,10 +43,26 @@ def prepare_config(saved, recipe, source_path, output):
     weight = recipe['mixture'][primary]
     if type(weight) not in (int, float) or not math.isfinite(weight) or not 0 < weight <= 1:
         raise ValueError('Primary SFT mixture weight must be positive and at most one')
-    count = sum(r['stage'] == primary for r in load_jsonl(Path(recipe['data_path']) / 'train.jsonl'))
+    finite = data_profile(recipe) == FINITE_PROFILE
+    data_roots = [Path(recipe['data_path'])]
+    if finite:
+        if batch % (world * micro):
+            raise ValueError('Finite SFT effective batch must contain whole distributed microbatches')
+        data_roots += [Path(p) for p in recipe.get('replay_data_paths', [])]
+    counts = {}
+    for directory in data_roots:
+        for row in iter_jsonl(directory / 'train.jsonl'):
+            counts[row['stage']] = counts.get(row['stage'], 0) + 1
+    count = counts.get(primary, 0)
     if not count:
         raise ValueError('The primary SFT dataset is empty')
-    steps = min(recipe['max_steps'], math.ceil(count * recipe['epochs'] / (batch * weight)))
+    if finite:
+        selected = mixture_counts(counts, recipe['mixture'])
+        if selected['anchor_stage'] != primary or not float(recipe['epochs']).is_integer():
+            raise ValueError('Finite SFT requires the primary stage as anchor and a whole number of epochs')
+        steps = min(recipe['max_steps'], math.ceil(selected['rows_per_epoch'] / batch) * int(recipe['epochs']))
+    else:
+        steps = min(recipe['max_steps'], math.ceil(count * recipe['epochs'] / (batch * weight)))
     config.update(steps=steps, min_steps=min(steps, recipe['min_steps']),
                   init_from=str(source_path), output=str(output))
     return config
