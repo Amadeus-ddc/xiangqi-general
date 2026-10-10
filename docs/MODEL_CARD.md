@@ -19,6 +19,10 @@ Raw model generations must be evaluated before correction or oracle assistance.
 
 ## Training and evaluation
 
+The current clean route has completed two of four courses. Independently verified third-course update 7680 scores 757/768 future-static, 756/768 static replay and 549/640 dynamic replay answers, with 84/128 exact move lists. Combined correctness is 2062/2176, below update 7168's 2080/2176; the selected checkpoint remains at 7168 with one check without improvement. All fifteen same-question raw checks and the latest 2176 native answers were read back. The failed update-4096 observer and its source are preserved; the replacement checks declared scheduled steps without restarting training. See `evidence/static-future-fifteenth-raw-validation-v1.json`; the update-8192 observer is queued. Initial clean SFT, trained search distillation and final strength/coaching acceptance remain pending.
+
+Optional BF16 teacher batching has passed CPU protocol and resume checks. A CI collection failure exposed an optional Transformers import in a tensor fixture; the PyTorch-only replacement passes all 18 affected cases with Transformers blocked and all 724 canonical CPU tests. Production code was unchanged by that fix. Real batched neural throughput and answer differences remain unmeasured. Existing frozen queues keep their original execution sources.
+
 Pinned source/model identities are in `configs/sources.json`; per-experiment
 configuration, hashes, code revisions, validation selection, and independent
 test results are in run manifests. Synthetic legal games are split before QA
