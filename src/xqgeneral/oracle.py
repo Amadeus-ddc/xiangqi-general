@@ -27,6 +27,7 @@ def parse_analysis(fen, output, nodes):
         if not pv:
             continue
         ranks[int(rank.group(1)) if rank else 1] = pv[0]
+        scored.pop(pv[0], None)  # Keep exact updates in their latest observed order.
         scored[pv[0]] = {'move': pv[0], 'pv': pv[:12], 'score_type': score.group(1),
                          'score': int(score.group(2)), 'perspective': 'side_to_move',
                          'depth': int(depth.group(1)) if depth else None,
@@ -36,7 +37,10 @@ def parse_analysis(fen, output, nodes):
     if best not in scored:
         raise RuntimeError('Engine completed without a scored best-move candidate')
     # Preserve previous exact scores by move when a stop interrupts a MultiPV iteration.
-    ordered_moves = list(dict.fromkeys([best, *[ranks[k] for k in sorted(ranks)]]))
+    # A partial iteration can put the same move in two ranks. Fill only from
+    # previously observed exact scores; never interpret a bound as an exact score.
+    ordered_moves = list(dict.fromkeys([best, *[ranks[k] for k in sorted(ranks)],
+                                       *reversed(scored)]))
     ordered = [scored[m] for m in ordered_moves[:3]]
     for candidate in ordered:
         position = fen

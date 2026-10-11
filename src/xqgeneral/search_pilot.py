@@ -12,6 +12,7 @@ from .clean_sft_evaluation import checked_sft, teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs
 from .sampling import checked_seed, search_generation_policy
+from .search_distillation import checked_search_extensions
 
 
 def pilot_spec(config, bound):
@@ -24,6 +25,8 @@ def pilot_spec(config, bound):
             type(config['max_root_retries']) is not int or config['max_root_retries'] < 0 or
             config['max_root_retries'] and config.get('student_generation_config') is None):
         raise ValueError('Root retries require a nonnegative integer budget and stochastic generation')
+    checked_search_extensions(config.get('root_candidate_policy', 'strict'),
+        config.get('reuse_child_analysis', False), config.get('max_root_retries'))
     for key in ['limit', 'nodes', 'teacher_max_new_tokens']:
         if type(config[key]) is not int or config[key] <= 0:
             raise ValueError('Positive integer search pilot budgets are required')
@@ -112,7 +115,12 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         command = [sys.executable, '-u', '-m', 'xqgeneral.' + module]
         for key, value in arguments.items():
             if value is not None:
-                command += ['--' + key.replace('_', '-'), str(value)]
+                flag = '--' + key.replace('_', '-')
+                if type(value) is bool:
+                    if value:
+                        command.append(flag)
+                else:
+                    command += [flag, str(value)]
         with (root / 'commands.jsonl').open('a') as handle:
             handle.write(json.dumps(command) + '\n')
         with (root / 'log.txt').open('a') as handle:
@@ -166,6 +174,10 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             arguments['student_generation_config'] = config['student_generation_config']
         if config.get('max_root_retries') is not None:
             arguments['max_root_retries'] = config['max_root_retries']
+        if config.get('root_candidate_policy') is not None:
+            arguments['root_candidate_policy'] = config['root_candidate_policy']
+        if config.get('reuse_child_analysis') is True:
+            arguments['reuse_child_analysis'] = True
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
         queries = load_jsonl(mining / 'queries.jsonl')
         attempts = load_jsonl(mining / 'results.partial.jsonl')

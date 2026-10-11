@@ -18,6 +18,31 @@ def test_node_stop_preserves_exact_best_score_before_rank_changes():
         parse_analysis(START_FEN, [lines[3], lines[4]], 100)
 
 
+@pytest.mark.parametrize('bound', ['upperbound', 'lowerbound'])
+def test_interrupted_multipv_retains_distinct_previously_scored_candidates(bound):
+    lines = ['info depth 8 multipv 1 score cp 20 pv b0c2',
+             'info depth 8 multipv 2 score cp 18 pv h0g2',
+             'info depth 8 multipv 3 score cp 10 pv c3c4',
+             'info depth 9 multipv 1 score cp 22 pv b0c2',
+             'info depth 9 multipv 2 score cp 19 pv c3c4',
+             f'info depth 9 multipv 3 score cp 24 {bound} pv h0g2',
+             'bestmove b0c2']
+    result = parse_analysis(START_FEN, lines, 100)
+    assert [c['move'] for c in result['candidates']] == ['b0c2', 'c3c4', 'h0g2']
+    assert result['candidates'][2]['score'] == 18
+    assert result['candidates'][2]['depth'] == 8
+    assert result['raw_output'] == lines
+
+
+def test_interrupted_multipv_does_not_invent_a_missing_exact_candidate():
+    lines = ['info depth 8 multipv 1 score cp 20 pv b0c2',
+             'info depth 8 multipv 2 score cp 18 pv h0g2',
+             'info depth 9 multipv 3 score cp 24 upperbound pv c3c4',
+             'bestmove b0c2']
+    result = parse_analysis(START_FEN, lines, 100)
+    assert [c['move'] for c in result['candidates']] == ['b0c2', 'h0g2']
+
+
 def test_play_query_preserves_node_budget_without_inventing_exact_scores():
     oracle = Pikafish.__new__(Pikafish)
     output = ['info depth 1 score cp 32 upperbound pv b0c2', 'bestmove b0c2']

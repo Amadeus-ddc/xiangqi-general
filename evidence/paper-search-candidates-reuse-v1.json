@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "kind": "paper_search_candidate_fill_and_child_reuse_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-11T09:44:55.890675+00:00",
+  "source_revision_before_commit": "ec4d029750afeebb7332e2ff80566b0818fe5d20",
+  "author": {
+    "revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "bindings": [
+      {
+        "path": "configs/self_distill/iteration/mine.yaml",
+        "bytes": 1050,
+        "sha256": "7bc5d323a74616be9e2d5b5510d5da94a515d73ce65ece7543932cfe1ad5cac0",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/recursion.py",
+        "bytes": 43677,
+        "sha256": "2be9d4de09a6842e908e64f2f187a9ac85c1045af4ee90a1d2a5c8ce5739664d",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/analysis.py",
+        "bytes": 14700,
+        "sha256": "2a3fecedea8073bc8f809167f4cedd96fa365403fb5ae967ffa089cada2be983",
+        "matches_pinned_git_blob": true
+      }
+    ],
+    "candidate_preparation_lines": [
+      247,
+      275
+    ],
+    "cached_child_parse_lines": [
+      191,
+      215
+    ],
+    "cached_child_capture_lines": [
+      660,
+      702
+    ]
+  },
+  "candidate_policy": {
+    "mode": "paper_fill",
+    "required": "min(3, legal root move count)",
+    "legal_student_candidates_preserved_in_order": true,
+    "model_fields": [
+      "move",
+      "candidates",
+      "pv"
+    ],
+    "fill_from_actual_engine_multipv_only": true,
+    "missing_real_engine_candidates_fail_closed": true,
+    "final_candidates_sorted_by_engine_quality": true,
+    "best_move_injection_threshold": 0.05,
+    "sources_recorded": true,
+    "raw_student_outputs_and_errors_unchanged": true,
+    "mining_only": true
+  },
+  "cached_child_policy": {
+    "enabled_explicitly": true,
+    "full_identity_fields": [
+      "id",
+      "feature_key",
+      "initial_fen",
+      "moves",
+      "history",
+      "fen"
+    ],
+    "cached_numerical_acceptance_attempt": 0,
+    "preserves_raw_and_original_child_errors": true,
+    "successful_reuse_consumes_no_new_generation_seed": true,
+    "bad_cached_evaluation_retained_then_fresh_initial_plus_three": true,
+    "explicit_numerical_root_policy_required": true,
+    "changed_profile_rejected_before_student_loading": true
+  },
+  "oracle_regression": {
+    "old_native_control_failed_after_completed_roots": 27,
+    "failure_record_preserved": true,
+    "same_native_trace_old_two_fixed_three": true,
+    "diagnosis": "partial MultiPV rank changes can duplicate a move across ranks and hide another previously exact-scored move",
+    "fix": "fill distinct candidates from latest observed exact scores when rank entries collide",
+    "score_bounds_never_consumed_as_exact": true,
+    "raw_log_and_actual_score_depths_preserved": true,
+    "regression_before_fix": {
+      "failed": 2,
+      "passed": 1
+    },
+    "regression_after_fix": {
+      "passed": 3
+    },
+    "same_fen_with_and_without_history_probe_excluded_missing_engine_candidates": true
+  },
+  "actual_native_control": {
+    "run_relative_path": "runs/paper-search-candidates-v1/worktree/runs/candidate-reuse-native-control-v2",
+    "manifest_sha256": "cdbc5bc632c80fae4754b534b804fb12e4274f2217fa7c502d0f6da984bfef74",
+    "verification": {
+      "real_recorded_human_training_roots": 32,
+      "distinct_training_games": 32,
+      "full_selected_histories_replayed": 32,
+      "actual_native_oracle_queries": 64,
+      "nodes_per_query": 100000,
+      "engine_filled_candidates": 62,
+      "all_added_candidates_in_actual_native_multipv": true,
+      "numeric_only_child_reuses": 32,
+      "original_fixture_raw_outputs_and_child_records_unchanged": true,
+      "source_modules": 90,
+      "source_hashes_unchanged": true,
+      "source_dataset_hashes_unchanged": true,
+      "pretrained_student_loaded": false,
+      "teacher_loaded": false,
+      "native_nnue_engine_loaded": true,
+      "candidate_predictions_and_recursive_triggers_are_constructed_fixtures": true,
+      "student_oracle_prose_not_generated": true,
+      "actual_distillation_labels": 0,
+      "student_quality_not_proven": true,
+      "same_native_trace_old_parser_shortfall_roots": 1,
+      "failed_v1_entry_source_and_log_preserved": true,
+      "elapsed_seconds": 25.996020153164864
+    }
+  },
+  "independent_native_readback": {
+    "kind": "candidate_reuse_independent_native_readback",
+    "native_manifest_sha256": "cdbc5bc632c80fae4754b534b804fb12e4274f2217fa7c502d0f6da984bfef74",
+    "input_bindings": 10,
+    "output_bindings": 3,
+    "source_modules": 90,
+    "source_matches_active_and_canonical_snapshot": true,
+    "real_training_roots": 32,
+    "distinct_source_games": 32,
+    "actual_native_queries": 64,
+    "exact_scores_from_native_raw_lines_checked": 190,
+    "histories_replayed": 64,
+    "engine_filled_candidates": 62,
+    "numeric_cached_reuses": 32,
+    "source_reference_answers_unchanged": true,
+    "fixture_construction_and_no_student_inference_explicit": true,
+    "old_parser_on_same_trace_has_one_two_candidate_shortfall": true,
+    "actual_distillation_labels": 0,
+    "student_strength_or_coaching_not_proven": true
+  },
+  "readback_rule_boundary": "full histories use the local legal replay implementation; actual engine searches receive complete histories; no independent rule implementation claimed",
+  "constructed_cases": {
+    "new_candidate_and_reuse_checks": 18,
+    "new_interrupted_multipv_checks": 3,
+    "focused_candidate_reuse_and_oracle_passed": 23,
+    "covered": [
+      "missing/illegal/duplicate recommendations",
+      "preferred/candidate/PV filtering",
+      "engine best injection and quality order",
+      "valid cached multi-depth recursion",
+      "invalid cached numerical retry",
+      "same final FEN with different complete histories",
+      "reserved child exclusion",
+      "profile changes rejected before student load",
+      "real pilot CLI boolean flags",
+      "interrupted MultiPV exact versus bound scores"
+    ]
+  },
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-search-candidates-v1/worktree/runs/candidate-reuse-canonical-v2",
+    "manifest_sha256": "6154b51005a80930802f8af6e9718a9cd22fd997b8e6a0d84ad7e39971f34036",
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 167,
+      "source_test_hashes_unchanged": true,
+      "elapsed_seconds": 325.58972593490034,
+      "test_summary": "1240 passed in 321.09s (0:05:21)",
+      "cpu_only": true
+    },
+    "source_and_tests_current_hashes_unchanged": true
+  },
+  "production_boundaries": {
+    "running_native_preparation_unchanged": true,
+    "waiting_reviewed_prose_follower_unchanged": true,
+    "existing_frozen_courses_unchanged": true,
+    "search_template_roots": 512,
+    "template_teacher_output_tokens": 1536,
+    "template_paths_require_actual_new_course_and_sft_unification": true
+  },
+  "remaining": [
+    "fresh formal four courses and prose SFT",
+    "author child-line clean-prefix sanitation and truncation boundary",
+    "author numerical improvement acceptance for equivalent or prefix-only PVs",
+    "full author mandatory recursive decision rules",
+    "batched/concurrent search and full teacher context/output limits",
+    "actual pretrained student search yield and accepted labels",
+    "actual distillation rounds and independent strength/coaching evaluation"
+  ],
+  "actual_distillation_labels": 0,
+  "new_formal_student_trained": false,
+  "student_strength_or_coaching_quality_not_proven": true,
+  "overall_goal_complete": false
+}
