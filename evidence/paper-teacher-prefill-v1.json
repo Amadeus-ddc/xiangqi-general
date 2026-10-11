@@ -1,0 +1,424 @@
+{
+  "schema_version": 1,
+  "kind": "paper_consolidation_teacher_chunked_prefill_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_utc": "2026-10-11T15:49:15.365510+00:00",
+  "source_revision_before_commit": "ca1138e01fba9c007abd0b27d13d2c78e4b76a79",
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "quantization": "none",
+    "dtype": "bfloat16",
+    "parameter_elements": 27356728560
+  },
+  "implementation": "Hugging Face explicit cached prefill; not the authors vLLM engine",
+  "generation_profile": {
+    "do_sample": true,
+    "temperature": 1.0,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_context_tokens": 16384,
+    "max_new_tokens": 8192,
+    "reasoning_effort": "low"
+  },
+  "prefill_chunk_size": 1024,
+  "full_input_preserved": true,
+  "explicit_opt_in_and_resume_contract_bound": true,
+  "gpu_control": {
+    "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/paper-teacher-prefill-gpu-control-v2",
+    "filename": "manifest.json",
+    "sha256": "00b4b98059f0a9b596466726cd41639485a1121e8466e769beb8f158f20536db",
+    "bytes": 29916,
+    "verification": {
+      "prefill_chunk_size": 1024,
+      "same_weight_manual_and_native_prefill_greedy_exact": true,
+      "same_weight_unchunked_and_chunked_greedy_exact": false,
+      "unchunked_full_context_oom_reproduced_on_fresh_gpu": true,
+      "full_unquantized_bf16_teacher_loaded": true,
+      "parameter_elements": 27356728560,
+      "physical_gpu": 0,
+      "one_visible_gpu": true,
+      "capacity_prompt_tokens": 16382,
+      "capacity_output_cap": 2,
+      "largest_tested_successful_full_context_batch": 16,
+      "capacity_results": [
+        {
+          "batch_size": 16,
+          "success": true,
+          "seed": "6917152077564367594",
+          "ids": [
+            "boundary-16-0",
+            "boundary-16-1",
+            "boundary-16-2",
+            "boundary-16-3",
+            "boundary-16-4",
+            "boundary-16-5",
+            "boundary-16-6",
+            "boundary-16-7",
+            "boundary-16-8",
+            "boundary-16-9",
+            "boundary-16-10",
+            "boundary-16-11",
+            "boundary-16-12",
+            "boundary-16-13",
+            "boundary-16-14",
+            "boundary-16-15"
+          ],
+          "responses": 16,
+          "elapsed_seconds": 149.22194036841393,
+          "peak_allocated_gib": 76.33997631072998,
+          "peak_reserved_gib": 94.509765625
+        }
+      ],
+      "short_budget_throughput": [
+        {
+          "batch_size": 1,
+          "queries": 16,
+          "generated_tokens": 2048,
+          "elapsed_seconds": 159.15166292712092,
+          "tokens_per_second": 12.868228721793656,
+          "peak_allocated_gib": 51.53301477432251,
+          "peak_reserved_gib": 51.67578125
+        },
+        {
+          "batch_size": 16,
+          "queries": 16,
+          "generated_tokens": 2048,
+          "elapsed_seconds": 37.268740757368505,
+          "tokens_per_second": 54.9522188939288,
+          "peak_allocated_gib": 59.32749605178833,
+          "peak_reserved_gib": 75.541015625
+        }
+      ],
+      "normal_output_tokens": [
+        3131,
+        6023,
+        1852,
+        5031,
+        5539,
+        2506,
+        3548,
+        2708,
+        4969,
+        2364,
+        2949,
+        2808,
+        3651,
+        1884,
+        3198,
+        4557
+      ],
+      "normal_queries": 16,
+      "normal_reasoning_completed": 16,
+      "normal_hit_generation_limit": 0,
+      "normal_peak_allocated_gib": 64.20066833496094,
+      "normal_max_new_tokens_budget": 8192
+    }
+  },
+  "cpu_hybrid_control": {
+    "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/prefill-hybrid-cpu-control-v3",
+    "filename": "manifest.json",
+    "sha256": "c73d99f2ebf3b43f688aa779af2c31bdabf6b5b1062987ceebba0efbe1d211b5",
+    "bytes": 14689,
+    "verification": {
+      "device": "cpu",
+      "parameters": 62048,
+      "batch": 2,
+      "input_width": 24,
+      "left_padding_tokens": [
+        0,
+        7
+      ],
+      "prefill_chunk_size": 8,
+      "actual_new_tokens": 8,
+      "plain_local_native_greedy_tokens_exactly_equal": true,
+      "pretrained_model_loaded": false,
+      "source_modules": 93
+    }
+  },
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/teacher-prefill-canonical-v1",
+    "filename": "manifest.json",
+    "sha256": "0fbd99fd7c685681b6b0e2b1718da9dd485966fa921a61ae082e4a51ca415e96",
+    "bytes": 11788,
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 172,
+      "source_test_hashes_unchanged": true,
+      "test_summary": "1328 passed in 316.31s (0:05:16)",
+      "elapsed_seconds": 320.6603235937655,
+      "cpu_only": true
+    }
+  },
+  "independent_readback": {
+    "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/teacher-prefill-independent-readback-v2",
+    "filename": "verification.json",
+    "sha256": "ddf2cbae7fd4dc3e06dd20fc1a552a5af6e6bcd1092e1474ff97b2e1a65d2342",
+    "bytes": 9110,
+    "verification": {
+      "verified_utc": "2026-10-11T15:49:15.365510+00:00",
+      "kind": "independent_teacher_chunked_prefill_readback",
+      "bound_files": 48,
+      "bound_bytes": 55582120049,
+      "source_modules_each_control": 93,
+      "canonical_source_test_files_unchanged": 172,
+      "additional_conftest_matches_committed_baseline": true,
+      "total_source_test_files_read_back": 173,
+      "full_bf16_parameter_elements": 27356728560,
+      "context_batch_capacity": 16,
+      "context_prompt_tokens": 16382,
+      "context_output_tokens_each": 2,
+      "near_context_peak_allocated_gib": 76.33997631072998,
+      "same_weight_local_and_native_greedy_exact": true,
+      "same_weight_unchunked_and_chunked_greedy_differ": true,
+      "fresh_unchunked_oom_reproduced": true,
+      "short_budget_throughput": [
+        {
+          "batch_size": 1,
+          "queries": 16,
+          "generated_tokens": 2048,
+          "elapsed_seconds": 159.15166292712092,
+          "tokens_per_second": 12.868228721793656
+        },
+        {
+          "batch_size": 16,
+          "queries": 16,
+          "generated_tokens": 2048,
+          "elapsed_seconds": 37.268740757368505,
+          "tokens_per_second": 54.9522188939288
+        }
+      ],
+      "short_budget_batch_throughput_ratio": 4.270379403566368,
+      "retokenization_observations": [
+        {
+          "id": "recorded-coach-01c0aaf03c6de16abb2b58884f4f7dd46b0fa7ddf52e56292c1ed7c53c9573e9-explanation-search",
+          "recorded_generated_tokens": 3131,
+          "decoded_text_retokenized_tokens": 3130
+        },
+        {
+          "id": "recorded-coach-027a82494b0a5ba4b5340ba766f24bf3657c9f9a090bb5a90c9644c6a88fa364-explanation-search",
+          "recorded_generated_tokens": 6023,
+          "decoded_text_retokenized_tokens": 6021
+        },
+        {
+          "id": "recorded-coach-0305eb1d24343add32f4aa1d39ccd43343d451cfb53db084f16a504e59a24e7c-explanation-search",
+          "recorded_generated_tokens": 1852,
+          "decoded_text_retokenized_tokens": 1851
+        },
+        {
+          "id": "recorded-coach-02cc46902cfc396776b83d1bd44c848c44d52de4f25e5585b1bdb057b623f92f-explanation-search",
+          "recorded_generated_tokens": 5031,
+          "decoded_text_retokenized_tokens": 5028
+        },
+        {
+          "id": "recorded-coach-0403316397ad2ebff9638c26e0192b9e805dd52c745f5fefce19d902143af339-explanation-search",
+          "recorded_generated_tokens": 5539,
+          "decoded_text_retokenized_tokens": 5538
+        },
+        {
+          "id": "recorded-coach-022340b93e27b5a5dd1c9bce617ed0afa1615be0e8cff64f19f7f0d5eecbc2c3-explanation-search",
+          "recorded_generated_tokens": 2506,
+          "decoded_text_retokenized_tokens": 2505
+        },
+        {
+          "id": "recorded-coach-01b29d1fcbd3389354610fd64c3a490848e5cc48ea25d2779268143196fd8525-explanation-search",
+          "recorded_generated_tokens": 3548,
+          "decoded_text_retokenized_tokens": 3547
+        },
+        {
+          "id": "recorded-coach-00b24677b3dd27bf82479d8c11e745c0f62de1074b5ad48bb4afa6d6c80d7baf-explanation-d2d8-search",
+          "recorded_generated_tokens": 2708,
+          "decoded_text_retokenized_tokens": 2703
+        },
+        {
+          "id": "recorded-coach-0003a1afaa0fedfd73daed0c49b579b6e6c2b2acb31e96a9510096fd441e6938-explanation-search",
+          "recorded_generated_tokens": 4969,
+          "decoded_text_retokenized_tokens": 4960
+        },
+        {
+          "id": "recorded-coach-0082636c827826b20a5999ead2f65608e7ca450700eeba75905dea24cce38ad1-explanation-g2h0-search",
+          "recorded_generated_tokens": 2364,
+          "decoded_text_retokenized_tokens": 2360
+        },
+        {
+          "id": "recorded-coach-0233787f2aca470702e02a61c72931af5c1255fb41ccf132308064eed344fdaf-explanation-search",
+          "recorded_generated_tokens": 2949,
+          "decoded_text_retokenized_tokens": 2952
+        },
+        {
+          "id": "recorded-coach-03e1a2fbee21b6142702127fd2ba45d20d4cf7000f38d27b072617fd3ce7ea96-explanation-search",
+          "recorded_generated_tokens": 2808,
+          "decoded_text_retokenized_tokens": 2807
+        },
+        {
+          "id": "recorded-coach-01c5e6053789360d043e15ae8bcf03024e71328e2ca5d1769672affba518580e-explanation-search",
+          "recorded_generated_tokens": 3651,
+          "decoded_text_retokenized_tokens": 3650
+        },
+        {
+          "id": "recorded-coach-015755e3b155556c74d13bfdb57eea4dac8aea7d809be417968cbf4b153e186f-explanation-search",
+          "recorded_generated_tokens": 1884,
+          "decoded_text_retokenized_tokens": 1883
+        },
+        {
+          "id": "recorded-coach-038dcd09d8c5d2523afe8365909f6eef538207afbf5fc351846b997bb0872d79-explanation-search",
+          "recorded_generated_tokens": 3198,
+          "decoded_text_retokenized_tokens": 3197
+        },
+        {
+          "id": "recorded-coach-02c9d2c82f382728079a08407e920dc7099d5f9fae734b4f4ce5e0d831284b56-explanation-c6c5-search",
+          "recorded_generated_tokens": 4557,
+          "decoded_text_retokenized_tokens": 4556
+        }
+      ],
+      "generated_token_counts_not_claimed_rebuilt_from_decoded_text": true,
+      "longest_generated_token_count_matches_actual_neural_tensor": true,
+      "normal_queries": 16,
+      "normal_output_tokens": [
+        3131,
+        6023,
+        1852,
+        5031,
+        5539,
+        2506,
+        3548,
+        2708,
+        4969,
+        2364,
+        2949,
+        2808,
+        3651,
+        1884,
+        3198,
+        4557
+      ],
+      "normal_reasoning_completed": 16,
+      "normal_hit_generation_limit": 0,
+      "normal_peak_allocated_gib": 64.20066833496094,
+      "fixture_prose_checks": [
+        {
+          "id": "recorded-coach-01c0aaf03c6de16abb2b58884f4f7dd46b0fa7ddf52e56292c1ed7c53c9573e9-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-027a82494b0a5ba4b5340ba766f24bf3657c9f9a090bb5a90c9644c6a88fa364-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-0305eb1d24343add32f4aa1d39ccd43343d451cfb53db084f16a504e59a24e7c-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-02cc46902cfc396776b83d1bd44c848c44d52de4f25e5585b1bdb057b623f92f-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-0403316397ad2ebff9638c26e0192b9e805dd52c745f5fefce19d902143af339-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-022340b93e27b5a5dd1c9bce617ed0afa1615be0e8cff64f19f7f0d5eecbc2c3-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-01b29d1fcbd3389354610fd64c3a490848e5cc48ea25d2779268143196fd8525-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-00b24677b3dd27bf82479d8c11e745c0f62de1074b5ad48bb4afa6d6c80d7baf-explanation-d2d8-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-0003a1afaa0fedfd73daed0c49b579b6e6c2b2acb31e96a9510096fd441e6938-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-0082636c827826b20a5999ead2f65608e7ca450700eeba75905dea24cce38ad1-explanation-g2h0-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-0233787f2aca470702e02a61c72931af5c1255fb41ccf132308064eed344fdaf-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-03e1a2fbee21b6142702127fd2ba45d20d4cf7000f38d27b072617fd3ce7ea96-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-01c5e6053789360d043e15ae8bcf03024e71328e2ca5d1769672affba518580e-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-015755e3b155556c74d13bfdb57eea4dac8aea7d809be417968cbf4b153e186f-explanation-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        },
+        {
+          "id": "recorded-coach-038dcd09d8c5d2523afe8365909f6eef538207afbf5fc351846b997bb0872d79-explanation-search",
+          "structured_and_prose_move_checks": "rejected",
+          "raw_error": "Consolidation violates grounded prose moves: ['unpaired_chinese_notation:马8进7']"
+        },
+        {
+          "id": "recorded-coach-02c9d2c82f382728079a08407e920dc7099d5f9fae734b4f4ce5e0d831284b56-explanation-c6c5-search",
+          "structured_and_prose_move_checks": "passed",
+          "strategic_prose_fully_verified": false
+        }
+      ],
+      "fixture_prose_checks_passed": 15,
+      "neural_generation_calls_checked": 24,
+      "forward_ledger_records_checked": 8386,
+      "no_neural_model_loaded_by_reader": true,
+      "actual_student_distillation_labels": 0,
+      "original_vllm_engine_used": false,
+      "overall_goal_complete": false
+    }
+  },
+  "preserved_failed_controls": [
+    {
+      "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/prefill-regression-red-v1",
+      "reason": "The actual teacher callsite exceeds the bounded prefill-memory fixture before the fix."
+    },
+    {
+      "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/prefill-hybrid-failure-v1",
+      "reason": "Cached hybrid attention requires explicit text position IDs."
+    },
+    {
+      "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/paper-teacher-prefill-gpu-control-v1",
+      "reason": "The one-token-tail prototype diverges from whole-prefill greedy tokens; final control uses a full input tail chunk and an independent native-chunked comparison."
+    },
+    {
+      "run_relative_path": "runs/paper-teacher-prefill-v1/worktree/runs/teacher-prefill-independent-readback-v1",
+      "reason": "Decoded text retokenization is not invertible; the corrected reader records differences and verifies budgets from the actual call and longest neural output tensor."
+    }
+  ],
+  "new_cases": 27,
+  "source_modules": 93,
+  "canonical_source_test_files_unchanged": 172,
+  "additional_conftest_matches_committed_baseline": true,
+  "total_source_test_files_read_back": 173,
+  "four_courses_required_before_formal_sft_and_search": true,
+  "actual_student_distillation_labels": 0,
+  "overall_goal_complete": false,
+  "remaining": [
+    "actual new four courses and explanation SFT",
+    "batched or concurrent trained-student mining",
+    "fresh search-source isolation against the completed new corpus",
+    "actual trained-student searches and qualified distillation labels",
+    "adaptive student distillation training",
+    "independent strength and coaching acceptance"
+  ]
+}

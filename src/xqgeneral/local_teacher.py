@@ -10,10 +10,12 @@ from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, 
 from .sampling import SAMPLING_KEYS, checked_seed, generation_software, sample_rng
 from .teacher_generation import (SEED_PROFILE, batch_seed, checked_budget, checked_prompt_width,
                                  checked_response, generation_profile)
+from .teacher_prefill import checked_prefill_chunk_size, generate_prefilled
 
 
 class LocalConsolidator:
     def __init__(self, config):
+        self.prefill_chunk_size = checked_prefill_chunk_size(config.get('prefill_chunk_size'))
         self.generation_profile = (generation_profile(config['generation_profile'])
                                    if config.get('generation_profile') is not None else None)
         self.max_context_tokens = config.get('max_context_tokens')
@@ -65,6 +67,8 @@ class LocalConsolidator:
         if self.generation_profile is not None:
             self.identity.update(generation_profile=self.generation_profile,
                                  generation_software=generation_software())
+        if self.prefill_chunk_size is not None:
+            self.identity.update(prefill_chunk_size=self.prefill_chunk_size)
 
     def chat_options(self):
         profile = getattr(self, 'generation_profile', None)
@@ -102,8 +106,9 @@ class LocalConsolidator:
         width = inputs['input_ids'].shape[1]
         budget = checked_prompt_width(width, max_new_tokens, getattr(self, 'max_context_tokens', None))
         inputs = inputs.to(self.model.device)
-        output = self.model.generate(**inputs, **self.decoding_options(), max_new_tokens=budget,
-                                      pad_token_id=self.tokenizer.eos_token_id)
+        output = generate_prefilled(self.model, inputs, getattr(self, 'prefill_chunk_size', None),
+                                    **self.decoding_options(), max_new_tokens=budget,
+                                    pad_token_id=self.tokenizer.eos_token_id)
         if output.ndim != 2 or output.shape[0] != 1 or not width <= output.shape[1] <= width + budget:
             raise RuntimeError('Teacher generation must return one bounded response per prompt')
         return self.response(output[0, width:], width, width, budget, max_new_tokens)
@@ -121,19 +126,25 @@ class LocalConsolidator:
                                 return_tensors='pt')
         lengths = [int(x) for x in inputs['attention_mask'].sum(dim=1).tolist()]
         groups = {}
+        spans = {}
+        chunk = getattr(self, 'prefill_chunk_size', None)
         for index, length in enumerate(lengths):
             budget = checked_prompt_width(length, max_new_tokens, getattr(self, 'max_context_tokens', None))
-            groups.setdefault(budget, []).append(index)
+            key = next((key for key, (lo, hi) in spans.items() if key[0] == budget and
+                        (chunk is None or max(hi, length) - min(lo, length) < chunk)), (budget, len(spans)))
+            lo, hi = spans.get(key, (length, length))
+            spans[key] = min(lo, length), max(hi, length)
+            groups.setdefault(key, []).append(index)
         eos = self.model.generation_config.eos_token_id
         if eos is None:
             eos = self.tokenizer.eos_token_id
         stops = {eos} if isinstance(eos, int) else set(eos or [])
         results = [None] * len(texts)
-        for budget, indices in groups.items():
+        for (budget, _), indices in groups.items():
             width = max(lengths[i] for i in indices)
             group = inputs.__class__({key: value[indices, -width:] for key, value in inputs.items()})
             group = group.to(self.model.device)
-            output = self.model.generate(**group, **self.decoding_options(), max_new_tokens=budget,
+            output = generate_prefilled(self.model, group, chunk, **self.decoding_options(), max_new_tokens=budget,
                 pad_token_id=self.tokenizer.eos_token_id, return_dict_in_generate=False)
             if output.ndim != 2 or output.shape[0] != len(indices) or not width <= output.shape[1] <= width + budget:
                 raise RuntimeError('Teacher generation must return one bounded response per prompt')
@@ -158,6 +169,7 @@ def main():
     parser.add_argument('--max-new-tokens', type=positive_int, default=1024)
     parser.add_argument('--batch-size', type=positive_int, default=1)
     parser.add_argument('--max-context-tokens', type=positive_int)
+    parser.add_argument('--prefill-chunk-size', type=positive_int)
     parser.add_argument('--generation-config')
     parser.add_argument('--seed', type=int)
     args = parser.parse_args()
@@ -179,6 +191,9 @@ def main():
         raise ValueError('An explicit teacher seed requires a stochastic generation profile')
     if args.max_context_tokens is not None:
         config['max_context_tokens'] = args.max_context_tokens
+    if args.prefill_chunk_size is not None:
+        config['prefill_chunk_size'] = args.prefill_chunk_size
+    chunk = checked_prefill_chunk_size(config.get('prefill_chunk_size'))
     checked_budget(args.max_new_tokens, config.get('max_context_tokens'))
     rows = load_jsonl(args.input)
     if len({r['id'] for r in rows}) != len(rows):
@@ -186,13 +201,15 @@ def main():
     contract = {'input_sha256': digest(args.input), 'teacher': config,
                 'max_new_tokens': args.max_new_tokens}
     arguments = vars(args).copy()
-    for key in ['max_context_tokens', 'generation_config', 'seed']:
+    for key in ['max_context_tokens', 'generation_config', 'seed', 'prefill_chunk_size']:
         if arguments[key] is None:
             arguments.pop(key)
     if profile is not None:
         contract.update(generation_config_sha256=digest(args.generation_config),
                         seed=args.seed, seed_profile=SEED_PROFILE, generation_software=generation_software(),
                         code=code_identity())
+    elif chunk is not None:
+        contract.update(generation_software=generation_software(), code=code_identity())
     if args.batch_size != 1:
         contract['batch_size'] = args.batch_size
     else:
@@ -210,6 +227,9 @@ def main():
         raise ValueError('Teacher continuation has duplicate or foreign IDs')
     for item in results:
         checked_response(item, args.max_new_tokens, config.get('max_context_tokens'), profile)
+        if chunk is not None and (type(item.get('teacher', {}).get('prefill_chunk_size')) is not int or
+                item['teacher']['prefill_chunk_size'] != chunk):
+            raise ValueError('Teacher continuation prefill settings changed')
         if profile is not None and (item['id'] not in item.get('generation_batch_ids', []) or
                 not set(item.get('generation_batch_ids', [])) <= {r['id'] for r in rows} or
                 item.get('sampling_seed') != batch_seed(args.seed, item.get('generation_batch_ids', []))):
@@ -244,8 +264,8 @@ def main():
             print(json.dumps({'generated': len(results), 'requested': len(rows),
                               'batch_size': len(group), 'seconds': time.monotonic() - started}), flush=True)
     if (digest(args.input) != contract['input_sha256'] or profile is not None and
-            (digest(args.generation_config) != contract['generation_config_sha256'] or
-             code_identity() != contract['code'])):
+            digest(args.generation_config) != contract['generation_config_sha256'] or
+            'code' in contract and code_identity() != contract['code']):
         raise ValueError('Teacher inputs or frozen generation execution changed during inference')
     write_jsonl(root / 'responses.jsonl', results)
     proof = {'examples': len(results), 'seconds': time.monotonic() - started,
@@ -261,6 +281,8 @@ def main():
     if profile is not None:
         proof.update(generation_profile=profile, seed_profile=SEED_PROFILE, reasoning_raw_text_preserved=True,
                      reasoning_completed=sum(r['reasoning_completed'] for r in results))
+    if chunk is not None:
+        proof.update(prefill_chunk_size=chunk, full_input_prefix_cached_without_truncation=True)
     input_paths = [args.config, args.input, Path(config['model_path']) / 'weights.manifest.json']
     if args.generation_config:
         input_paths.append(args.generation_config)
