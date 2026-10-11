@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "kind": "paper_numerical_root_retry_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-11T08:47:17.291931+00:00",
+  "source_revision_before_commit": "88b716a36cff94f2a065c73f101c01925ba0819f",
+  "author": {
+    "revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "bindings": [
+      {
+        "path": "configs/self_distill/iteration/mine.yaml",
+        "bytes": 1050,
+        "sha256": "7bc5d323a74616be9e2d5b5510d5da94a515d73ce65ece7543932cfe1ad5cac0",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/recursion.py",
+        "bytes": 43677,
+        "sha256": "2be9d4de09a6842e908e64f2f187a9ac85c1045af4ee90a1d2a5c8ce5739664d",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/analysis.py",
+        "bytes": 14700,
+        "sha256": "2a3fecedea8073bc8f809167f4cedd96fa365403fb5ae967ffa089cada2be983",
+        "matches_pinned_git_blob": true
+      }
+    ],
+    "root_initial_plus_retries": 4,
+    "max_root_retries": 3,
+    "retry_predicate": "numerical root evaluation unavailable",
+    "root_retry_source_lines": [
+      217,
+      244
+    ],
+    "local_evaluation_encoding": "side_to_move integer cp or mate with successful WDL conversion",
+    "batched_vllm_rng_replay_not_claimed": true
+  },
+  "retry_policy": {
+    "max_root_retries": 3,
+    "max_total_root_generations": 4,
+    "predicate": "malformed_numerical_evaluation",
+    "all_raw_attempts_retained": true,
+    "structural_and_numerical_verification_separate": true,
+    "positive_budget_requires_sampling": true
+  },
+  "actual_neural_control": {
+    "manifest_sha256": "19376b71e76394ce487cf1dfe4349680ac954f8d788393abb36c95b47f348466",
+    "run_relative_path": "runs/paper-search-retry-v1/worktree/runs/root-retry-real-control-v1",
+    "verification": {
+      "short_independent_actual_neural_decoding_matches": 128,
+      "root_count": 32,
+      "numerical_attempts_per_failed_root": 4,
+      "completed_prefix_skipped": 11,
+      "resumed_and_reordered_traces_identical": true,
+      "raw_invalid_outputs_retained": true,
+      "engine_not_called_for_rejected_roots": true,
+      "long_attempts": 4,
+      "tokens_per_long_attempt": 4096,
+      "total_long_generated_tokens": 16384,
+      "long_seconds": 19.94855785742402,
+      "rng_restored": true,
+      "source_modules": 90,
+      "source_hashes_unchanged": true,
+      "cpu_constructed_random_decoder": true,
+      "pretrained_student_loaded": false,
+      "teacher_loaded": false,
+      "gpu_neural_model_loaded": false,
+      "actual_distillation_labels": 0,
+      "strength_or_teaching_proven": false,
+      "generation_software": {
+        "torch": "2.10.0+cu128",
+        "transformers": "5.8.1"
+      },
+      "elapsed_seconds": 28.454326156526804
+    },
+    "bound_artifacts_rehashed": 5,
+    "source_modules_rehashed": 90
+  },
+  "canonical": {
+    "manifest_sha256": "7fc3707761e57452690655283f5b7e2ddf7a285f586be63e2374f784b8cd0fe9",
+    "run_relative_path": "runs/paper-search-retry-v1/worktree/runs/root-retry-canonical-v1",
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 166,
+      "source_test_hashes_unchanged": true,
+      "elapsed_seconds": 325.8351190937683,
+      "test_summary": "1219 passed in 321.06s (0:05:21)",
+      "cpu_only": true
+    },
+    "bound_artifacts_rehashed": 4,
+    "source_modules_rehashed": 90
+  },
+  "independent_real_readback_sha256": "cb8f90d8c9b536c229719d0c81b094c1d78e8785e59e00e7913d0349127dd7d8",
+  "source_and_test_files_rehashed": 166,
+  "focused_checks": {
+    "passed": 82,
+    "elapsed_seconds": 26.79
+  },
+  "controlled_acceptance_cases": [
+    "fourth numerical attempt succeeds",
+    "budget exhaustion rejects before oracle",
+    "integer overflow preserves structural result",
+    "valid evaluation with illegal candidates is not retried",
+    "child failures keep recursion behavior",
+    "completed-prefix skip and reordering preserve traces",
+    "changed CLI retry budget rejects resume before loading student"
+  ],
+  "production_observation": {
+    "native_workers": 64,
+    "source_cursor_bytes": 19856441344,
+    "source_total_bytes": 45505590932,
+    "cursor_is_not_training_progress": true,
+    "native_phase": "generating_full_native_paper_questions",
+    "follower_phase": "waiting_for_actual_new_four_courses",
+    "production_jobs_modified": false
+  },
+  "limitations": {
+    "random_constructed_cpu_model_only": true,
+    "pretrained_student_or_teacher_loaded": false,
+    "actual_distillation_labels": 0,
+    "fresh_four_courses_complete": false,
+    "initial_prose_sft_complete": false,
+    "distillation_rounds_complete": 0,
+    "strength_or_teaching_acceptance_proven": false,
+    "candidate_fill_and_child_reuse_aligned": false,
+    "batched_or_parallel_search_aligned": false,
+    "paper_consolidation_context_and_budget_aligned": false
+  }
+}

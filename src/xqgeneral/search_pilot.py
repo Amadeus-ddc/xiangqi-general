@@ -20,6 +20,10 @@ def pilot_spec(config, bound):
             raise ValueError('Student sampling configuration must be a file path')
         search_generation_policy(bound.json(config['student_generation_config']))
         checked_seed(config['seed'])
+    if config.get('max_root_retries') is not None and (
+            type(config['max_root_retries']) is not int or config['max_root_retries'] < 0 or
+            config['max_root_retries'] and config.get('student_generation_config') is None):
+        raise ValueError('Root retries require a nonnegative integer budget and stochastic generation')
     for key in ['limit', 'nodes', 'teacher_max_new_tokens']:
         if type(config[key]) is not int or config[key] <= 0:
             raise ValueError('Positive integer search pilot budgets are required')
@@ -160,6 +164,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             **{key: evaluation[key] for key in ['executable', 'weights']}}
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
+        if config.get('max_root_retries') is not None:
+            arguments['max_root_retries'] = config['max_root_retries']
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
         queries = load_jsonl(mining / 'queries.jsonl')
         attempts = load_jsonl(mining / 'results.partial.jsonl')

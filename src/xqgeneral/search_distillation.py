@@ -93,7 +93,8 @@ def reachable_child_positions(record, value):
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
-                 record_oracle_query=None, generation_policy=None, generation_seed=0):
+                 record_oracle_query=None, generation_policy=None, generation_seed=0,
+                 max_root_retries=None):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -106,6 +107,10 @@ class SearchMiner:
         self.generation_policy = search_generation_policy(generation_policy) if generation_policy is not None else None
         self.generation_seed = checked_seed(generation_seed) if self.generation_policy is not None else None
         self.generation_root, self.generation_index = None, 0
+        if (max_root_retries is not None and (type(max_root_retries) is not int or max_root_retries < 0) or
+                max_root_retries and self.generation_policy is None):
+            raise ValueError('Root retries need a nonnegative integer budget and stochastic generation')
+        self.max_root_retries = max_root_retries
 
     def analyze(self, row, restricted=None):
         key = row['feature_key'], tuple(restricted or [])
@@ -156,6 +161,31 @@ class SearchMiner:
             result['generation'] = generation
         return result
 
+    def root_analysis(self, row):
+        if self.max_root_retries is None:
+            return self.model_analysis(row), None
+        attempts = []
+        for index in range(self.max_root_retries + 1):
+            generated = self.model_analysis(row)
+            value = generated['analysis']
+            try:
+                if not isinstance(value, dict):
+                    raise ValueError('Root generation has no numerical evaluation')
+                evaluation_probability(row['fen'], value.get('evaluation'))
+                acceptance = {'valid': True, 'errors': []}
+            except (AttributeError, TypeError, ValueError, OverflowError):
+                acceptance = {'valid': False, 'errors': ['invalid_evaluation_contract']}
+            generated['root_evaluation_acceptance'] = dict(acceptance, attempt=index + 1)
+            attempts.append(generated)
+            self.counts['root_evaluation_generations'] += 1
+            if index:
+                self.counts['root_evaluation_retries'] += 1
+            if acceptance['valid']:
+                break
+        if not acceptance['valid']:
+            self.counts['root_evaluation_retry_exhaustions'] += 1
+        return generated, attempts
+
     def child_acceptance(self, row, generation):
         if self.child_contract == 'full':
             proof = generation['verification']
@@ -186,9 +216,13 @@ class SearchMiner:
                 return None, trace, 'reserved_position'
             if adjudicate(root['initial_fen'], root['moves'])['ended']:
                 return None, trace, 'terminal_root'
-            generated = self.model_analysis(root)
+            generated, attempts = self.root_analysis(root)
             step = {'record': root, 'depth': depth, 'root_generation': generated}
             trace.append(step)
+            if attempts is not None:
+                step['root_generation_attempts'] = attempts
+                if not generated['root_evaluation_acceptance']['valid']:
+                    return None, trace, 'invalid_root_evaluation'
             before = generated['analysis']
             candidates = before.get('candidates') if isinstance(before, dict) else None
             if (not isinstance(candidates, list) or not 1 <= len(candidates) <= 3 or
@@ -337,6 +371,8 @@ def main():
     parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
+    parser.add_argument('--max-root-retries', type=int,
+                        help='Regenerate malformed numerical root evaluations; excludes the initial attempt')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
@@ -346,7 +382,11 @@ def main():
     if args.student_generation_config is not None:
         generation_policy = search_generation_policy(json.loads(Path(args.student_generation_config).read_text()))
         checked_seed(args.seed)
-    arguments = {k: v for k, v in vars(args).items() if k != 'student_generation_config' or v is not None}
+    if args.max_root_retries is not None and (args.max_root_retries < 0 or
+            args.max_root_retries and generation_policy is None):
+        raise ValueError('Root retries require a nonnegative budget and stochastic generation')
+    arguments = {k: v for k, v in vars(args).items()
+                 if k not in {'student_generation_config', 'max_root_retries'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -403,7 +443,8 @@ def main():
             miner = SearchMiner(predictor, oracle, reserved_positions(args.data) | additional_reserved,
                                 args.nodes, args.max_depth,
                                 child_contract=args.child_contract, record_oracle_query=record_oracle_query,
-                                generation_policy=generation_policy, generation_seed=args.seed)
+                                generation_policy=generation_policy, generation_seed=args.seed,
+                                max_root_retries=args.max_root_retries)
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -440,6 +481,12 @@ def main():
         proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
                      generation_software=contract['generation_software'],
                      stochastic_model_generations_this_session=miner.counts['stochastic_model_generations'])
+    if args.max_root_retries is not None:
+        proof.update(max_root_retries=args.max_root_retries,
+                     root_retry_condition='malformed_numerical_evaluation',
+                     root_evaluation_generations_this_session=miner.counts['root_evaluation_generations'],
+                     root_evaluation_retries_this_session=miner.counts['root_evaluation_retries'],
+                     root_evaluation_retry_exhaustions_this_session=miner.counts['root_evaluation_retry_exhaustions'])
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
