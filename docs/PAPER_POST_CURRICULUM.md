@@ -6,6 +6,10 @@
 
 [explanation-sft-paper-v1.json](../configs/explanation-sft-paper-v1.json)继承交接模型的预训练版本、全宽桥接、专家层和棋盘词元配置，不从旧讲解权重续训。全解码器与桥接使用 FP32 可训练主参数，回答 token 损失，四 GPU、全局批量 16、微批量 1。桥接／解码器／棋盘词元学习率为 `1e-5`／`1e-6`／`1e-6`，预热 5% 后恒定，权重衰减 0.1。
 
+这份配方显式设置 `optimizer_foreach: false` 和 `ddp_gradient_as_bucket_view: true`，避免 AdamW 整组临时张量，并让梯度复用 DDP 通信缓冲区。未声明时仍使用历史默认的 `null`／`false`；精确续跑拒绝更改这些设置，实际优化器设置和梯度视图数量进入执行记录。已冻结的课程源码保持原样。
+
+固定模型配置的 meta 张量计数为 4694274592 个完整可训练参数；FP32 主参数、梯度与两个 Adam 状态的合计估算约 69.95GiB，未包括激活、临时张量、通信、初始化与分配器开销，不能当成显存预检通过。真实固定 Qwen 的冻结解码器四卡控制已验证这两个设置：671806496 个连接桥／棋盘参数的连续八步与四加四恢复逐位一致，最后一次更新的全部训练梯度均为视图。rank 0 峰值约 23.31／23.33GiB，属于短连接桥控制，不能推断完整 SFT 显存或模型质量。全套 1149 项检查通过；见 [显存设置证据](../evidence/paper-sft-memory-policy-v1.json)。
+
 训练数据沿用 `data/astra-explanations-clean-v1` 的 10758 条训练项和 384 条验证项，包含引擎局面及真实实战讲解；512 条独立测试项不训练、选模或建立训练索引。初始标注教师为用户指定的 GPT-6-Astra Low。训练项继承已完成的语义接受；旧保留集的内容和审查状态保持原样，本次没有新增语义审查。
 
 新配置使用有限遍历，每轮完整呈现全部训练项，共四轮。实际数据对应每轮 673 次更新、共 **2692** 次更新；尾部每轮补两条以满足分布式微批量，四轮共 43032 条有效呈现和八条补齐呈现。`max_steps`／`min_steps` 的 4096 是配方上限，`sft.prepare_config` 按实际完整轮次数编译为 2692；没有第五轮片段或有放回凑数。选模仍使用验证 NLL，之后单独检查原始走法、完整变化和讲解正文。
@@ -75,7 +79,7 @@
 
 ## 本服务器当前队列
 
-保存入口位于 `runs/paper-followthrough-v1/worktree/runs/paper-followthrough-preparation-v1/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-v1`；同目录 `plan.json` 绑定入口、五份实际配置和 88 份冻结执行模块，`state.json` 保存实际等待句柄。实际输出在 `runs/paper-sft-v1`，只含已固定的输入；训练／验证索引在 `data/astra-explanations-paper-index-v1`。
+当前保存入口位于 `runs/sft-memory-policy-v1/worktree/runs/paper-followthrough-preparation-v4/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-v4`；同目录 `plan.json` 绑定入口、五份实际配置、显存设置控制及 88 份冻结执行模块，`state.json` 保存实际等待句柄。实际父课程为 `runs/curriculum-paper-v3`，生产会话为 `xqgeneral-paper-curriculum-preparation-v5`；实际讲解输出在 `runs/paper-sft-v4`，只含已固定的输入，训练／验证索引仍在 `data/astra-explanations-paper-index-v1`。课程保留其既有冻结源码；新讲解队列与本次真实显存设置控制使用相同模块。前一个尚未开训的 v3 讲解等待任务已确认退出，配置与日志保留。
 
 只有新四课完整证明出现后，队列才复查新缓存、执行正式 SFT、三组能力验证和 384 局基线；首次 SFT 等待四卡各至少空闲 90GiB，正文评测等待 GPU 0 至少 80GiB，对弈等待 GPU 2 至少 48GiB。这些是保守启动条件，实际显存容量仍由真实预检决定。私有保存入口与运行数据不随软件包发布；复用公开命令即可执行相同阶段。
 
