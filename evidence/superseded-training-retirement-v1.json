@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "superseded_legacy_training_retirement",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_utc": "2026-10-11T12:50:43.212649+00:00",
+  "reason": "New paper recipe restarts four courses from pretrained decoder and newly initialized full-width bridge; old prototype queues no longer serve that path.",
+  "six_owned_sessions_stopped": true,
+  "old_driver_and_four_workers_stopped": true,
+  "old_completed_courses": 3,
+  "old_four_courses_marked_complete": false,
+  "selected_old_fourth_step": 11776,
+  "preserved_candidate": {
+    "path": "runs/curriculum-human-engine-clean-v3/dynamic_future/candidates/step-11776/adapter.pt",
+    "bytes": 559769555,
+    "sha256": "1267d96e94419ab33f4f61e27cf9686ef941fa9fb8b86767631a09b73ae8564c"
+  },
+  "all_outputs_and_latest_resume_state_retained": true,
+  "new_bridge_width": 2560,
+  "new_bridge_initialization_fresh": true,
+  "native_preparation_sources_unchanged": 88,
+  "reviewed_follower_sources_unchanged": 88,
+  "new_preparation_and_sft_follower_live": true,
+  "four_training_gpus_released": true,
+  "private_run_relative_path": "runs/paper-teacher-context-v1/worktree/runs/legacy-training-retirement-v1",
+  "retirement_verified_sha256": "a12e8f7402fcfd51be3af2b0463fe02a377cf01369da446ddefdcd64ec8231e9",
+  "new_formal_four_courses_completed": false,
+  "actual_distillation_labels": 0,
+  "overall_goal_complete": false
+}

@@ -12,6 +12,24 @@ def checked_acceptance_policy(policy, candidate_policy, child_contract, root_ret
         raise ValueError('A clean-prefix length requires the paper recursive policy')
 
 
+def acceptance_evidence(policy):
+    if policy == 'strict':
+        return {'strict_pv_improvement_required': True}
+    if policy != 'paper_recursive':
+        raise ValueError('Unsupported mining acceptance evidence')
+    return {'strict_pv_improvement_required': False, 'paper_critical_line_acceptance_required': True,
+            'equivalent_lines_require_strictly_closer_evaluation': True, 'removed_move_boundary_compared': True}
+
+
+def checked_acceptance_evidence(proof, requested=None):
+    policy = proof.get('acceptance_policy', 'strict')
+    if requested is not None and policy != requested:
+        raise ValueError('Mining acceptance policy differs from the requested profile')
+    if any(proof.get(key) is not value for key, value in acceptance_evidence(policy).items()):
+        raise ValueError('Mining lacks its complete critical-line acceptance contract')
+    return policy
+
+
 def parse_critical(record, moves):
     from .search_distillation import descend
     if replay(record['initial_fen'], record['moves']) != record['history'] or record['history'][-1] != record['fen']:
