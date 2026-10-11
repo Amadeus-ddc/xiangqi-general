@@ -4,6 +4,8 @@
 
 ## 已验证
 
+- 后续搜索的显式论文采样控制已完成：温度 0.6、top-k 20、top-p 0.95 与 4096 输出 token，按原根及生成序号绑定续跑种子。随机 CPU 神经解码的 64 个种子与独立计算一致，32 根连续／前缀续跑／倒序结果一致，实际长输出为 4096 token；两卡仅验证随机张量与状态恢复，没有加载预训练学生、专家或教师。特征分片改变会在加载学生前拒收。全套 1201 项通过，164 份模块／测试在前后不变，另核验未改动的测试配置。正式四课仍在准备，采样模板仅 512 根，实际蒸馏标签和棋力／教学验收尚未产生。见 `docs/PAPER_SEARCH_GENERATION.md` 与 `evidence/paper-search-generation-v1.json`。
+
 - 旧讲解参考的完整复审与新版本已完成：448 条旧验证／独立测试参考中，284 条原文接受，164 条实际重写后另行接受（验证 73、独立测试 91）。新 `astra-explanations-reference-corrected-v3` 的 10758 条训练文件逐字节不变，全部 11654 条的身份、问题、结构化答案、完整历史、特征键与棋局分割一致；只修改参考正文与复核元数据。实际固定词元器检查全部 11142 条训练／验证，无截断，独立测试未编码。全套 1177 项通过，163 份源码／测试不变。新 `xqgeneral-paper-followthrough-reference-v1` 使用新索引并等待 `runs/curriculum-paper-v4` 的实际四课；GPU 阶段保持已控制的 88 份源码，修订清单的 CPU 预检另用冻结的 89 份源码。新队列存活与来源确认后，旧 v5 讲解等待任务已退出，64 进程课程数据生产继续。正式新四课、讲解 SFT、蒸馏及学生棋力／教学收益仍未完成。见 `docs/REFERENCE_PROSE.md`、`docs/PAPER_POST_CURRICULUM.md` 和 `evidence/heldout-reference-prose-v1.json`。
 
 - 原生准备的分批与缓存控制已完成：4096 个真实训练根的目标逐字节一致，旧版／十六根分批版耗时 109.69／16.25 秒，局部分类约快 6.75 倍；不是全库或训练加速。全套 1158 项通过，161 份源码／测试不变；相同 88 份新模块的真实四卡连接桥连续八步与四加四恢复一致，新旧八步参数／优化器／随机状态也一致。该准备里程碑使用 `xqgeneral-paper-curriculum-preparation-v6` 和 `data/paper-courses-v4`；当时的 `xqgeneral-paper-followthrough-v5` 等待 `runs/curriculum-paper-v4`，已由上项新参考集队列接替，仍保留已验证的讲解显存设置源码。交接守卫只在新 64 子进程及来源进度实际确认后退役旧 CPU 准备与等待任务；新模型工作先等交接完成。正式新四课、讲解、蒸馏及最终能力仍未完成。见 `evidence/paper-native-prefix-cache-v1.json` 和两份阶段文档。

@@ -12,6 +12,9 @@ from .oracle import Pikafish
 from .prose_moves import consolidation_messages
 from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
 from .search_inputs import prepared_training_roots, training_roots
+from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_software,
+                       search_generation_policy)
+from .feature_store import feature_paths
 
 
 def first_divergence(fen, before, after):
@@ -90,7 +93,7 @@ def reachable_child_positions(record, value):
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
-                 record_oracle_query=None):
+                 record_oracle_query=None, generation_policy=None, generation_seed=0):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -100,6 +103,9 @@ class SearchMiner:
         self.engine_cache = {}
         self.record_oracle_query = record_oracle_query
         self.counts = Counter()
+        self.generation_policy = search_generation_policy(generation_policy) if generation_policy is not None else None
+        self.generation_seed = checked_seed(generation_seed) if self.generation_policy is not None else None
+        self.generation_root, self.generation_index = None, 0
 
     def analyze(self, row, restricted=None):
         key = row['feature_key'], tuple(restricted or [])
@@ -121,7 +127,19 @@ class SearchMiner:
         return candidate_probability(row['fen'], candidate)
 
     def model_analysis(self, row):
-        raw = self.predictor.generate(row, EXPLANATION_QUESTION, 768)
+        generation = None
+        if self.generation_policy is None:
+            raw = self.predictor.generate(row, EXPLANATION_QUESTION, 768)
+        else:
+            source = self.generation_root if self.generation_root is not None else row
+            seed = generation_seed(self.generation_seed, source, self.generation_index)
+            generation = {'settings': self.generation_policy, 'seed_profile': SEED_PROFILE,
+                          'seed': str(seed), 'call_index': self.generation_index}
+            self.generation_index += 1
+            self.counts['stochastic_model_generations'] += 1
+            sampling = {k: v for k, v in self.generation_policy.items() if k != 'max_new_tokens'}
+            raw = self.predictor.generate(row, EXPLANATION_QUESTION, self.generation_policy['max_new_tokens'],
+                                          sampling=sampling, seed=seed)
         try:
             value = parse_explanation(raw)
             proof = validate_explanation(row['fen'], value)
@@ -133,7 +151,10 @@ class SearchMiner:
                     proof['errors'].append('invalid_history_continuation')
         except (ValueError, TypeError, KeyError, IndexError):
             value, proof = None, {'valid': False, 'errors': ['invalid_json']}
-        return {'raw': raw, 'analysis': value, 'verification': proof}
+        result = {'raw': raw, 'analysis': value, 'verification': proof}
+        if generation is not None:
+            result['generation'] = generation
+        return result
 
     def child_acceptance(self, row, generation):
         if self.child_contract == 'full':
@@ -156,6 +177,7 @@ class SearchMiner:
         return {'valid': not errors, 'errors': errors, 'contract': 'move_eval'}
 
     def mine(self, original):
+        self.generation_root, self.generation_index = original, 0
         root = dict(original, question=EXPLANATION_QUESTION, future_moves=[])
         trace = []
         for depth in range(self.max_depth + 1):
@@ -314,24 +336,34 @@ def main():
     parser.add_argument('--max-depth', type=int, default=5)
     parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
     parser.add_argument('--seed', type=int, default=20261013)
+    parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
     if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
         raise ValueError('Search limits and node budgets must be positive; recursion depth cannot be negative')
+    generation_policy = None
+    if args.student_generation_config is not None:
+        generation_policy = search_generation_policy(json.loads(Path(args.student_generation_config).read_text()))
+        checked_seed(args.seed)
+    arguments = {k: v for k, v in vars(args).items() if k != 'student_generation_config' or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
     from .inference import Predictor
-    input_paths = [args.checkpoint, args.features, args.executable, args.weights,
+    input_paths = [args.checkpoint, *feature_paths(args.features), args.executable, args.weights,
                    *[Path(args.data) / f'{s}.jsonl' for s in ['train', 'validation', 'test']]]
+    if args.student_generation_config is not None:
+        input_paths.append(Path(args.student_generation_config))
     if args.prepared_inputs:
         input_paths.extend(Path(args.prepared_inputs) / name for name in ['manifest.json', 'roots.jsonl', 'counts.json'])
     if args.recorded_inputs:
         from .recorded_search_inputs import ARTIFACTS, prepared_roots
         input_paths.extend(Path(args.recorded_inputs) / name for name in ARTIFACTS)
-    contract = {'arguments': vars(args), 'input_hashes': {str(p): digest(p) for p in input_paths},
+    contract = {'arguments': arguments, 'input_hashes': {str(p): digest(p) for p in input_paths},
                 'code': code_identity()}
+    if generation_policy is not None:
+        contract['generation_software'] = generation_software()
     root.mkdir(parents=True, exist_ok=True)
     if (root / 'contract.json').exists():
         if json.loads((root / 'contract.json').read_text()) != contract:
@@ -370,7 +402,8 @@ def main():
 
             miner = SearchMiner(predictor, oracle, reserved_positions(args.data) | additional_reserved,
                                 args.nodes, args.max_depth,
-                                child_contract=args.child_contract, record_oracle_query=record_oracle_query)
+                                child_contract=args.child_contract, record_oracle_query=record_oracle_query,
+                                generation_policy=generation_policy, generation_seed=args.seed)
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -403,7 +436,11 @@ def main():
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
-    atomic_json(root / 'manifest.json', manifest('search_distillation_mining', vars(args), input_paths,
+    if generation_policy is not None:
+        proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
+                     generation_software=contract['generation_software'],
+                     stochastic_model_generations_this_session=miner.counts['stochastic_model_generations'])
+    atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
 
