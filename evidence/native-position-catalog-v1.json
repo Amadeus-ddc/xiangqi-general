@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "kind": "native_recorded_position_catalog_reuse_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_utc": "2026-10-11T18:18:41.386653+00:00",
+  "source_revision_before_commit": "8bcd8e4328e4acc529997eca415afed67fcb1ec6",
+  "source_modules": 95,
+  "implementation": "Recompute all recorded target masks against completed unchanged native source/history proofs; compare every JSON/root header and game owner; open the bound catalog read-only. Selected questions still require full native history validation and native answers.",
+  "opt_in": {
+    "cli": "--catalog-proof",
+    "requires_declared_position_sampling": true,
+    "default_temporary_catalog_unchanged": true,
+    "legacy_manifest_omits_new_catalog_field": true,
+    "saved_readback_reuses_same_bound_catalog": true,
+    "input_changes_during_rendering_rejected": true
+  },
+  "real_control": {
+    "run_relative_path": "runs/paper-position-catalog-v1/worktree/runs/native-catalog-real-games-control-v1",
+    "filename": "manifest.json",
+    "sha256": "c53f8f2f94bc2fb3fbffcbe86c8b438c19c116d945cfde5036f803c98c446506",
+    "bytes": 16819,
+    "verification": {
+      "status": "complete",
+      "actual_games": 6,
+      "full_source_game_histories_and_all_eligible_prefixes_natively_replayed_twice": true,
+      "native_catalog_roots_checked": 392,
+      "native_catalog_targets_checked": 3312,
+      "question_counts": {
+        "test": 52,
+        "validation": 52,
+        "train": 108
+      },
+      "questions": 212,
+      "all_tasks_present_by_split": {
+        "train": true,
+        "validation": true,
+        "test": true
+      },
+      "fresh_and_reused_question_bytes_and_order_exact": true,
+      "adaptive_frequency_and_position_selection_reports_exact": true,
+      "complete_cached_question_native_readback": true,
+      "catalog_bytes_unchanged": true,
+      "question_sha256_by_split": {
+        "train": "e5d993751a90e217af8c9727552d8fede217666877e5c66a80e49641dfcea72e",
+        "validation": "bbae61ada198aa5d940c6f6440ef25fb809f5416c8915a5b9906034c402a1ca0",
+        "test": "924d88a291fee4937a562c7c977d0dc26f68da2894fee1b9cb0d7819307d330a"
+      },
+      "scope_is_six_actual_games_only": true,
+      "full_6301835_root_catalog_accepted": false,
+      "formal_four_courses_started": false,
+      "model_or_gpu_loaded": false,
+      "production_changed": false,
+      "student_strength_measured": false,
+      "overall_goal_complete": false,
+      "seconds": 55.73700204119086
+    }
+  },
+  "independent_readback": {
+    "run_relative_path": "runs/paper-position-catalog-v1/worktree/runs/native-catalog-independent-readback-v1",
+    "filename": "manifest.json",
+    "sha256": "fe5a9323b0e18489771efd2816e844f40085003520428cae628df8c762d16808",
+    "bytes": 19804,
+    "verification": {
+      "status": "complete",
+      "verified_utc": "2026-10-11T18:18:41.386653+00:00",
+      "all_control_stage_bindings_freshly_checked": true,
+      "bound_files": 26,
+      "bound_bytes": 200923254,
+      "original_real_game_records_compared": 6,
+      "full_history_native_roots_revalidated": 392,
+      "native_targets_recomputed_with_original_full_history_path": 3312,
+      "native_qa_answers_recomputed": 212,
+      "split_course_task_groups": 78,
+      "fresh_and_reused_question_bytes_order_equal": true,
+      "source_modules": 95,
+      "source_test_files_unchanged_including_conftest": 178,
+      "canonical_summary": "1364 passed in 406.71s (0:06:46)",
+      "full_catalog_verification_has_separate_frozen_source": true,
+      "full_6301835_root_catalog_accepted": false,
+      "source_rule_and_answer_helpers_shared": true,
+      "model_or_gpu_loaded": false,
+      "formal_student_training_executed": false,
+      "strength_or_coaching_quality_measured": false,
+      "overall_goal_complete": false
+    }
+  },
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-position-catalog-v1/worktree/runs/native-catalog-integration-canonical-v1",
+    "filename": "verification.json",
+    "sha256": "97332846e56825d7f766bf2f961981141ad6625b93a5110bc67200531dee6ea9",
+    "bytes": 198,
+    "verification": {
+      "status": "complete",
+      "exit_code": 0,
+      "seconds": 411.96952295396477,
+      "source_and_tests_unchanged": true,
+      "bound_files": 178,
+      "models_loaded": false,
+      "overall_goal_complete": false
+    },
+    "test_summary": "1364 passed in 406.71s (0:06:46)"
+  },
+  "full_catalog": {
+    "snapshot_bytes": 55110930432,
+    "snapshot_sha256": "6d0a606168127ce62fafe6005055b9bc3798bdd5fed6d5ef924aaab9e93ede3b",
+    "source_roots": 6301835,
+    "roots_by_split": {
+      "train": 5099559,
+      "validation": 602056,
+      "test": 600220
+    },
+    "verification_status": "in_progress",
+    "accepted_for_production": false,
+    "verification_has_separate_frozen_execution_source": true
+  },
+  "limitations": {
+    "full_histories_and_prior_isolation_proof_inherited_for_unchanged_source_bytes": true,
+    "all_native_target_classes_recomputed": true,
+    "unused_positions_table_recomputed": false,
+    "generated_terminal_variants_supported_by_reuse": false,
+    "shared_native_rule_and_answer_helpers": true,
+    "control_scope_actual_games": 6,
+    "full_original_recorded_archive_reproduced_by_control": false,
+    "full_corpus_or_training_speedup_measured": false
+  },
+  "production_changed": false,
+  "formal_new_four_courses_started": false,
+  "explanation_sft_or_distillation_executed": false,
+  "model_or_gpu_loaded": false,
+  "strength_or_coaching_quality_measured": false,
+  "overall_goal_complete": false
+}
