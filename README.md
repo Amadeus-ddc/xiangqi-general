@@ -112,6 +112,8 @@ python -m xqgeneral.revise_prose --data data/astra-explanations-full-v4 \
 
 使用新输出目录；抽样复核不代表其余训练正文已审查，数据修订完成也不证明学生收益。新的训练须另行冻结配置与源码。
 
+新实验开始前，若旧验证／独立测试参考正文存在事实错误，使用独立的[参考正文修订入口](docs/REFERENCE_PROSE.md)。它要求完整审查范围、真实拒收和独立接受，保留训练文件原字节及全部问题、结构化走法和分割；修订结果生成新版本，不修改已运行实验。审稿不使用学生预测，独立测试不参与训练或选模。
+
 `configs/explanation-sft.json` 从已完成、哈希核验的最佳课程检查点初始化。讲解训练同时更新桥接块、棋盘词元和完整解码器，使用 FP32 参数、BF16 计算与梯度累积，并保留课程问答回放。验证集只选讲解检查点。全量优化器和检查点较大，需要为运行目录保留磁盘空间。
 
 ```bash
@@ -574,7 +576,7 @@ python scripts/freeze_run.py --output runs/new-reviewed-explanation-prep/source-
   --output runs/new-reviewed-explanation-preflight --max-tokens 1024 --workers 8
 ```
 
-实际候选集 `data/astra-explanations-clean-v1` 为 10758／384／512 条，共 11654 个不同完整历史键；包含已有 3363 条颜色派生项，新增独立讲解仍为 2496 条。旧 384 条训练标签与已完成接受池逐字段相同；旧 448 条保留集的内容及原审查状态保留，没有补做或宣称新的语义接受。全部训练／验证共 11142 条按主线词元器及 105 个棋盘词元编码，最长 649／625、上限 1024，无截断；测试答案不参与词元编码。全部标签键存在现有 169904 键缓存中。
+此前冻结的候选集 `data/astra-explanations-clean-v1` 为 10758／384／512 条，共 11654 个不同完整历史键；包含已有 3363 条颜色派生项，新增独立讲解仍为 2496 条。旧 384 条训练标签与已完成接受池逐字段相同；旧 448 条保留集的内容及原审查状态保留，没有补做或宣称新的语义接受。全部训练／验证共 11142 条按主线词元器及 105 个棋盘词元编码，最长 649／625、上限 1024，无截断；测试答案不参与词元编码。全部标签键存在现有 169904 键缓存中。
 
 第二入口逐字节匹配全部原片段，复演全部过去、重算事实及所有合法未来／颜色几何足迹和逐项词元长度；61 份来源／生产产物及 60 份实际冻结源码核验，见 `evidence/clean-explanation-data-independent-preflight-v1.json`。第二入口复用生产阶段完整终局证明；缓存检查读取键、形状和精度，绑定已完成全量预检，没有重哈希全部 251GB 或重算特征值。272 项 CPU 测试通过。当前四卡课程输入不变，预检不加载模型权重，新 SFT 仍须等待四门课程按验证策略完成。
 
@@ -750,4 +752,6 @@ python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
 
 [新四课之后的讲解与评测](docs/PAPER_POST_CURRICULUM.md)已固定对应配置和真实训练／验证索引，使用四轮有限遍历并等待实际四课交接；随后运行全解码器预检、初始 SFT、三组能力／正文辅助评分及 384 局开发基线。已完成的索引和等待读回不证明训练完成，后续搜索规模、蒸馏轮数和独立最终验收仍待实际结果。
 
-原生分类可用 `--position-workers 64 --position-batch-size 16` 复用相邻完整历史的原生计算；保存的分批配置参与完整读回，旧默认大小仍为一。4096 个实战训练根逐字节一致，局部分类约快 6.75 倍，详见 [当前实验](docs/PAPER_FOUNDATION_EXPERIMENT.md)及[轻量证据](evidence/paper-native-prefix-cache-v1.json)。本服务器替代准备／讲解等待会话分别为 `xqgeneral-paper-curriculum-preparation-v6`／`xqgeneral-paper-followthrough-v5`；正式新四课仍待数据、缓存与预检完成。
+原生分类可用 `--position-workers 64 --position-batch-size 16` 复用相邻完整历史的原生计算；保存的分批配置参与完整读回，旧默认大小仍为一。4096 个实战训练根逐字节一致，局部分类约快 6.75 倍，详见 [当前实验](docs/PAPER_FOUNDATION_EXPERIMENT.md)及[轻量证据](evidence/paper-native-prefix-cache-v1.json)。本服务器准备／讲解等待会话分别为 `xqgeneral-paper-curriculum-preparation-v6`／`xqgeneral-paper-followthrough-reference-v1`；正式新四课仍待数据、缓存与预检完成。
+
+当前新讲解队列使用[完整复审后的参考集](docs/REFERENCE_PROSE.md)：训练 10758 条逐字节不变，448 条旧保留参考完成独立审查，164 条正文实际修订后另行接受。新数据与索引已经完成；正式讲解训练继续等待实际新四课，参考复审不代表学生能力提升。见[读回证据](evidence/heldout-reference-prose-v1.json)。
