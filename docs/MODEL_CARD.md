@@ -9,7 +9,9 @@ and explain verifiable continuations. Use the independent evaluation evidence to
 decide how much to trust a checkpoint. A completed training run alone establishes
 neither strong play nor accurate strategic explanations.
 
-The explicit consolidation profile uses a 16,384-token total window, an 8,192-token output cap, temperature 1.0, top-k 20, top-p 0.95 and low reasoning. Actual unquantized Qwen3.8-27B inference completes two constructed search queries; the 16,382-token boundary gets a two-token cap and the full-window input never reaches generation. Raw thoughts, responses and errors are retained. This HF control does not establish original vLLM execution, 16-request capacity, trained-student yield or strategic coaching quality. See [the control](../evidence/paper-teacher-context-v1.json).
+The explicit consolidation profile uses a 16,384-token total window, an 8,192-token output cap, temperature 1.0, top-k 20, top-p 0.95 and low reasoning. Actual unquantized Qwen3.8-27B inference completes two constructed search queries; the 16,382-token boundary gets a two-token cap and the full-window input never reaches generation. Raw thoughts, responses and errors are retained. That earlier HF control did not establish original vLLM execution, 16-request capacity, trained-student yield or strategic coaching quality. See [the control](../evidence/paper-teacher-context-v1.json).
+
+The optional 1,024-token chunked prefill completes sixteen 16,382-token inputs with two output tokens each on one H20 (76.34 GiB peak allocated), and sixteen distinct constructed queries with an 8,192-token budget (actual outputs 1,852–6,023 tokens). Same-input 128-token measurements show 12.87/54.95 token/s for serial/batch-16; this is a short-budget throughput result. Local and library-native chunked greedy outputs match; chunked and unchunked outputs differ. This remains HF execution and constructed fixtures; strategic coaching quality, actual student distillation labels and strength remain unproven. See [the batch control](../evidence/paper-teacher-prefill-v1.json).
 
 ## Inputs and outputs
 

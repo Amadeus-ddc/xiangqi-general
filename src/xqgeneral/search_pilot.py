@@ -15,6 +15,7 @@ from .sampling import checked_seed, search_generation_policy
 from .search_distillation import checked_search_extensions
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
 from .teacher_generation import checked_budget, generation_profile
+from .teacher_prefill import checked_prefill_chunk_size
 
 
 def pilot_spec(config, bound):
@@ -37,6 +38,7 @@ def pilot_spec(config, bound):
     if type(config.get('teacher_batch_size', 1)) is not int or config.get('teacher_batch_size', 1) <= 0:
         raise ValueError('A positive integer teacher batch size is required')
     checked_budget(config['teacher_max_new_tokens'], config.get('teacher_max_context_tokens'))
+    checked_prefill_chunk_size(config.get('teacher_prefill_chunk_size'))
     if config.get('teacher_generation_config') is not None:
         profile = generation_profile(bound.json(config['teacher_generation_config']))
         checked_seed(config.get('teacher_seed'))
@@ -222,7 +224,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             if config.get('teacher_batch_size', 1) != 1:
                 args['batch_size'] = config['teacher_batch_size']
             for source_key, dest_key in [('teacher_max_context_tokens', 'max_context_tokens'),
-                    ('teacher_generation_config', 'generation_config'), ('teacher_seed', 'seed')]:
+                    ('teacher_generation_config', 'generation_config'), ('teacher_seed', 'seed'),
+                    ('teacher_prefill_chunk_size', 'prefill_chunk_size')]:
                 if config.get(source_key) is not None:
                     args[dest_key] = config[source_key]
             teacher_proof = completed_stage('local_teacher', args, 'local_teacher_inference', consolidation, True)
