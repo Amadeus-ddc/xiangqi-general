@@ -745,3 +745,5 @@ python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
 源码采用 GPL-3.0-or-later，保留 Px0 派生实现与协议的来源声明。依赖、参考代码与权重的边界见 [第三方说明](THIRD_PARTY_NOTICES.md)，贡献步骤见 [CONTRIBUTING.md](CONTRIBUTING.md)。本项目独立于 Queen、Px0、Qwen 和皮卡鱼官方项目。训练完成后的棋力与讲解结论以独立评测为准。
 
 新的[论文对齐四课实验](docs/PAPER_FOUNDATION_EXPERIMENT.md)组合全宽桥接、26 类原生问答、token 损失、有限遍历、索引／分片存储及当前课选模。真实预训练模型的四卡训练／恢复已验证；完整实战来源已全量复验，准备队列已进入完整问答生成；正式新四课及最终模型能力仍未完成。
+
+[新四课之后的讲解与评测](docs/PAPER_POST_CURRICULUM.md)已固定对应配置和真实训练／验证索引，使用四轮有限遍历并等待实际四课交接；随后运行全解码器预检、初始 SFT、三组能力／正文辅助评分及 384 局开发基线。已完成的索引和等待读回不证明训练完成，后续搜索规模、蒸馏轮数和独立最终验收仍待实际结果。

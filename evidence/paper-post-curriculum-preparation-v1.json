@@ -1,0 +1,294 @@
+{
+  "kind": "paper_post_curriculum_label_and_live_queue_readback",
+  "status": "complete",
+  "observed_utc": "2026-10-11T01:50:59.181062+00:00",
+  "seconds": 3.2034678841009736,
+  "bindings": {
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-preparation-v1/entry.py": {
+      "sha256": "878c300a53b297814d30fd6d6d17ba8840b3b30e9b0e6bb434c17c2cb66bba2b",
+      "bytes": 9233
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-preparation-v1/plan.json": {
+      "sha256": "55d8ca708ffa47d13f26b25fdb09665167767231d0529420dcb50e9cd3f15ac9",
+      "bytes": 10764
+    },
+    "runs/paper-sft-v1/inputs/evaluation.json": {
+      "sha256": "4e0008f11c8672ea6521a20e3e1050d5e88b76b392bbba9eec8d0a6fdc92ee94",
+      "bytes": 983
+    },
+    "runs/paper-sft-v1/inputs/matches.json": {
+      "sha256": "52a4b8ae220a4b16d71dabebdd2dd5e063fedb8b745a50a67e195ac6e5685634",
+      "bytes": 667
+    },
+    "runs/paper-sft-v1/inputs/search-pilot-pending.json": {
+      "sha256": "7710a2dbd61762642a85004a33e27904487ecc1cffa95019803496c5666a127b",
+      "bytes": 477
+    },
+    "runs/paper-sft-v1/inputs/sft.json": {
+      "sha256": "41164559d0a58e33e879305ad446e2ae9d616d7197e35300b13394bb13be0ec8",
+      "bytes": 1791
+    },
+    "runs/paper-sft-v1/inputs/teachers.json": {
+      "sha256": "d6e9b2b21445bdd68d6f85db3e005611f44f35e8878ca9d10b7c64147af47670",
+      "bytes": 764
+    },
+    "runs/paper-followthrough-v1/worktree/configs/explanation-sft-paper-v1.json": {
+      "sha256": "31ce8407662041dfaa5e8958f30b5474cef78a74b8df5b43785be04893fe43e3",
+      "bytes": 1619
+    },
+    "runs/paper-followthrough-v1/worktree/configs/evaluation-paper-sft-v1.json": {
+      "sha256": "1f9fd95946733e9c201229c4ea7256b952da0d67b7d3ae1dbd054f6bd0d7796f",
+      "bytes": 669
+    },
+    "runs/paper-followthrough-v1/worktree/configs/matches-paper-sft-baseline-v1.json": {
+      "sha256": "74b51b072755293fe34a1bd931b98389e15d2d8decc112d265f6b4035805743e",
+      "bytes": 448
+    },
+    "runs/paper-followthrough-v1/worktree/configs/search-paper-sft-pilot-v1.json": {
+      "sha256": "8c943294491050461367263b9de05ef411b7bb52b3d51d055de7c93801a67806",
+      "bytes": 344
+    },
+    "data/astra-explanations-full-v7/manifest.json": {
+      "sha256": "a9f621fad80251ce69de9b248beb49e4e0c82f37fe7fffcbc97d7db688c14b21",
+      "bytes": 8678
+    },
+    "data/astra-explanations-full-v7/train.jsonl": {
+      "sha256": "1f615bbb780c715a5a5ce7630e751e223a8c11361f2938c3bbaf73e48c73f5e5",
+      "bytes": 61883966
+    },
+    "data/astra-explanations-full-v7/validation.jsonl": {
+      "sha256": "6bc233bfb465c88b311bb4b4e6aa7b2939e61d0e2f5f1c6740348dddd8794911",
+      "bytes": 1047580
+    },
+    "data/astra-explanations-full-v7/test.jsonl": {
+      "sha256": "b11fc17a7cfa5d4fed41d28d4f3da556731ee6ddc641e21954b098daf55fa66f",
+      "bytes": 1416134
+    },
+    "data/astra-recorded-coach-teacher-reviewed-v1/manifest.json": {
+      "sha256": "af8e0b3542d88a1c842e2f829629ed3720280244aa5823ebdba4d5875c48bbe6",
+      "bytes": 12696
+    },
+    "data/astra-recorded-coach-teacher-reviewed-v1/train.jsonl": {
+      "sha256": "24eb21c65d3f4399f1a56924ecb293429b8c0e4e9e76d2b5649cd8ee3072ee9a",
+      "bytes": 16563773
+    },
+    "data/astra-recorded-coach-teacher-reviewed-v1/validation.jsonl": {
+      "sha256": "31c0afb44a9e1787bd339d0aa12e33a02b475f9948bfa06ac8e1ee4460c342ab",
+      "bytes": 1612141
+    },
+    "data/astra-recorded-coach-teacher-reviewed-v1/test.jsonl": {
+      "sha256": "4cbdb0057d56c250472489db879d490c36d53635825f3aabae6eed7dd6d0c390",
+      "bytes": 2174792
+    },
+    "data/astra-selfplay-explanation-replay-v1/manifest.json": {
+      "sha256": "5145a162645b0ca9c6dd25cd4157dc24cc36047ee10cfb5b2e2bcf3be6501de1",
+      "bytes": 6452
+    },
+    "data/astra-selfplay-explanation-replay-v1/train.jsonl": {
+      "sha256": "07ec0b869fdd9882eb89060ae75eebdc53842a27cb37aa5be4390852072be461",
+      "bytes": 3231420
+    },
+    "data/astra-selfplay-explanation-replay-v1/validation.jsonl": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "data/astra-selfplay-explanation-replay-v1/test.jsonl": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "data/astra-explanations-clean-v1/train.jsonl": {
+      "sha256": "53af7fabdf41685c6db7b4ef0f91d52351495dece1368c1d2d37381e3c858b3a",
+      "bytes": 78447739
+    },
+    "data/astra-explanations-clean-v1/validation.jsonl": {
+      "sha256": "42016c1563668c16ad6ebfcc8e4fc9fe457ec6e9a7e560935b22192158afdbf4",
+      "bytes": 2659721
+    },
+    "data/astra-explanations-clean-v1/test.jsonl": {
+      "sha256": "9d9422acd9311e69a087a81acd06361089547ea7502c2a6cacbe22e0d7432b1d",
+      "bytes": 3590926
+    },
+    "data/astra-explanations-clean-v1/verification.json": {
+      "sha256": "2c1030cbb08677f73e537e9d54a284b0aed80c2101fc5f8d41ab6a58b4335690",
+      "bytes": 2062
+    },
+    "data/astra-explanations-clean-v1/manifest.json": {
+      "sha256": "332cfa0ab19419e70ae0a4425664cbe458546bd9b4a9679a4ea1aa0a2427529c",
+      "bytes": 12042
+    },
+    "data/astra-explanations-paper-index-v1/train/records.bin": {
+      "sha256": "aafd5ce9dbf6f5e47484ce94e2d1df2b0f95d3aaf25ef6c2ea614fd9d583547c",
+      "bytes": 430320
+    },
+    "data/astra-explanations-paper-index-v1/train/identities.bin": {
+      "sha256": "fcb8332a73e6666f70555e9d8c520990687ecff6d080a7fabb70f65223f8b750",
+      "bytes": 566195
+    },
+    "data/astra-explanations-paper-index-v1/train/metadata.json": {
+      "sha256": "97d9200ae9bad443812002156bd1ec47cc40e07c5b484bf116e761fb54d68082",
+      "bytes": 775165
+    },
+    "data/astra-explanations-paper-index-v1/train/manifest.json": {
+      "sha256": "9e17be8658efeacbfafbecae61132b67288c7addf7c6ceeb07c6d7757b4cb828",
+      "bytes": 11946
+    },
+    "data/astra-explanations-paper-index-v1/validation/records.bin": {
+      "sha256": "3f3fb4ad50082b9f847026b2b9f3cd8aaa7a261be69b70002cf15b47237f454b",
+      "bytes": 15360
+    },
+    "data/astra-explanations-paper-index-v1/validation/identities.bin": {
+      "sha256": "f1c010ff078d0452170c0a584110303c27121b95aff800b58dfe468504d7ea63",
+      "bytes": 24864
+    },
+    "data/astra-explanations-paper-index-v1/validation/metadata.json": {
+      "sha256": "55f276b9f5f255f79b604e13216293fa73d3399b6281a2723b242089d568a8d1",
+      "bytes": 28247
+    },
+    "data/astra-explanations-paper-index-v1/validation/manifest.json": {
+      "sha256": "b7758cfa2544f1ffb2c62bc151bc63bbaa72dc06ec81f7cf71f5830d28017639",
+      "bytes": 11980
+    },
+    "runs/paper-experiment-v1/worktree/runs/paper-curriculum-preparation-v3/foundation.config.json": {
+      "sha256": "b179d01c44815014720d0eb839c5c1a76127b89d78fb995f5b58b520fc04fac9",
+      "bytes": 4026
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/readback-v2.py": {
+      "sha256": "7ffced9f09cb3d8b7ccd26aa83ab3008e5d469f3f71f497d856ae76d7647dd82",
+      "bytes": 7997
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/readback-v2.json": {
+      "sha256": "b9f2d19c75852b896cf8432036eba7e4ae37c3c1459fcd89fe0d6d9708d4e613",
+      "bytes": 9204
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/runtime-wait.json": {
+      "sha256": "b2afbb7c95ad80114f30f732203019a3df4342c8d9034a952a4b069cf03bff84",
+      "bytes": 604
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/canonical.py": {
+      "sha256": "2ea6388a1353fdc91081278fe3547aa4ad0f9b5a5477796f1539e2e8b490e370",
+      "bytes": 1667
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/canonical.json": {
+      "sha256": "70698f08d7281695f7420550108d06d9769ee66aba290b89fbbf598e08a804d2",
+      "bytes": 202
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/source-test-before.json": {
+      "sha256": "342ab64266c15ad7f358ac8742abff9bd9f476b3574c2f41dce8738d2b531d23",
+      "bytes": 16705
+    },
+    "runs/paper-followthrough-v1/worktree/runs/paper-followthrough-publication-v1/source-test-after.json": {
+      "sha256": "342ab64266c15ad7f358ac8742abff9bd9f476b3574c2f41dce8738d2b531d23",
+      "bytes": 16705
+    }
+  },
+  "indexed_rows_all_fields_equal_to_preserved_source": {
+    "train": 10758,
+    "validation": 384
+  },
+  "test_labels_indexed_or_tokenized": false,
+  "new_native_or_semantic_label_review_performed": false,
+  "finite_contract": {
+    "profile": "author_finite_mixture_epochs_xiangqi_v1",
+    "anchor_stage": "explanation",
+    "source_rows_by_stage": {
+      "explanation": 10758
+    },
+    "selected_rows_by_stage": {
+      "explanation": 10758
+    },
+    "requested_weights": {
+      "explanation": 1.0
+    },
+    "realized_weights": {
+      "explanation": 1.0
+    },
+    "rows_per_epoch": 10758,
+    "mixture_seed": 0,
+    "epoch_seed": 20261066,
+    "selected_row_id_and_index_sha256": "5c775b4260cb7a5ec102b3f8cacd45904984954176b04997c9f74a5edbd02bc4",
+    "global_batch_size": 16,
+    "world_size": 4,
+    "micro_batch_size": 1,
+    "optimizer_steps_per_epoch": 673,
+    "padded_rows_per_epoch": 2,
+    "tail_policy": "pad_distributed_microbatch_from_epoch_start",
+    "old_course_subsets_reselected_each_epoch": false,
+    "task_types_resampled_uniformly": false,
+    "independent_test_used": false
+  },
+  "four_real_index_traversals": [
+    {
+      "epoch": 0,
+      "unique_rows": 10758,
+      "padding_rows": 2
+    },
+    {
+      "epoch": 1,
+      "unique_rows": 10758,
+      "padding_rows": 2
+    },
+    {
+      "epoch": 2,
+      "unique_rows": 10758,
+      "padding_rows": 2
+    },
+    {
+      "epoch": 3,
+      "unique_rows": 10758,
+      "padding_rows": 2
+    }
+  ],
+  "planned_sft_updates_from_actual_train_count": 2692,
+  "completed_four_course_parent_available": false,
+  "actual_sft_config_from_selected_parent_prepared": false,
+  "source_modules_in_each_of_follower_upstream_and_real_control": 88,
+  "all_three_source_snapshots_identical": true,
+  "actual_followthrough_handle": "1101124 0",
+  "actual_followthrough_entry_pid": 1101132,
+  "actual_upstream_handle": "1091691 0",
+  "actual_queue_waits_for_new_four_courses": true,
+  "cuda_initialized_in_readback": false,
+  "gpu_model_or_formal_sft_started_by_follower": false,
+  "teacher_configuration": {
+    "initial_model": "gpt-6-astra",
+    "initial_reasoning": "low",
+    "local_dtype": "bfloat16",
+    "local_quantization": "none"
+  },
+  "model_weights_rehashed_in_this_readback": false,
+  "formal_search_distillation_completed": false,
+  "final_strength_and_coaching_accepted": false,
+  "goal_complete": false,
+  "evidence_state": "reconstructed_baseline",
+  "scope": "Actual reviewed-label indexes, four finite traversals, preserved configurations and live sequencing guard; no model-quality acceptance.",
+  "canonical_tests_completed": true,
+  "runtime_wait": {
+    "status": "complete",
+    "observed_utc": "2026-10-11T01:54:28.323898+00:00",
+    "actual_followthrough_entry_pid": 1101132,
+    "actual_owned_processes": [
+      1101132
+    ],
+    "owned_processes_with_cuda_context": [],
+    "actual_paper_curriculum_pid": 1092201,
+    "native_catalog_source_cursor": [
+      {
+        "path": "runs/paper-recorded-root-expansion-v1/worktree/runs/full-recorded-course-pools-real-v1/pools/roots.jsonl",
+        "offset_bytes": 693968896,
+        "source_bytes": 45505590932
+      }
+    ],
+    "new_question_rows_written": 0,
+    "formal_new_four_courses_started": false,
+    "goal_complete": false
+  },
+  "canonical": {
+    "status": "complete",
+    "returncode": 0,
+    "source_test_bindings": 160,
+    "source_and_tests_unchanged": true,
+    "passed": 1133,
+    "pytest_seconds": 427.33,
+    "wrapper_seconds": 431.42098443955183
+  }
+}

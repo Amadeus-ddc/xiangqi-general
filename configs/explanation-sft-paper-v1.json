@@ -1,0 +1,47 @@
+{
+  "data_path": "data/astra-explanations-clean-v1",
+  "feature_path": "data/paper-courses-v1/feature-store/manifest.json",
+  "require_clean_foundation_handoff": true,
+  "decoder_training": "full",
+  "trainable_parameter_dtype": "float32",
+  "loss_normalization": "token",
+  "deterministic_training": true,
+  "feature_cache_mmap": true,
+  "ddp_world_size": 4,
+  "ddp_find_unused_parameters": true,
+  "stages": [
+    "explanation"
+  ],
+  "mixture": {
+    "explanation": 1.0
+  },
+  "validation_stages": [
+    "explanation"
+  ],
+  "epochs": 4,
+  "max_steps": 4096,
+  "min_steps": 4096,
+  "batch_size": 16,
+  "micro_batch_size": 1,
+  "eval_batch_size": 1,
+  "learning_rate": 1e-05,
+  "decoder_learning_rate": 1e-06,
+  "token_learning_rate": 1e-06,
+  "lr_schedule": "constant",
+  "weight_decay": 0.1,
+  "warmup_fraction": 0.05,
+  "eval_every": 256,
+  "patience": 4,
+  "max_tokens": 1024,
+  "validation_examples": 384,
+  "generation_examples": 8,
+  "max_new_tokens": 768,
+  "seed": 20261066,
+  "purpose": "Initial full-decoder explanation SFT for the fresh paper-aligned four-course foundation. Only use the actual completed new four-course handoff, retain its full-width architecture, and require new token/storage and real four-GPU full-decoder preflight before training. Four complete finite passes through the preserved reviewed labels; no independent-test selection.",
+  "mixture_seed": 0,
+  "row_index_paths": {
+    "train": "data/astra-explanations-paper-index-v1/train",
+    "validation": "data/astra-explanations-paper-index-v1/validation"
+  },
+  "training_data_profile": "author_finite_mixture_epochs_xiangqi_v1"
+}

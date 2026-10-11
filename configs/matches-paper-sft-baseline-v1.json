@@ -1,0 +1,17 @@
+{
+  "evaluation_config": "configs/evaluation-paper-sft-v1.json",
+  "opening_suite": "runs/recorded-match-openings-real-v1/suite",
+  "opening_count": 64,
+  "nodes": [
+    100,
+    1000,
+    10000
+  ],
+  "max_plies": 256,
+  "action_mode": "explanation",
+  "move_beams": 4,
+  "executable": "vendor/pikafish/src/pikafish",
+  "weights": "vendor/pikafish/src/pikafish.nnue",
+  "expert_weights": "models/px0-latest.pb.gz",
+  "cuda_visible_devices": "2"
+}
