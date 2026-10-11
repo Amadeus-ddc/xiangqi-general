@@ -1,6 +1,7 @@
 """Mine improved model/child analyses; the oracle never supplies training prose."""
 import argparse
 from collections import Counter
+import copy
 import json
 from pathlib import Path
 
@@ -90,11 +91,29 @@ def reachable_child_positions(record, value):
     return positions
 
 
+def checked_search_extensions(candidate_policy, reuse_child_analysis, max_root_retries):
+    if candidate_policy not in ('strict', 'paper_fill') or type(reuse_child_analysis) is not bool:
+        raise ValueError('Invalid candidate policy or child-analysis reuse setting')
+    if (candidate_policy == 'paper_fill' or reuse_child_analysis) and max_root_retries is None:
+        raise ValueError('Candidate filling and child reuse require an explicit numerical root retry policy')
+
+
+def numerical_root_acceptance(row, generated):
+    value = generated['analysis']
+    try:
+        if not isinstance(value, dict):
+            raise ValueError('Root generation has no numerical evaluation')
+        evaluation_probability(row['fen'], value.get('evaluation'))
+        return {'valid': True, 'errors': []}
+    except (AttributeError, TypeError, ValueError, OverflowError):
+        return {'valid': False, 'errors': ['invalid_evaluation_contract']}
+
+
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
                  record_oracle_query=None, generation_policy=None, generation_seed=0,
-                 max_root_retries=None):
+                 max_root_retries=None, root_candidate_policy='strict', reuse_child_analysis=False):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -111,6 +130,8 @@ class SearchMiner:
                 max_root_retries and self.generation_policy is None):
             raise ValueError('Root retries need a nonnegative integer budget and stochastic generation')
         self.max_root_retries = max_root_retries
+        checked_search_extensions(root_candidate_policy, reuse_child_analysis, max_root_retries)
+        self.root_candidate_policy, self.reuse_child_analysis = root_candidate_policy, reuse_child_analysis
 
     def analyze(self, row, restricted=None):
         key = row['feature_key'], tuple(restricted or [])
@@ -161,20 +182,30 @@ class SearchMiner:
             result['generation'] = generation
         return result
 
-    def root_analysis(self, row):
+    def root_analysis(self, row, cached_child=None):
+        if cached_child is not None and not self.reuse_child_analysis:
+            raise ValueError('Cached child reuse is not enabled for this search')
         if self.max_root_retries is None:
             return self.model_analysis(row), None
         attempts = []
+        if cached_child is not None:
+            fields = ['id', 'feature_key', 'initial_fen', 'moves', 'history', 'fen']
+            if any(cached_child['record'][key] != row[key] for key in fields):
+                raise ValueError('Cached child differs from the complete recursive root history')
+            generated = copy.deepcopy({key: cached_child[key] for key in
+                ['raw', 'analysis', 'verification', 'generation'] if key in cached_child})
+            acceptance = numerical_root_acceptance(row, generated)
+            generated['root_evaluation_acceptance'] = dict(acceptance, attempt=0)
+            generated['reused_child_analysis'] = {'record_id': row['id'], 'feature_key': row['feature_key'],
+                'source_child_acceptance': copy.deepcopy(cached_child['child_acceptance'])}
+            attempts.append(generated)
+            if acceptance['valid']:
+                self.counts['reused_child_root_analyses'] += 1
+                return generated, attempts
+            self.counts['unusable_cached_child_evaluations'] += 1
         for index in range(self.max_root_retries + 1):
             generated = self.model_analysis(row)
-            value = generated['analysis']
-            try:
-                if not isinstance(value, dict):
-                    raise ValueError('Root generation has no numerical evaluation')
-                evaluation_probability(row['fen'], value.get('evaluation'))
-                acceptance = {'valid': True, 'errors': []}
-            except (AttributeError, TypeError, ValueError, OverflowError):
-                acceptance = {'valid': False, 'errors': ['invalid_evaluation_contract']}
+            acceptance = numerical_root_acceptance(row, generated)
             generated['root_evaluation_acceptance'] = dict(acceptance, attempt=index + 1)
             attempts.append(generated)
             self.counts['root_evaluation_generations'] += 1
@@ -185,6 +216,29 @@ class SearchMiner:
         if not acceptance['valid']:
             self.counts['root_evaluation_retry_exhaustions'] += 1
         return generated, attempts
+
+    def prepare_candidates(self, row, before, oracle):
+        legal = legal_moves(row['fen'])
+        required, candidates, sources = min(3, len(legal)), [], {}
+        preferred = [before.get('move')]
+        for field, values in [('preferred_move', preferred), ('candidates', before.get('candidates')),
+                              ('original_pv', before.get('pv'))]:
+            for move in values if isinstance(values, list) else []:
+                if isinstance(move, str) and move in legal and move not in candidates and len(candidates) < required:
+                    candidates.append(move); sources[move] = 'model_' + field
+        model_candidates = list(candidates)
+        filled = []
+        for item in oracle['candidates']:
+            move = item['move']
+            if len(candidates) >= required:
+                break
+            if isinstance(move, str) and move in legal and move not in candidates:
+                candidates.append(move); filled.append(move); sources[move] = 'engine_multipv_fill'
+        if len(candidates) != required:
+            raise ValueError('Engine supplied too few distinct legal root repair candidates')
+        self.counts['engine_filled_root_candidates'] += len(filled)
+        return candidates, {'policy': 'paper_fill', 'required': required,
+            'legal_model_candidates': model_candidates, 'engine_filled_candidates': filled, 'sources': sources}
 
     def child_acceptance(self, row, generation):
         if self.child_contract == 'full':
@@ -209,14 +263,15 @@ class SearchMiner:
     def mine(self, original):
         self.generation_root, self.generation_index = original, 0
         root = dict(original, question=EXPLANATION_QUESTION, future_moves=[])
-        trace = []
+        trace, cached_child = [], None
         for depth in range(self.max_depth + 1):
             self.counts['root_attempts'] += 1
             if position_key(root['fen']) in self.reserved:
                 return None, trace, 'reserved_position'
             if adjudicate(root['initial_fen'], root['moves'])['ended']:
                 return None, trace, 'terminal_root'
-            generated, attempts = self.root_analysis(root)
+            generated, attempts = self.root_analysis(root, cached_child)
+            cached_child = None
             step = {'record': root, 'depth': depth, 'root_generation': generated}
             trace.append(step)
             if attempts is not None:
@@ -225,11 +280,14 @@ class SearchMiner:
                     return None, trace, 'invalid_root_evaluation'
             before = generated['analysis']
             candidates = before.get('candidates') if isinstance(before, dict) else None
-            if (not isinstance(candidates, list) or not 1 <= len(candidates) <= 3 or
+            if self.root_candidate_policy == 'strict' and (not isinstance(candidates, list) or not 1 <= len(candidates) <= 3 or
                     any(not isinstance(m, str) or m not in legal_moves(root['fen']) for m in candidates) or
                     len(set(candidates)) != len(candidates)):
                 return None, trace, 'invalid_root_candidates'
             oracle = self.analyze(root)
+            if self.root_candidate_policy == 'paper_fill':
+                candidates, preparation = self.prepare_candidates(root, before, oracle)
+                step['candidate_preparation'] = preparation
             best = self.move_probability(root, oracle['best_move'], oracle)
             qualities = [(m, self.move_probability(root, m, oracle)) for m in candidates]
             injected = False
@@ -237,8 +295,13 @@ class SearchMiner:
                 worst = min(qualities, key=lambda x: x[1])[0]
                 candidates = [m for m in candidates if m != worst] + [oracle['best_move']]
                 injected = True; self.counts['oracle_candidate_injections'] += 1
+                if self.root_candidate_policy == 'paper_fill':
+                    preparation['sources'][oracle['best_move']] = 'engine_best_injection'
+            if self.root_candidate_policy == 'paper_fill':
+                candidates.sort(key=lambda move: self.move_probability(root, move, oracle), reverse=True)
+                preparation['final_candidates'] = list(candidates)
             step.update(candidate_probabilities=qualities, injected_oracle_move=injected, oracle=oracle)
-            children, offending = [], None
+            children, offending, offending_generation = [], None, None
             for move in candidates:
                 child = descend(root, move)
                 if position_key(child['fen']) in self.reserved:
@@ -257,7 +320,8 @@ class SearchMiner:
                 item = {'move': move, 'record': child, **generation, 'child_acceptance': acceptance}
                 children.append(item)
                 if not acceptance['valid']:
-                    offending = offending or child
+                    if offending is None:
+                        offending, offending_generation = child, item
                     continue
                 analysis = generation['analysis']
                 positions = (continuation_positions(child, analysis) if self.child_contract == 'full'
@@ -281,11 +345,14 @@ class SearchMiner:
                         acceptance['errors'].append('recommended_move_mistake')
                     if item['evaluation_error'] > self.child_threshold:
                         acceptance['errors'].append('evaluation_error_exceeds_threshold')
-                    offending = offending or child
+                    if offending is None:
+                        offending, offending_generation = child, item
             step['children'] = children
             if offending is not None:
                 self.counts['recursive_descents'] += 1
                 root = offending
+                if self.reuse_child_analysis:
+                    cached_child = offending_generation
                 continue
             children.sort(key=lambda c: order_score(c['root_evaluation']), reverse=True)
             selected = children[0]
@@ -373,6 +440,10 @@ def main():
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
     parser.add_argument('--max-root-retries', type=int,
                         help='Regenerate malformed numerical root evaluations; excludes the initial attempt')
+    parser.add_argument('--root-candidate-policy', choices=['strict', 'paper_fill'],
+                        help='Keep raw student output and optionally fill mining candidates from engine MultiPV')
+    parser.add_argument('--reuse-child-analysis', action='store_true', default=None,
+                        help='Reuse a numerically parsed child when that exact full-history position is recursed')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
@@ -385,8 +456,11 @@ def main():
     if args.max_root_retries is not None and (args.max_root_retries < 0 or
             args.max_root_retries and generation_policy is None):
         raise ValueError('Root retries require a nonnegative budget and stochastic generation')
+    checked_search_extensions(args.root_candidate_policy or 'strict', bool(args.reuse_child_analysis),
+                              args.max_root_retries)
     arguments = {k: v for k, v in vars(args).items()
-                 if k not in {'student_generation_config', 'max_root_retries'} or v is not None}
+                 if k not in {'student_generation_config', 'max_root_retries', 'root_candidate_policy',
+                              'reuse_child_analysis'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -444,7 +518,9 @@ def main():
                                 args.nodes, args.max_depth,
                                 child_contract=args.child_contract, record_oracle_query=record_oracle_query,
                                 generation_policy=generation_policy, generation_seed=args.seed,
-                                max_root_retries=args.max_root_retries)
+                                max_root_retries=args.max_root_retries,
+                                root_candidate_policy=args.root_candidate_policy or 'strict',
+                                reuse_child_analysis=bool(args.reuse_child_analysis))
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -487,6 +563,13 @@ def main():
                      root_evaluation_generations_this_session=miner.counts['root_evaluation_generations'],
                      root_evaluation_retries_this_session=miner.counts['root_evaluation_retries'],
                      root_evaluation_retry_exhaustions_this_session=miner.counts['root_evaluation_retry_exhaustions'])
+    if args.root_candidate_policy is not None or args.reuse_child_analysis is not None:
+        proof.update(root_candidate_policy=args.root_candidate_policy or 'strict',
+                     reused_child_analysis_enabled=bool(args.reuse_child_analysis),
+                     engine_filled_candidates_this_session=miner.counts['engine_filled_root_candidates'],
+                     reused_child_root_analyses_this_session=miner.counts['reused_child_root_analyses'],
+                     unusable_cached_child_evaluations_this_session=miner.counts['unusable_cached_child_evaluations'],
+                     candidate_preparation_is_mining_only=True)
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
