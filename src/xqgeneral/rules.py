@@ -183,6 +183,14 @@ def square_controllers(fen, square):
 
 def adjudicate(initial_fen, moves):
     """Use full history and claim optional engine-rule outcomes in the match protocol."""
+    ended, winner, reason = _adjudication(initial_fen, tuple(moves))
+    return {'ended': ended, 'winner': winner, 'reason': reason,
+            'rule_profile': 'pyffish-0.0.90-xiangqi-AXF'}
+
+
+@lru_cache(maxsize=16384)
+def _adjudication(initial_fen, moves):
+    """Cache immutable outcomes by the initial FEN and entire move history."""
     history = replay(initial_fen, moves)
     converted = [to_fairy(move) for move in moves]
     for kind, function in [("variant_end", pyffish.is_immediate_game_end),
@@ -191,11 +199,10 @@ def adjudicate(initial_fen, moves):
         if ended:
             # The result integer is undefined whenever the boolean flag is false.
             winner = None if value == 0 else ("red" if (value > 0) == (history[-1].split()[1] == "w") else "black")
-            return {"ended": True, "winner": winner, "reason": kind, "rule_profile": "pyffish-0.0.90-xiangqi-AXF"}
+            return True, winner, kind
     if not legal_moves(history[-1]):
-        return {"ended": True, "winner": "black" if history[-1].split()[1] == "w" else "red",
-                "reason": "checkmate_or_stalemate_loss", "rule_profile": "pyffish-0.0.90-xiangqi-AXF"}
-    return {"ended": False, "winner": None, "reason": None, "rule_profile": "pyffish-0.0.90-xiangqi-AXF"}
+        return True, "black" if history[-1].split()[1] == "w" else "red", "checkmate_or_stalemate_loss"
+    return False, None, None
 
 
 def prompt(record):

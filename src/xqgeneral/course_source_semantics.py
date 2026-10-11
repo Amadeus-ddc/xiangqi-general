@@ -1,4 +1,5 @@
 """Native target classes and complete terminal-source footprint semantics."""
+from functools import lru_cache
 from .evidence import position_key
 from .rules import gives_check, in_check, legal_moves, replay
 from .symmetry import mirror_fen
@@ -8,6 +9,12 @@ NEAR_MATE_PLIES = 6
 
 def native_classes(fen, mate_distance=None):
     """Classes describe the queried board; near-mate needs an actual source witness."""
+    return list(_native_classes(fen, mate_distance))
+
+
+@lru_cache(maxsize=16384)
+def _native_classes(fen, mate_distance):
+    """Reuse native computation, with mate distance retained in the cache key."""
     moves, check = legal_moves(fen), in_check(fen)
     classes = ['generic']
     if any(gives_check(fen, move) for move in moves):
@@ -18,7 +25,7 @@ def native_classes(fen, mate_distance=None):
         classes.append('mate' if check else 'stalemate')
     if check and mate_distance is not None and 1 <= mate_distance <= NEAR_MATE_PLIES:
         classes.append('near_mate_check')
-    return classes
+    return tuple(classes)
 
 
 

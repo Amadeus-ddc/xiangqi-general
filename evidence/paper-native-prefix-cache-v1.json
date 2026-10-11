@@ -1,0 +1,69 @@
+{
+  "status": "complete",
+  "scope": "native preparation performance and same-source frozen-decoder bridge control; formal training remains incomplete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-11T04:48:43.525955+00:00",
+  "actual_training_roots": 4096,
+  "workers": 64,
+  "native_batch_size": 16,
+  "ordered_targets_sha256": "7bef0fb4d438919cc8753c5ccb6340ac13cda3f2e3db9e8957c3598490af89ed",
+  "ordered_native_targets_byte_identical": true,
+  "seconds_including_worker_startup": {
+    "old-1": 109.69204342737794,
+    "cached-1": 96.1344713428989,
+    "cached-16": 16.247514935210347
+  },
+  "sample_cache_only_speedup": 1.1410271663753262,
+  "sample_cache_and_batch_speedup": 6.7513120538613505,
+  "full_catalog_or_question_generation_speedup_measured": false,
+  "coactive_production_preparation_during_comparison": true,
+  "cache_keys": {
+    "adjudication": "initial FEN and complete move history",
+    "native_classes": "complete FEN and actual source mate distance"
+  },
+  "cached_values_immutable_and_public_results_fresh": true,
+  "saved_source_tags_still_recomputed_and_rejected_if_inconsistent": true,
+  "source_modules": 88,
+  "source_snapshot_map_sha256": "8be8ae92403f16687e8babe46368f2724737402a8fc2b60a52a76e84f1d912e8",
+  "canonical_passed": 1158,
+  "canonical_source_test_modules": 161,
+  "canonical_source_and_tests_unchanged": true,
+  "real_pretrained_four_gpu_bridge_control": {
+    "continuous_updates": 8,
+    "resume_after_update": 4,
+    "native_training_questions": 21,
+    "native_validation_questions": 14,
+    "trainable_parameters": 671806496,
+    "all_parameters_optimizer_rng_and_traces_bitwise_equal": true,
+    "all_32_zero_initialized_gates_opened": true,
+    "rank_zero_peak_allocated_gib": {
+      "continuous": 23.304731369018555,
+      "resumed": 23.332707405090332
+    },
+    "micro_batch_size": 1,
+    "short_probe_not_formal_memory_capacity": true,
+    "same_88_modules_as_native_optimized_course_preparation": true
+  },
+  "original_and_optimized_real_eight_update_trainable_optimizer_rng_states_bitwise_equal": true,
+  "new_dense_outputs_freshly_rehashed": 29,
+  "full_original_base_cache_freshly_rehashed_at_dense_control_start_only": true,
+  "failed_first_cpu_control_preserved": "multiprocessing worker entry lacked main guard; replacement v2 completed; production never signaled by the failed control",
+  "execution": {
+    "course_preparation": "runs/native-prefix-cache-v1/worktree/runs/paper-curriculum-preparation-v6",
+    "course_session": "xqgeneral-paper-curriculum-preparation-v6",
+    "course_data": "data/paper-courses-v4",
+    "formal_courses": "runs/curriculum-paper-v4",
+    "followthrough": "runs/native-prefix-cache-v1/worktree/runs/paper-followthrough-preparation-v5",
+    "followthrough_session": "xqgeneral-paper-followthrough-v5",
+    "sft_output": "runs/paper-sft-v5",
+    "sft_preserves_approved_memory_control_source": true,
+    "ownership_handoff": "runs/native-prefix-cache-v1/worktree/runs/native-preparation-handoff-v4",
+    "handoff_requires_actual_64_workers_and_advancing_source_before_retirement": true,
+    "handoff_required_before_any_gpu_feature_or_model_work": true
+  },
+  "formal_new_four_courses_completed": false,
+  "formal_explanation_sft_completed": false,
+  "search_distillation_completed": false,
+  "strength_or_coaching_quality_proven": false,
+  "goal_complete": false
+}

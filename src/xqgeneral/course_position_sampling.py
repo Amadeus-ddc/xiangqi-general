@@ -4,7 +4,7 @@ from collections import deque
 from concurrent.futures import ProcessPoolExecutor
 from copy import deepcopy
 import hashlib
-from itertools import groupby
+from itertools import groupby, islice
 import json
 import multiprocessing
 import random
@@ -119,23 +119,33 @@ def weighted_interleave(streams, seen, counters):
         yield source['label'], candidate
 
 
-def catalog_inputs(roots, workers=1):
+def _root_batch_targets(roots):
+    return [root_targets(root) for root in roots]
+
+
+def catalog_inputs(roots, workers=1, *, batch_size=1):
     """Bounded ordered native workers; catalog IDs remain in original file order."""
     if type(workers) is not int or workers < 1:
         raise ValueError('Positive native position worker count required')
+    if type(batch_size) is not int or batch_size < 1:
+        raise ValueError('Positive native position batch size required')
+    source_iter = iter(roots)
+    def batches():
+        while batch := list(islice(source_iter, batch_size)):
+            yield batch
     if workers == 1:
-        for root in roots:
-            yield root, root_targets(root)
+        for batch in batches():
+            yield from zip(batch, _root_batch_targets(batch), strict=True)
         return
     with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn')) as pool:
         pending = deque()
-        for root in roots:
-            pending.append((root, pool.submit(root_targets, root)))
+        for batch in batches():
+            pending.append((batch, pool.submit(_root_batch_targets, batch)))
             if len(pending) >= workers * 2:
                 source, job = pending.popleft()
-                yield source, job.result()
+                yield from zip(source, job.result(), strict=True)
         for source, job in pending:
-            yield source, job.result()
+            yield from zip(source, job.result(), strict=True)
 
 
 class PositionCatalog:

@@ -49,6 +49,56 @@ def small_budgets(n=1):
             for split in ('train', 'validation', 'test')}
 
 
+def test_native_classes_reuse_identical_boards_without_sharing_mutable_labels(monkeypatch):
+    from xqgeneral import rules
+    from xqgeneral.course_source_semantics import native_classes
+    fen = CHECK.rsplit(' ', 1)[0] + ' 8918'
+    original = rules.pyffish.gives_check
+    calls = []
+    def counted(*args):
+        calls.append(args)
+        return original(*args)
+    monkeypatch.setattr(rules.pyffish, 'gives_check', counted)
+    before = native_classes(fen, 1)
+    count = len(calls)
+    assert count and 'near_mate_check' in before
+    before.append('corrupted')
+    assert 'corrupted' not in native_classes(fen, 1)
+    assert len(calls) == count
+    assert 'near_mate_check' not in native_classes(fen, 7)
+    assert 'near_mate_check' not in native_classes(fen)
+
+
+@pytest.mark.parametrize('workers', [1, 2])
+def test_batched_native_workers_preserve_root_order_and_final_partial_batch(tmp_path, workers):
+    from xqgeneral.course_position_sampling import catalog_inputs
+    _, _, roots = fixture(tmp_path)
+    roots = roots[:5]
+    expected = [(root, root_targets(root)) for root in roots]
+    assert list(catalog_inputs(iter(roots), workers, batch_size=3)) == expected
+
+
+@pytest.mark.parametrize('batch_size', [0, -1, True, 1.5])
+def test_native_batch_size_rejects_invalid_values(batch_size):
+    from xqgeneral.course_position_sampling import catalog_inputs
+    with pytest.raises(ValueError, match='batch'):
+        list(catalog_inputs([], batch_size=batch_size))
+
+
+def test_batched_paper_corpus_preserves_every_question_and_complete_readback(tmp_path):
+    roots, proof, _ = fixture(tmp_path)
+    arguments = dict(sampling_profile=SAMPLING_PROFILE, position_sampling_profile=POSITION_PROFILE,
+                     task_position_budgets=small_budgets(), color_mirror=False)
+    build([roots], [proof], tmp_path/'ordinary', **arguments)
+    build([roots], [proof], tmp_path/'batched', position_workers=2, position_batch_size=3, **arguments)
+    for split in ('train', 'validation', 'test'):
+        assert (tmp_path/'ordinary'/f'{split}.jsonl').read_bytes() == (tmp_path/'batched'/f'{split}.jsonl').read_bytes()
+    saved = json.loads((tmp_path/'batched/manifest.json').read_text())
+    assert saved['config']['position_batch_size'] == 3
+    result = readback(tmp_path/'batched', tmp_path/'readback')
+    assert result['questions_regenerated_and_compared'] > 0
+
+
 def test_author_requested_position_budgets_and_mixtures_match_yaml_counts():
     budgets = position_budgets()
     assert sum(n * TRAIN_QUERIES[t] for t, n in budgets['train']['static_current'].items()) == 12800004
