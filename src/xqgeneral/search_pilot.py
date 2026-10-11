@@ -13,6 +13,7 @@ from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs
 from .sampling import checked_seed, search_generation_policy
 from .search_distillation import checked_search_extensions
+from .search_critical import checked_acceptance_policy
 
 
 def pilot_spec(config, bound):
@@ -27,6 +28,8 @@ def pilot_spec(config, bound):
         raise ValueError('Root retries require a nonnegative integer budget and stochastic generation')
     checked_search_extensions(config.get('root_candidate_policy', 'strict'),
         config.get('reuse_child_analysis', False), config.get('max_root_retries'))
+    checked_acceptance_policy(config.get('acceptance_policy', 'strict'), config.get('root_candidate_policy', 'strict'),
+        config['child_contract'], config.get('max_root_retries'), config.get('min_clean_ply', 1))
     for key in ['limit', 'nodes', 'teacher_max_new_tokens']:
         if type(config[key]) is not int or config[key] <= 0:
             raise ValueError('Positive integer search pilot budgets are required')
@@ -178,6 +181,9 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             arguments['root_candidate_policy'] = config['root_candidate_policy']
         if config.get('reuse_child_analysis') is True:
             arguments['reuse_child_analysis'] = True
+        for key in ['acceptance_policy', 'min_clean_ply']:
+            if config.get(key) is not None:
+                arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
         queries = load_jsonl(mining / 'queries.jsonl')
         attempts = load_jsonl(mining / 'results.partial.jsonl')

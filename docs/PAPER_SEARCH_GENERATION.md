@@ -1,4 +1,4 @@
-# 搜索学生的采样设置
+# 搜索生成与论文递归规则
 
 固定作者版本 `c372da22ca75e95c3c79bee8a83c220fc54d0dcb` 的 [mine.yaml](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/mine.yaml) 声明学生温度 0.6、top-k 20、top-p 0.95，最多 4096 个输出 token。[本地生成配置](../configs/paper-search-generation-v1.json)沿用这些数值，显式启用采样。
 
@@ -16,10 +16,11 @@
   --recorded-inputs "$XQ_FRESH_ISOLATED_SEARCH_INPUTS" --seed 20260828 \
   --student-generation-config configs/paper-search-generation-v1.json --max-root-retries 3 \
   --root-candidate-policy paper_fill --reuse-child-analysis \
+  --acceptance-policy paper_recursive --min-clean-ply 1 --child-contract move_eval \
   --output runs/sampled-search/mining
 ```
 
-路径须指向实际完成的四课、讲解 SFT 及重新隔离的搜索来源。[候选补齐与子分析复用模板](../configs/search-paper-candidates-pilot-v1.json)通过现有 `search_pilot` 串联搜索、教师汇总和收取；它等待对应讲解能力验证，数据／缓存／父权重及实际队列路径需要统一。原[根重试模板](../configs/search-paper-retry-pilot-v1.json)与[采样模板](../configs/search-paper-sampled-pilot-v1.json)保留。模板仍只有 512 根，汇总输出预算仍是 1536，不能把它当成正式论文整轮。
+路径须指向实际完成的四课、讲解 SFT 及重新隔离的搜索来源。[递归接受模板](../configs/search-paper-recursive-pilot-v1.json)通过现有 `search_pilot` 串联搜索、教师汇总和收取；它等待对应讲解能力验证，数据／缓存／父权重及实际队列路径需要统一。原[候选／复用模板](../configs/search-paper-candidates-pilot-v1.json)、[根重试模板](../configs/search-paper-retry-pilot-v1.json)与[采样模板](../configs/search-paper-sampled-pilot-v1.json)保留。模板仍只有 512 根，汇总输出预算仍是 1536，不能把它当成正式论文整轮。
 
 配置文件原字节参与搜索与试批合同。搜索输入包括特征清单、完整历史键目录和全部存储分片；配置、分片或执行来源变动不能续写原实验。新采样实验还绑定实际 Torch／Transformers 版本。已有冻结课程和等待入口不随新配置修改。
 
@@ -45,6 +46,16 @@
 
 真实控制中还修正了 Pikafish 的中断 MultiPV 解析：部分迭代中两个名次指向同一走法时，按已观察的精确评分补回不同候选；上下界结果不当作精确评分，原日志和各候选实际深度保留。失败控制及其冻结源码保留，原生同一条日志可复现旧解析器只有两个候选、修正后得到三个。
 
+## 变化核验与递归选择
+
+显式 `paper_recursive` 对照作者 [子变化核验](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/self_distill/recursion.py#L327)、[变化比较](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/self_distill/recursion.py#L463)及[递归决策](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/datagen/self_distill/recursion.py#L566)。每个子节点只生成一次，独立解析数值评估、复演主要变化，并对所有合法步实际查询引擎。首个非法走法或胜率下降达到 0.10 的走法之后的后缀不进入汇总；至少保留一个核验正确的子走法，真正终局可以保留零步。完整原文与结构失败仍留在轨迹里，未选分支的全部可达历史也先检查保留集隔离。
+
+模型从原生质量排序的子节点中推断最优变化。错误排序导致走法质量下降至少 0.05 时，递归到数值误差最大的子节点；选中子评估距真实根达到 0.10 时，递归到原生最优子节点。数值缺失、无可用正确前缀和变化没有改进也各自选择对应子节点递归，原子分析可按完整历史复用。
+
+新旧变化在首个分歧处比较：合法变化修复非法变化可以接受，两条合法变化用相同完整历史和节点预算的受限引擎查询比较评分。变化一致或只相差合法前缀时，要求新数值评估严格更接近真实根。被截掉的首个坏走法保留为比较边界，不能用截断掩盖新变化的错误。汇总候选按推断排序，使建议走法与候选首位一致；原生排序另留在轨迹里。
+
+本地使用中国象棋完整历史、结构化 JSON 和 Pikafish 的材料条件 WDL；不是作者的国际象棋文本解析或 Stockfish 校准。最终 JSON 变化最多 32 步，超长目标直接拒收，不静默裁剪。该策略要求显式候选补齐、数值根检查与 `move_eval` 子节点合同；省略选项仍运行旧严格策略。策略或最短正确前缀设置变更会在续跑加载学生之前拒收。
+
 ## 已完成的控制
 
 固定 90 份执行模块，以随机初始化的小型 GPT-2 在 CPU 上实际调用 `Predictor`；没有加载预训练学生、专家或汇总教师。64 个种子的八 token 结果均与独立的完整前缀推理、温度／top-k／top-p 筛选和显式随机生成器逐字一致。32 个根的连续处理、跳过已完成前 11 根及倒序处理结果一致，全部原始非法输出保持拒收。另一实例实际生成了 4096 个输出 token，未截为旧 768 预算。
@@ -55,8 +66,8 @@
 
 候选与复用控制使用 32 盘不同真实棋谱的训练侧历史，实际执行 64 次完整历史 Pikafish 查询，每次 10 万节点，补入 62 个实际 MultiPV 候选，32 个数值子分析成功复用。独立读回重建全部 64 条历史、核对原生精确评分与保留原文，并重新绑定十份输入、三份输出与 90 份源码。模型候选错误和递归触发是构造夹具，子分析取自实际引擎；没有加载预训练学生或讲解教师，也没有产生蒸馏标签。受控多层递归另覆盖数值缓存失败、新生成、不同历史拒收、保留集隔离和设置变更拒收。见 [候选与复用证据](../evidence/paper-search-candidates-reuse-v1.json)。
 
-## 后续验收
+新策略以作者未修改的函数 AST 做了 256 组决策、256 组前缀截断及 256 组比较边界对照，全部一致；另六组首处分歧对照使用中国象棋棋盘适配器，不宣称复现原国际象棋规则引擎。32 盘真实棋谱训练侧控制实际查询 Pikafish 154 次，保留 144 条构造生成原文；8 次递归决策中实际复用 6 条子分析。30 条控制查询通过汇总条件、2 条达到控制递归上限，没有调用学生或讲解教师。这些是引擎构造夹具，不是学生产出率或训练标签。独立读回 154 条完整查询历史、449 份原生精确评分、全部原文及正确前缀；全套 1272 项通过，169 份源码／测试不变。见 [递归接受证据](../evidence/paper-search-recursive-acceptance-v1.json)。
 
-采样、根重试、候选补齐和子分析复用只是整轮准备的一部分。本地仍使用较严格的原变化／子变化与首处分歧改进门槛。作者还会截断子变化的错误后缀，并在变化一致或只是合法前缀时比较数值评估是否更准确；错误子排序、选中子评估偏差与截断边界也有指定递归条件。这些接受／递归条件尚未全部对齐，不能称为完整作者搜索。
+## 后续验收
 
 工作批量／并发、汇总上下文 16384 与输出 8192，以及正式合格标签产出仍待执行。先完成新四课、讲解 SFT、能力与对弈基线，再测合格产出并扩大搜索、训练实际蒸馏轮；最终棋力与教学验收仍使用独立保留集。

@@ -16,6 +16,7 @@ from .search_inputs import prepared_training_roots, training_roots
 from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_software,
                        search_generation_policy)
 from .feature_store import feature_paths
+from .search_critical import checked_acceptance_policy, mine_paper
 
 
 def first_divergence(fen, before, after):
@@ -41,7 +42,7 @@ def root_evaluation(child):
     if score['perspective'] != 'side_to_move':
         raise ValueError('Child score has an incompatible perspective')
     value = -score['value']
-    if score['type'] == 'mate' and value > 0:
+    if score['type'] == 'mate' and value >= 0:
         value += 1
     return {'type': score['type'], 'value': value, 'perspective': 'side_to_move'}
 
@@ -113,7 +114,8 @@ class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
                  record_oracle_query=None, generation_policy=None, generation_seed=0,
-                 max_root_retries=None, root_candidate_policy='strict', reuse_child_analysis=False):
+                 max_root_retries=None, root_candidate_policy='strict', reuse_child_analysis=False,
+                 acceptance_policy='strict', min_clean_ply=1):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -132,6 +134,8 @@ class SearchMiner:
         self.max_root_retries = max_root_retries
         checked_search_extensions(root_candidate_policy, reuse_child_analysis, max_root_retries)
         self.root_candidate_policy, self.reuse_child_analysis = root_candidate_policy, reuse_child_analysis
+        checked_acceptance_policy(acceptance_policy, root_candidate_policy, child_contract, max_root_retries, min_clean_ply)
+        self.acceptance_policy, self.min_clean_ply = acceptance_policy, min_clean_ply
 
     def analyze(self, row, restricted=None):
         key = row['feature_key'], tuple(restricted or [])
@@ -261,6 +265,8 @@ class SearchMiner:
         return {'valid': not errors, 'errors': errors, 'contract': 'move_eval'}
 
     def mine(self, original):
+        if self.acceptance_policy == 'paper_recursive':
+            return mine_paper(self, original)
         self.generation_root, self.generation_index = original, 0
         root = dict(original, question=EXPLANATION_QUESTION, future_moves=[])
         trace, cached_child = [], None
@@ -388,39 +394,49 @@ class SearchMiner:
                                      'after_probability': p_new, 'common_prefix': prefix}
             if p_new <= p_old:
                 return None, trace, 'pv_does_not_strictly_improve'
-            best_candidate = next(c for c in oracle['candidates'] if c['move'] == oracle['best_move'])
-            target = {'move': selected['move'], 'pv': selected['root_pv'],
-                      'candidates': [c['move'] for c in children],
-                      'branches': [{'move': c['move'], 'pv': c['root_pv'], 'evaluation': c['root_evaluation']}
-                                   for c in children],
-                      'evaluation': {'type': best_candidate['score_type'], 'value': best_candidate['score'],
-                                     'perspective': 'side_to_move'}, 'facts': move_facts(root['fen'], selected['move'])}
-            content = {'root_side': side(root['fen']), 'root_fen': root['fen'],
-                       'root_board': {square: piece_name(piece) for square, piece in piece_map(root['fen']).items()},
-                       'target_fields': target,
-                       'root_line_facts': [{'move': c['move'], 'facts': line_facts(root['fen'], c['root_pv'],
-                                                                               include_positions=True)}
-                                           for c in children],
-                       'verified_child_analyses': [{'move': c['move'], 'analysis': c['analysis'],
-                                                     'terminal_outcome': c.get('outcome')} for c in children]}
-            if root.get('recorded_source_kind') in {'recorded_tactical_line', 'recorded_tactical_position'}:
-                content['recorded_source_context'] = root['recorded_source_context']
-            if self.child_contract == 'move_eval':
-                del content['verified_child_analyses']
-                content['child_analyses'] = [{'move': c['move'], 'terminal_outcome': c.get('outcome'),
-                    'recommended_move': c['analysis'].get('move') if c['analysis'] else None,
-                    'evaluation': c['analysis'].get('evaluation') if c['analysis'] else None,
-                    'used_pv': c['root_pv'][1:],
-                    'unverified_explanation': c['analysis'].get('explanation') if c['analysis'] else None,
-                    'full_output_verification': c.get('verification'),
-                    'move_evaluation_verification': c.get('child_acceptance')} for c in children]
-            messages = consolidation_messages(content, root['fen'], target)
-            self.counts['mined_improvements'] += 1
-            return {'id': root['id'] + '-search', 'record': root, 'target_fields': target,
-                    'messages': messages, 'source_root_id': original['id'], 'depth': depth,
-                    'selected_root_move_loss': selected_loss,
-                    'child_contract': self.child_contract}, trace, 'accepted_for_consolidation'
+            return self.consolidation_query(original, root, children, selected, oracle, selected_loss, depth), trace, 'accepted_for_consolidation'
         return None, trace, 'recursion_limit'
+
+
+    def consolidation_query(self, original, root, children, selected, oracle, selected_loss, depth):
+        best_candidate = next(c for c in oracle['candidates'] if c['move'] == oracle['best_move'])
+        target = {'move': selected['move'], 'pv': selected['root_pv'],
+                  'candidates': [c['move'] for c in children],
+                  'branches': [{'move': c['move'], 'pv': c['root_pv'], 'evaluation': c['root_evaluation']}
+                               for c in children],
+                  'evaluation': {'type': best_candidate['score_type'], 'value': best_candidate['score'],
+                                 'perspective': 'side_to_move'}, 'facts': move_facts(root['fen'], selected['move'])}
+        content = {'root_side': side(root['fen']), 'root_fen': root['fen'],
+                   'root_board': {square: piece_name(piece) for square, piece in piece_map(root['fen']).items()},
+                   'target_fields': target,
+                   'root_line_facts': [{'move': c['move'], 'facts': line_facts(root['fen'], c['root_pv'],
+                                                                           include_positions=True)}
+                                       for c in children],
+                   'verified_child_analyses': [{'move': c['move'], 'analysis': c['analysis'],
+                                                 'terminal_outcome': c.get('outcome')} for c in children]}
+        if root.get('recorded_source_kind') in {'recorded_tactical_line', 'recorded_tactical_position'}:
+            content['recorded_source_context'] = root['recorded_source_context']
+        if self.child_contract == 'move_eval':
+            del content['verified_child_analyses']
+            content['child_analyses'] = [{'move': c['move'], 'terminal_outcome': c.get('outcome'),
+                'recommended_move': c['analysis'].get('move') if c['analysis'] else None,
+                'evaluation': c['analysis'].get('evaluation') if c['analysis'] else None,
+                'used_pv': c['root_pv'][1:],
+                'unverified_explanation': c['analysis'].get('explanation') if c['analysis'] else None,
+                'full_output_verification': c.get('verification'),
+                'move_evaluation_verification': c.get('child_acceptance')} for c in children]
+        if self.acceptance_policy == 'paper_recursive':
+            content['search_acceptance_policy'] = 'paper_recursive'
+            for entry, child in zip(content['child_analyses'], children):
+                sanitation = child['sanitation']
+                entry['critical_sanitation'] = {key:sanitation.get(key) for key in
+                    ['accepted_ply', 'accepted_uci', 'valid_checked_prefix', 'full_line_legal']}
+        messages = consolidation_messages(content, root['fen'], target)
+        self.counts['mined_improvements'] += 1
+        return {'id': root['id'] + '-search', 'record': root, 'target_fields': target,
+                'messages': messages, 'source_root_id': original['id'], 'depth': depth,
+                'selected_root_move_loss': selected_loss,
+                'child_contract': self.child_contract}
 
 
 def main():
@@ -444,6 +460,9 @@ def main():
                         help='Keep raw student output and optionally fill mining candidates from engine MultiPV')
     parser.add_argument('--reuse-child-analysis', action='store_true', default=None,
                         help='Reuse a numerically parsed child when that exact full-history position is recursed')
+    parser.add_argument('--acceptance-policy', choices=['strict', 'paper_recursive'],
+                        help='Explicit author-style clean-prefix, evaluation-improvement and recursive acceptance')
+    parser.add_argument('--min-clean-ply', type=int, help='Minimum engine-checked child prefix; paper default is one')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
@@ -458,9 +477,11 @@ def main():
         raise ValueError('Root retries require a nonnegative budget and stochastic generation')
     checked_search_extensions(args.root_candidate_policy or 'strict', bool(args.reuse_child_analysis),
                               args.max_root_retries)
+    checked_acceptance_policy(args.acceptance_policy or 'strict', args.root_candidate_policy or 'strict',
+                              args.child_contract, args.max_root_retries, 1 if args.min_clean_ply is None else args.min_clean_ply)
     arguments = {k: v for k, v in vars(args).items()
                  if k not in {'student_generation_config', 'max_root_retries', 'root_candidate_policy',
-                              'reuse_child_analysis'} or v is not None}
+                              'reuse_child_analysis', 'acceptance_policy', 'min_clean_ply'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -520,7 +541,9 @@ def main():
                                 generation_policy=generation_policy, generation_seed=args.seed,
                                 max_root_retries=args.max_root_retries,
                                 root_candidate_policy=args.root_candidate_policy or 'strict',
-                                reuse_child_analysis=bool(args.reuse_child_analysis))
+                                reuse_child_analysis=bool(args.reuse_child_analysis),
+                                acceptance_policy=args.acceptance_policy or 'strict',
+                                min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply)
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -570,6 +593,10 @@ def main():
                      reused_child_root_analyses_this_session=miner.counts['reused_child_root_analyses'],
                      unusable_cached_child_evaluations_this_session=miner.counts['unusable_cached_child_evaluations'],
                      candidate_preparation_is_mining_only=True)
+    if args.acceptance_policy is not None or args.min_clean_ply is not None:
+        proof.update(acceptance_policy=args.acceptance_policy or 'strict',
+                     min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
+                     raw_outputs_preserved=True, clean_prefixes_are_mining_only=True)
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)

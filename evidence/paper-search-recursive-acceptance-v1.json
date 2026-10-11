@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "kind": "paper_recursive_search_acceptance_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-11T10:32:18.855496+00:00",
+  "source_revision_before_commit": "43976cc777f43fd2b1ca3c80405eb25a4ac514f0",
+  "author": {
+    "revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "bindings": [
+      {
+        "path": "configs/self_distill/iteration/mine.yaml",
+        "bytes": 1050,
+        "sha256": "7bc5d323a74616be9e2d5b5510d5da94a515d73ce65ece7543932cfe1ad5cac0",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/recursion.py",
+        "bytes": 43677,
+        "sha256": "2be9d4de09a6842e908e64f2f187a9ac85c1045af4ee90a1d2a5c8ce5739664d",
+        "matches_pinned_git_blob": true
+      },
+      {
+        "path": "datagen/self_distill/analysis.py",
+        "bytes": 14700,
+        "sha256": "2a3fecedea8073bc8f809167f4cedd96fa365403fb5ae967ffa089cada2be983",
+        "matches_pinned_git_blob": true
+      }
+    ],
+    "child_audit_and_sampling_lines": [
+      327,
+      460
+    ],
+    "divergence_and_acceptance_lines": [
+      463,
+      563
+    ],
+    "mandatory_decision_lines": [
+      566,
+      645
+    ]
+  },
+  "acceptance_profile": {
+    "name": "paper_recursive",
+    "requires": [
+      "paper_fill",
+      "move_eval",
+      "explicit numerical root retries"
+    ],
+    "min_clean_ply": 1,
+    "child_generations_per_attempt": 1,
+    "child_retry_budget": 0,
+    "mistake_drop": 0.1,
+    "ordering_drop": 0.05,
+    "evaluation_truth_tolerance": 0.1,
+    "numerical_and_clean_prefix_acceptance_separate_from_full_structural_validity": true,
+    "equivalent_or_prefix_lines_accept_only_strictly_closer_evaluation": true,
+    "truncation_boundary_prevents_hidden_regressions": true,
+    "ordering_error_recurses_largest_child_evaluation_error": true,
+    "inferred_truth_error_recurses_native_best_child": true,
+    "invalid_prefix_recurses_first_bad_child_in_native_order": true,
+    "failed_divergence_recurses_selected_child": true,
+    "raw_outputs_and_failures_unchanged": true,
+    "all_raw_reachable_branches_reserved_before_sanitation": true,
+    "target_preferred_candidate_order_consistent": true,
+    "profile_changes_rejected_before_resumed_student_load": true
+  },
+  "adaptation_boundaries": {
+    "encoding": "structured Xiangqi JSON and complete supplied histories",
+    "probabilities": "pinned material-conditioned Pikafish WDL, not author Stockfish calibration",
+    "rules": "Xiangqi full-history adjudication, not chess.Board",
+    "maximum_target_pv_plies": 32,
+    "longer_targets_rejected_without_silent_clipping": true,
+    "native_control_max_recursions": 1,
+    "formal_template_max_recursions": 5,
+    "author_divergence_control_uses_a_Xiangqi_board_adapter_not_the_original_chess_rule_engine": true,
+    "restricted_divergence_query_compares_two_moves_at_the_same_history_and_budget": true
+  },
+  "author_function_control": {
+    "run_relative_path": "runs/paper-search-acceptance-v1/worktree/runs/paper-decision-author-control-v1",
+    "manifest_sha256": "6fb6be206356eb60d042721eb3510cf85bf290ccfddc151e805f91e2f8839fa1",
+    "verification": {
+      "unmodified_author_ast_decision_matches": 256,
+      "unmodified_author_ast_sanitation_matches": 256,
+      "unmodified_author_ast_boundary_matches": 256,
+      "author_divergence_with_xiangqi_board_adapter_matches": 6,
+      "author_rule_engine_not_reproduced_by_adapter": true,
+      "decision_outcome_counts": {
+        "incorrect inaccurate child ordering": 126,
+        "inferred evaluation outside truth limit": 55,
+        "child exhausted clean-prefix attempts": 12,
+        "child evaluation remained malformed": 59,
+        "controlled divergence": 4
+      },
+      "full_history_local_rules_used_for_divergence_adapter": true,
+      "inputs_and_source_unchanged": true,
+      "source_modules": 91,
+      "student_loaded": false,
+      "teacher_loaded": false,
+      "actual_distillation_labels": 0
+    }
+  },
+  "native_fixture_control": {
+    "run_relative_path": "runs/paper-search-acceptance-v1/worktree/runs/paper-recursive-native-control-v1",
+    "manifest_sha256": "1fa2339eccbb9c5a4f457089f94c75572b7489f4a7796b1c20a94ba40b02efc8",
+    "verification": {
+      "real_recorded_training_roots": 32,
+      "distinct_games": 32,
+      "actual_native_queries": 154,
+      "nodes_per_query": 100000,
+      "max_recursions": 1,
+      "fixture_accepted_for_consolidation_queries": 30,
+      "recursive_descents": 8,
+      "numeric_child_reuses": 6,
+      "raw_model_fixture_generations": 144,
+      "engine_filled_candidates": 62,
+      "all_accepted_target_histories_and_preferred_order_checked": true,
+      "outcome_reasons": {
+        "accepted_for_consolidation": 30,
+        "recursion_limit": 2
+      },
+      "source_modules": 91,
+      "inputs_and_source_unchanged": true,
+      "language_student_loaded": false,
+      "teacher_loaded": false,
+      "native_nnue_engine_loaded": true,
+      "sampling_in_this_control_is_fixture_metadata_only": true,
+      "actual_distillation_labels": 0,
+      "actual_student_yield_or_strength_not_proven": true,
+      "elapsed_seconds": 56.357549861073494
+    }
+  },
+  "independent_native_readback": {
+    "kind": "paper_recursive_independent_readback",
+    "verified_utc": "2026-10-11T10:26:10.541713+00:00",
+    "bound_control_input_outputs": 15,
+    "source_modules_each_control": 91,
+    "canonical_source_matches": true,
+    "real_recorded_training_roots": 32,
+    "actual_native_queries": 154,
+    "native_exact_score_rows": 449,
+    "full_query_histories_replayed": 154,
+    "raw_constructed_generations_preserved": 144,
+    "fixture_accepted_queries_checked": 30,
+    "recursive_descents_checked": 8,
+    "numerical_cache_reuses_checked": 6,
+    "audited_clean_child_prefixes_checked": 112,
+    "original_structural_failures_preserved": 112,
+    "native_rule_readback_uses_local_replay": true,
+    "pretrained_language_student_or_teacher_loaded": false,
+    "actual_distillation_labels": 0,
+    "actual_student_search_yield_or_strength_not_proven": true
+  },
+  "new_unit_cases": 32,
+  "legacy_focused_cases_before_new_profile": 76,
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-search-acceptance-v1/worktree/runs/paper-recursive-canonical-v1",
+    "manifest_sha256": "0eba45fa3ca33a7b7fe154bc0b2f0ee0ee1b39da4beeae31fe392be6b79b308e",
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 169,
+      "source_test_hashes_unchanged": true,
+      "elapsed_seconds": 335.1368686091155,
+      "test_summary": "1272 passed in 330.20s (0:05:30)",
+      "cpu_only": true
+    },
+    "source_and_test_files_currently_unchanged": 169
+  },
+  "production_boundaries": {
+    "running_native_preparation_and_reviewed_follower_not_modified": true,
+    "GPU_training_and_evaluation_entrypoints_not_modified": true,
+    "legacy_search_profile_remains_explicitly_strict": true,
+    "template_paths_require_actual_completed_four_course_and_sft_binding": true,
+    "student_fixture_acceptances_are_not_training_labels_or_student_yield": true
+  },
+  "remaining": [
+    "fresh formal four-course training and explanation SFT",
+    "paper batched/concurrent mining execution",
+    "paper teacher context 16384 and output 8192 limits",
+    "fresh search-source isolation against the completed new corpus",
+    "actual pretrained student search and accepted labels",
+    "adaptive real distillation rounds",
+    "independent strength and coaching acceptance"
+  ],
+  "actual_distillation_labels": 0,
+  "actual_student_search_yield_or_strength_not_proven": true,
+  "overall_goal_complete": false
+}
