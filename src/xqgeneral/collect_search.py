@@ -7,6 +7,7 @@ import shutil
 from .curriculum_data import verify_splits
 from .evidence import atomic_json, history_key, load_jsonl, manifest, write_jsonl
 from .explanations import EXPLANATION_QUESTION, continuation_positions, parse_explanation, validate_explanation
+from .search_critical import checked_acceptance_evidence
 from .recorded_search_inputs import ARTIFACTS, BoundInputs, prepared_roots
 from .rules import replay
 from .search_distillation import reserved_positions
@@ -19,6 +20,8 @@ def consolidated_label(query, response, teacher):
             any(identity.get(k) != teacher[k] for k in ['repository', 'revision', 'quantization', 'inference_dtype']) or
             identity.get('parameter_elements_by_dtype', {}).get('torch.bfloat16', 0) <= 0):
         raise ValueError('Response does not prove the authorized full BF16 teacher inference')
+    if identity.get('generation_profile') is not None and response.get('reasoning_completed') is not True:
+        raise ValueError('Teacher reasoning did not finish; its raw response remains preserved')
     prose = parse_explanation(response['text'])
     if set(prose) != {'explanation'} or not isinstance(prose['explanation'], str) or len(prose['explanation']) < 80:
         raise ValueError('Consolidator must supply Chinese prose, without replacing verified root fields')
@@ -80,9 +83,10 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
     required = ['unused_recorded_training_inputs', 'training_roots_only',
                 'heldout_positions_excluded', 'all_child_branch_positions_isolated',
                 'raw_child_reachable_prefixes_isolated', 'all_inferred_target_lines_history_validated',
-                'strict_pv_improvement_required', 'all_successful_oracle_queries_preserved']
+                'all_successful_oracle_queries_preserved']
     if any(proof.get(name) is not True for name in required):
         raise ValueError('Recorded mining lacks its complete isolation and search contract')
+    checked_acceptance_evidence(proof, config.get('acceptance_policy', 'strict'))
     inputs = saved.get('inputs', {})
 
     def declared(path):

@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "kind": "paper_consolidation_teacher_context_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_utc": "2026-10-11T13:07:09.534408+00:00",
+  "source_revision_before_commit": "cb85e49633870232bf500571c9c6c6fd859c2547",
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "quantization": "none",
+    "dtype": "bfloat16",
+    "parameter_elements": 27356728560
+  },
+  "generation_profile": {
+    "do_sample": true,
+    "temperature": 1.0,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_context_tokens": 16384,
+    "max_new_tokens": 8192,
+    "reasoning_effort": "low"
+  },
+  "implementation": "Hugging Face grouped batching; not the authors vLLM engine",
+  "context_semantics": "Per request output cap min(requested cap, context minus actual prompt); reject inputs with no output room; never truncate input. Group by effective cap and retain request order.",
+  "raw_thought_preservation": true,
+  "incomplete_thought_rejected": true,
+  "resume_profile_seed_and_cached_raw_response_checked": true,
+  "search_acceptance_evidence_matches_strict_or_paper_policy": true,
+  "gpu_control": {
+    "run_relative_path": "runs/paper-teacher-context-v1/worktree/runs/paper-teacher-window-control-v1",
+    "manifest_sha256": "cf8d4ac77413c8560b4c92aaa206712044a3129c81edc43bce929109b0bac985",
+    "verification": {
+      "actual_full_bf16_teacher_loaded": true,
+      "unquantized": true,
+      "parameter_elements_by_dtype": {
+        "torch.bfloat16": 27356728560
+      },
+      "all_parameters_on_one_gpu": true,
+      "physical_gpu": 2,
+      "configured_batch_size": 2,
+      "actual_consolidation_fixture_queries": 2,
+      "generation_profile": {
+        "do_sample": true,
+        "temperature": 1.0,
+        "top_k": 20,
+        "top_p": 0.95,
+        "max_context_tokens": 16384,
+        "max_new_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "responses": [
+        {
+          "id": "recorded-coach-01c0aaf03c6de16abb2b58884f4f7dd46b0fa7ddf52e56292c1ed7c53c9573e9-explanation-search",
+          "prompt_tokens": 2412,
+          "generated_tokens": 4954,
+          "effective_max_new_tokens": 8192,
+          "reasoning_completed": true,
+          "hit_generation_limit": false
+        },
+        {
+          "id": "recorded-coach-02c9d2c82f382728079a08407e920dc7099d5f9fae734b4f4ce5e0d831284b56-explanation-c6c5-search",
+          "prompt_tokens": 2892,
+          "generated_tokens": 2796,
+          "effective_max_new_tokens": 8192,
+          "reasoning_completed": true,
+          "hit_generation_limit": false
+        }
+      ],
+      "near_context_prompt_tokens": 16382,
+      "near_context_generated_tokens": 2,
+      "near_context_actual_output_cap": 2,
+      "overlong_prompt_tokens": 16384,
+      "overlong_prompt_neural_calls": 0,
+      "unmodified_installed_vllm_stop_function_matches": 33,
+      "vllm_version": "0.19.1",
+      "author_literal_settings_and_pinned_files_match": true,
+      "reasoning_raw_text_preserved": true,
+      "peak_allocated_gib": 56.93012619018555,
+      "peak_reserved_gib": 57.6953125,
+      "elapsed_seconds": 848.5608732160181,
+      "source_modules": 92,
+      "pretrained_language_student_loaded": false,
+      "actual_distillation_labels": 0,
+      "batch_size_16_capacity_or_actual_student_yield_not_proven": true,
+      "overall_goal_complete": false
+    }
+  },
+  "independent_readback": {
+    "verified_utc": "2026-10-11T13:07:09.534408+00:00",
+    "kind": "independent_paper_teacher_context_readback",
+    "bound_files": 40,
+    "bound_bytes": 55580725038,
+    "source_modules_each_control": 92,
+    "source_and_test_files_unchanged": 171,
+    "prompt_token_counts_rebuilt": [
+      2412,
+      2892
+    ],
+    "response_token_counts": [
+      4954,
+      2796
+    ],
+    "raw_thought_and_finished_responses_preserved": true,
+    "sampling_seed_and_batch_ids_checked": true,
+    "actual_neural_generation_calls_checked": 2,
+    "near_context_cap_tokens": 2,
+    "overflow_neural_calls": 0,
+    "fixture_prose_checks": [
+      {
+        "id": "recorded-coach-01c0aaf03c6de16abb2b58884f4f7dd46b0fa7ddf52e56292c1ed7c53c9573e9-explanation-search",
+        "structured_and_prose_move_checks": "passed",
+        "strategic_prose_fully_verified": false
+      },
+      {
+        "id": "recorded-coach-02c9d2c82f382728079a08407e920dc7099d5f9fae734b4f4ce5e0d831284b56-explanation-c6c5-search",
+        "structured_and_prose_move_checks": "passed",
+        "strategic_prose_fully_verified": false
+      }
+    ],
+    "neural_student_or_teacher_loaded_by_readback": false,
+    "actual_distillation_labels": 0,
+    "independent_strength_or_coaching_not_proven": true,
+    "overall_goal_complete": false
+  },
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-teacher-context-v1/worktree/runs/teacher-context-canonical-v2",
+    "manifest_sha256": "4177b3841517a102a380a5ed18fc2e43b0b8143d0bd334ae13e54bde75b1c377",
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 171,
+      "source_test_hashes_unchanged": true,
+      "test_summary": "1301 passed in 327.05s (0:05:27)",
+      "elapsed_seconds": 332.065262674354,
+      "cpu_only": true
+    }
+  },
+  "new_cases": 29,
+  "source_modules": 92,
+  "unchanged_source_and_test_files": 171,
+  "production_native_and_reviewed_follower_not_modified": true,
+  "four_courses_required_before_formal_sft_and_search": true,
+  "remaining": [
+    "actual new four courses and explanation SFT",
+    "batched or concurrent student mining",
+    "16-request full-window teacher capacity and throughput",
+    "fresh search-source isolation against the completed new corpus",
+    "actual trained-student searches and distillation labels",
+    "adaptive distillation training",
+    "independent strength and coaching acceptance"
+  ],
+  "actual_distillation_labels": 0,
+  "overall_goal_complete": false
+}

@@ -117,7 +117,7 @@ Qwen3-4B 本身在作者的解码器消融中被测试；它的使用有论文�
 
 作者 [挖掘配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/mine.yaml) 给出：三个候选分支，10 万节点 oracle，候选全部差时以 5 个百分点损失为注入条件，子节点走法损失／评价偏差阈值 10 个百分点，最多五次递归。先找出学生无法正确分析的根、但子节点能正确分析的局面；按主线首次分歧比较改进，再交给 Qwen3.8-27B 忠实汇总。训练标签可重写引擎数值评价；评测学生的原始非法回答始终保留，不能修成合法回答计分。
 
-这份公开配置的学生生成温度为 0.6、top-k=20、top-p=0.95，最多 4,096 个输出 token；[汇总配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/consolidate.yaml) 给 Qwen 最长 16,384 的上下文和 8,192 的输出，关闭额外子力提示；[收取配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/packing.yaml) 还在重写前拒收评价误差至少 7.5 个百分点的标签。正式实现须记录采样、长度与过滤设置；当前本地串行／贪心、较短输出的试批不能称为这些生成设置已经逐项复制。
+这份公开配置的学生生成温度为 0.6、top-k=20、top-p=0.95，最多 4,096 个输出 token；[汇总配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/consolidate.yaml) 给 Qwen 最长 16,384 的上下文和 8,192 的输出，关闭额外子力提示；[收取配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/self_distill/iteration/packing.yaml) 还在重写前拒收评价误差至少 7.5 个百分点的标签。正式实现须记录采样、长度与过滤设置；旧本地串行／贪心、较短输出的试批没有逐项复制这些设置；新的[汇总教师控制](PAPER_SEARCH_GENERATION.md)已实测对应长度、采样和 low 推理设置，使用 HF 批量实现并保留思考原文，原 vLLM 引擎与工作并发尚未执行。
 
 本地搜索实现保留这套主要机制；完整 BF16、未量化的 Qwen3.8-27B 已完成单条真实推理验证。现在排队的 512 条只是产出率试批，不是正式蒸馏规模，当前新标签和已训练蒸馏轮数均为零。
 

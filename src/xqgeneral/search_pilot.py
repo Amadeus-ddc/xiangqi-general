@@ -13,7 +13,8 @@ from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs
 from .sampling import checked_seed, search_generation_policy
 from .search_distillation import checked_search_extensions
-from .search_critical import checked_acceptance_policy
+from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
+from .teacher_generation import checked_budget, generation_profile
 
 
 def pilot_spec(config, bound):
@@ -35,6 +36,15 @@ def pilot_spec(config, bound):
             raise ValueError('Positive integer search pilot budgets are required')
     if type(config.get('teacher_batch_size', 1)) is not int or config.get('teacher_batch_size', 1) <= 0:
         raise ValueError('A positive integer teacher batch size is required')
+    checked_budget(config['teacher_max_new_tokens'], config.get('teacher_max_context_tokens'))
+    if config.get('teacher_generation_config') is not None:
+        profile = generation_profile(bound.json(config['teacher_generation_config']))
+        checked_seed(config.get('teacher_seed'))
+        if (profile['max_new_tokens'] != config['teacher_max_new_tokens'] or
+                profile['max_context_tokens'] != config.get('teacher_max_context_tokens')):
+            raise ValueError('Search pilot teacher lengths differ from its generation profile')
+    elif config.get('teacher_seed') is not None:
+        raise ValueError('A teacher seed requires an explicit stochastic generation profile')
     if (type(config['max_depth']) is not int or config['max_depth'] < 0 or
             type(config['seed']) is not int or config['child_contract'] not in {'full', 'move_eval'}):
         raise ValueError('Invalid recursive search pilot configuration')
@@ -197,8 +207,9 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         if any(mined['verification'].get(key) is not True for key in [
                 'training_roots_only', 'heldout_positions_excluded', 'all_child_branch_positions_isolated',
                 'raw_child_reachable_prefixes_isolated', 'all_inferred_target_lines_history_validated',
-                'strict_pv_improvement_required', 'all_successful_oracle_queries_preserved']):
+                'all_successful_oracle_queries_preserved']):
             raise ValueError('The actual miner must preserve its complete search and isolation contract')
+        checked_acceptance_evidence(mined['verification'], config.get('acceptance_policy', 'strict'))
         proofs = [validation_path, Path(pipeline) / 'manifest.json', mining / 'manifest.json']
         labels = []
         rejections = []
@@ -210,6 +221,10 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     'output': str(consolidation), 'max_new_tokens': config['teacher_max_new_tokens']}
             if config.get('teacher_batch_size', 1) != 1:
                 args['batch_size'] = config['teacher_batch_size']
+            for source_key, dest_key in [('teacher_max_context_tokens', 'max_context_tokens'),
+                    ('teacher_generation_config', 'generation_config'), ('teacher_seed', 'seed')]:
+                if config.get(source_key) is not None:
+                    args[dest_key] = config[source_key]
             teacher_proof = completed_stage('local_teacher', args, 'local_teacher_inference', consolidation, True)
             responses = load_jsonl(consolidation / 'responses.jsonl')
             if (len(responses) != len(queries) or len({row['id'] for row in responses}) != len(responses) or

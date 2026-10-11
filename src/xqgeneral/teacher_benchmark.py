@@ -14,6 +14,7 @@ from .clean_sft_evaluation import teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, file_signature, load_jsonl, manifest, write_jsonl
 from .local_teacher import LocalConsolidator
 from .recorded_search_inputs import BoundInputs
+from .search_critical import checked_acceptance_evidence
 
 
 KIND = 'clean_search_teacher_batch_benchmark'
@@ -101,9 +102,10 @@ def admitted_queries(pilot, pilot_contract, pilot_config, evaluation, bound):
             any(verified.get(key) is not True for key in [
                 'unused_recorded_training_inputs', 'training_roots_only', 'heldout_positions_excluded',
                 'all_child_branch_positions_isolated', 'raw_child_reachable_prefixes_isolated',
-                'all_inferred_target_lines_history_validated', 'strict_pv_improvement_required',
+                'all_inferred_target_lines_history_validated',
                 'all_successful_oracle_queries_preserved'])):
         raise ValueError('Actual training-query coverage, yield or heldout isolation changed')
+    checked_acceptance_evidence(verified, pilot_config.get('acceptance_policy', 'strict'))
     if (len({row['id'] for row in queries}) != len(queries) or
             any(not isinstance(row['id'], str) or not row['id'] or
                 not isinstance(row['messages'], list) or not row['messages'] or

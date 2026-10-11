@@ -16,7 +16,7 @@ from .search_inputs import prepared_training_roots, training_roots
 from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_software,
                        search_generation_policy)
 from .feature_store import feature_paths
-from .search_critical import checked_acceptance_policy, mine_paper
+from .search_critical import acceptance_evidence, checked_acceptance_policy, mine_paper
 
 
 def first_divergence(fen, before, after):
@@ -564,7 +564,8 @@ def main():
              'reasons': dict(Counter(r['reason'] for r in results)), 'new_session_counters': dict(miner.counts),
              'training_roots_only': True, 'heldout_positions_excluded': True,
              'all_child_branch_positions_isolated': True, 'full_history_termination_checked': True,
-             'strict_pv_improvement_required': True, 'probability_model': 'pinned_Pikafish_material_WDL',
+             **acceptance_evidence(args.acceptance_policy or 'strict'),
+             'probability_model': 'pinned_Pikafish_material_WDL',
              'teacher_consolidation_executed': False, 'student_generations_preserved': True,
              'child_contract': args.child_contract,
              'all_successful_oracle_queries_preserved': True,
