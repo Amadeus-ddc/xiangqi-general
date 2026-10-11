@@ -101,13 +101,13 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
 
 
 def position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
-                             budgets, report, scratch, workers, task_order_profile=None):
+                             budgets, report, scratch, workers, task_order_profile=None, batch_size=1):
     """Select one task and one locked horizon, then render only those questions."""
     with TemporaryDirectory(prefix='native-position-catalog-', dir=scratch) as directory:
         catalog = PositionCatalog(Path(directory) / 'sources.sqlite', prior_games=prior_games, prior_positions=prior_positions)
         try:
             sources = (root for name in roots for root in iter_jsonl(name))
-            for root, targets in catalog_inputs(sources, workers):
+            for root, targets in catalog_inputs(sources, workers, batch_size=batch_size):
                 catalog.add(root, targets)
             catalog.finish()
             for root, stage, task in catalog.selections(budgets, seed, report, task_order_profile):
@@ -123,15 +123,16 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
 
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
           reference_data=(), sampling_profile=None, position_sampling_profile=None,
-          task_position_budgets=None, position_workers=1, task_order_profile=None):
+          task_position_budgets=None, position_workers=1, task_order_profile=None, position_batch_size=1):
     output = Path(output)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
     sampler = make_sampler(sampling_profile)
     if (position_sampling_profile not in (None, POSITION_PROFILE) or
             type(position_workers) is not int or position_workers < 1 or
+            type(position_batch_size) is not int or position_batch_size < 1 or
             position_sampling_profile is None and (task_position_budgets is not None or position_workers != 1 or
-                                                   task_order_profile is not None) or
+                                                   task_order_profile is not None or position_batch_size != 1) or
             position_sampling_profile is not None and sampler is None):
         raise ValueError('Task position sampling requires its declared profile, answer sampler and positive workers')
     task_order(task_order_profile)
@@ -147,7 +148,8 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     ids, games = set(), set()
     position_report = {}
     groups = (position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
-                                      budgets, position_report, output, position_workers, task_order_profile) if budgets is not None else
+                                      budgets, position_report, output, position_workers, task_order_profile,
+                                      position_batch_size) if budgets is not None else
               question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler))
     try:
         for root, records in groups:
@@ -200,6 +202,8 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
         result['source_roots_by_split_are_selected_task_contexts'] = True
         config.update(position_sampling_profile=position_sampling_profile,
                       task_position_budgets=budgets, position_workers=position_workers)
+        if position_batch_size != 1:
+            config['position_batch_size'] = position_batch_size
         if task_order_profile:
             config['task_order_profile'] = task_order_profile
     atomic_json(output / 'manifest.json', manifest(DATA_KIND, config, inputs, paths.values(), result))
@@ -232,7 +236,10 @@ def readback(data, output):
     task_order(order_profile)
     if proof['verification'].get('task_order_profile') != order_profile:
         raise ValueError('Stored task ordering profile differs from its declared producer')
-    if not profile and any(k in config for k in ('task_position_budgets', 'position_workers', 'task_order_profile')):
+    batch_size = config.get('position_batch_size', 1)
+    if type(batch_size) is not int or batch_size < 1:
+        raise ValueError('Positive completed native position batch size required')
+    if not profile and any(k in config for k in ('task_position_budgets', 'position_workers', 'task_order_profile', 'position_batch_size')):
         raise ValueError('Undeclared completed position budget settings')
     checked_sources(config['roots'], config['source_manifests'])
     _, prior_games, prior_positions = reference_contract(config['reference_data'])
@@ -242,7 +249,8 @@ def readback(data, output):
     position_report = {}
     output.mkdir(parents=True)
     groups = (position_question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games,
-        prior_positions, sampler, budgets, position_report, output, config['position_workers'], order_profile) if profile else
+        prior_positions, sampler, budgets, position_report, output, config['position_workers'], order_profile,
+        batch_size) if profile else
         question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games, prior_positions, sampler))
     try:
         for _, records in groups:
@@ -297,16 +305,19 @@ def main():
     parser.add_argument('--position-sampling-profile', choices=[POSITION_PROFILE])
     parser.add_argument('--task-position-budgets', help='Explicit complete JSON position budgets; omitted uses author YAML counts')
     parser.add_argument('--position-workers', type=int, default=1)
+    parser.add_argument('--position-batch-size', type=int, default=1,
+                        help='Adjacent roots per native worker job; saved and replayed during readback')
     parser.add_argument('--task-order-profile', choices=[SCARCE_FIRST_PROFILE])
     args = parser.parse_args()
     if args.readback and any((args.sampling_profile, args.position_sampling_profile, args.task_position_budgets,
-                              args.position_workers != 1, args.task_order_profile)):
+                              args.position_workers != 1, args.task_order_profile, args.position_batch_size != 1)):
         parser.error('Readback uses its saved sampling and worker profiles; do not override them')
     result = (readback(args.readback, args.output) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
                     not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile,
                     args.position_sampling_profile, json.loads(Path(args.task_position_budgets).read_text())
-                    if args.task_position_budgets else None, args.position_workers, args.task_order_profile))
+                    if args.task_position_budgets else None, args.position_workers, args.task_order_profile,
+                    args.position_batch_size))
     print(json.dumps(result), flush=True)
 
 

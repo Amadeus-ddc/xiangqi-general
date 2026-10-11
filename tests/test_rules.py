@@ -68,3 +68,23 @@ def test_split_before_qa_and_future_answers():
     for row in rows[::9]:
         assert replay(row["initial_fen"], row["moves"])[-1] == row["fen"]
         replay(row["fen"], row["future_moves"])
+
+
+def test_repeated_native_adjudication_reuses_inputs_without_sharing_mutable_results(monkeypatch):
+    from xqgeneral import rules
+    fen = START_FEN.rsplit(' ', 1)[0] + ' 8917'
+    original = rules.pyffish.is_immediate_game_end
+    calls = []
+    def counted(*args):
+        calls.append(args)
+        return original(*args)
+    monkeypatch.setattr(rules.pyffish, 'is_immediate_game_end', counted)
+    first = rules.adjudicate(fen, ['b0c2'])
+    assert calls and first['ended'] is False
+    count = len(calls)
+    first['ended'] = True
+    assert rules.adjudicate(fen, ('b0c2',))['ended'] is False
+    assert len(calls) == count
+    cycle = ['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2
+    assert rules.adjudicate(fen, cycle)['ended'] is True
+    assert rules.adjudicate(fen, [])['ended'] is False

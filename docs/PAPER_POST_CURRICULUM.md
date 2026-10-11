@@ -79,7 +79,9 @@
 
 ## 本服务器当前队列
 
-当前保存入口位于 `runs/sft-memory-policy-v1/worktree/runs/paper-followthrough-preparation-v4/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-v4`；同目录 `plan.json` 绑定入口、五份实际配置、显存设置控制及 88 份冻结执行模块，`state.json` 保存实际等待句柄。实际父课程为 `runs/curriculum-paper-v3`，生产会话为 `xqgeneral-paper-curriculum-preparation-v5`；实际讲解输出在 `runs/paper-sft-v4`，只含已固定的输入，训练／验证索引仍在 `data/astra-explanations-paper-index-v1`。课程保留其既有冻结源码；新讲解队列与本次真实显存设置控制使用相同模块。前一个尚未开训的 v3 讲解等待任务已确认退出，配置与日志保留。
+当前保存入口位于 `runs/native-prefix-cache-v1/worktree/runs/paper-followthrough-preparation-v5/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-v5`；`plan.json` 绑定入口、五份配置及 88 份已通过显存设置控制的冻结讲解模块。实际父课程为 `runs/curriculum-paper-v4`，准备会话为 `xqgeneral-paper-curriculum-preparation-v6`，讲解输出为 `runs/paper-sft-v5`；训练／验证索引继续使用 `data/astra-explanations-paper-index-v1`。
+
+新课程采用单独通过原生分批及四卡更新控制的优化源码；讲解仍保留 PR 105 的显存控制源码。双方配置绑定同一实际新特征存储，阶段来源明确分开。旧 v4 讲解等待任务在对应旧准备退役后退出，原记录保留；新等待任务不提前启动学生或教师。
 
 只有新四课完整证明出现后，队列才复查新缓存、执行正式 SFT、三组能力验证和 384 局基线；首次 SFT 等待四卡各至少空闲 90GiB，正文评测等待 GPU 0 至少 80GiB，对弈等待 GPU 2 至少 48GiB。这些是保守启动条件，实际显存容量仍由真实预检决定。私有保存入口与运行数据不随软件包发布；复用公开命令即可执行相同阶段。
 
