@@ -1,6 +1,7 @@
 """Native thirteen-task questions from completed, preassigned source-root pools."""
 import argparse
 from collections import Counter
+from contextlib import nullcontext
 import hashlib
 import json
 from pathlib import Path
@@ -15,6 +16,7 @@ from .course_position_sampling import (POSITION_PROFILE, SCARCE_FIRST_PROFILE, P
 from .curriculum_data import verify_splits
 from .engine_selfplay import context_positions
 from .evidence import atomic_json, digest, iter_jsonl, manifest, position_key
+from .native_catalog import check_catalog_unchanged, load_catalog
 from .symmetry import mirror_fen, mirrored_qa
 
 DATA_KIND = 'paper_xiangqi_four_course_questions'
@@ -103,16 +105,19 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
 
 def position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
                              budgets, report, scratch, workers, task_order_profile=None, batch_size=1,
-                             question_workers=1, question_batch_size=1):
+                             question_workers=1, question_batch_size=1, catalog=None):
     """Select one task and one locked horizon, then render only those questions."""
     checked_question_rendering(question_workers, question_batch_size, POSITION_PROFILE, color_mirror)
-    with TemporaryDirectory(prefix='native-position-catalog-', dir=scratch) as directory:
-        catalog = PositionCatalog(Path(directory) / 'sources.sqlite', prior_games=prior_games, prior_positions=prior_positions)
+    reused = catalog is not None
+    with (nullcontext() if reused else TemporaryDirectory(prefix='native-position-catalog-', dir=scratch)) as directory:
+        if not reused:
+            catalog = PositionCatalog(Path(directory) / 'sources.sqlite', prior_games=prior_games, prior_positions=prior_positions)
         try:
-            sources = (root for name in roots for root in iter_jsonl(name))
-            for root, targets in catalog_inputs(sources, workers, batch_size=batch_size):
-                catalog.add(root, targets)
-            catalog.finish()
+            if not reused:
+                sources = (root for name in roots for root in iter_jsonl(name))
+                for root, targets in catalog_inputs(sources, workers, batch_size=batch_size):
+                    catalog.add(root, targets)
+                catalog.finish()
             if question_workers != 1:
                 yield from render_positions(catalog.selections(budgets, seed, report, task_order_profile),
                                             seed, sampler, question_workers, question_batch_size)
@@ -131,7 +136,7 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
           reference_data=(), sampling_profile=None, position_sampling_profile=None,
           task_position_budgets=None, position_workers=1, task_order_profile=None, position_batch_size=1,
-          question_workers=1, question_batch_size=1):
+          question_workers=1, question_batch_size=1, catalog_proof=None):
     output = Path(output)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
@@ -145,20 +150,33 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
             position_sampling_profile is not None and sampler is None):
         raise ValueError('Task position sampling requires its declared profile, answer sampler and positive workers')
     task_order(task_order_profile)
+    if catalog_proof is not None and (position_sampling_profile != POSITION_PROFILE or
+            not isinstance(catalog_proof, (str, Path)) or not str(catalog_proof)):
+        raise ValueError('Verified catalog reuse requires its declared position sampling profile and proof')
     budgets = position_budgets(task_position_budgets) if position_sampling_profile else None
     inputs = checked_sources(roots, source_manifests)
     reference_inputs, prior_games, prior_positions = reference_contract(reference_data)
     inputs += reference_inputs
-    source_hashes = {str(p): digest(p) for p in inputs}
-    output.mkdir(parents=True)
-    paths = {split: output / f'{split}.jsonl' for split in SPLITS}
-    handles = {split: path.open('x', encoding='utf-8') for split, path in paths.items()}
+    catalog = load_catalog(catalog_proof, roots=roots, source_manifests=source_manifests,
+                           reference_data=reference_data) if catalog_proof is not None else None
+    if catalog is not None:
+        inputs += [Path(catalog_proof), *map(Path, catalog.verified_input_bindings)]
+        inputs = list(dict.fromkeys(inputs))
+    try:
+        source_hashes = {str(p): digest(p) for p in inputs}
+        output.mkdir(parents=True)
+        paths = {split: output / f'{split}.jsonl' for split in SPLITS}
+        handles = {split: path.open('x', encoding='utf-8') for split, path in paths.items()}
+    except BaseException:
+        if catalog is not None:
+            catalog.close()
+        raise
     counts, task_counts, root_counts, horizons = Counter(), Counter(), Counter(), Counter()
     ids, games = set(), set()
     position_report = {}
     groups = (position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
                                       budgets, position_report, output, position_workers, task_order_profile,
-                                      position_batch_size, question_workers, question_batch_size) if budgets is not None else
+                                      position_batch_size, question_workers, question_batch_size, catalog) if budgets is not None else
               question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler))
     try:
         for root, records in groups:
@@ -179,6 +197,8 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     finally:
         for handle in handles.values():
             handle.close()
+        if catalog is not None:
+            catalog.close()
     if any(not counts[split] for split in SPLITS):
         raise ValueError('Paper curriculum requires nonempty preassigned train, validation and test sources')
     if any(digest(path) != source_hashes[str(path)] for path in inputs):
@@ -203,6 +223,9 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     config = {'roots': list(map(str, roots)), 'source_manifests': list(map(str, source_manifests)),
               'output': str(output), 'seed': seed, 'color_mirror': color_mirror, 'task_profile': PAPER_PROFILE,
               'reference_data': list(map(str, reference_data))}
+    if catalog_proof is not None:
+        config['catalog_proof'] = str(catalog_proof)
+        result['verified_native_source_catalog_reused'] = True
     if sampler is not None:
         result.update(sampler.verification())
         config['sampling_profile'] = sampling_profile
@@ -217,7 +240,10 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
             config['task_order_profile'] = task_order_profile
         if question_workers != 1:
             config.update(question_workers=question_workers, question_batch_size=question_batch_size)
-    atomic_json(output / 'manifest.json', manifest(DATA_KIND, config, inputs, paths.values(), result))
+    completed = manifest(DATA_KIND, config, inputs, paths.values(), result)
+    if catalog is not None:
+        check_catalog_unchanged(catalog)
+    atomic_json(output / 'manifest.json', completed)
     if public_evidence:
         atomic_json(public_evidence, dict(result, manifest_sha256=digest(output / 'manifest.json')))
     return result
@@ -240,6 +266,12 @@ def readback(data, output):
     config = proof['config']
     sampler = make_sampler(config.get('sampling_profile'))
     profile = config.get('position_sampling_profile')
+    catalog_proof = config.get('catalog_proof')
+    if catalog_proof is not None and (profile != POSITION_PROFILE or
+            not isinstance(catalog_proof, str) or not catalog_proof):
+        raise ValueError('Completed catalog reuse requires its declared position sampling profile and proof')
+    if proof['verification'].get('verified_native_source_catalog_reused', False) is not (catalog_proof is not None):
+        raise ValueError('Stored catalog reuse differs from its declared producer')
     if profile not in (None, POSITION_PROFILE) or profile and sampler is None:
         raise ValueError('Completed corpus position sampling profile changed')
     budgets = position_budgets(config.get('task_position_budgets')) if profile else None
@@ -252,11 +284,15 @@ def readback(data, output):
     checked_question_rendering(question_workers, question_batch_size, profile, config['color_mirror'])
     if type(batch_size) is not int or batch_size < 1:
         raise ValueError('Positive completed native position batch size required')
+    if profile and (type(config.get('position_workers')) is not int or config['position_workers'] < 1):
+        raise ValueError('Positive completed native position workers required')
     if not profile and any(k in config for k in ('task_position_budgets', 'position_workers', 'task_order_profile',
                                                 'position_batch_size', 'question_workers', 'question_batch_size')):
         raise ValueError('Undeclared completed position budget settings')
     checked_sources(config['roots'], config['source_manifests'])
     _, prior_games, prior_positions = reference_contract(config['reference_data'])
+    catalog = load_catalog(catalog_proof, roots=config['roots'], source_manifests=config['source_manifests'],
+                           reference_data=config['reference_data']) if catalog_proof is not None else None
     paths = {split: data / f'{split}.jsonl' for split in SPLITS}
     handles = {split: path.open(encoding='utf-8') for split, path in paths.items()}
     checked, counts = 0, Counter()
@@ -264,7 +300,7 @@ def readback(data, output):
     output.mkdir(parents=True)
     groups = (position_question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games,
         prior_positions, sampler, budgets, position_report, output, config['position_workers'], order_profile,
-        batch_size, question_workers, question_batch_size) if profile else
+        batch_size, question_workers, question_batch_size, catalog) if profile else
         question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games, prior_positions, sampler))
     try:
         for _, records in groups:
@@ -278,6 +314,8 @@ def readback(data, output):
     finally:
         for handle in handles.values():
             handle.close()
+        if catalog is not None:
+            catalog.close()
     split_proof = verify_splits(row for path in paths.values() for row in iter_jsonl(path))
     if counts != proof['verification']['counts'] or split_proof != proof['verification']['split_verification']:
         raise ValueError('Source readback counts or complete future isolation changed')
@@ -293,14 +331,20 @@ def readback(data, output):
     result = {'status': 'complete', 'task_profile': PAPER_PROFILE, 'questions_regenerated_and_compared': checked,
               'counts': dict(counts), 'split_verification': split_proof, 'all_source_and_question_bytes_checked': True,
               'student_model_loaded': False, 'student_training_executed': False, 'student_strength_measured': False}
+    if catalog is not None:
+        result['verified_native_source_catalog_reused'] = True
+        check_catalog_unchanged(catalog)
     if adaptive:
         result.update(sampler.verification())
     if budgets is not None:
         result.update(position_verification(budgets, position_report, order_profile))
     atomic_json(output / 'verification.json', result)
-    atomic_json(output / 'manifest.json', manifest('paper_curriculum_complete_source_readback',
+    completed = manifest('paper_curriculum_complete_source_readback',
         {'data': str(data), 'output': str(output)}, [proof_path, *proof['inputs'], *proof['outputs']],
-        [output / 'verification.json'], result))
+        [output / 'verification.json'], result)
+    if catalog is not None:
+        check_catalog_unchanged(catalog)
+    atomic_json(output / 'manifest.json', completed)
     return result
 
 
@@ -325,17 +369,18 @@ def main():
     parser.add_argument('--question-workers', type=int, default=1,
                         help='Ordered native question workers; requires position sampling without color mirrors')
     parser.add_argument('--question-batch-size', type=int, default=1)
+    parser.add_argument('--catalog-proof', help='Completed full recorded-source catalog readback for read-only reuse')
     args = parser.parse_args()
     if args.readback and any((args.sampling_profile, args.position_sampling_profile, args.task_position_budgets,
                               args.position_workers != 1, args.task_order_profile, args.position_batch_size != 1,
-                              args.question_workers != 1, args.question_batch_size != 1)):
+                              args.question_workers != 1, args.question_batch_size != 1, args.catalog_proof)):
         parser.error('Readback uses its saved sampling and worker profiles; do not override them')
     result = (readback(args.readback, args.output) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
                     not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile,
                     args.position_sampling_profile, json.loads(Path(args.task_position_budgets).read_text())
                     if args.task_position_budgets else None, args.position_workers, args.task_order_profile,
-                    args.position_batch_size, args.question_workers, args.question_batch_size))
+                    args.position_batch_size, args.question_workers, args.question_batch_size, args.catalog_proof))
     print(json.dumps(result), flush=True)
 
 
