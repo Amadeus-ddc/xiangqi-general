@@ -1,0 +1,107 @@
+{
+  "kind": "bounded_real_native_classification_concurrency_control",
+  "status": "complete",
+  "observed_utc": "2026-10-11T03:35:12.642221+00:00",
+  "controls": [
+    {
+      "path": "runs/paper-followthrough-v1/worktree/runs/native-classification-concurrency-real-v1",
+      "verification_sha256": "508c5e8c77057bad2aa9b46f86634786b8e64545644b01e75010cc64cff4ffb2",
+      "plan_sha256": "fd7573aca1799717d6043df124cbd9b59db9d8c3109a86868054dab62d766c9e",
+      "actual_training_roots": 512,
+      "ordered_native_targets_byte_identical": true,
+      "worker_statistics": [
+        {
+          "workers": 8,
+          "roots": 512,
+          "seconds": 50.144750686362386,
+          "targets_sha256": "507aad3f21d88e397c0b82a7c5196397794dfa7b753ef907a057855f41ab2b37",
+          "target_bytes": 548000
+        },
+        {
+          "workers": 32,
+          "roots": 512,
+          "seconds": 15.672934457659721,
+          "targets_sha256": "507aad3f21d88e397c0b82a7c5196397794dfa7b753ef907a057855f41ab2b37",
+          "target_bytes": 548000
+        }
+      ],
+      "seconds_including_worker_startup": {
+        "8": 50.144750686362386,
+        "32": 15.672934457659721
+      },
+      "sample_native_classification_speedup": 3.199448758101295,
+      "source_modules": 88,
+      "selected_root_file_sha256": "72fd7cc42335ea98309c0989b6699830b5531bb2d77517b5c604933dc84b775b",
+      "upstream_declared_binding": {
+        "sha256": "1f8e053a6d12dcab36dc2c22ba6be4375b6e97f0e00fc88b14296541931de01e",
+        "bytes": 45505590932
+      },
+      "upstream_full_file_freshly_rehashed_during_control": false,
+      "upstream_full_file_freshly_rehashed_in_publication_readback": true,
+      "full_catalog_or_question_generation_speedup_measured": false,
+      "model_loaded_or_trained": false
+    },
+    {
+      "path": "runs/paper-followthrough-v1/worktree/runs/native-classification-concurrency-real-v2",
+      "verification_sha256": "00dd488fdf15b8851a7e144d9c635693be74eea0109062c40b2e02f04997082b",
+      "plan_sha256": "a7fec4e0b685c79ff0e3a2d03851b721c1926d47f743b6ffbc2ef700e069e744",
+      "actual_training_roots": 4096,
+      "ordered_native_targets_byte_identical": true,
+      "worker_statistics": [
+        {
+          "workers": 32,
+          "roots": 4096,
+          "seconds": 104.6428795568645,
+          "targets_sha256": "7bef0fb4d438919cc8753c5ccb6340ac13cda3f2e3db9e8957c3598490af89ed",
+          "target_bytes": 4397488
+        },
+        {
+          "workers": 64,
+          "roots": 4096,
+          "seconds": 66.24937940109521,
+          "targets_sha256": "7bef0fb4d438919cc8753c5ccb6340ac13cda3f2e3db9e8957c3598490af89ed",
+          "target_bytes": 4397488
+        }
+      ],
+      "seconds_including_worker_startup": {
+        "32": 104.6428795568645,
+        "64": 66.24937940109521
+      },
+      "sample_native_classification_speedup": 1.579529959417772,
+      "source_modules": 88,
+      "selected_root_file_sha256": "346e33467a74f0b4b6fc4d74dee2102bf37bd93ac0a4be94d24e932e3ae40287",
+      "upstream_declared_binding": {
+        "sha256": "1f8e053a6d12dcab36dc2c22ba6be4375b6e97f0e00fc88b14296541931de01e",
+        "bytes": 45505590932
+      },
+      "upstream_full_file_freshly_rehashed_during_control": false,
+      "upstream_full_file_freshly_rehashed_in_publication_readback": true,
+      "full_catalog_or_question_generation_speedup_measured": false,
+      "model_loaded_or_trained": false
+    }
+  ],
+  "controls_use_different_cohorts_and_speedups_are_not_multiplied": true,
+  "publication_readback": {
+    "all_native_target_files_freshly_hashed_and_byte_compared": true,
+    "native_targets_recomputed_during_publication_readback": false
+  },
+  "runtime_handoff": {
+    "status": "complete",
+    "final_native_worker_count": 64,
+    "replacement_session": "xqgeneral-paper-curriculum-preparation-v5",
+    "data_output": "data/paper-courses-v3",
+    "curriculum_output": "runs/curriculum-paper-v3",
+    "proof": "runs/paper-followthrough-v1/worktree/runs/paper-curriculum-preparation-v5/ownership-handoff.json",
+    "proof_sha256": "37d3a32edbcad3deadb721d50e617eee5d56a53ed54cadc2de957006118e0bbc",
+    "actual_64_native_workers_confirmed_live_before_retirement": true,
+    "source_read_cursor_advanced_before_retirement": true,
+    "old_8_preparation_and_waiting_follower_confirmed_terminal": true,
+    "intermediate_32_preparation_and_waiting_follower_confirmed_terminal": true,
+    "partial_outputs_frozen_inputs_and_logs_preserved": true,
+    "original_legacy_curriculum_signalled": false,
+    "model_or_gpu_process_signalled": false,
+    "gpu_preparation_requires_complete_handoff_proof": true,
+    "formal_curriculum_completed": false
+  },
+  "goal_complete": false
+}

@@ -52,6 +52,31 @@ def configure_determinism(enabled):
     return {'deterministic_training': enabled, 'cublas_workspace_config': workspace}
 
 
+def training_memory_settings(config):
+    """Validate explicit memory choices while retaining the legacy defaults."""
+    foreach = config.get('optimizer_foreach')
+    bucket_view = config.get('ddp_gradient_as_bucket_view', False)
+    if foreach is not None and type(foreach) is not bool:
+        raise ValueError('optimizer_foreach must be a boolean or null')
+    if type(bucket_view) is not bool:
+        raise ValueError('ddp_gradient_as_bucket_view must be a boolean')
+    return {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
+
+
+def training_optimizer(model, config):
+    settings = training_memory_settings(config)
+    groups = defaultdict(list)
+    for name, parameter in model.named_parameters():
+        if parameter.requires_grad:
+            group = 'board' if name.endswith('board_weight') else ('bridge' if name.startswith('bridges.') else 'decoder')
+            groups[group].append(parameter)
+    rates = {'bridge': config['learning_rate'], 'decoder': config.get('decoder_learning_rate', config['learning_rate']),
+             'board': config.get('token_learning_rate', config['learning_rate'])}
+    return torch.optim.AdamW([{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
+                             for name, values in groups.items()], weight_decay=config.get('weight_decay', 0.01),
+                            foreach=settings['optimizer_foreach'])
+
+
 def atomic_checkpoint(path, value):
     path = Path(path)
     partial = path.with_suffix(path.suffix + '.partial')
@@ -211,6 +236,8 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     from .course_tasks import row_profile
+    if training_memory_settings(saved) != training_memory_settings(requested):
+        raise ValueError('Resume optimizer/DDP memory settings differ; initialize a new experiment instead')
     if saved.get('row_index_paths', {}) != requested.get('row_index_paths', {}):
         raise ValueError('Resume training row index paths differ; initialize a new experiment')
     if data_profile(saved) != data_profile(requested):
@@ -255,7 +282,8 @@ def main():
     normalization = config.get('loss_normalization', 'token')
     if normalization not in {'token', 'example'}:
         raise ValueError('Loss normalization must be token or example')
-    compute_contract = configure_determinism(config.get('deterministic_training', False))
+    memory_settings = training_memory_settings(config)
+    compute_contract = {**configure_determinism(config.get('deterministic_training', False)), **memory_settings}
     world, rank = int(os.environ.get('WORLD_SIZE', 1)), int(os.environ.get('RANK', 0))
     if world > 1:
         local_rank = int(os.environ['LOCAL_RANK'])
@@ -318,15 +346,7 @@ def main():
     model, tokenizer = load_model(config, cache['features'][0].shape[-1], device)
     pools = None if finite_epochs is not None else sample_groups(rows['train'])
     parameters = [p for p in model.parameters() if p.requires_grad]
-    groups = defaultdict(list)
-    for name, parameter in model.named_parameters():
-        if parameter.requires_grad:
-            group = 'board' if name.endswith('board_weight') else ('bridge' if name.startswith('bridges.') else 'decoder')
-            groups[group].append(parameter)
-    rates = {'bridge': config['learning_rate'], 'decoder': config.get('decoder_learning_rate', config['learning_rate']),
-             'board': config.get('token_learning_rate', config['learning_rate'])}
-    optimizer = torch.optim.AdamW([{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
-                                   for name, values in groups.items()], weight_decay=config.get('weight_decay', 0.01))
+    optimizer = training_optimizer(model, config)
     begin, best_loss, best_step, tokens_seen = 0, float('inf'), 0, 0
     resume = None
     if args.resume:
@@ -344,6 +364,8 @@ def main():
             finite_epochs.check_resume(resume.get('data_state'), resume['step'])
         load_trainable(model, resume)
         optimizer.load_state_dict(resume['optimizer'])
+        if any(group.get('foreach') is not memory_settings['optimizer_foreach'] for group in optimizer.param_groups):
+            raise ValueError('Resume optimizer state differs from its foreach configuration')
         for state in optimizer.state.values():
             for name, value in state.items():
                 if torch.is_tensor(value) and name != 'step':
@@ -365,7 +387,8 @@ def main():
     if type(find_unused) is not bool:
         raise ValueError('ddp_find_unused_parameters must be a boolean')
     wrapped = DistributedDataParallel(model, device_ids=[int(os.environ['LOCAL_RANK'])],
-                                       broadcast_buffers=False, find_unused_parameters=find_unused) if world > 1 else model
+                                       broadcast_buffers=False, find_unused_parameters=find_unused,
+                                       gradient_as_bucket_view=memory_settings['ddp_gradient_as_bucket_view']) if world > 1 else model
     if rank == 0:
         dest.mkdir(parents=True, exist_ok=True)
         atomic_json(dest / 'config.json', config)
@@ -525,6 +548,10 @@ def main():
                   'global_batch_size': config['batch_size'], 'supervised_tokens_seen': tokens_seen,
                   'training_loss_normalization': normalization, 'validation_loss_normalization': 'token',
                   **compute_contract,
+                  'optimizer_foreach_by_group': {g['name']: g['foreach'] for g in optimizer.param_groups},
+                  'gradient_parameters': sum(p.numel() for p in parameters if p.grad is not None),
+                  'gradient_view_parameters': sum(p.numel() for p in parameters
+                                                  if p.grad is not None and p.grad._is_view()),
                   'initial_validation_nll': initial_loss, 'final_validation_nll': after,
                   'zero_memory_validation_nll': zero, 'shuffled_memory_validation_nll': shuffled,
                   'trainable_parameters': sum(p.numel() for p in parameters),

@@ -73,6 +73,7 @@ def test_prepare_only_verifies_parent_and_writes_identical_config_without_worker
     {'batch_size': False}, {'micro_batch_size': 0}, {'micro_batch_size': True},
     {'epochs': 0}, {'epochs': float('nan')}, {'max_steps': 0}, {'min_steps': -1},
     {'mixture': {'explanation': 0}}, {'mixture': {'explanation': 1.1}},
+    {'optimizer_foreach': 0}, {'ddp_gradient_as_bucket_view': None},
 ])
 def test_invalid_sft_budget_refused_before_config_write_or_launch(tmp_path, monkeypatch, change):
     checkpoint, _, recipe = selected_fixture(tmp_path);recipe.update(change)
@@ -117,6 +118,14 @@ def test_budget_reads_primary_training_only_and_honors_cap(tmp_path):
     config = sft.prepare_config(saved, recipe, checkpoint, tmp_path / 'sft')
     assert config['steps'] == config['min_steps'] == 12
     assert config['decoder_bridge_positions'] == saved['decoder_bridge_positions']
+
+
+def test_sft_preparation_preserves_explicit_memory_settings(tmp_path):
+    checkpoint, saved, recipe = selected_fixture(tmp_path)
+    recipe.update(optimizer_foreach=False, ddp_gradient_as_bucket_view=True)
+    config = sft.prepare_config(saved, recipe, checkpoint, tmp_path / 'sft')
+    assert config['optimizer_foreach'] is False and config['ddp_gradient_as_bucket_view'] is True
+    assert config['decoder_training'] == 'full'
 
 
 @pytest.mark.parametrize('prepare_only', [False, True])

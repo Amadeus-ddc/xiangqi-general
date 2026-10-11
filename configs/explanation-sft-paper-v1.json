@@ -9,6 +9,8 @@
   "feature_cache_mmap": true,
   "ddp_world_size": 4,
   "ddp_find_unused_parameters": true,
+  "ddp_gradient_as_bucket_view": true,
+  "optimizer_foreach": false,
   "stages": [
     "explanation"
   ],
