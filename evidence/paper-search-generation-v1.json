@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "kind": "paper_search_generation_controls",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-11T08:13:37.185168+00:00",
+  "source_revision_before_commit": "66c6be2c6443601337b2c81863f63a448361c3b2",
+  "source_modules": 90,
+  "source_sha256_map_digest": "28b7b3fda4cb999e4e3b62188369b01d3be07d1a031d7b155a9b832a822b789f",
+  "author_settings": {
+    "status": "complete",
+    "author_revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+    "author_path": "configs/self_distill/iteration/mine.yaml",
+    "author_bytes": 1050,
+    "author_sha256": "7bc5d323a74616be9e2d5b5510d5da94a515d73ce65ece7543932cfe1ad5cac0",
+    "working_file_matches_pinned_git_blob": true,
+    "student_sampling_values_match": true,
+    "pilot_base_seed_matches": true,
+    "per_root_random_stream_is_local_adaptation": true,
+    "author_root_retries_and_batching_not_claimed": true
+  },
+  "policy": {
+    "do_sample": true,
+    "temperature": 0.6,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_new_tokens": 4096
+  },
+  "real_control": {
+    "manifest_sha256": "057941d76f8fc7384508db20a7511261a19254706ec602d489943e2df098fe8d",
+    "run_relative_path": "runs/paper-search-sampling-v1/worktree/runs/stochastic-generation-real-control-v1",
+    "verification": {
+      "short_actual_neural_manual_matches": 64,
+      "resume_roots": 32,
+      "completed_prefix_skipped": 11,
+      "reversed_root_order_identical": true,
+      "raw_invalid_outputs_not_repaired": true,
+      "long_actual_neural_output_tokens": 4096,
+      "long_output_seconds": 4.4449874041602015,
+      "cpu_rng_restored": true,
+      "selected_cuda_rng_matches_explicit_generator": true,
+      "cpu_and_two_cuda_rng_restored_normal_and_exception": true,
+      "current_cuda_device_unchanged": true,
+      "cpu_constructed_random_decoder": true,
+      "pretrained_model_loaded": false,
+      "teacher_loaded": false,
+      "expert_feature_model_loaded": false,
+      "gpu_neural_model_loaded": false,
+      "cuda_tensor_control": true,
+      "generation_software": {
+        "torch": "2.10.0+cu128",
+        "transformers": "5.8.1"
+      },
+      "source_files": 90,
+      "source_hashes_unchanged": true,
+      "elapsed_seconds": 10.157609020359814,
+      "actual_distillation_labels": 0,
+      "strength_or_teaching_acceptance_proven": false
+    },
+    "independent_readback_sha256": "42a3c0cfd14074084253bc6f5d4e39b5fa825d6f856878eebe424d06e713ee46"
+  },
+  "canonical": {
+    "manifest_sha256": "ee0b791cdd852d321906199af0f43d45331a9c513ece5f1832f2a83911bd8a53",
+    "run_relative_path": "runs/paper-search-sampling-v1/worktree/runs/stochastic-generation-canonical-v1",
+    "verification": {
+      "exit_code": 0,
+      "source_test_files": 164,
+      "source_test_hashes_unchanged": true,
+      "elapsed_seconds": 314.3798022828996,
+      "test_summary": "1201 passed in 309.75s (0:05:09)",
+      "cpu_only": true
+    },
+    "unchanged_conftest_git_binding": {
+      "path": "tests/conftest.py",
+      "sha256": "ac623a2fe5859c94a1a1b8108aab9b1d43138d43938cf1788b12d139612f0e24",
+      "bytes": 78,
+      "matches_git_base": "66c6be2c6443601337b2c81863f63a448361c3b2",
+      "role": "complementary unchanged conftest binding; canonical inventory directly binds 164 module/test files"
+    }
+  },
+  "readback": {
+    "real_bound_artifacts_rehashed": 5,
+    "canonical_bound_artifacts_rehashed": 4,
+    "each_frozen_module_set_rehashed": 90,
+    "source_test_before_after_rehashed": 164,
+    "additional_unchanged_conftest_rehashed": true,
+    "current_module_hashes_match_both_controls": true
+  },
+  "focused_acceptance": {
+    "passed": 118,
+    "elapsed_seconds": 27.89,
+    "scope": "stochastic generation, mining, pilot and feature storage"
+  },
+  "resume_contract": {
+    "explicit_policy_bytes": true,
+    "all_feature_shards_and_history_keys": true,
+    "sampled_software_versions": true,
+    "source_identity": true,
+    "changed_shard_rejected_before_student_load": true
+  },
+  "production_observation": {
+    "native_workers": 64,
+    "root_source_position_bytes": 16715325440,
+    "root_source_total_bytes": 45505590932,
+    "position_is_not_training_progress": true,
+    "follower_status": "waiting_for_actual_new_four_courses",
+    "fresh_four_course_manifest_exists": false,
+    "frozen_production_jobs_modified": false
+  },
+  "remaining": {
+    "fresh_four_courses_complete": false,
+    "initial_prose_sft_complete": false,
+    "actual_distillation_labels": 0,
+    "distillation_training_rounds": 0,
+    "real_student_search_yield_measured": false,
+    "final_strength_and_teaching_acceptance": false,
+    "paper_root_retries": false,
+    "paper_batched_or_parallel_search": false,
+    "paper_consolidation_context_and_budget": false
+  }
+}

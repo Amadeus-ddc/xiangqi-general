@@ -11,9 +11,15 @@ import time
 from .clean_sft_evaluation import checked_sft, teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs
+from .sampling import checked_seed, search_generation_policy
 
 
 def pilot_spec(config, bound):
+    if config.get('student_generation_config') is not None:
+        if not isinstance(config['student_generation_config'], str) or not config['student_generation_config']:
+            raise ValueError('Student sampling configuration must be a file path')
+        search_generation_policy(bound.json(config['student_generation_config']))
+        checked_seed(config['seed'])
     for key in ['limit', 'nodes', 'teacher_max_new_tokens']:
         if type(config[key]) is not int or config[key] <= 0:
             raise ValueError('Positive integer search pilot budgets are required')
@@ -152,6 +158,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             'prepared_inputs': None, 'recorded_inputs': config['recorded_inputs'], 'output': str(mining),
             **{key: config[key] for key in ['limit', 'nodes', 'max_depth', 'child_contract', 'seed']},
             **{key: evaluation[key] for key in ['executable', 'weights']}}
+        if config.get('student_generation_config') is not None:
+            arguments['student_generation_config'] = config['student_generation_config']
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
         queries = load_jsonl(mining / 'queries.jsonl')
         attempts = load_jsonl(mining / 'results.partial.jsonl')

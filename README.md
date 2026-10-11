@@ -755,3 +755,5 @@ python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
 原生分类可用 `--position-workers 64 --position-batch-size 16` 复用相邻完整历史的原生计算；保存的分批配置参与完整读回，旧默认大小仍为一。4096 个实战训练根逐字节一致，局部分类约快 6.75 倍，详见 [当前实验](docs/PAPER_FOUNDATION_EXPERIMENT.md)及[轻量证据](evidence/paper-native-prefix-cache-v1.json)。本服务器准备／讲解等待会话分别为 `xqgeneral-paper-curriculum-preparation-v6`／`xqgeneral-paper-followthrough-reference-v1`；正式新四课仍待数据、缓存与预检完成。
 
 当前新讲解队列使用[完整复审后的参考集](docs/REFERENCE_PROSE.md)：训练 10758 条逐字节不变，448 条旧保留参考完成独立审查，164 条正文实际修订后另行接受。新数据与索引已经完成；正式讲解训练继续等待实际新四课，参考复审不代表学生能力提升。见[读回证据](evidence/heldout-reference-prose-v1.json)。
+
+后续[搜索采样](docs/PAPER_SEARCH_GENERATION.md)可显式使用作者发布的温度 0.6、top-k 20、top-p 0.95 与 4096 输出 token 配置，并按根与生成序号保存可续跑种子。随机 CPU 神经解码、独立采样、32 根续跑及实际 4096 token 输出控制通过；CUDA 仅验证随机状态恢复。输入绑定覆盖完整特征分片，新模板仍是 512 根试批，实际学生搜索、整轮蒸馏与最终棋力仍须完成。

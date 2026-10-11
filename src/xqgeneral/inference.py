@@ -7,6 +7,7 @@ from .modeling import load_checkpoint
 from .rules import replay
 from .training import messages, model_autocast
 from .board_tokens import decode_board_text, encode_board_text
+from .sampling import sample_rng, sampling_options
 
 
 class Predictor:
@@ -44,9 +45,10 @@ class Predictor:
         return [f.to(torch.float16).to(torch.bfloat16) for f in features]
 
     @torch.no_grad()
-    def generate(self, record, question=None, max_new_tokens=768):
+    def generate(self, record, question=None, max_new_tokens=768, *, sampling=None, seed=None):
+        options = {} if sampling is None and seed is None else {'sampling': sampling, 'seed': seed}
         return self.generate_batch([dict(record, question=question or record['question'])],
-                                   max_new_tokens=max_new_tokens)[0]
+                                   max_new_tokens=max_new_tokens, **options)[0]
 
     @torch.no_grad()
     def generate_moves(self, records, memory='normal', beams=4):
@@ -69,7 +71,11 @@ class Predictor:
         return answers
 
     @torch.no_grad()
-    def generate_batch(self, records, max_new_tokens=768, memory='normal', _move_constraints=None, _beams=1):
+    def generate_batch(self, records, max_new_tokens=768, memory='normal', _move_constraints=None, _beams=1,
+                       *, sampling=None, seed=None):
+        generation = sampling_options(sampling)
+        if seed is not None and sampling is None:
+            raise ValueError('An explicit random seed requires stochastic decoding')
         if not records:
             return []
         if memory not in {'normal', 'zero', 'shuffled'}:
@@ -99,9 +105,9 @@ class Predictor:
                        _move_constraints[batch].allowed(ids[prefix_length:].tolist()),
                        'num_beams': _beams, 'length_penalty': 0.0}
             features = [f.repeat_interleave(_beams, dim=0) for f in features]
-        with self.model.board_context(features), model_autocast(self.device):
-            outputs = self.model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
-                                               pad_token_id=self.tokenizer.pad_token_id, **options)
+        with self.model.board_context(features), model_autocast(self.device), sample_rng(self.device, seed):
+            outputs = self.model.base.generate(**inputs, max_new_tokens=max_new_tokens,
+                                               pad_token_id=self.tokenizer.pad_token_id, **generation, **options)
         answers = [self.tokenizer.decode(o[inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
                    for o in outputs]
         return [decode_board_text(a) for a in answers] if self.config.get('board_tokens', False) else answers
