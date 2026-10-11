@@ -316,14 +316,25 @@ def paper_queries(fen, rng, initial_board=None):
     return static, dynamic
 
 
-def paper_records(root, rng, sampler=None, *, only_stage=None, only_task=None):
-    """Use an already split, complete native root and its actual future line."""
+def _check_paper_record_request(root, only_stage, only_task):
     if root['split'] not in ('train', 'validation', 'test') or not isinstance(root['game_id'], str):
         raise ValueError('Paper questions require a preassigned native game split')
     if ((only_stage is None) != (only_task is None) or only_stage is not None and
             (only_stage not in PAPER_TASKS or only_task not in PAPER_TASKS[only_stage])):
         raise ValueError('A selected paper task requires its matching declared stage')
+
+
+def paper_records(root, rng, sampler=None, *, only_stage=None, only_task=None):
+    """Use an already split, complete native root and its actual future line."""
+    _check_paper_record_request(root, only_stage, only_task)
     validate_context(root, check_future=True)
+    return _complete_paper_answers(_paper_record_queries(root, rng, sampler,
+        only_stage=only_stage, only_task=only_task))
+
+
+def _paper_record_queries(root, rng, sampler=None, *, only_stage=None, only_task=None):
+    """Draft sequential adaptive queries; callers must validate before emitting."""
+    _check_paper_record_request(root, only_stage, only_task)
     rows = []
     for future in (False, True):
         if only_stage is not None and only_stage.endswith('_future') != future:
@@ -360,11 +371,18 @@ def paper_records(root, rng, sampler=None, *, only_stage=None, only_task=None):
                 if 'augmentation_parent' in root:
                     row['foundation_source_augmentation_parent'] = row.pop('augmentation_parent')
                 row['question'] = paper_question(row, row['question_variant'])
-                row['answer'] = paper_answer(row)
+                # Reserve its original JSON field position for worker completion.
+                row['answer'] = None
                 identity = {k: row[k] for k in ('game_id', 'feature_key', 'stage', 'task_type', 'query',
                             'future_moves', 'rationale_variant', 'question_variant', 'task_profile')}
                 row['id'] = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:24]
                 rows.append(row)
+    return rows
+
+
+def _complete_paper_answers(rows):
+    for row in rows:
+        row['answer'] = paper_answer(row)
     return rows
 
 
