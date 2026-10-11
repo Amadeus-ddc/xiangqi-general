@@ -1,0 +1,23 @@
+{
+  "sft_recipe": "configs/explanation-sft-paper-v1.json",
+  "token_preflight": "runs/paper-sft-v1/token-preflight/manifest.json",
+  "data": "data/astra-explanations-clean-v1",
+  "features": "data/paper-courses-v1/feature-store/manifest.json",
+  "split": "validation",
+  "validation_examples": 384,
+  "memories": [
+    "normal",
+    "zero",
+    "shuffled"
+  ],
+  "batch_size": 4,
+  "max_new_tokens": 768,
+  "nodes": 1000000,
+  "workers": 8,
+  "seed": 20261067,
+  "executable": "vendor/pikafish/src/pikafish",
+  "weights": "vendor/pikafish/src/pikafish.nnue",
+  "teacher_config": "configs/teachers.json",
+  "review_max_new_tokens": 1536,
+  "cuda_visible_devices": "0"
+}
