@@ -1,0 +1,14 @@
+{
+  "evaluation_config": "configs/evaluation-paper-sft-v1.json",
+  "data": "data/paper-courses-v1",
+  "recorded_inputs": "data/recorded-paper-search-inputs-v1",
+  "student_generation_config": "configs/paper-search-generation-v1.json",
+  "max_root_retries": 3,
+  "limit": 512,
+  "nodes": 100000,
+  "max_depth": 5,
+  "child_contract": "move_eval",
+  "seed": 20260828,
+  "teacher_max_new_tokens": 1536,
+  "gpu": "0"
+}

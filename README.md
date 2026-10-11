@@ -757,3 +757,5 @@ python -m xqgeneral.coach --checkpoint CHECKPOINT.pt --resume runs/study.json
 当前新讲解队列使用[完整复审后的参考集](docs/REFERENCE_PROSE.md)：训练 10758 条逐字节不变，448 条旧保留参考完成独立审查，164 条正文实际修订后另行接受。新数据与索引已经完成；正式讲解训练继续等待实际新四课，参考复审不代表学生能力提升。见[读回证据](evidence/heldout-reference-prose-v1.json)。
 
 后续[搜索采样](docs/PAPER_SEARCH_GENERATION.md)可显式使用作者发布的温度 0.6、top-k 20、top-p 0.95 与 4096 输出 token 配置，并按根与生成序号保存可续跑种子。随机 CPU 神经解码、独立采样、32 根续跑及实际 4096 token 输出控制通过；CUDA 仅验证随机状态恢复。输入绑定覆盖完整特征分片，新模板仍是 512 根试批，实际学生搜索、整轮蒸馏与最终棋力仍须完成。
+
+新的[根重试模板](configs/search-paper-retry-pilot-v1.json)对无法解析或换算的数值评估最多追加三次生成，保留全部原始尝试及独立数值接受结果。随机 CPU 解码的 128 次短输出／32 根续跑与四次各 4096 token 控制通过；候选和子节点错误按各自验收处理。正式学生搜索仍须等待新四课与讲解完成，见[重试证据](evidence/paper-search-root-retry-v1.json)。
