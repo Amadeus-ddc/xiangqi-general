@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "kind": "native_parallel_paper_question_rendering",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "verified_utc": "2026-10-11T16:53:06.738185+00:00",
+  "source_revision_before_commit": "286339293e078c2b01f7e7a26c248a2aa6c6e9a8",
+  "implementation": "Sequential adaptive query selection and frequency updates; bounded ordered spawned native validation and answer workers. No omitted full-history validation.",
+  "opt_in": {
+    "question_workers_default": 1,
+    "question_batch_size_default": 1,
+    "requires_declared_position_sampling_for_parallel": true,
+    "parallel_requires_color_mirror_false": true,
+    "legacy_serial_manifest_omits_new_fields": true,
+    "saved_readback_uses_same_worker_contract": true
+  },
+  "real_performance_control": {
+    "run_relative_path": "runs/paper-question-render-v1/worktree/runs/paper-question-render-control-real-v1",
+    "filename": "manifest.json",
+    "sha256": "1e8ccc23814e5351baf2ad9751c26b308587469d4b8dc6359835a7fa136f55b8",
+    "bytes": 31925,
+    "verification": {
+      "status": "complete",
+      "real_training_roots": 64,
+      "distinct_real_games": 64,
+      "questions": 256,
+      "ordered_native_questions_byte_identical_to_before_refactor": true,
+      "adaptive_frequency_reports_exact": true,
+      "all_native_history_checks_preserved": true,
+      "speedups_vs_unprofiled_serial": {
+        "parallel16": 6.9769664156366415,
+        "parallel32": 9.340788139281967
+      },
+      "source_modules": 94,
+      "model_or_gpu_loaded": false,
+      "production_job_changed": false,
+      "formal_four_courses_started": false,
+      "overall_goal_complete": false
+    }
+  },
+  "all_task_control": {
+    "run_relative_path": "runs/paper-question-render-v1/worktree/runs/paper-question-render-all-tasks-v1",
+    "filename": "manifest.json",
+    "sha256": "bc89f4f3e235e2992369992748e097e5e3b1b6d51640e29c1bb011c91441c585",
+    "bytes": 14647,
+    "verification": {
+      "status": "complete",
+      "real_training_roots": 64,
+      "distinct_real_games": 64,
+      "constructed_selection_groups": 1664,
+      "declared_task_types": 26,
+      "all_task_types_nonempty": true,
+      "questions": 3340,
+      "question_counts_by_type": {
+        "static_current/piece": 256,
+        "static_current/locate": 128,
+        "static_current/file": 128,
+        "static_current/rank": 128,
+        "static_current/diagonal": 192,
+        "static_current/counts": 64,
+        "static_current/materials": 64,
+        "dynamic_current/moves": 256,
+        "dynamic_current/controllers": 256,
+        "dynamic_current/captures": 64,
+        "dynamic_current/checks": 64,
+        "dynamic_current/parries": 6,
+        "dynamic_current/mate": 64,
+        "static_future/piece": 256,
+        "static_future/locate": 128,
+        "static_future/file": 128,
+        "static_future/rank": 128,
+        "static_future/diagonal": 192,
+        "static_future/counts": 64,
+        "static_future/materials": 64,
+        "dynamic_future/moves": 256,
+        "dynamic_future/controllers": 256,
+        "dynamic_future/captures": 64,
+        "dynamic_future/checks": 64,
+        "dynamic_future/parries": 6,
+        "dynamic_future/mate": 64
+      },
+      "ordered_question_bytes_exactly_match_previous_frozen_93_module_implementation": true,
+      "adaptive_sampler_reports_exact": true,
+      "source_legacy_modules": 93,
+      "source_new_modules": 94,
+      "reuse_across_tasks_is_this_control_fixture_only": true,
+      "production_catalog_selection_policy_unchanged": true,
+      "real_new_dataset_or_student_labels_written": false,
+      "models_or_gpu_loaded": false,
+      "production_job_changed": false,
+      "overall_goal_complete": false
+    }
+  },
+  "canonical_cpu": {
+    "run_relative_path": "runs/paper-question-render-v1/worktree/runs/paper-question-render-canonical-v1",
+    "filename": "manifest.json",
+    "sha256": "6787b9894cf66a9542166dcb7e5e513cc3b9f8ea60d2875d332df418ae6f4bfb",
+    "bytes": 11787,
+    "verification": {
+      "status": "complete",
+      "exit_code": 0,
+      "source_test_files_including_conftest": 175,
+      "source_test_hashes_unchanged": true,
+      "test_summary": "1339 passed in 320.58s (0:05:20)",
+      "elapsed_seconds": 324.85729534365237,
+      "cpu_only": true
+    }
+  },
+  "independent_readback": {
+    "run_relative_path": "runs/paper-question-render-v1/worktree/runs/paper-question-render-independent-readback-v1",
+    "filename": "verification.json",
+    "sha256": "bcf8f6cff2eb79a2b36822efa7c6ef14e2a23afa9b5c8fd437c366ac7ccfa47c",
+    "bytes": 2336,
+    "verification": {
+      "status": "complete",
+      "kind": "independent_parallel_question_readback",
+      "verified_utc": "2026-10-11T16:53:06.738185+00:00",
+      "bound_files": 61,
+      "bound_bytes": 60601625,
+      "source_new_modules": 94,
+      "source_legacy_modules": 93,
+      "source_test_files_unchanged_including_conftest": 175,
+      "canonical_test_summary": "1339 passed in 320.58s (0:05:20)",
+      "real_training_roots": 64,
+      "distinct_real_games": 64,
+      "full_native_root_histories_revalidated": 64,
+      "max_input_history_length": 161,
+      "performance_controller_questions": 256,
+      "performance_native_validation_ledgers_checked": 192,
+      "controller_timings": [
+        {
+          "mode": "serial",
+          "seconds": 33.63064271397889,
+          "actual_validation_calls": 64,
+          "actual_validation_processes": 1,
+          "configured_workers": 1
+        },
+        {
+          "mode": "parallel16",
+          "seconds": 4.8202385837212205,
+          "actual_validation_calls": 64,
+          "actual_validation_processes": 15,
+          "configured_workers": 16
+        },
+        {
+          "mode": "parallel32",
+          "seconds": 3.6004073973745108,
+          "actual_validation_calls": 64,
+          "actual_validation_processes": 23,
+          "configured_workers": 32
+        }
+      ],
+      "speedups_vs_unprofiled_serial": {
+        "parallel16": 6.9769664156366415,
+        "parallel32": 9.340788139281967
+      },
+      "all_task_questions_independently_regrounded": 3340,
+      "all_task_types_present": 26,
+      "ordered_question_bytes_match_prior_frozen_implementation": true,
+      "distinct_queries_checked_per_root_and_task": true,
+      "manual_adaptive_frequencies_exact": true,
+      "manifests": [
+        {
+          "run": "runs/paper-question-render-v1/worktree/runs/paper-question-render-control-real-v1",
+          "manifest_sha256": "1e8ccc23814e5351baf2ad9751c26b308587469d4b8dc6359835a7fa136f55b8"
+        },
+        {
+          "run": "runs/paper-question-render-v1/worktree/runs/paper-question-render-all-tasks-v1",
+          "manifest_sha256": "bc89f4f3e235e2992369992748e097e5e3b1b6d51640e29c1bb011c91441c585"
+        },
+        {
+          "run": "runs/paper-question-render-v1/worktree/runs/paper-question-render-canonical-v1",
+          "manifest_sha256": "6787b9894cf66a9542166dcb7e5e513cc3b9f8ea60d2875d332df418ae6f4bfb"
+        }
+      ],
+      "models_or_gpu_loaded": false,
+      "real_new_dataset_or_student_labels_written": false,
+      "production_job_changed": false,
+      "overall_goal_complete": false
+    }
+  },
+  "new_cases": 11,
+  "source_modules": 94,
+  "source_test_files_unchanged_including_conftest": 175,
+  "production_native_and_reviewed_follower_not_modified": true,
+  "formal_new_four_courses_started": false,
+  "actual_student_distillation_labels": 0,
+  "overall_goal_complete": false,
+  "remaining": [
+    "verified full catalog source/target readback and preparation handoff",
+    "actual full new question corpus, expert features and preflights",
+    "actual new four courses",
+    "actual explanation SFT, trained-student mining and distillation",
+    "independent chess strength and teaching acceptance"
+  ]
+}

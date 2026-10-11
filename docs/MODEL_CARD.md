@@ -13,6 +13,8 @@ The explicit consolidation profile uses a 16,384-token total window, an 8,192-to
 
 The optional 1,024-token chunked prefill completes sixteen 16,382-token inputs with two output tokens each on one H20 (76.34 GiB peak allocated), and sixteen distinct constructed queries with an 8,192-token budget (actual outputs 1,852–6,023 tokens). Same-input 128-token measurements show 12.87/54.95 token/s for serial/batch-16; this is a short-budget throughput result. Local and library-native chunked greedy outputs match; chunked and unchunked outputs differ. This remains HF execution and constructed fixtures; strategic coaching quality, actual student distillation labels and strength remain unproven. See [the batch control](../evidence/paper-teacher-prefill-v1.json).
 
+Optional CPU question workers preserve sequential adaptive queries and frequency updates, validate every complete source history, and emit native answers in the original order. A 64-game/256-question control measures 33.63/3.60 seconds for serial/configured-32 workers; 23 native worker processes actually participate. This local comparison does not measure the full catalog, dataset, or training speed. All 3,340 control questions across 26 task types match the previous frozen implementation byte for byte, and an independent reader rechecks native gold, histories and frequencies. All 1,339 local tests pass. Parallel mode requires declared position sampling without color mirrors; existing serial mode stays available. Full-corpus handoff and formal new training remain pending. See [the control](../evidence/paper-question-render-v1.json).
+
 ## Inputs and outputs
 
 Input: Xiangqi FEN, all supplied move history, and a Chinese question. Tactical

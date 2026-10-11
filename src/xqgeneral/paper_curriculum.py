@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 
 from .course_tasks import PAPER_PROFILE, PAPER_TASKS, paper_records, validate_context
 from .course_sampling import SAMPLING_PROFILE, make_sampler
+from .course_rendering import checked_question_rendering, render_positions
 from .course_position_sampling import (POSITION_PROFILE, SCARCE_FIRST_PROFILE, PositionCatalog, catalog_inputs,
                                       position_budgets, position_verification, task_order)
 from .curriculum_data import verify_splits
@@ -101,8 +102,10 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
 
 
 def position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
-                             budgets, report, scratch, workers, task_order_profile=None, batch_size=1):
+                             budgets, report, scratch, workers, task_order_profile=None, batch_size=1,
+                             question_workers=1, question_batch_size=1):
     """Select one task and one locked horizon, then render only those questions."""
+    checked_question_rendering(question_workers, question_batch_size, POSITION_PROFILE, color_mirror)
     with TemporaryDirectory(prefix='native-position-catalog-', dir=scratch) as directory:
         catalog = PositionCatalog(Path(directory) / 'sources.sqlite', prior_games=prior_games, prior_positions=prior_positions)
         try:
@@ -110,6 +113,10 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
             for root, targets in catalog_inputs(sources, workers, batch_size=batch_size):
                 catalog.add(root, targets)
             catalog.finish()
+            if question_workers != 1:
+                yield from render_positions(catalog.selections(budgets, seed, report, task_order_profile),
+                                            seed, sampler, question_workers, question_batch_size)
+                return
             for root, stage, task in catalog.selections(budgets, seed, report, task_order_profile):
                 rng = random.Random(int(hashlib.sha256(f'{seed}/{stage}/{task}/{root["feature_key"]}'.encode()).hexdigest(), 16))
                 rows = paper_records(root, rng, sampler, only_stage=stage, only_task=task)
@@ -123,10 +130,12 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
 
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
           reference_data=(), sampling_profile=None, position_sampling_profile=None,
-          task_position_budgets=None, position_workers=1, task_order_profile=None, position_batch_size=1):
+          task_position_budgets=None, position_workers=1, task_order_profile=None, position_batch_size=1,
+          question_workers=1, question_batch_size=1):
     output = Path(output)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
+    checked_question_rendering(question_workers, question_batch_size, position_sampling_profile, color_mirror)
     sampler = make_sampler(sampling_profile)
     if (position_sampling_profile not in (None, POSITION_PROFILE) or
             type(position_workers) is not int or position_workers < 1 or
@@ -149,7 +158,7 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     position_report = {}
     groups = (position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
                                       budgets, position_report, output, position_workers, task_order_profile,
-                                      position_batch_size) if budgets is not None else
+                                      position_batch_size, question_workers, question_batch_size) if budgets is not None else
               question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler))
     try:
         for root, records in groups:
@@ -206,6 +215,8 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
             config['position_batch_size'] = position_batch_size
         if task_order_profile:
             config['task_order_profile'] = task_order_profile
+        if question_workers != 1:
+            config.update(question_workers=question_workers, question_batch_size=question_batch_size)
     atomic_json(output / 'manifest.json', manifest(DATA_KIND, config, inputs, paths.values(), result))
     if public_evidence:
         atomic_json(public_evidence, dict(result, manifest_sha256=digest(output / 'manifest.json')))
@@ -237,9 +248,12 @@ def readback(data, output):
     if proof['verification'].get('task_order_profile') != order_profile:
         raise ValueError('Stored task ordering profile differs from its declared producer')
     batch_size = config.get('position_batch_size', 1)
+    question_workers, question_batch_size = config.get('question_workers', 1), config.get('question_batch_size', 1)
+    checked_question_rendering(question_workers, question_batch_size, profile, config['color_mirror'])
     if type(batch_size) is not int or batch_size < 1:
         raise ValueError('Positive completed native position batch size required')
-    if not profile and any(k in config for k in ('task_position_budgets', 'position_workers', 'task_order_profile', 'position_batch_size')):
+    if not profile and any(k in config for k in ('task_position_budgets', 'position_workers', 'task_order_profile',
+                                                'position_batch_size', 'question_workers', 'question_batch_size')):
         raise ValueError('Undeclared completed position budget settings')
     checked_sources(config['roots'], config['source_manifests'])
     _, prior_games, prior_positions = reference_contract(config['reference_data'])
@@ -250,7 +264,7 @@ def readback(data, output):
     output.mkdir(parents=True)
     groups = (position_question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games,
         prior_positions, sampler, budgets, position_report, output, config['position_workers'], order_profile,
-        batch_size) if profile else
+        batch_size, question_workers, question_batch_size) if profile else
         question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games, prior_positions, sampler))
     try:
         for _, records in groups:
@@ -308,16 +322,20 @@ def main():
     parser.add_argument('--position-batch-size', type=int, default=1,
                         help='Adjacent roots per native worker job; saved and replayed during readback')
     parser.add_argument('--task-order-profile', choices=[SCARCE_FIRST_PROFILE])
+    parser.add_argument('--question-workers', type=int, default=1,
+                        help='Ordered native question workers; requires position sampling without color mirrors')
+    parser.add_argument('--question-batch-size', type=int, default=1)
     args = parser.parse_args()
     if args.readback and any((args.sampling_profile, args.position_sampling_profile, args.task_position_budgets,
-                              args.position_workers != 1, args.task_order_profile, args.position_batch_size != 1)):
+                              args.position_workers != 1, args.task_order_profile, args.position_batch_size != 1,
+                              args.question_workers != 1, args.question_batch_size != 1)):
         parser.error('Readback uses its saved sampling and worker profiles; do not override them')
     result = (readback(args.readback, args.output) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
                     not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile,
                     args.position_sampling_profile, json.loads(Path(args.task_position_budgets).read_text())
                     if args.task_position_budgets else None, args.position_workers, args.task_order_profile,
-                    args.position_batch_size))
+                    args.position_batch_size, args.question_workers, args.question_batch_size))
     print(json.dumps(result), flush=True)
 
 
