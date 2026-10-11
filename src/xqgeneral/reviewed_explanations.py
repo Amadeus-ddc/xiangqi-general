@@ -16,6 +16,7 @@ from .symmetry import mirror_fen
 SOURCE_KINDS = {'fully_reviewed_selfplay_teacher_append',
                 'reviewed_recorded_coach_initial_teacher_labels',
                 'combined_reviewed_explanation_dataset'}
+REFERENCE_CORRECTION_KIND = 'heldout_reference_corrected_explanation_dataset'
 
 
 def checked_label(row):
@@ -54,7 +55,7 @@ def checked_label(row):
 def source_contract(proof, counts):
     """Reuse exact completed semantic acceptance; do not invent a fresh review."""
     kind, verification = proof.get('kind'), proof.get('verification', {})
-    if kind not in SOURCE_KINDS:
+    if kind not in SOURCE_KINDS | {REFERENCE_CORRECTION_KIND}:
         raise ValueError('A supported completed reviewed-label dataset is required')
     if ({s: verification.get('by_split', {}).get(s, 0) for s in SPLITS} != counts or
             set(verification.get('by_split', {})) - set(SPLITS)):
@@ -73,6 +74,18 @@ def source_contract(proof, counts):
         verification.get('source_label_bytes_and_original_splits_preserved') is True and
         verification.get('completed_semantic_acceptance_proofs_reused') is True and
         verification.get('all_training_rows_have_inline_or_supplemental_acceptance') is True
+    ) or (
+        kind == REFERENCE_CORRECTION_KIND and
+        all(verification.get(k) is True for k in (
+            'training_file_byte_identical', 'heldout_only_prose_and_review_metadata_changed',
+            'identities_structured_labels_histories_and_original_splits_preserved',
+            'completed_parent_native_and_isolation_proofs_reused',
+            'revised_bodies_complete_native_histories_and_continuations_revalidated',
+            'all_original_unrated_heldout_annotations_independently_accepted',
+            'all_training_rows_have_inline_or_supplemental_acceptance',
+            'completed_semantic_acceptance_proofs_reused')) and
+        verification.get('student_predictions_seen') is False and
+        verification.get('independent_test_used_for_training_or_selection') is False
     )
     if not accepted:
         raise ValueError('Completed dataset does not establish full upstream semantic acceptance')

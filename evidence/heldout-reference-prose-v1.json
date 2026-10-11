@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "kind": "heldout_reference_prose_correction_real_complete_readback",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-11T06:59:52.243675+00:00",
+  "scope": "Reference-only correction before the fresh paper-aligned explanation experiment; no student predictions were used.",
+  "public_entry": "xqgeneral.reference_prose",
+  "dataset_kind": "heldout_reference_corrected_explanation_dataset",
+  "teacher": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "backend": "codex_subagent",
+    "human_rating": false,
+    "authors_and_final_reviewers_differ": true,
+    "student_predictions_seen": false
+  },
+  "semantic_review": {
+    "all_legacy_heldout_annotations": 448,
+    "original_validation": 192,
+    "original_independent_test": 256,
+    "accepted_without_revision": 284,
+    "rejected_actually_rewritten_and_independently_accepted": 164,
+    "rewritten_validation": 73,
+    "rewritten_independent_test": 91,
+    "rewritten_color_derived_contexts": 148,
+    "rewritten_original_contexts": 16,
+    "independent_position_capacity_added": 0,
+    "all_original_rejection_revision_acceptance_and_raw_label_hashes_checked": true
+  },
+  "dataset": {
+    "path": "data/astra-explanations-reference-corrected-v3",
+    "rows_by_split": {
+      "train": 10758,
+      "validation": 384,
+      "test": 512
+    },
+    "all_11654_label_identities_questions_structured_answers_full_histories_splits_and_feature_keys_equal": true,
+    "all10758_training_rows_byte_identical": true,
+    "unchanged_raw_record_rows": {
+      "train": 10758,
+      "validation": 311,
+      "test": 421
+    },
+    "all164_actual_revisions_match_independent_acceptance": true,
+    "all164_revised_rows_complete_native_history_and_continuations_rechecked": true,
+    "unchanged_rows_reuse_exact_completed_parent_native_and_isolation_proofs": true,
+    "only_revised_heldout_prose_and_review_metadata_changed": true,
+    "all_source_label_bytes_preserved": false,
+    "original_dataset_modified": false,
+    "independent_test_used_for_training_or_selection": false
+  },
+  "pinned_tokenizer": {
+    "rows_by_split": {
+      "train": 10758,
+      "validation": 384
+    },
+    "maximum_tokens_by_split": {
+      "train": 649,
+      "validation": 625
+    },
+    "limit": 1024,
+    "all11142_answers_fit_without_truncation": true,
+    "independent_test_rows_tokenized": 0,
+    "assets_and_declared_control_inputs_outputs_fully_rehashed": true,
+    "frozen_modules": 89,
+    "new_foundation_feature_cache_verified": false,
+    "model_or_gpu_loaded": false
+  },
+  "new_indexes": {
+    "path": "data/astra-explanations-reference-paper-index-v1",
+    "rows_by_split": {
+      "train": 10758,
+      "validation": 384
+    },
+    "all11142_rows_compared_field_for_field_in_original_order_with_independent_serial_jsonl": true,
+    "independent_test_index_created": false
+  },
+  "post_course_ownership": {
+    "observed_utc": "2026-10-11T06:57:59.744762+00:00",
+    "new_session": "xqgeneral-paper-followthrough-reference-v1",
+    "actual_state": "waiting_for_actual_new_four_courses",
+    "new_pane_pid": 1239411,
+    "old_session": "xqgeneral-paper-followthrough-v5",
+    "old_owned_follower_confirmed_terminal": true,
+    "only_old_owned_waiting_driver_signalled": true,
+    "old_frozen_record_and_outputs_preserved": true,
+    "new_actual_parent": "runs/curriculum-paper-v4",
+    "new_stage_output": "runs/paper-sft-reviewed-reference-v1",
+    "gpu_execution_modules": 88,
+    "gpu_source_exactly_matches_approved_real_four_gpu_memory_control": true,
+    "reference_cpu_preflight_execution_modules": 89,
+    "cpu_reference_contract_change_does_not_replace_approved_neural_training_source": true,
+    "new_follower_model_or_sft_started": false,
+    "all_actual_four_new_courses_required_before_sft": true,
+    "native_preparation_session": "xqgeneral-paper-curriculum-preparation-v6",
+    "native_pane_pid": 1180302,
+    "native_actual_spawn_workers": 64,
+    "native_source_cursor_bytes_at_probe": 9618350080,
+    "native_source_cursor_advanced_at_probe": true,
+    "native_frozen_modules_rehashed": 88,
+    "original_gpu_training_not_signalled": true
+  },
+  "validation": {
+    "new_regression_cases": 19,
+    "canonical_tests_passed": 1177,
+    "canonical_seconds": 263.84,
+    "all163_source_and_test_files_unchanged": true,
+    "canonical_source_and_tests_hash_profile": "sha256_utf8_sorted_compact_json_map",
+    "canonical_source_and_tests_sha256": "819866d21d8837f61cf7bdfc6cc651f012deb81d2338d151282314aa1d1b3354",
+    "cpu_source_modules": 89,
+    "production_relative_output_key_vs_absolute_file_regression_reproduced_and_fixed": true
+  },
+  "preserved_failed_controls": {
+    "real_v1": "Wrong working directory for existing relative manifest bindings; no corrected dataset created.",
+    "real_v2": "Relative declared output key versus absolute file lookup; no corrected dataset created.",
+    "real_v3": "Completed after same-file/full-byte output binding fix; original labels unchanged."
+  },
+  "artifacts": {
+    "original_data_manifest": {
+      "path": "data/astra-explanations-clean-v1/manifest.json",
+      "sha256": "332cfa0ab19419e70ae0a4425664cbe458546bd9b4a9679a4ea1aa0a2427529c",
+      "bytes": 12042
+    },
+    "accepted_audit_manifest": {
+      "path": "data/legacy-heldout-reference-reviewed-v1/manifest.json",
+      "sha256": "de728006775764449bae19c18aed36661d35356202be3e2c12d497fe172297ec",
+      "bytes": 65161
+    },
+    "audit_verification": {
+      "path": "data/legacy-heldout-reference-reviewed-v1/verification.json",
+      "sha256": "d84b9aa30fe1a40e81b526d2890eb86255080fdde45e615fa09318cbfe939cce",
+      "bytes": 769
+    },
+    "full_audit_independent_readback": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/full-real-reference-audit-control-v1/verification.json",
+      "sha256": "a076f7e7d3d69c2c13ded70de919d363c57393a0a083f80111ddd51ec3007c23",
+      "bytes": 1002
+    },
+    "new_data_manifest": {
+      "path": "data/astra-explanations-reference-corrected-v3/manifest.json",
+      "sha256": "f11cc3cb0f9247ff18170d3fc7967baf64d4ad29c95e33b9ab51fb3ddec48c73",
+      "bytes": 13615
+    },
+    "new_data_independent_readback": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-dataset-real-v3/independent-readback.json",
+      "sha256": "6ed1d35190a9c4586aee340cca5ec3554aace4d561123c25f2d8f5fc1e261ab7",
+      "bytes": 729
+    },
+    "token_control_manifest": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-token-control-v1/manifest.json",
+      "sha256": "78b4cdd44cf5eb070f9a349127059334641e60a1f0a28b0ad6910c20aeac7e5d",
+      "bytes": 22512
+    },
+    "token_control_independent_readback": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-token-control-v1/independent-readback.json",
+      "sha256": "3e3182a59f3afed3847972c6cb39dc112de3ddde7be14ff4ef533cd648855fcd",
+      "bytes": 1232
+    },
+    "new_train_index_manifest": {
+      "path": "data/astra-explanations-reference-paper-index-v1/train/manifest.json",
+      "sha256": "10c2c2ae4dac2f3cb2f3f341de5cf09f3842903e80e5bebe56411876fad559c6",
+      "bytes": 12020
+    },
+    "new_validation_index_manifest": {
+      "path": "data/astra-explanations-reference-paper-index-v1/validation/manifest.json",
+      "sha256": "d2808bd28a8c74325aa9854c9cb78e32d8ccf4d45c6f3cd0d0bbbfaa1a47231b",
+      "bytes": 12054
+    },
+    "ownership_handoff": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/paper-followthrough-reference-v1/ownership-handoff.json",
+      "sha256": "22a161ebe95dacc8bd0dec2f8415cd650f6802ef22c6db3676c1f027cd44d4ab",
+      "bytes": 1320
+    },
+    "follower_and_indexes_independent_readback": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/paper-followthrough-reference-v1/independent-readback-v1.json",
+      "sha256": "6ab8cb4f48f58b7f479d821b15cf59956503140ea39f75fb7ef67af5f97a874f",
+      "bytes": 1360
+    },
+    "follower_gpu_source_manifest": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/paper-followthrough-reference-v1/source-run/source-manifest.json",
+      "sha256": "f0852205f7aa4eda87fbe0610eefd5bca387f66805971e59ee5bfe3b6053b40f",
+      "bytes": 8372
+    },
+    "reference_cpu_source_manifest": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-dataset-real-v3/source-run/source-manifest.json",
+      "sha256": "0bbfa1890ed4f4975f81bbe2c0392bb75ed5e60916cf2e2bbfa654210d5e27f7",
+      "bytes": 8466
+    },
+    "canonical_result": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-canonical-v2/result.json",
+      "sha256": "269e9492224a34328fd2cd918f4663f533b6526dfc849c4a9b8ddf2d84b5ea04",
+      "bytes": 139
+    },
+    "canonical_log": {
+      "path": "runs/heldout-reference-prose-v1/worktree/runs/reference-prose-canonical-v2/run.log",
+      "sha256": "a83bff5ef6cb63ca0d4e6e5d1bb9f123a44b26ed4db90dc88987df330f1968eb",
+      "bytes": 1393
+    }
+  },
+  "limitations": {
+    "four_new_formal_courses_completed": false,
+    "formal_student_explanation_sft_completed": false,
+    "search_distillation_completed": false,
+    "student_strength_or_prose_benefit_measured": false,
+    "full_decoder_sft_memory_fit_measured": false,
+    "full_token_and_feature_preflight_after_actual_four_courses_still_required": true,
+    "final_independent_play_and_human_coaching_acceptance_completed": false,
+    "goal_complete": false
+  }
+}

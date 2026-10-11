@@ -4,7 +4,9 @@
 
 ## 已验证
 
-- 原生准备的分批与缓存控制已完成：4096 个真实训练根的目标逐字节一致，旧版／十六根分批版耗时 109.69／16.25 秒，局部分类约快 6.75 倍；不是全库或训练加速。全套 1158 项通过，161 份源码／测试不变；相同 88 份新模块的真实四卡连接桥连续八步与四加四恢复一致，新旧八步参数／优化器／随机状态也一致。替代课程准备 `xqgeneral-paper-curriculum-preparation-v6` 使用 `data/paper-courses-v4`，新讲解等待 `xqgeneral-paper-followthrough-v5` 接 `runs/curriculum-paper-v4`，仍保留已验证的讲解显存设置源码。交接守卫只在新 64 子进程及来源进度实际确认后退役旧 CPU 准备与等待任务；新模型工作先等交接完成。正式新四课、讲解、蒸馏及最终能力仍未完成。见 `evidence/paper-native-prefix-cache-v1.json` 和两份阶段文档。
+- 旧讲解参考的完整复审与新版本已完成：448 条旧验证／独立测试参考中，284 条原文接受，164 条实际重写后另行接受（验证 73、独立测试 91）。新 `astra-explanations-reference-corrected-v3` 的 10758 条训练文件逐字节不变，全部 11654 条的身份、问题、结构化答案、完整历史、特征键与棋局分割一致；只修改参考正文与复核元数据。实际固定词元器检查全部 11142 条训练／验证，无截断，独立测试未编码。全套 1177 项通过，163 份源码／测试不变。新 `xqgeneral-paper-followthrough-reference-v1` 使用新索引并等待 `runs/curriculum-paper-v4` 的实际四课；GPU 阶段保持已控制的 88 份源码，修订清单的 CPU 预检另用冻结的 89 份源码。新队列存活与来源确认后，旧 v5 讲解等待任务已退出，64 进程课程数据生产继续。正式新四课、讲解 SFT、蒸馏及学生棋力／教学收益仍未完成。见 `docs/REFERENCE_PROSE.md`、`docs/PAPER_POST_CURRICULUM.md` 和 `evidence/heldout-reference-prose-v1.json`。
+
+- 原生准备的分批与缓存控制已完成：4096 个真实训练根的目标逐字节一致，旧版／十六根分批版耗时 109.69／16.25 秒，局部分类约快 6.75 倍；不是全库或训练加速。全套 1158 项通过，161 份源码／测试不变；相同 88 份新模块的真实四卡连接桥连续八步与四加四恢复一致，新旧八步参数／优化器／随机状态也一致。该准备里程碑使用 `xqgeneral-paper-curriculum-preparation-v6` 和 `data/paper-courses-v4`；当时的 `xqgeneral-paper-followthrough-v5` 等待 `runs/curriculum-paper-v4`，已由上项新参考集队列接替，仍保留已验证的讲解显存设置源码。交接守卫只在新 64 子进程及来源进度实际确认后退役旧 CPU 准备与等待任务；新模型工作先等交接完成。正式新四课、讲解、蒸馏及最终能力仍未完成。见 `evidence/paper-native-prefix-cache-v1.json` 和两份阶段文档。
 
 - 新讲解配方的显存设置已通过真实四卡控制：显式关闭 AdamW 整组临时张量并启用 DDP 梯度视图，671806496 个连接桥／棋盘参数的连续八步与四加四恢复逐位一致，全部最后训练梯度为视图；全套 1149 项检查通过，161 份源码／测试不变。完整参数 meta 计数为 4694274592，69.95GiB 只是主参数／梯度／两项状态估算，不证明完整 SFT 能装入显存。新讲解队列 `xqgeneral-paper-followthrough-v4` 固定相同 88 份显存控制模块，等待 `runs/curriculum-paper-v3` 的实际四课完成证明；前一个未开训的等待任务已退出。新课程准备为 `xqgeneral-paper-curriculum-preparation-v5`，配置 64 个原生分类进程；4096 根三十二／六十四进程目标字节一致，局部分类耗时约 1.58 倍。自动交接已确认 64 个工作进程实际存活与来源推进，旧八进程准备和对应讲解等待任务已退出，冻结记录保留；原课程与 GPU 模型进程未被退役。新课程、完整解码器预检／讲解、蒸馏及最终棋力／教学验收尚未完成。见 `docs/PAPER_POST_CURRICULUM.md`、`docs/PAPER_FOUNDATION_EXPERIMENT.md` 和两份新轻量证据。
 
