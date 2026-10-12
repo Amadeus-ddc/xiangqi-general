@@ -2,6 +2,7 @@
 import argparse
 from collections import Counter
 import json
+import math
 from pathlib import Path
 import shutil
 from .curriculum_data import verify_splits
@@ -12,9 +13,37 @@ from .recorded_search_inputs import ARTIFACTS, BoundInputs, prepared_roots
 from .rules import replay
 from .search_distillation import reserved_positions
 from .prose_moves import validate_prose_moves
+from .calibration import evaluation_probability
+
+EVALUATION_FILTER_PROFILE = 'selected_branch_vs_oracle_winrate_xiangqi_v1'
 
 
-def consolidated_label(query, response, teacher):
+def search_evaluation_filter(query, threshold=0.075):
+    """Filter the retained student estimate, before using the oracle root field.
+
+    Queen parses the consolidated prose score; our consolidator only supplies
+    prose around fixed fields. This therefore measures the selected student
+    branch estimate and explicitly does not rate the prose's numerical claims.
+    """
+    if type(threshold) not in (int, float) or not math.isfinite(threshold) or not 0 < threshold <= 1:
+        raise ValueError('A finite exclusive winrate-error threshold in (0, 1] is required')
+    fields, fen = query['target_fields'], query['record']['fen']
+    selected = [branch for branch in fields['branches'] if branch['move'] == fields['move']]
+    if len(selected) != 1:
+        raise ValueError('Require exactly one original selected branch evaluation')
+    original, truth = selected[0]['evaluation'], fields['evaluation']
+    predicted, oracle = evaluation_probability(fen, original), evaluation_probability(fen, truth)
+    error = abs(predicted - oracle)
+    if error >= threshold or math.isclose(error, threshold, rel_tol=0, abs_tol=1e-12):
+        raise ValueError('Selected branch evaluation error reaches the exclusive packing threshold')
+    return {'profile': EVALUATION_FILTER_PROFILE, 'max_absolute_winrate_error_exclusive': threshold,
+        'original_selected_branch_evaluation': original, 'oracle_root_evaluation': truth,
+        'predicted_winrate': predicted, 'oracle_winrate': oracle, 'absolute_winrate_error': error,
+        'structured_root_evaluation_already_oracle_grounded': True,
+        'consolidated_prose_evaluation_error_measured': False}
+
+
+def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.075):
     identity = response.get('teacher', {})
     if (response.get('id') != query['id'] or response.get('hit_generation_limit', True) or
             any(identity.get(k) != teacher[k] for k in ['repository', 'revision', 'quantization', 'inference_dtype']) or
@@ -30,6 +59,7 @@ def consolidated_label(query, response, teacher):
     proof = validate_explanation(row['fen'], value, require_branches=True)
     if not proof['valid']:
         raise ValueError(f'Consolidation violates grounded facts: {proof["errors"]}')
+    evaluation_filter = search_evaluation_filter(query, max_eval_error_exclusive)
     prose_proof = validate_prose_moves(row['fen'], value, prose['explanation'])
     if not prose_proof['valid']:
         raise ValueError(f'Consolidation violates grounded prose moves: {prose_proof["errors"]}')
@@ -40,6 +70,7 @@ def consolidated_label(query, response, teacher):
                 future_moves=list(value['pv']), future_branches=[list(b['pv']) for b in value['branches']],
                 question=EXPLANATION_QUESTION, answer=json.dumps(value, ensure_ascii=False),
                 teacher=identity, search_source_root=query['source_root_id'], search_depth=query['depth'],
+                search_evaluation_filter=evaluation_filter,
                 provenance=row['provenance'] + ';student_recursive_search;verified_pv_improvement;Qwen3.8-27B_BF16_consolidation')
 
 
@@ -149,6 +180,8 @@ def main():
     parser.add_argument('--mining-manifest', help='Completed miner manifest; defaults to the queries sibling')
     parser.add_argument('--recorded-inputs', help='Require this exact unused-recorded pool from the miner')
     parser.add_argument('--output', required=True)
+    parser.add_argument('--max-eval-error-exclusive', type=float, default=0.075,
+                        help='Selected student branch versus oracle expected-score error; reject equality')
     args = parser.parse_args()
     dest = Path(args.output)
     if dest.exists():
@@ -172,7 +205,8 @@ def main():
     train, rejected, keys = [], [], set()
     for query in queries:
         try:
-            row = consolidated_label(query, by_id[query['id']], teacher)
+            row = consolidated_label(query, by_id[query['id']], teacher,
+                                     max_eval_error_exclusive=args.max_eval_error_exclusive)
             if continuation_positions(row, parse_explanation(row['answer'])) & forbidden:
                 raise ValueError('Consolidated root or branch overlaps a heldout position')
             if row['feature_key'] in keys:
@@ -206,6 +240,10 @@ def main():
                'explicit_prose_moves_natively_verified': True,
                'all_strategic_prose_semantics_verified': False,
                'all_branch_positions_isolated': True, 'full_history_termination_checked': True,
+               'selected_branch_evaluation_filter_applied': True,
+               'evaluation_filter_profile': EVALUATION_FILTER_PROFILE,
+               'max_absolute_winrate_error_exclusive': args.max_eval_error_exclusive,
+               'consolidated_prose_evaluation_error_measured': False,
                'validation_source_unchanged': args.validation_data, 'strategic_prose_human_rating': False,
                **source_proof}
     saved = manifest('search_consolidated_dataset', vars(args), [], outputs, summary)

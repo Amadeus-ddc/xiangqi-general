@@ -242,6 +242,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     'config': evaluation['teacher_config'], 'heldout_data': config['data'],
                     'validation_data': evaluation['data'], 'mining_manifest': str(mining / 'manifest.json'),
                     'recorded_inputs': config['recorded_inputs'], 'output': str(data)}
+            args['max_eval_error_exclusive'] = config.get('max_eval_error_exclusive', 0.075)
             collected = completed_stage('collect_search', args, 'search_consolidated_dataset', data)
             labels = load_jsonl(data / 'train.jsonl')
             rejections = json.loads((data / 'rejected.json').read_text())
