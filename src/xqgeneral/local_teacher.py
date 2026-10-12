@@ -1,6 +1,8 @@
 """Pinned, unquantized BF16 teacher. One load serves an entire local batch."""
 import argparse
 from collections import Counter
+from contextlib import contextmanager
+from importlib.metadata import version
 import json
 from pathlib import Path
 import time
@@ -161,6 +163,20 @@ def positive_int(value):
     return result
 
 
+@contextmanager
+def teacher_session(config, backend):
+    if backend == 'vllm':
+        from .vllm_teacher import VllmConsolidator
+        teacher = VllmConsolidator(config)
+    else:
+        teacher = LocalConsolidator(config)
+    try:
+        yield teacher
+    finally:
+        if backend == 'vllm':
+            teacher.close()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='configs/teachers.json')
@@ -172,6 +188,7 @@ def main():
     parser.add_argument('--prefill-chunk-size', type=positive_int)
     parser.add_argument('--generation-config')
     parser.add_argument('--seed', type=int)
+    parser.add_argument('--backend', choices=['transformers', 'vllm'], default='transformers')
     args = parser.parse_args()
     root = Path(args.output)
     if (root / 'manifest.json').exists():
@@ -195,12 +212,17 @@ def main():
         config['prefill_chunk_size'] = args.prefill_chunk_size
     chunk = checked_prefill_chunk_size(config.get('prefill_chunk_size'))
     checked_budget(args.max_new_tokens, config.get('max_context_tokens'))
+    if args.backend == 'vllm' and (config.get('max_context_tokens') is None or chunk is not None or
+            args.batch_size > 16):
+        raise ValueError('vLLM requires an explicit context, at most 16 requests, and no HF prefill setting')
     rows = load_jsonl(args.input)
     if len({r['id'] for r in rows}) != len(rows):
         raise ValueError('Teacher query IDs must be unique')
     contract = {'input_sha256': digest(args.input), 'teacher': config,
                 'max_new_tokens': args.max_new_tokens}
     arguments = vars(args).copy()
+    if args.backend == 'transformers':
+        arguments.pop('backend')
     for key in ['max_context_tokens', 'generation_config', 'seed', 'prefill_chunk_size']:
         if arguments[key] is None:
             arguments.pop(key)
@@ -210,6 +232,9 @@ def main():
                         code=code_identity())
     elif chunk is not None:
         contract.update(generation_software=generation_software(), code=code_identity())
+    if args.backend == 'vllm':
+        contract.update(backend='vllm', generation_software={**generation_software(), 'vllm': version('vllm')},
+                        code=code_identity())
     if args.batch_size != 1:
         contract['batch_size'] = args.batch_size
     else:
@@ -234,35 +259,50 @@ def main():
                 not set(item.get('generation_batch_ids', [])) <= {r['id'] for r in rows} or
                 item.get('sampling_seed') != batch_seed(args.seed, item.get('generation_batch_ids', []))):
             raise ValueError('Teacher continuation sampling identities changed')
+        if args.backend == 'vllm':
+            from .vllm_teacher import REQUEST_SEED_PROFILE, request_seed
+            if (item.get('teacher', {}).get('backend') != 'vllm' or
+                    item['teacher'].get('request_seed_profile') != REQUEST_SEED_PROFILE or
+                    not isinstance(item.get('generated_token_ids'), list) or
+                    len(item['generated_token_ids']) != item['generated_tokens'] or
+                    any(type(token) is not int or token < 0 for token in item['generated_token_ids']) or
+                    profile is not None and item.get('request_sampling_seed') != request_seed(
+                        item['sampling_seed'], item['generation_batch_ids'].index(item['id']))):
+                raise ValueError('Teacher continuation vLLM request identity changed')
     started = time.monotonic()
-    teacher = LocalConsolidator(config)
-    atomic_json(root / 'deployment.json', teacher.identity)
-    pending = [row for row in rows if row['id'] not in seen]
-    reused = len(results)
-    batches = 0
-    with partial.open('a') as handle:
-        for offset in range(0, len(pending), args.batch_size):
-            group = pending[offset:offset + args.batch_size]
-            sampling_seed = batch_seed(args.seed, [row['id'] for row in group]) if profile else None
-            with sample_rng(teacher.model.device if profile else 'cpu', sampling_seed):
-                generated = ([teacher.generate(group[0]['messages'], args.max_new_tokens)]
-                             if args.batch_size == 1 else
-                             teacher.generate_batch([row['messages'] for row in group], args.max_new_tokens))
-            if len(generated) != len(group):
-                raise RuntimeError('Teacher batch coverage differs from its queries')
-            for response in generated:
-                checked_response(response, args.max_new_tokens, config.get('max_context_tokens'), profile)
-            items = [{'id': row['id'], **response, 'teacher': teacher.identity}
-                     for row, response in zip(group, generated, strict=True)]
-            if profile is not None:
+    with teacher_session(config, args.backend) as teacher:
+        atomic_json(root / 'deployment.json', teacher.identity)
+        pending = [row for row in rows if row['id'] not in seen]
+        reused = len(results)
+        batches = 0
+        with partial.open('a') as handle:
+            for offset in range(0, len(pending), args.batch_size):
+                group = pending[offset:offset + args.batch_size]
+                sampling_seed = batch_seed(args.seed, [row['id'] for row in group]) if profile else None
+                with sample_rng(teacher.model.device if profile and args.backend == 'transformers' else 'cpu',
+                                sampling_seed if args.backend == 'transformers' else None):
+                    if args.backend == 'vllm':
+                        generated = teacher.generate_batch([row['messages'] for row in group],
+                            args.max_new_tokens, sampling_seed=sampling_seed)
+                    else:
+                        generated = ([teacher.generate(group[0]['messages'], args.max_new_tokens)]
+                                     if args.batch_size == 1 else
+                                     teacher.generate_batch([row['messages'] for row in group], args.max_new_tokens))
+                if len(generated) != len(group):
+                    raise RuntimeError('Teacher batch coverage differs from its queries')
+                for response in generated:
+                    checked_response(response, args.max_new_tokens, config.get('max_context_tokens'), profile)
+                items = [{'id': row['id'], **response, 'teacher': teacher.identity}
+                         for row, response in zip(group, generated, strict=True)]
+                if profile is not None:
+                    for item in items:
+                        item.update(sampling_seed=sampling_seed, generation_batch_ids=[row['id'] for row in group])
                 for item in items:
-                    item.update(sampling_seed=sampling_seed, generation_batch_ids=[row['id'] for row in group])
-            for item in items:
-                handle.write(json.dumps(item, ensure_ascii=False) + '\n'); handle.flush()
-                results.append(item)
-            batches += 1
-            print(json.dumps({'generated': len(results), 'requested': len(rows),
-                              'batch_size': len(group), 'seconds': time.monotonic() - started}), flush=True)
+                    handle.write(json.dumps(item, ensure_ascii=False) + '\n'); handle.flush()
+                    results.append(item)
+                batches += 1
+                print(json.dumps({'generated': len(results), 'requested': len(rows),
+                                  'batch_size': len(group), 'seconds': time.monotonic() - started}), flush=True)
     if (digest(args.input) != contract['input_sha256'] or profile is not None and
             digest(args.generation_config) != contract['generation_config_sha256'] or
             'code' in contract and code_identity() != contract['code']):
@@ -283,6 +323,9 @@ def main():
                      reasoning_completed=sum(r['reasoning_completed'] for r in results))
     if chunk is not None:
         proof.update(prefill_chunk_size=chunk, full_input_prefix_cached_without_truncation=True)
+    if args.backend == 'vllm':
+        proof.update(backend='vllm', request_seed_profile=teacher.identity['request_seed_profile'],
+                     full_input_prefix_cached_without_truncation=True, teacher_engine_closed=True)
     input_paths = [args.config, args.input, Path(config['model_path']) / 'weights.manifest.json']
     if args.generation_config:
         input_paths.append(args.generation_config)

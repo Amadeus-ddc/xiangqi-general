@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "kind": "paper_teacher_vllm_real_control_and_independent_readback",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "completed_utc": "2026-10-12T09:01:30.996865+00:00",
+  "scope": "bounded unquantized teacher inference on constructed queries; no trained-student search or accepted labels",
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "official_complete_shards": 18,
+    "total_weight_bytes": 55563006776,
+    "stored_tensor_dtype": "BF16",
+    "quantization": "none",
+    "complete_disk_checkpoint_elements": 27781427952,
+    "stored_bf16_tensors": 1199,
+    "active_autoregressive_plus_vision_elements": 27356728560,
+    "default_inactive_mtp_parameters": 424699392,
+    "default_inactive_mtp_tensors": 15,
+    "standard_hf_active_parameter_count_matches": true,
+    "all_official_bf16_shards_including_mtp_fresh_sha256_verified": true,
+    "loaded_worker_identity": [
+      {
+        "parameter_elements_by_dtype": {
+          "torch.bfloat16": 27356726256,
+          "torch.float32": 2304
+        },
+        "quant_methods": [
+          "UnquantizedEmbeddingMethod",
+          "UnquantizedLinearMethod"
+        ],
+        "model_class": "Qwen3_5ForConditionalGeneration",
+        "model_quant_config_is_none": true,
+        "vision_tower_present": true
+      }
+    ]
+  },
+  "generation_profile": {
+    "do_sample": true,
+    "temperature": 1.0,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_context_tokens": 16384,
+    "max_new_tokens": 8192,
+    "reasoning_effort": "low"
+  },
+  "software": {
+    "vllm": "0.19.1",
+    "torch": "2.10.0",
+    "transformers": "5.8.1"
+  },
+  "same_query_control": [
+    {
+      "kind": "same_query_short_batch_128",
+      "batch": 16,
+      "max_new_tokens": 128,
+      "seconds": 21.171333528123796,
+      "generated_tokens": 2048,
+      "tokens_per_second": 96.73457731320781,
+      "reasoning_completed": 0,
+      "generation_limit_rows": 16,
+      "prefix_cache_reset_before_measurement": true,
+      "sha256": "71f24ee4fea763a302f541333b04b9b11e165697c414711f7b3d31848e0433c8"
+    },
+    {
+      "kind": "same_query_full_batch_8192",
+      "batch": 16,
+      "max_new_tokens": 8192,
+      "seconds": 205.89810087904334,
+      "generated_tokens": 60268,
+      "tokens_per_second": 292.7078964919884,
+      "reasoning_completed": 15,
+      "generation_limit_rows": 1,
+      "prefix_cache_reset_before_measurement": true,
+      "sha256": "c1c840f47faa0699be0bb044d40553c4be4bab468818a265a4de26cde23f43b8"
+    }
+  ],
+  "full_window_capacity": {
+    "status": "complete",
+    "batch": 16,
+    "distinct_prompts": 16,
+    "prompt_tokens_per_request": 16382,
+    "max_new_tokens": 2,
+    "max_model_len": 16384,
+    "no_input_truncation": true,
+    "prefix_cache_reset_before_measurement": true,
+    "seconds": 109.6224366882816,
+    "sha256": "52fa66d3fa1c4aac9fa6321cb9f87013771d443df7a59be2348cf5cd8f588205",
+    "scope": "constructed full-window capacity only; no explanation quality or student labels"
+  },
+  "hf_full_control": {
+    "tokens": 56718,
+    "seconds": 909.6822154605761,
+    "tokens_per_second": 62.3492457432329
+  },
+  "qualified_control_token_rate_ratio": 4.694650159801774,
+  "hf_and_vllm_seed_profiles_and_outputs_differ": true,
+  "actual_integrated_cli": {
+    "queries": 16,
+    "generated_tokens": 50404,
+    "reasoning_completed": 16,
+    "generation_limit_rows": 0,
+    "seconds_including_verification_and_deployment": 341.286592932418,
+    "teacher_engine_closed": true,
+    "source_modules": 98,
+    "request_seed_profile": "sha256_teacher_batch_seed_and_request_ordinal_v1",
+    "source_and_inputs_outputs_seeds_token_ids_raw_text_verified": true
+  },
+  "independent_readback": {
+    "fresh_full_weight_hashes": true,
+    "raw_token_ids_and_decoded_text_recomputed": true,
+    "complete_capacity_prompts_reconstructed": true,
+    "all_98_integrated_source_modules_freshly_hashed": true,
+    "source_key_normalization": "bijective module filename mapping",
+    "disk_mtp_and_standard_hf_vllm_parameter_difference_resolved": true,
+    "new_gpu_inference_executed_by_reader": false,
+    "seconds": 53.148246532306075
+  },
+  "local_validation": {
+    "full_pytest_passed": 1452,
+    "failed": 0,
+    "source_and_test_files_bound": 185,
+    "source_and_test_files_unchanged": true,
+    "seconds": 422.4025228302926,
+    "physical_gpu_visible_to_full_test_suite": [
+      0
+    ]
+  },
+  "private_artifact_bindings": [
+    {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/vllm-teacher-independent-readback-v3/launch.json",
+      "bytes": 1190,
+      "sha256": "157ffef896fdfe8dc370482a26d667fc3c63a2150c7e2607a0d429dea9ff200b"
+    },
+    {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/vllm-teacher-independent-readback-v3/verification.json",
+      "bytes": 3995,
+      "sha256": "32c762dd8128dbed81f4fba4f70886ab8ee170615ee8af3b9de85975ac43b0e5"
+    },
+    {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/vllm-teacher-independent-readback-v3/control-readback.json",
+      "bytes": 2986,
+      "sha256": "1291f8319a95ac28f9528df7080effd1390feb5395ce8cf301706bec624ca0c4"
+    },
+    {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/teacher-vllm-throughput-v4/verification.json",
+      "bytes": 3242,
+      "sha256": "f988174ea8cc1c5d14ec3076e3d4a4164d7abd7615d0dbde81b49e75824fce97"
+    },
+    {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/teacher-vllm-throughput-v4/measurements.json",
+      "bytes": 1088,
+      "sha256": "f3170c467729d90aa26aec6bdd2d32d13231cf15485a9ace38835e1734f4faec"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-bf16-vllm-entry-control-v1/inference/manifest.json",
+      "bytes": 15901,
+      "sha256": "5b94b018f661a0528342fcddb98e6feebaa0bf6da77220018056e3287b7cd594"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-bf16-vllm-entry-control-v1/inference/responses.jsonl",
+      "bytes": 457200,
+      "sha256": "125610a3b3a88a64b16704227afd867bd6e0c08a04bc65919c4969f0dcd1d8f8"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-bf16-vllm-entry-control-v1/source-run/source-manifest.json",
+      "bytes": 9318,
+      "sha256": "563b77bc7e7ca5e95dbe9019bb478f856065186aa5b24a62f387e090c0082cfe"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-verification-v1/exit.json",
+      "bytes": 169,
+      "sha256": "df550040d2f39a1b20683b22f59429e9fb598a6a0c22295ce7d7d6702a9f6e9d"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-verification-v1/pytest.log",
+      "bytes": 1713,
+      "sha256": "294228b362088ff19eac1013521a208c769e2a2ac9a788611493fa4aaee6e2c0"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-verification-v1/source-before.json",
+      "bytes": 19377,
+      "sha256": "f5e93df0e620c4146e64ee33d41ed5845578acb89a38af2e59bb9a02c7ed4bd3"
+    },
+    {
+      "path": "runs/paper-teacher-vllm-backend-v1/worktree/runs/full-verification-v1/source-after.json",
+      "bytes": 19377,
+      "sha256": "f5e93df0e620c4146e64ee33d41ed5845578acb89a38af2e59bb9a02c7ed4bd3"
+    }
+  ],
+  "public_bundle_contains_raw_artifacts_or_weights": false,
+  "failed_private_probes_preserved": true,
+  "production_preparation_and_followthrough_changed": false,
+  "actual_student_search_labels": 0,
+  "new_four_course_optimizer_updates": 0,
+  "student_training_started": false,
+  "strength_or_strategic_prose_quality_proven": false,
+  "overall_goal_complete": false
+}
