@@ -1,0 +1,19 @@
+{
+  "sft_recipe": "runs/search-round-1-training/recipe.json",
+  "token_preflight": "runs/search-round-1-data-preflight/manifest.json",
+  "data": "data/search-round-1",
+  "features": "data/search-round-1-features/manifest.json",
+  "split": "validation",
+  "validation_examples": 384,
+  "memories": ["normal", "zero", "shuffled"],
+  "batch_size": 4,
+  "max_new_tokens": 768,
+  "nodes": 1000000,
+  "workers": 8,
+  "seed": 20261067,
+  "executable": "vendor/pikafish/src/pikafish",
+  "weights": "vendor/pikafish/src/pikafish.nnue",
+  "teacher_config": "configs/teachers.json",
+  "review_max_new_tokens": 1536,
+  "cuda_visible_devices": "0"
+}

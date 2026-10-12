@@ -1,6 +1,8 @@
 # 论文对齐的新四课实验
 
-核对日期：2026-10-11。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。当前原冻结课程保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
+核对日期：2026-10-13。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。当前原冻结课程保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
+
+本服务器当前生产会话为 `xqgeneral-paper-curriculum-preparation-v7`，入口在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7/`，实际输出为 `data/paper-courses-v5` 与 `runs/curriculum-paper-v5`。CPU 问答使用 95 份冻结模块，GPU 特征／课程阶段保留原来的 88 份已验证模块；完整目录已经核对 6301835 个根、52964340 个目标及 105352 盘来源棋局。当前仍在生成问答，后续全量金标复核、缓存、索引、预检与四课按保存计划衔接。四卡全局 256／微批量 4／完整 2048 token 的容量已另行[实测](PAPER_CURRICULUM_CAPACITY.md)。后续讲解等待会话见[当前衔接队列](PAPER_POST_CURRICULUM.md#本服务器当前队列)。
 
 ## 组合与选模
 
@@ -37,16 +39,18 @@
 
 rank 0 的峰值分配分别为 23.30／23.33GiB，使用微批量一及短原生探针；运行时原课程同时在用 GPU，不能当成独立吞吐或正式微批量四的显存结果。八次更新不证明完成课程、棋力或讲解质量。见 [轻量证据](../evidence/paper-foundation-integration-v1.json)。
 
-当前替代准备队列为 `xqgeneral-paper-curriculum-preparation-v6`，固定 88 份优化后的执行模块，仍用 64 个原生工作进程，每次处理相邻 16 根。历史判定按初始 FEN 和完整走法序列缓存；分类按完整 FEN 和实际将死距离缓存。内部结果不可变，公开返回值另建，仍拒收非法历史及与原生事实不符的保存标签。默认分批大小一，旧配方不改；完成清单保存非默认 `position_batch_size`，完整读回沿用同值。
+## 已保存的 v6 原生分批优化
+
+准备队列 `xqgeneral-paper-curriculum-preparation-v6` 曾使用固定的 88 份优化模块、64 个原生工作进程，每次处理相邻 16 根。历史判定按初始 FEN 和完整走法序列缓存；分类按完整 FEN 和实际将死距离缓存。内部结果不可变，公开返回值另建，仍拒收非法历史及与原生事实不符的保存标签。默认分批大小一，旧配方不改；完成清单保存非默认 `position_batch_size`，完整读回沿用同值。
 
 4096 个真实训练根的旧版、单根缓存版、十六根缓存版目标逐字节一致，耗时分别为 109.69／96.13／16.25 秒，计入工作进程启动，分批版约快 6.75 倍。比较时原准备任务同在运行；只测分类，未测全库目录、问答制作或训练的加速。新增九项检查及全套 1158 项通过，161 份源码／测试不变。见 [轻量证据](../evidence/paper-native-prefix-cache-v1.json)。
 
 相同 88 份模块的实际固定 Qwen 四卡连接桥控制也已完成：连续八步与四加四恢复的参数／优化器／随机状态／访问轨迹逐位一致；新旧实现各自的连续八步参数、优化器及随机状态也逐位一致。全部 32 个门控打开，rank 0 峰值 23.30／23.33GiB，仍是微批量一和短探针，不能证明正式批量容量或棋力。控制的 29 份输出再次完整哈希读回。
 
-完整实战根的全量原生复演已完成，保留训练 5099559、验证 602056、独立测试 600220 个完整历史根；这些数量包含同一棋盘的不同历史，不是独立问答数。当前输出为 `data/paper-courses-v4` 与 `runs/curriculum-paper-v4`。队列重新核对所有原字节后，依次制作全部问答、重新生成金标和顺序、提取完整特征缓存、建立训练／验证索引、完成原生与词元预检、核对原始来源／旧缓存／预训练资产，再检查真实四卡恢复证明及相同冻结源码，最后启动新四课。每个阶段保留清单与退出状态，原始课程及旧证据不变。
+完整实战根的全量原生复演已完成，保留训练 5099559、验证 602056、独立测试 600220 个完整历史根；这些数量包含同一棋盘的不同历史，不是独立问答数。v6 保存配置的输出为 `data/paper-courses-v4` 与 `runs/curriculum-paper-v4`。该准备链先重新核对原字节，再制作全部问答、重新生成金标和顺序、提取完整特征缓存、建立训练／验证索引、完成原生与词元预检、核对原始来源／旧缓存／预训练资产，再检查真实四卡恢复证明及相同冻结源码，最后启动新四课。每个阶段保留清单与退出状态，原始课程及旧证据不变。
 
-自动交接守卫 `xqgeneral-native-preparation-handoff-v4` 等待新任务实际拥有 64 个原生子进程，且连续观察到根来源读取推进，再退役仍处在分类阶段的旧 v5 准备及其 v4 讲解等待任务。新队列进入任何 GPU 特征／模型工作前要求这份交接证明完成；原冻结课程和 GPU 模型进程不在退役范围。旧源码、输入和部分产物全部保留。
+v6 的自动交接守卫 `xqgeneral-native-preparation-handoff-v4` 要求新任务实际拥有 64 个原生子进程，且连续观察到根来源读取推进，才退役当时的旧 v5 准备及其 v4 讲解等待任务。进入任何 GPU 特征／模型工作前要求这份交接证明完成；原冻结课程和 GPU 模型进程不在退役范围。旧源码、输入和部分产物全部保留。
 
-保存入口位于 `runs/native-prefix-cache-v1/worktree/runs/paper-curriculum-preparation-v6/`，`state.json`／`plan.json` 记录阶段、固定字节和续跑说明。确认原会话退出后才按保存计划恢复；部分输出或配置改变使用新输出。完整来源、四课预算、课程比例、零初始化起点和选模规则均未因分批优化而改变。
+v6 的历史入口保留在 `runs/native-prefix-cache-v1/worktree/runs/paper-curriculum-preparation-v6/`。v7 已确认新问答进程实际写出并推进后完成 v6 准备及旧讲解等待的退役，交接依据见[目录切换记录](../evidence/native-position-catalog-handoff-v1.json)。实际观察与续跑使用文首所列 v7 的 `state.json`／`plan.json`；确认原会话退出后才按对应保存计划恢复。部分输出或配置改变使用新输出。完整来源、四课预算、课程比例、零初始化起点和选模规则保持原合同。
 
 完整新问答、正式缓存和四课尚未完成；四课完成后还须执行初始讲解 SFT、原始能力与棋力评测、足量搜索蒸馏，以及独立教学正文验收。模型交付目标保持未完成。

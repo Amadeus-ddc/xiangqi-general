@@ -1,4 +1,4 @@
-"""Wait for clean initial SFT, then evaluate paired raw outputs and blinded prose."""
+"""Evaluate completed initial or distilled full-decoder SFT with paired raw outputs."""
 import argparse
 import json
 import os
@@ -10,12 +10,18 @@ import time
 import torch
 
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
+from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
 from .evaluate_explanations import explanation_summary
 from .explanations import EXPLANATION_QUESTION
 from .foundation_handoff import Artifacts
 from .review_explanations import DIMENSIONS, blinded_query, parse_rating
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary
+
+
+def capability_kind(token):
+    return ('search_distillation_capability_validation' if token.get('kind') == TOKEN_KIND
+            else 'clean_initial_sft_capability_validation')
 
 
 def validation_spec(config):
@@ -25,11 +31,18 @@ def validation_spec(config):
         if type(config[key]) is not int or config[key] <= 0:raise ValueError('Evaluation budgets must be positive integers')
     token = json.loads(Path(config['token_preflight']).read_text());checked_artifacts(token)
     recipe = json.loads(Path(config['sft_recipe']).read_text())
-    if (token.get('kind') != 'latent_only_reviewed_explanation_data_preflight' or
+    distilled = token.get('kind') == TOKEN_KIND
+    if (token.get('kind') not in {'latent_only_reviewed_explanation_data_preflight', TOKEN_KIND} or
             token['config']['data'] != config['data'] or recipe['data_path'] != config['data'] or
-            recipe.get('require_clean_foundation_handoff') is not True or
+            recipe.get('require_clean_foundation_handoff') is not (not distilled) or
             recipe['feature_path'] != config['features'] or token['cache_header_only_input']['path'] != config['features']):
         raise ValueError('Evaluation must use the exact reviewed clean SFT data and cache')
+    if distilled and any(token['verification'].get(k) is not value for k, value in {
+            'protected_validation_and_test_bytes_unchanged': True,
+            'parent_full_decoder_completion_verified': True,
+            'all_original_feature_keys_and_tensor_references_preserved': True,
+            'independent_test_used_for_training_or_selection': False}.items()):
+        raise ValueError('Distilled evaluation requires the original protected validation and parent cache')
     path = Path(config['data']) / 'validation.jsonl';rows = load_jsonl(path)
     if (len(rows) != config['validation_examples'] or len({row['id'] for row in rows}) != len(rows) or
             len({row['feature_key'] for row in rows}) != len(rows) or
@@ -56,6 +69,8 @@ def wait_for_sft(pipeline, producer_session, output, poll_seconds=30):
 def checked_sft(pipeline, config, recipe):
     root = Path(pipeline);proof = json.loads((root / 'manifest.json').read_text());checked_artifacts(proof)
     result = proof['verification'];source = root / 'sft/adapter.pt'
+    if proof.get('kind') == ROUND_KIND:
+        return checked_distilled_sft(root, config, recipe, proof)
     if (proof.get('kind') != 'clean_curriculum_to_initial_sft_pipeline' or
             any(result.get(key) is not True for key in ['four_courses_completed_before_any_gpu_sft_work',
                 'clean_handoff_verified', 'actual_four_gpu_full_decoder_preflight_passed',
@@ -91,6 +106,49 @@ def checked_sft(pipeline, config, recipe):
             summary['trainable_tensors'] != result['trainable_tensors'] or
             expected['decoder_training'] != 'full' or expected['feature_path'] != config['features']):
         raise ValueError('The actual selected full-decoder state differs from clean SFT completion')
+    del checkpoint, reference
+    return source, proof
+
+
+def checked_distilled_sft(root, config, recipe, proof):
+    source = root / 'sft/adapter.pt'
+    saved, parent = completed_parent(source, root / 'manifest.json')
+    contract = proof['config'];result = proof['verification']
+    token = json.loads(Path(config['token_preflight']).read_text())
+    if (parent != proof or token.get('kind') != TOKEN_KIND or
+            type(result.get('selected_step')) is not int or result['selected_step'] < 1 or
+            type(result.get('actual_steps')) is not int or result['actual_steps'] < result['selected_step'] or
+            contract.get('compiled_recipe') != recipe or
+            contract.get('token_preflight') != config['token_preflight'] or
+            contract.get('token_preflight_sha256') != digest(config['token_preflight']) or
+            contract.get('source') != token['config'].get('source') or
+            proof['inputs'].get(config['sft_recipe']) != {
+                'sha256': digest(config['sft_recipe']), 'bytes': Path(config['sft_recipe']).stat().st_size}):
+        raise ValueError('Distilled evaluation must bind its actual compiled recipe and data preflight')
+    trained = json.loads((source.parent / 'manifest.json').read_text());checked_artifacts(trained)
+    initial = Path(contract['source'])
+    expected = prepare_config(checked_parent(initial, False), recipe, initial, source.parent)
+    preflight = json.loads((root / 'preflight/manifest.json').read_text());checked_artifacts(preflight)
+    if (preflight.get('kind') != 'four_gpu_search_distillation_sft_preflight' or
+            preflight['config'].get('source') != str(initial) or
+            preflight['config'].get('token_preflight') != config['token_preflight'] or
+            preflight['verification'].get('full_decoder_initialization_preserved_all_parent_tensors') is not True or
+            preflight['fresh_feature_cache_input']['path'] != config['features']):
+        raise ValueError('Distilled evaluation requires its actual full-decoder parent and feature preflight')
+    reference = torch.load(root / 'preflight/zero-init.pt', map_location='cpu', weights_only=True, mmap=True)['trainable']
+    checkpoint = torch.load(source, map_location='cpu', weights_only=True, mmap=True)
+    summary = full_parameter_summary(checkpoint['trainable'], reference)
+    inputs = {p: v['sha256'] for p, v in trained['inputs'].items()}
+    inputs[config['features']] = preflight['fresh_feature_cache_input']['sha256']
+    metrics = trained['verification']
+    if (saved != expected or trained['config'] != expected or checkpoint['config'] != expected or
+            checkpoint['code'] != proof['code'] or trained['code'] != proof['code'] or
+            checkpoint['input_hashes'] != inputs or checkpoint['selected_step'] != result['selected_step'] or
+            metrics['selected_step'] != result['selected_step'] or metrics['steps_completed'] != result['actual_steps'] or
+            expected['feature_path'] != config['features'] or
+            any(summary[k] != result[k] for k in ['trainable_parameters', 'trainable_tensors']) or
+            type(result.get('trained_search_distillation_rounds')) is not int or result['trained_search_distillation_rounds'] < 1):
+        raise ValueError('The selected complete distilled state differs from its actual training and initialization')
     del checkpoint, reference
     return source, proof
 
@@ -151,7 +209,12 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
         if not resume or json.loads((root / 'contract.json').read_text()) != contract:
             raise ValueError('Resume only the exact preserved evaluation contract; otherwise use a fresh output')
         if (root / 'manifest.json').exists():
-            proof = json.loads((root / 'manifest.json').read_text());checked_artifacts(proof);return proof['verification']
+            proof = json.loads((root / 'manifest.json').read_text());checked_artifacts(proof)
+            if (proof.get('kind') != capability_kind(token) or proof.get('config') != contract or
+                    proof.get('code') != contract['code'] or
+                    proof['verification'] != json.loads((root / 'verification.json').read_text())):
+                raise ValueError('Completed paired evaluation differs from its exact stage, contract or raw report')
+            return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
     stage = 'waiting_for_completed_clean_sft'
     def unchanged():
@@ -168,6 +231,9 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
     try:
         source_manifest = wait_for_sft(pipeline, producer_session, root, poll_seconds)
         unchanged();source, parent = checked_sft(pipeline, config, recipe)
+        distilled = parent['kind'] == ROUND_KIND
+        if distilled != (token['kind'] == TOKEN_KIND):
+            raise ValueError('Evaluation data preflight and selected training completion have different stages')
         core = Artifacts()
         core.add(source, parent['outputs'][str(source)])
         validation = str(Path(config['data']) / 'validation.jsonl');core.add(validation, token['inputs'][validation])
@@ -241,7 +307,10 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
             raise ValueError('Neural aggregates differ from actual accepted and rejected ratings')
         unchanged();core.unchanged();teacher_guard.unchanged()
         final = {'status': 'complete', 'evidence_state': 'reconstructed_baseline', 'split': 'validation',
-            'actual_clean_initial_sft_completed_before_model_or_reviewer_load': True,
+            'actual_clean_initial_sft_completed_before_model_or_reviewer_load': not distilled,
+            'actual_full_decoder_distillation_round_completed_before_evaluation': distilled,
+            'actual_selected_full_decoder_training_completed_before_model_or_reviewer_load': True,
+            'trained_search_distillation_rounds': parent['verification'].get('trained_search_distillation_rounds', 0),
             'all_validation_examples': len(rows), 'raw_validation_by_memory': metrics,
             'paired_memory_rate_differences_normal_minus_ablation': {memory: {k: metrics['normal'][k] - metrics[memory][k]
                 for k in ['first_move_no_mistake_rate', 'structured_contract_valid_rate', 'pv_legal_rate']}
@@ -250,7 +319,7 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
             'independent_test_used_for_training_or_selection': False, 'strong_play_or_reliable_coaching_proven': False}
         atomic_json(root / 'verification.json', final)
         proofs += [queries / 'manifest.json', inference / 'manifest.json', ratings / 'manifest.json']
-        completed = manifest('clean_initial_sft_capability_validation', contract,
+        completed = manifest(capability_kind(token), contract,
             [config_path, source_manifest, *[Path(p) for p in contract['prerequisite_sha256']], *proofs],
             [root / 'verification.json'], final)
         completed['inputs'].update(core.expected);completed['inputs'].update(teacher_guard.expected)
