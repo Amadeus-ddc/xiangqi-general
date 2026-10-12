@@ -11,10 +11,15 @@ from .sampling import sample_rng, sampling_options
 
 
 class Predictor:
-    def __init__(self, checkpoint, weights='models/px0-latest.pb.gz', device='cuda', feature_cache=None):
+    def __init__(self, checkpoint, weights=None, device='cuda', feature_cache=None):
         torch.set_num_threads(4)
         self.device = device
         self.model, self.tokenizer, self.config = load_checkpoint(checkpoint, device)
+        if weights is None:
+            weights = self.config.get('inference_expert_path', 'models/px0-latest.pb.gz')
+        expected_expert = self.config.get('inference_expert_sha256')
+        if expected_expert is not None and digest(weights) != expected_expert:
+            raise ValueError('Inference weights differ from the exported trained expert')
         cache_mmap = self.config.get('feature_cache_mmap', False)
         if type(cache_mmap) is not bool:
             raise ValueError('feature_cache_mmap must be a boolean')
