@@ -1,5 +1,7 @@
 # Xiangqi General（象棋将军）
 
+后续搜索新增 22714 盘真实对局、1333655 个半回合，全部原始记录与完整原生历史已独立复核。候选准备等待新课程数据的全量复核后共同隔离九份来源；当前没有新增学生标签或模型训练。见[新增棋谱与接入流程](docs/PUBLIC_RECORDED_SEARCH_SOURCES.md)。
+
 将 [Queen 论文](https://arxiv.org/abs/2610.03695v1) 的棋类专家与语言模型桥接路线迁移到中国象棋，目标是同时提供强走法和可核对的中文讲解。当前能力与实测限制见 [STATUS.md](STATUS.md)，模型用途与评测边界见 [模型说明](docs/MODEL_CARD.md)。
 
 新四课之后的顺序与执行入口见[初始讲解与评测](docs/PAPER_POST_CURRICULUM.md)、[搜索蒸馏训练](docs/PAPER_DISTILLATION_TRAINING.md)。正式训练、开发验证和最终独立棋力／教学验收分别记录，接口与受控检查通过不等于已训练好模型。
