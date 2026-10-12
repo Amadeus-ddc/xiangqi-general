@@ -175,6 +175,9 @@ def test_actual_cli_chain_counts_labels_and_preserves_original_heldouts(tmp_path
     chain = ControlledChain(monkeypatch, query)
     output = tmp_path / 'pilot'
     result = search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output)
+    collection = json.loads((output / 'labels/manifest.json').read_text())
+    assert collection['config']['max_eval_error_exclusive'] == .075
+    assert collection['verification']['selected_branch_evaluation_filter_applied']
     assert len(chain.commands) == 3 and chain.student_loads == chain.teacher_loads == 1
     assert result['attempted_original_training_roots'] == result['mined_queries'] == 1
     assert result['accepted_structured_training_labels'] == 1 and result['final_structured_label_yield'] == 1

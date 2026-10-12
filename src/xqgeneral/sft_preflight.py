@@ -8,12 +8,13 @@ import subprocess
 import torch
 
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, write_jsonl
-from .foundation_handoff import Artifacts
 from .modeling import expanded_initialization_reference
 from .sft import checked_parent, prepare_config, training_command
 from .training import atomic_checkpoint, compatible_resume, training_input_paths
 from .feature_store import feature_paths
 from .training_index import build_index, index_paths, IndexedTrainingRows
+from .finite_training import FINITE_PROFILE, prepare_finite_epochs
+from .recorded_search_inputs import BoundInputs
 
 RESUME_FIELDS = ['step', 'world_size', 'trainable', 'optimizer', 'random_state', 'torch_rng_state',
     'cuda_rng_states', 'tokens_seen', 'initial_loss', 'input_hashes', 'code', 'compute_contract',
@@ -64,16 +65,16 @@ def full_parameter_summary(state, initial):
             'complete_shapes_and_finite_fp32_verified': True}
 
 
-def probe_data(recipe, token_proof, output):
+def probe_data(recipe, token_proof, output, *, train_examples=24):
     lengths = load_jsonl(next(p for p in token_proof['outputs'] if p.endswith('token-lengths.jsonl')))
     result = {}
-    for split, limit in [('train', 24), ('validation', 12)]:
+    for split, limit in [('train', train_examples), ('validation', 12)]:
         source = load_jsonl(Path(recipe['data_path']) / (split + '.jsonl'))
         by_id = {row['id']: row for row in source}
         selected = sorted([item for item in lengths if item['split'] == split],
                           key=lambda item: (-item['tokens'], item['id']))[:limit]
         if len(selected) != limit or len({item['id'] for item in selected}) != limit:
-            raise ValueError('The actual longest-sequence probe needs 24 train and 12 validation labels')
+            raise ValueError(f'The actual longest-sequence probe needs {train_examples} train and 12 validation labels')
         rows = [by_id[item['id']] for item in selected]
         if any(row['split'] != split or row['stage'] != 'explanation' for row in rows):
             raise ValueError('Probe labels must preserve their actual protected split and stage')
@@ -106,6 +107,13 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
         raise ValueError('Actual four-worker full-decoder continuation differs')
     initial = torch.load(initial_path, map_location='cpu', weights_only=True, mmap=True)['trainable']
     actual = torch.load(root / 'continuous/latest.pt', map_location='cpu', weights_only=True, mmap=True)
+    if config.get('training_data_profile') == FINITE_PROFILE:
+        rows = IndexedTrainingRows(config['row_index_paths']['train'],
+            [Path(config['data_path']) / 'train.jsonl'], config['mixture'])
+        try:
+            prepare_finite_epochs(rows, config['mixture'], config, 4).check_resume(actual.get('data_state'), 4)
+        finally:
+            rows.close()
     compatible_resume(actual['config'], config)
     if actual['code'] != execution_code or actual['input_hashes'] != expected_inputs or len(actual['cuda_rng_states']) != 4:
         raise ValueError('Full-decoder probe execution or immutable inputs differ')
@@ -155,51 +163,78 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
 
 def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     root = Path(output);recipe_path = Path(recipe_path);token_manifest = Path(token_manifest)
-    recipe = json.loads(recipe_path.read_text());saved = checked_parent(source, True)
+    guard = BoundInputs()
+    recipe = guard.json(recipe_path)
+    token = guard.json(token_manifest)
+    if token.get('status') != 'complete':raise ValueError('Completed token preflight evidence is required')
+    for section in ['inputs', 'outputs']:
+        for path, binding in token[section].items():
+            guard.bind(path, binding)
+    from .distillation_preflight import TOKEN_KIND, completed_parent
+    distillation = token.get('kind') == TOKEN_KIND
+    if distillation:
+        required = ['all_full_native_histories_facts_branches_and_explicit_prose_moves_checked',
+            'protected_validation_and_test_bytes_unchanged', 'all_label_feature_contexts_present',
+            'parent_full_decoder_completion_verified', 'all_original_feature_keys_and_tensor_references_preserved',
+            'original_selected_branch_evaluation_filter_rechecked']
+        if (recipe.get('require_clean_foundation_handoff') is not False or token['config'].get('source') != str(source) or
+                any(token['verification'].get(k) is not True for k in required) or
+                token['verification'].get('independent_test_used_for_training_or_selection') is not False):
+            raise ValueError('Distillation requires its completed full-decoder parent and exact token proof')
+        saved, _ = completed_parent(source, token['config']['parent_completion'], guard)
+    else:
+        saved = checked_parent(source, True)
     formal = prepare_config(saved, recipe, source, root / 'unused-formal-output')
     if (formal.get('decoder_training') != 'full' or formal.get('trainable_parameter_dtype') != 'float32' or
-            formal.get('ddp_world_size') != 4 or formal['batch_size'] != 16 or formal.get('micro_batch_size') != 1 or
+            formal.get('ddp_world_size') != 4 or formal['batch_size'] != (32 if distillation else 16) or formal.get('micro_batch_size') != 1 or
             not formal.get('deterministic_training') or not formal.get('feature_cache_mmap')):
         raise ValueError('Preflight requires the exact deterministic four-worker full-decoder recipe')
-    token = json.loads(token_manifest.read_text());checked_artifacts(token)
-    if token.get('kind') != 'latent_only_reviewed_explanation_data_preflight' or token['config']['data'] != recipe['data_path']:
+    if token.get('kind') != (TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight') or token['config']['data'] != recipe['data_path']:
         raise ValueError('A completed token preflight for the exact reviewed data is required')
     if (token['verification']['token_limit'] != formal['max_tokens'] or
             not token['verification']['all_train_validation_supervision_fits_without_truncation']):
         raise ValueError('Formal token limit differs from the completed no-truncation preflight')
     cache_item = token['cache_header_only_input']
-    if formal['feature_path'] != cache_item['path'] or formal['feature_path'] != saved['feature_path']:
+    if formal['feature_path'] != cache_item['path'] or not distillation and formal['feature_path'] != saved['feature_path']:
         raise ValueError('Full-decoder preflight must use the exact foundation feature cache')
     foundation_path = Path(token['config']['foundation_preflight'])
-    foundation = json.loads(foundation_path.read_text())
+    foundation = guard.json(foundation_path)
     if foundation.get('status') != 'complete':raise ValueError('Completed pinned-base foundation preflight is required')
     base_assets = {p: item for p, item in foundation['inputs'].items()
                    if Path(p).resolve().parent == Path(formal['model_path']).resolve()}
     if not any(p.endswith('.safetensors') for p in base_assets):raise ValueError('Pinned base weights are not hash-bound')
-    checked_artifacts({'status': 'complete', 'inputs': base_assets, 'outputs': {}})
+    for path, binding in base_assets.items():
+        guard.bind(path, binding)
     contract = {'recipe_sha256': digest(recipe_path), 'source_sha256': digest(source),
         'source_config_sha256': digest(Path(source).parent / 'config.json'),
         'token_preflight_sha256': digest(token_manifest), 'base_assets': base_assets, 'code': code_identity()}
-    cache = Artifacts()
-    cache.add(formal['feature_path'], {key: cache_item[key] for key in ['sha256', 'bytes']})
+    guard.bind(formal['feature_path'], {key: cache_item[key] for key in ['sha256', 'bytes']})
     for path in feature_paths(formal['feature_path'])[1:]:
         name = str(path)
         if name not in token['inputs']:
             raise ValueError('Token preflight must bind every feature storage shard')
-        cache.add(name, token['inputs'][name])
-    cache.verify()
+        guard.bind(name, token['inputs'][name])
     if root.exists():
         if not resume or json.loads((root / 'contract.json').read_text()) != contract:
             raise ValueError('Preserve an existing preflight; resume only its exact immutable contract')
         if (root / 'manifest.json').exists():
-            proof = json.loads((root / 'manifest.json').read_text());checked_artifacts(proof);return proof['verification']
+            proof = guard.json(root / 'manifest.json')
+            kind = 'four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight'
+            if (proof.get('status') != 'complete' or proof.get('kind') != kind or proof.get('code') != contract['code'] or
+                    proof.get('config') != {'recipe': str(recipe_path), 'source': str(source),
+                                            'token_preflight': str(token_manifest)}):
+                raise ValueError('Completed actual GPU preflight differs from its exact source and recipe')
+            for section in ['inputs', 'outputs']:
+                for path, binding in proof[section].items():
+                    guard.bind(path, binding)
+            guard.unchanged()
+            return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
-    selected = probe_data(recipe, token, root / 'data')
+    selected = probe_data(recipe, token, root / 'data', train_examples=32 if distillation else 24)
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
                   validation_examples=12, generation_examples=0, purpose='Four-GPU full-decoder actual 4 versus 2+2 probe; no independent test or completed SFT claim')
     common = probe_row_indexes(common, root)
-    expected_inputs = {str(p): cache.expected[str(p)]['sha256'] if str(p) in cache.expected else digest(p)
-                       for p in training_input_paths(common)}
+    expected_inputs = {str(p): guard.bind(p)['sha256'] for p in training_input_paths(common)}
     initial = root / 'zero-init.pt';initial_manifest = root / 'zero-init.manifest.json'
     if not initial.exists():
         torch.manual_seed(common['seed'])
@@ -209,10 +244,14 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         atomic_json(initial_manifest, manifest('expanded_full_decoder_initial_reference', common,
             [Path(source), Path(source).parent / 'config.json', *[Path(p) for p in base_assets]], [initial],
             {'all_foundation_values_preserved': True, 'gpu_training_started': False}))
-    initial_proof = json.loads(initial_manifest.read_text());checked_artifacts(initial_proof)
+    initial_proof = guard.json(initial_manifest)
+    if initial_proof.get('status') != 'complete':raise ValueError('Completed initial-reference evidence is required')
+    for section in ['inputs', 'outputs']:
+        for path, binding in initial_proof[section].items():
+            guard.bind(path, binding)
     if initial_proof['config'] != common or initial_proof['code'] != contract['code']:
         raise ValueError('Preserved CPU initialization reference differs from the exact probe')
-    cache.unchanged()
+    guard.unchanged()
     for run, target in [('continuous', 4), ('resumed', 2), ('resumed', 4)]:
         run_root = root / run;config = dict(common, output=str(run_root));path = root / (run + '.config.json')
         if path.exists() and json.loads(path.read_text()) != config:raise ValueError('Changed actual probe configuration')
@@ -230,15 +269,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             command += ['--stop-after', str(target)]
             with (root / (run + '.log')).open('a') as handle:
                 subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT, check=True)
-        cache.unchanged()
+        guard.unchanged()
     observed = verify_updated_probe(root, initial, expected_inputs, dict(common, output=str(root / 'continuous')), contract['code'])
-    checked_artifacts(initial_proof);checked_artifacts(token)
-    checked_artifacts({'status': 'complete', 'inputs': base_assets, 'outputs': {}})
-    cache.unchanged()
-    if digest(recipe_path) != contract['recipe_sha256'] or digest(source) != contract['source_sha256']:
+    guard.unchanged()
+    if (digest(recipe_path) != contract['recipe_sha256'] or digest(source) != contract['source_sha256'] or
+            code_identity() != contract['code']):
         raise ValueError('Formal recipe or selected foundation changed during actual GPU preflight')
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline', **observed,
-        'full_decoder_initialization_preserved_all_foundation_tensors': True,
+        'full_decoder_initialization_preserved_all_foundation_tensors': not distillation,
+        'full_decoder_initialization_preserved_all_parent_tensors': True,
         'actual_continuous_four_and_two_plus_two_updates_compared': True,
         'longest_actual_train_validation_probe': selected,
         'independent_test_used_for_training_or_selection': False,
@@ -253,7 +292,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     inputs = [recipe_path, token_manifest, foundation_path, Path(source), Path(source).parent / 'manifest.json',
               Path(source).parent / 'config.json', *[Path(p) for p in token['inputs']], *[Path(p) for p in token['outputs']],
               *[Path(p) for p in base_assets]]
-    proof = manifest('four_gpu_clean_full_decoder_sft_preflight',
+    proof = manifest('four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight',
         {'recipe': str(recipe_path), 'source': str(source), 'token_preflight': str(token_manifest)},
         list(dict.fromkeys(inputs)), outputs, result)
     proof['fresh_feature_cache_input'] = dict(cache_item, fresh_full_bytes_hash_verified_by_this_preflight=True)
