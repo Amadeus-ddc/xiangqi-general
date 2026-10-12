@@ -1,5 +1,7 @@
 # Xiangqi General model card
 
+The [additional recorded search sources](PUBLIC_RECORDED_SEARCH_SOURCES.md) contribute 22,714 newly retained games and 1,333,655 plies. An independent entry checks every retained original export and native history prefix, with 221 fresh artifact bindings. Source-declared human and human/computer counts are 16,695 and 6,019; participant labels do not authenticate identities, unassisted play or optimal moves. A CPU preparation queue waits for the actual complete new-course readback before protecting used games and all held-out histories, explanation branches and color positions across nine sources. Its real candidate pool, student labels, trained rounds and coaching benefit remain unproduced or unmeasured; the controlled 18-root reader check is a fixture. All 1452 tests pass with 186 source, test and test-configuration bindings unchanged. See [the evidence](../evidence/public-recorded-search-source-v1.json).
+
 Xiangqi General couples a frozen Px0 Xiangqi Transformer expert with a Qwen3
 language model through trainable gated cross-attention. It is an independent
 adaptation of the [Queen paper](https://arxiv.org/abs/2610.03695v1).

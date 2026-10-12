@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "kind": "public_recorded_search_source_expansion",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-12T09:58:37.270372+00:00",
+  "scope": "Source acquisition, full native import and complete independent new-game readback; subsequent unused search preparation is queued only.",
+  "source": {
+    "platform_api": "https://playstrategy.org/api",
+    "anonymous_public_account_exports": true,
+    "captured_public_account_count": 200,
+    "original_records": 38612,
+    "acquisition_manifest": {
+      "path": "data/sources/playstrategy-search-public-users-v2/manifest.json",
+      "sha256": "ee3d78aefb4c088a5cdd0c67585fae22b3cf1e7d4348ead891698931d68346db",
+      "bytes": 181361
+    },
+    "raw_or_derived_data_published": false,
+    "redistribution_license_status": "unspecified",
+    "participant_authenticity_and_unassisted_play_proven": false
+  },
+  "native_import": {
+    "manifest": {
+      "path": "data/playstrategy-search-public-users-native-v4/manifest.json",
+      "sha256": "98287cdb4873054826f03f9bbbeffa6d8ebe1945b0b2506ecad5707dbe393a75",
+      "bytes": 76514
+    },
+    "entry": {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/public-search-source-native-v4/entry.py",
+      "sha256": "e991ccbf1f8821bf64604c479ceda4996e38f7f8b1c4b224081a4488bd84f79e",
+      "bytes": 1468
+    },
+    "source_manifest": {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/public-search-source-native-v4/source-run/source-manifest.json",
+      "sha256": "fb78062f065de4911e52fec5e5d8f6d0ea8d2b86ecc6c28f35c107ce2d96aa83",
+      "bytes": 9227
+    },
+    "modules": 97,
+    "code_revision": "27bf6bc1ac14bff26e927c1cb8fa12c66dbcf836",
+    "candidate_records": 38612,
+    "quarantined_records": 5446,
+    "records_passing_native_full_history": 33166,
+    "duplicates": 10452,
+    "differing_attribution_records": 768,
+    "new_unique_games": 22714,
+    "new_plies": 1333655,
+    "source_declared_kinds": {
+      "recorded_human_computer_match": 6019,
+      "recorded_human_match": 16695
+    },
+    "splits": {
+      "train": 18158,
+      "test": 2243,
+      "validation": 2313
+    },
+    "years": {
+      "2026": 6368,
+      "2025": 12086,
+      "2024": 3519,
+      "2023": 591,
+      "2022": 150
+    },
+    "distinct_participant_labels": 1153,
+    "previous_full_history_game_ids_read": 109937,
+    "new_ids_disjoint_from_previous": true,
+    "isolated_zero_move_tactical_source_excluded_only_from_full_match_dedup": true,
+    "isolated_tactical_source_required_in_future_board_isolation": true
+  },
+  "independent_readback": {
+    "entry": {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/public-search-source-independent-v1/entry.py",
+      "sha256": "9e5d9fd73cbebdf03613cfd8b11a60efe8b812db0ca6bd60604b464acb37bfdc",
+      "bytes": 8751
+    },
+    "verification": {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/public-search-source-independent-v1/verification.json",
+      "sha256": "e126bac927e3cc706374ca57d642ee472f83c8e1e81005f98900762ed2a04677",
+      "bytes": 1591
+    },
+    "row_readback": {
+      "path": "runs/paper-distillation-training-v1/worktree/runs/public-search-source-independent-v1/games-readback.jsonl",
+      "sha256": "116a04e93f65bb68d73fea1b27f0734e10b3521c40f14a137d8c170403a840ce",
+      "bytes": 5342941
+    },
+    "returncode": 0,
+    "games": 22714,
+    "plies": 1333655,
+    "positions": 1356369,
+    "fresh_bound_inputs_and_outputs": 221,
+    "every_retained_original_json_pgn_coordinate_result_and_player_checked": true,
+    "every_retained_full_history_prefix_and_terminal_checked": true,
+    "canonical_ids_and_pre_question_splits_recomputed": true,
+    "native_rules_implementation_shared_with_importer": true,
+    "seconds": 1412.9946451419964
+  },
+  "unused_search_preparation": {
+    "state": "waiting_for_actual_complete_new_course_readback",
+    "plan": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/fresh-paper-search-inputs-v1/plan.json",
+      "sha256": "362f257aa0f2d776d443b00fc479c6b8f614fb8f21fec3ba79623fad2464a085",
+      "bytes": 16170
+    },
+    "entry": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/fresh-paper-search-inputs-v1/entry.py",
+      "sha256": "ed139fe18199f766ff4b739902a7f8e3424d32936c430f29c810912a7b730de0",
+      "bytes": 8411
+    },
+    "source_manifest": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/fresh-paper-search-inputs-v1/source-run/source-manifest.json",
+      "sha256": "718521f4cbe0de1f6d8d9d807aa01d31642e993939efd325e9fc511a15e3b3ae",
+      "bytes": 9318
+    },
+    "modules": 98,
+    "canonical_sources": 9,
+    "source_inventory_reference_including_fragments_and_zero_move_positions": 142334,
+    "actual_pool_created": false,
+    "actual_pool_count": null,
+    "actual_models_or_training_started": false,
+    "owned_live_handles": {
+      "xqgeneral-fresh-paper-search-inputs-v1": "1934343 0",
+      "xqgeneral-paper-curriculum-preparation-v7": "1729389 0",
+      "xqgeneral-paper-followthrough-catalog-v1": "1730010 0"
+    },
+    "guards": "Require full new-course gold readback; protect used games and all canonical heldout histories, structured answer branches and color positions.",
+    "independent_reader_entry": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/fresh-paper-search-inputs-v1/readback/entry.py",
+      "sha256": "ee083bbcc873c1ed70cb46f0ce1fffc4a95542ab3ad068ac443ac7f3fddf2012",
+      "bytes": 20636
+    },
+    "same_reader_fixture_control": {
+      "status": "complete",
+      "fixture_canonical_games": 5,
+      "field_compared_candidates": 18,
+      "native_checked_candidates": 18,
+      "actual_prepared_search_reader_roots": 18,
+      "reserved_positions": 66,
+      "new_production_candidates": 0,
+      "student_or_teacher_loaded": false,
+      "seconds": 4.426738487556577,
+      "same_independent_reader_entry_bytes": true
+    },
+    "failed_fixture_parent_v1_preserved": true
+  },
+  "verification": {
+    "pytest_passed": 1452,
+    "pytest_seconds": 423.97,
+    "runner_seconds": 429.12185891810805,
+    "source_test_and_configuration_bindings_unchanged": 186,
+    "source_identity_before": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/full-verification-v1/source-before.json",
+      "sha256": "00e6f9ff7cee723ad74ec0a7a24ca3a9a0b69c19cb7eaf4dcd3c2c3adf138a4e",
+      "bytes": 19465
+    },
+    "source_identity_after": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/full-verification-v1/source-after.json",
+      "sha256": "00e6f9ff7cee723ad74ec0a7a24ca3a9a0b69c19cb7eaf4dcd3c2c3adf138a4e",
+      "bytes": 19465
+    },
+    "pytest_log": {
+      "path": "runs/public-search-native-publication-v1/worktree/runs/full-verification-v1/pytest.log",
+      "sha256": "a62d571c8ca433f657c5a629c661201a9edf816b313800fe8a9b449e9b926714",
+      "bytes": 1713
+    },
+    "frozen_course_and_sft_inputs_changed": false,
+    "formal_new_course_optimizer_updates": 0,
+    "new_student_search_labels": 0,
+    "trained_new_search_distillation_rounds": 0,
+    "playing_strength_or_teaching_quality_proven": false,
+    "overall_goal_complete": false
+  }
+}
