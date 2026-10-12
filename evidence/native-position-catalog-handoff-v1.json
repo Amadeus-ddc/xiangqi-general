@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "verified_full_catalog_parallel_question_ownership_handoff",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-12T02:43:59.124518+00:00",
+  "handoff_verification_sha256": "fbfc7cfa4dcac3db89d40a43e0d1b470e81858766203bc664f72c38d58a82d04",
+  "independent_startup_readback_sha256": "79e0530a682f52a070bc48b51bdb6d1ce883094c7251df21f79e4e1992c9ffe0",
+  "observations": {
+    "first_new_output": {
+      "observed_utc": "2026-10-12T02:43:37.680603+00:00",
+      "question_bytes": 2079245,
+      "native_question_workers": 32
+    },
+    "second_new_output": {
+      "observed_utc": "2026-10-12T02:43:57.724788+00:00",
+      "question_bytes": 21909926,
+      "native_question_workers": 32
+    },
+    "post_retirement_new_output": {
+      "observed_utc": "2026-10-12T02:43:59.124485+00:00",
+      "question_bytes": 23998656,
+      "native_question_workers": 32
+    }
+  },
+  "old_owned_preparation_and_followthrough_confirmed_terminal": true,
+  "old_partial_corpus_and_logs_preserved": true,
+  "new_preparation_session": "xqgeneral-paper-curriculum-preparation-v7",
+  "new_follower_session": "xqgeneral-paper-followthrough-catalog-v1",
+  "fresh_corpus": "data/paper-courses-v5",
+  "fresh_curriculum": "runs/curriculum-paper-v5",
+  "fresh_sft_stages": "runs/paper-sft-reviewed-reference-v2",
+  "native_prefix_questions_checked_by_split": {
+    "train": 128,
+    "validation": 128,
+    "test": 128
+  },
+  "scope_of_question_readback": "first 128 completed native rows per original split; full corpus still regenerating",
+  "shared_native_rules_and_answer_helpers": true,
+  "gpu_work_executed_by_handoff": false,
+  "non_path_training_recipe_and_question_budget_bytes_preserved": true,
+  "canonical_passed": 1364,
+  "source_test_files_rehashed_unchanged": 178,
+  "separate_source_snapshots": {
+    "cpu_question_modules": 95,
+    "foundation_gpu_modules": 88,
+    "sft_gpu_modules": 88,
+    "corrected_reference_cpu_modules": 89
+  },
+  "limits": {
+    "whole_question_corpus_completed": false,
+    "formal_new_four_course_training_started": false,
+    "initial_explanation_sft_completed": false,
+    "actual_search_distillation_completed": false,
+    "student_strength_or_coaching_accepted": false,
+    "overall_goal_complete": false
+  }
+}
