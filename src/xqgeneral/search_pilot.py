@@ -39,6 +39,11 @@ def pilot_spec(config, bound):
         raise ValueError('A positive integer teacher batch size is required')
     checked_budget(config['teacher_max_new_tokens'], config.get('teacher_max_context_tokens'))
     checked_prefill_chunk_size(config.get('teacher_prefill_chunk_size'))
+    if config.get('teacher_backend', 'transformers') not in {'transformers', 'vllm'}:
+        raise ValueError('Unsupported teacher inference backend')
+    if config.get('teacher_backend') == 'vllm' and (config.get('teacher_max_context_tokens') is None or
+            config.get('teacher_prefill_chunk_size') is not None or config.get('teacher_batch_size', 1) > 16):
+        raise ValueError('vLLM requires bounded context, at most 16 requests, and no HF prefill setting')
     if config.get('teacher_generation_config') is not None:
         profile = generation_profile(bound.json(config['teacher_generation_config']))
         checked_seed(config.get('teacher_seed'))
@@ -228,6 +233,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     ('teacher_prefill_chunk_size', 'prefill_chunk_size')]:
                 if config.get(source_key) is not None:
                     args[dest_key] = config[source_key]
+            if config.get('teacher_backend') == 'vllm':
+                args['backend'] = 'vllm'
             teacher_proof = completed_stage('local_teacher', args, 'local_teacher_inference', consolidation, True)
             responses = load_jsonl(consolidation / 'responses.jsonl')
             if (len(responses) != len(queries) or len({row['id'] for row in responses}) != len(responses) or
