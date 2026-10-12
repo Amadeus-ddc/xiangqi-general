@@ -62,4 +62,26 @@ python scripts/freeze_run.py --output runs/search-round-1-source -- \
 
 查看 `state.json`、`preflight/verification.json` 和 `sft-controller.log`。中断后在同一冻结源码、配置、父模型和输出上加 `--resume`；完成的预检和索引复用，实际 SFT 通过现有 `latest.pt` 恢复。变动合同必须使用新输出目录。最终完成清单重新绑定实际训练、有限遍历状态、所选完整参数、索引和缓存；已完成结果的续读也重新核验文件。
 
-完成一轮训练后仍须运行原始问答、正常／清零／错配专家特征讲解验证、盲评与真实对弈，再决定下一轮搜索和训练。当前等待队列只覆盖四课后的初始讲解与开发基线，尚未自动执行这些蒸馏轮次，也没有最终独立棋力与教学验收。
+## 每轮训练之后的开发验证
+
+初始讲解与已完成的蒸馏轮次共用 `clean_sft_evaluation`、`clean_sft_matches` 入口。蒸馏模式要求实际 `full_decoder_search_distillation_sft_round` 完成清单、该轮编译的 `recipe.json` 及原始数据预检；核对选中模型、全部 FP32 参数与初始化形状、真实更新数、训练输入和源码。验证集及其原缓存继承必须保持原合同，独立测试不用于训练或选模。
+
+[evaluation-paper-distillation-v1.json](../configs/evaluation-paper-distillation-v1.json) 对全部 384 条保护验证题分别生成正常／清零／错配专家特征的原始回答，再执行原生规则、独立引擎判断和完整 BF16 教师的匿名正文评分。预算与初始讲解开发基线一致。[matches-paper-distillation-v1.json](../configs/matches-paper-distillation-v1.json) 随后对同一实际选中模型运行 64 个验证开局、红黑互换及三个节点预算，共 384 局。非法原始答案照实记录，截断对局单列，不算和棋。
+
+这两份配置的路径是待替换示例；必须与实际完成清单中的数据、编译配方、预检和缓存路径一致。每轮使用新的配置副本与输出目录，长任务固定源码后放在 tmux 中：
+
+```bash
+python scripts/freeze_run.py --output runs/search-round-1-evaluation-source -- \
+  python -u -m xqgeneral.clean_sft_evaluation \
+  --pipeline runs/search-round-1-training --producer-session xqgeneral-search-round-1-training \
+  --config configs/evaluation-paper-distillation-v1.json --output runs/search-round-1-validation
+python scripts/freeze_run.py --output runs/search-round-1-evaluation-source -- \
+  python -u -m xqgeneral.clean_sft_matches \
+  --pipeline runs/search-round-1-training --validation runs/search-round-1-validation \
+  --producer-session xqgeneral-search-round-1-evaluation \
+  --config configs/matches-paper-distillation-v1.json --output runs/search-round-1-matches
+```
+
+完成报告分别记为 `search_distillation_capability_validation` 和 `search_distillation_full_match_baseline`，记录实际已训练轮次。对弈要求同一模型的整套三组能力验证先完成。恢复复用已有原始记录；完成后恢复不会再次生成回答或对局，也会核对报告正文与清单中的聚合值。教师评分不等于人类评价，这些验证不构成最终独立棋力或教学验收。
+
+当前等待队列仍覆盖四课后的初始讲解与开发基线。上述入口已可用于正式蒸馏之后；是否增加搜索和下一轮训练，要等实际产出与本轮验证结果。蒸馏轮次、棋力收益与最终模型验收尚未完成。

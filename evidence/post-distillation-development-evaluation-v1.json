@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "kind": "post_distillation_development_evaluation_entry",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-12T16:48:53.061505+00:00",
+  "implementation": {
+    "initial_full_decoder_sft_supported": true,
+    "completed_search_distillation_round_supported": true,
+    "same_three_memories_and_blinded_review_reused": true,
+    "selected_tensor_shapes_finite_fp32_source_inputs_and_actual_updates_checked": true,
+    "complete_protected_validation_only": true,
+    "same_evaluated_selected_checkpoint_required_before_matches": true,
+    "trained_round_counts_bound": true,
+    "completed_resume_has_no_new_generation_and_checks_saved_report": true
+  },
+  "controlled_cpu_integration": {
+    "new_cases": 13,
+    "validation_examples": 16,
+    "raw_answers": 48,
+    "memories": [
+      "normal",
+      "zero",
+      "shuffled"
+    ],
+    "controlled_model_engine_and_teacher_outputs": true,
+    "raw_invalid_student_answers_preserved": true,
+    "valid_neural_fixture_ratings": 15,
+    "rejected_neural_fixture_ratings": 1,
+    "openings": 2,
+    "colors": 2,
+    "node_budgets": [
+      100,
+      1000,
+      10000
+    ],
+    "full_match_cases": 12,
+    "model_turns": 24,
+    "censored_matches": 12,
+    "censored_counted_as_draws": false,
+    "actual_pretrained_student_or_teacher_used": false,
+    "actual_student_training_or_mining_executed": false,
+    "strength_or_semantic_coaching_quality_established": false
+  },
+  "templates": {
+    "validation_examples": 384,
+    "validation_memories": [
+      "normal",
+      "zero",
+      "shuffled"
+    ],
+    "normal_blinded_auxiliary_prose_review": true,
+    "match_openings": 64,
+    "match_colors": 2,
+    "match_node_budgets": [
+      100,
+      1000,
+      10000
+    ],
+    "planned_full_games": 384,
+    "paths_are_examples_requiring_actual_completed_round": true,
+    "independent_final_test": false
+  },
+  "tests": {
+    "full_passed": 1486,
+    "pytest_seconds": 443.99,
+    "runner_seconds": 448.17042399104685,
+    "source_test_and_json_configuration_bindings_unchanged": 239,
+    "full_runner": {
+      "path": "runs/post-distillation-validation-v1/worktree/runs/full-verification-v1/entry.py",
+      "sha256": "954a1d023fa40184009df817999c6ca9494e9338cd162b1a7de4763a90633546",
+      "bytes": 1291
+    },
+    "verification": {
+      "path": "runs/post-distillation-validation-v1/worktree/runs/full-verification-v1/verification.json",
+      "sha256": "e3bcdf1067c626912742979b999e80246c4441037813545f1288c25c508cec42",
+      "bytes": 238
+    },
+    "source_before": {
+      "path": "runs/post-distillation-validation-v1/worktree/runs/full-verification-v1/source-before.json",
+      "sha256": "48dccb2710da61443412f26dda0d63507199dd32f2f8284c1f31cc109fc42a74",
+      "bytes": 25296
+    },
+    "source_after": {
+      "path": "runs/post-distillation-validation-v1/worktree/runs/full-verification-v1/source-after.json",
+      "sha256": "48dccb2710da61443412f26dda0d63507199dd32f2f8284c1f31cc109fc42a74",
+      "bytes": 25296
+    },
+    "actual_log": {
+      "path": "runs/post-distillation-validation-v1/worktree/runs/full-verification-v1/pytest.log",
+      "sha256": "e69abfdd3b56d3e448cbd0984d5256be794ead26a7c6573286cbdc1ae95418d5",
+      "bytes": 1713
+    },
+    "focused_related_passed": 125,
+    "focused_related_seconds": 101.9,
+    "local_package_build_and_release_checks_passed": true,
+    "verification_jobs_lowered_to_nice_10": true
+  },
+  "effective_status": {
+    "owned_live_handles": {
+      "xqgeneral-paper-curriculum-preparation-v7": "1729389 0",
+      "xqgeneral-paper-followthrough-catalog-v1": "1730010 0",
+      "xqgeneral-fresh-paper-search-inputs-v1": "1934343 0",
+      "xqgeneral-fresh-paper-search-pilot-v1": "1942363 0"
+    },
+    "current_phase": "generating_full_native_paper_questions",
+    "observed_question_progress": {
+      "native_source_roots": 4128768,
+      "questions_written": 7195579
+    },
+    "frozen_production_jobs_changed": false,
+    "formal_new_curriculum_updates": 0,
+    "initial_full_decoder_sft_complete": false,
+    "new_student_search_labels": 0,
+    "actual_trained_distillation_rounds": 0,
+    "final_strength_or_coaching_acceptance_complete": false,
+    "overall_goal_complete": false
+  }
+}
