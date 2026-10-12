@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "full_recorded_native_catalog_acceptance_and_parallel_preparation_startup",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-12T02:08:55.682482+00:00",
+  "full_native_catalog": {
+    "roots": 6301835,
+    "roots_by_split": {
+      "train": 5099559,
+      "validation": 602056,
+      "test": 600220
+    },
+    "targets": 52964340,
+    "source_games": 105352,
+    "input_files": 48,
+    "input_bytes": 126265683903,
+    "completed_utc": "2026-10-11T19:48:21.262810+00:00",
+    "manifest_sha256": "4e4172c7ca8998d617ea15adc2306309f2ca2cdd704e28e6d19f41222265f9b0",
+    "catalog_sha256": "6d0a606168127ce62fafe6005055b9bc3798bdd5fed6d5ef924aaab9e93ede3b",
+    "all_root_json_and_sampling_headers_compared": true,
+    "all_native_target_masks_recomputed": true,
+    "complete_unchanged_source_history_proof_inherited": true,
+    "source_history_replayed_again": false,
+    "unused_positions_table_recomputed": false,
+    "generated_terminal_variants_supported": false,
+    "selected_questions_still_require_full_native_history_checks": true
+  },
+  "canonical_verification": {
+    "passed": 1364,
+    "source_and_test_files_checked_unchanged": 178,
+    "verification_sha256": "97332846e56825d7f766bf2f961981141ad6625b93a5110bc67200531dee6ea9"
+  },
+  "separate_preserved_sources": {
+    "full_catalog_verifier_modules": 95,
+    "question_preparation_cpu_modules": 95,
+    "foundation_gpu_control_and_execution_modules": 88,
+    "sft_gpu_control_and_execution_modules": 88,
+    "corrected_reference_cpu_modules": 89,
+    "foundation_gpu_modules_match_completed_pretrained_four_card_control": true,
+    "sft_gpu_modules_match_completed_memory_setting_bridge_control": true
+  },
+  "runtime_startup": {
+    "new_preparation_session": "xqgeneral-paper-curriculum-preparation-v7",
+    "new_follower_session": "xqgeneral-paper-followthrough-catalog-v1",
+    "ownership_guard_session": "xqgeneral-native-catalog-handoff-v1",
+    "handles_observed_live": {
+      "xqgeneral-paper-curriculum-preparation-v7": "1729389 0",
+      "xqgeneral-paper-followthrough-catalog-v1": "1730010 0",
+      "xqgeneral-native-catalog-handoff-v1": "1731184 0"
+    },
+    "preparation_phase": "generating_full_native_paper_questions",
+    "follower_phase": "waiting_for_reference_follower_ownership_handoff",
+    "question_workers_configured": 32,
+    "question_batch_size": 4,
+    "fresh_corpus": "data/paper-courses-v5",
+    "fresh_curriculum": "runs/curriculum-paper-v5",
+    "fresh_sft_stages": "runs/paper-sft-reviewed-reference-v2",
+    "non_path_training_recipe_fields_equal_to_previous": true,
+    "question_budget_bytes_equal_to_previous": true,
+    "new_reference_training_labels_changed": false,
+    "ownership_transfer_completed": false,
+    "old_owned_queues_retained_until_new_output_progress": true
+  },
+  "limits": {
+    "question_corpus_completed": false,
+    "new_formal_four_course_training_started": false,
+    "initial_explanation_sft_completed": false,
+    "actual_search_distillation_completed": false,
+    "student_strength_or_coaching_accepted": false,
+    "overall_goal_complete": false
+  }
+}
