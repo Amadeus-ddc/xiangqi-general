@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "kind": "paper_curriculum_formal_batch_capacity",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-12T10:51:53.556122+00:00",
+  "scope": "Frozen-decoder foundation capacity and full optimizer/selection resume control; no formal new curriculum or quality outcome.",
+  "actual_configuration": {
+    "pretrained_student": "Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "bridge_architecture": "flamingo_dense",
+    "bridge_width": 2560,
+    "bridge_heads": 16,
+    "bridge_layers": 16,
+    "world_size": 4,
+    "global_batch": 256,
+    "micro_batch_per_gpu": 4,
+    "max_complete_tokens": 2048,
+    "decoder_training": "frozen",
+    "decoder_dtype": "torch.bfloat16",
+    "trainable_dtype": "torch.float32",
+    "trainable_parameters": 671806496,
+    "trainable_tensors": 226,
+    "loss_normalization": "token",
+    "optimizer_foreach": null,
+    "ddp_gradient_as_bucket_view": false,
+    "formal_gpu_source_modules": 88,
+    "formal_gpu_source_revision": "8a263bdf03df2bbe57c4506b6a5869b55c909392",
+    "source_manifest": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-v1/source-run/source-manifest.json",
+      "sha256": "61a923f49c5216c016a53e91fec939ba8577791716420259b81bed393d171660",
+      "bytes": 8372
+    },
+    "same_formal_gpu_source": true
+  },
+  "control_input": {
+    "native_original_train_questions": 21,
+    "native_original_validation_questions": 14,
+    "original_history_keys": 5,
+    "constructed_full_window_train_presentations": 512,
+    "complete_full_window_validation_presentations": 14,
+    "all_tokens_exactly_2048": true,
+    "native_full_histories_and_answer_fields_preserved": true,
+    "question_padding_and_repetition_are_capacity_fixtures_only": true,
+    "padding_is_production_data": false,
+    "independent_test_used_for_training": false
+  },
+  "actual_training": {
+    "entry": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-v1/entry.py",
+      "sha256": "d483abc25f76ec9d6316a6d3baae9b28e11efaee174308f167dbb50804ae79b3",
+      "bytes": 12947
+    },
+    "plan": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-v1/plan.json",
+      "sha256": "cd6c0eeed10546513381012fd57d7ffbf950951bcbd8eb82054d0daf812f0e20",
+      "bytes": 10939
+    },
+    "manifest": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-v1/manifest.json",
+      "sha256": "0ddf172212038c825e1071ac1ea376710204671405b541d1b7ec7183e808966d",
+      "bytes": 24444
+    },
+    "verification": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-v1/verification.json",
+      "sha256": "8b0fdc36ac4ee4e1d459a6cc0f7aa3663f457c97b2257f6f87f4cf433428c3fb",
+      "bytes": 1208
+    },
+    "returncode": 0,
+    "continuous_updates": 2,
+    "resume_after_update": 1,
+    "all_parameters_optimizer_rng_data_selection_and_step_logs_bitwise_equal": true,
+    "all_32_initially_zero_bridge_gates_opened": true,
+    "rank_zero_peak_allocated_gib": {
+      "continuous": 79.81591939926147,
+      "resumed": 79.87134647369385
+    },
+    "four_rank_device_peak_used_mib": {
+      "0": 86403,
+      "1": 86505,
+      "2": 86505,
+      "3": 86505
+    },
+    "seconds": 534.4888109248132
+  },
+  "independent_readback": {
+    "entry": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-readback-v2/entry.py",
+      "sha256": "eb787024a9876a3d80e88db0148c355efecee8439870bc9df2f66043a81fb94a",
+      "bytes": 9865
+    },
+    "manifest": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-readback-v2/manifest.json",
+      "sha256": "f25fad75ad8ab4aa6057b963caa3bc353184ddec8e0bf7a0b098cdd452548005",
+      "bytes": 24819
+    },
+    "verification": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-window-batch256-readback-v2/verification.json",
+      "sha256": "d42d3af417a123013b81df41a1186812c719521400101087caeff89a95d9adda",
+      "bytes": 1959
+    },
+    "returncode": 0,
+    "fresh_bound_files": 43,
+    "fresh_bound_bytes": 24210493732,
+    "native_original_gold_questions_recomputed": 35,
+    "every_control_input_and_complete_answer_length_rebuilt": 526,
+    "actual_indexed_rows_compared": 526,
+    "supervised_tokens_by_split": {
+      "train": 28272,
+      "validation": 780
+    },
+    "resume_comparison": {
+      "status": "complete",
+      "mismatched_fields": [],
+      "mismatched_trainable_tensors": 0,
+      "max_parameter_absolute_error": 0,
+      "steps": [
+        2,
+        2
+      ],
+      "world_sizes": [
+        4,
+        4
+      ]
+    },
+    "all_full_parameter_shapes_values_finite_fp32": true,
+    "all_88_formal_gpu_modules_rehashed": true,
+    "every_real_feature_value_finite": true,
+    "storage_feature_dtype": "torch.float16",
+    "runtime_feature_dtype": "torch.bfloat16",
+    "all_runtime_values_equal_to_explicit_bf16_conversion": true,
+    "four_rank_device_memory_samples": 837,
+    "native_rules_and_template_helpers_shared": true,
+    "student_or_expert_model_loaded": false,
+    "gpu_initialized": false,
+    "seconds": 30.724554726853967,
+    "failed_first_reader_precision_assumption_preserved": true,
+    "gpu_control_or_formal_source_changed_for_reader_correction": false
+  },
+  "tests": {
+    "passed": 1452,
+    "pytest_seconds": 520.03,
+    "runner_seconds": 525.8311615977436,
+    "source_test_and_test_configuration_bindings_unchanged": 186,
+    "source_before": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-verification-v1/source-before.json",
+      "sha256": "00e6f9ff7cee723ad74ec0a7a24ca3a9a0b69c19cb7eaf4dcd3c2c3adf138a4e",
+      "bytes": 19465
+    },
+    "source_after": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-verification-v1/source-after.json",
+      "sha256": "00e6f9ff7cee723ad74ec0a7a24ca3a9a0b69c19cb7eaf4dcd3c2c3adf138a4e",
+      "bytes": 19465
+    },
+    "actual_log": {
+      "path": "runs/paper-curriculum-capacity-v1/worktree/runs/full-verification-v1/pytest.log",
+      "sha256": "53d065115fb65d708fb914be220451ca55364909984f5398ae223d566ac127b1",
+      "bytes": 1713
+    }
+  },
+  "effective_status": {
+    "owned_live_handles": {
+      "xqgeneral-paper-curriculum-preparation-v7": "1729389 0",
+      "xqgeneral-paper-followthrough-catalog-v1": "1730010 0",
+      "xqgeneral-fresh-paper-search-inputs-v1": "1934343 0",
+      "xqgeneral-fresh-paper-search-pilot-v1": "1942363 0"
+    },
+    "frozen_course_or_sft_inputs_or_jobs_changed": false,
+    "formal_new_curriculum_updates": 0,
+    "full_decoder_initial_sft_executed": false,
+    "new_student_distillation_labels": 0,
+    "playing_strength_or_coaching_quality_measured": false,
+    "overall_goal_complete": false
+  }
+}
