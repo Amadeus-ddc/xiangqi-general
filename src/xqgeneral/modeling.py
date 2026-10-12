@@ -163,7 +163,12 @@ def expanded_initialization_reference(config, source_path):
 
 
 def load_checkpoint(path, device='cuda'):
-    checkpoint = torch.load(Path(path), map_location='cpu', weights_only=True)
+    path = Path(path)
+    if path.is_dir():
+        from .model_bundle import read_bundle
+        checkpoint, _ = read_bundle(path)
+    else:
+        checkpoint = torch.load(path, map_location='cpu', weights_only=True)
     model, tokenizer = load_model(checkpoint['config'], device=device)
     load_trainable(model, checkpoint)
     model.eval()

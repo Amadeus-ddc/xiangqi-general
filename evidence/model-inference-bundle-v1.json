@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "kind": "portable_model_inference_delivery",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-12T15:54:48.396849+00:00",
+  "implementation": {
+    "source_modules": 99,
+    "inference_model_directory_supported": true,
+    "legacy_checkpoint_file_supported": true,
+    "ask_and_coach_use_bundled_expert_by_default": true,
+    "explicit_expert_override_must_match_trained_identity": true,
+    "runtime_source_hashes_required": 9,
+    "selected_positive_updates_and_completed_training_manifest_required": true
+  },
+  "artifact": {
+    "files": 14,
+    "bytes": 10901192669,
+    "config_and_file_paths_relative": true,
+    "decoder_assets_tokenizer_and_expert_included": true,
+    "all_trained_values_and_dtypes_preserved": true,
+    "optimizer_rng_datasets_feature_store_omitted": true,
+    "private_training_paths_omitted_from_runtime_config": true,
+    "existing_output_and_source_experiments_preserved": true,
+    "bundle_manifest": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/relocated-model/manifest.json",
+      "sha256": "e4f79d2a35d8ad6e52b86eb61ec700904911be2761235d7d4f3810654c6b40c3",
+      "bytes": 24586
+    },
+    "quality_assessed_by_export": false
+  },
+  "real_inference_control": {
+    "entry": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/entry.py",
+      "sha256": "39e3009b9eb58052dbb4bed4a1af01eb5dc0db9e73f73a3303419d1b5a4ea270",
+      "bytes": 9610
+    },
+    "plan": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/plan.json",
+      "sha256": "870ccd1757113ffffd596598d9ddc1f2b7ffb7440a7058ec35802544501bafe5",
+      "bytes": 698
+    },
+    "source_manifest": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/source-run/source-manifest.json",
+      "sha256": "80f650f72d50b03102dcf759a8cb9118aee36ccc8e57448ab6e0aa96e26a25a6",
+      "bytes": 9409
+    },
+    "manifest": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/manifest.json",
+      "sha256": "27e443e65579d221c4e7471221a5b6cf314057f182a13a17cbaab577760223c1",
+      "bytes": 19950
+    },
+    "verification": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-inference-v1/verification.json",
+      "sha256": "502bd0fa3ee21558903eb11f8981b2befe169d6babc39c0d8e61b7e61aac7f8e",
+      "bytes": 835
+    },
+    "status": "complete",
+    "source_selected_updates": 2,
+    "new_model_training_executed": false,
+    "native_questions_checked": 35,
+    "complete_histories": 5,
+    "exact_exported_trainable_values": true,
+    "live_model_parameter_tensors": 624,
+    "live_model_parameters": 4694274592,
+    "all_live_parameters_and_buffers_bitwise_equal": true,
+    "all_token_ids_live_expert_features_first_step_logits_and_raw_answers_bitwise_equal": true,
+    "bundle_relocated_before_inference": true,
+    "original_cache_used_for_inference": false,
+    "original_expert_used_for_relocated_inference": false,
+    "constructed_capacity_checkpoint_only": true,
+    "formal_new_curriculum_updates": 0,
+    "playing_strength_or_coaching_quality_measured": false,
+    "maximum_observed_device_used_mib": 23299,
+    "seconds": 174.0132881384343,
+    "overall_goal_complete": false
+  },
+  "independent_readback": {
+    "entry": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-independent-v1/entry.py",
+      "sha256": "70c2caf692c8c2fe91faa4ea765462c98901998abea92549a04634deb2ceb4aa",
+      "bytes": 6976
+    },
+    "manifest": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-independent-v1/manifest.json",
+      "sha256": "4ac8fa9f540d8321ace773193e747c7e72594a6718d247b4f53441bc566d04a9",
+      "bytes": 22384
+    },
+    "verification": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/real-bundle-independent-v1/verification.json",
+      "sha256": "062fb6bb1fcdac861c23f5c3649183739ea34df803ebf7fc1cc2ce899d698868",
+      "bytes": 1007
+    },
+    "status": "complete",
+    "fresh_bound_files": 39,
+    "fresh_bound_bytes": 21802594864,
+    "source_modules_rehashed": 99,
+    "exact_trainable_tensors_rechecked": 226,
+    "exact_trainable_parameters_rechecked": 671806496,
+    "all_trained_values_finite_fp32_and_bitwise_equal": true,
+    "original_decoder_assets_match_each_exported_asset": true,
+    "portable_configuration_independently_reconstructed": true,
+    "optimizer_rng_datasets_and_feature_store_omitted": true,
+    "all_bundle_inventory_and_paths_checked": true,
+    "native_questions_recomputed": 35,
+    "complete_native_histories": 5,
+    "live_gpu_equality_inherited_from_completed_control": true,
+    "raw_answer_pairs_rechecked": 35,
+    "gpu_memory_samples_recomputed": 144,
+    "maximum_observed_device_used_mib": 23299,
+    "gpu_forward_recomputed": false,
+    "student_or_expert_model_loaded": false,
+    "gpu_initialized": false,
+    "formal_new_curriculum_updates": 0,
+    "quality_measured": false,
+    "seconds": 31.102645670995116,
+    "overall_goal_complete": false
+  },
+  "tests": {
+    "passed": 1473,
+    "pytest_seconds": 401.59,
+    "runner_seconds": 406.1314304554835,
+    "source_test_and_test_configuration_bindings_unchanged": 188,
+    "source_before": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/full-verification-v1/source-before.json",
+      "sha256": "5c34a99d75ae5a209af90a31e95dce56411fdec0b28f84f2118f2cf5031892d1",
+      "bytes": 19668
+    },
+    "source_after": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/full-verification-v1/source-after.json",
+      "sha256": "5c34a99d75ae5a209af90a31e95dce56411fdec0b28f84f2118f2cf5031892d1",
+      "bytes": 19668
+    },
+    "actual_log": {
+      "path": "runs/model-inference-bundle-v1/worktree/runs/full-verification-v1/pytest.log",
+      "sha256": "1499a230f1b73ea15f97fa35140cf30eba710b3bec1dd4504b491ceefcbf300c",
+      "bytes": 1713
+    },
+    "package_build_and_release_checks_passed": true
+  },
+  "effective_status": {
+    "owned_live_handles": {
+      "xqgeneral-paper-curriculum-preparation-v7": "1729389 0",
+      "xqgeneral-paper-followthrough-catalog-v1": "1730010 0",
+      "xqgeneral-fresh-paper-search-inputs-v1": "1934343 0",
+      "xqgeneral-fresh-paper-search-pilot-v1": "1942363 0"
+    },
+    "frozen_curriculum_or_initial_sft_inputs_changed": false,
+    "formal_new_curriculum_updates": 0,
+    "initial_full_decoder_sft_completed": false,
+    "new_student_distillation_labels": 0,
+    "playing_strength_or_coaching_quality_measured": false,
+    "overall_goal_complete": false
+  }
+}

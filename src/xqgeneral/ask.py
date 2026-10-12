@@ -7,8 +7,8 @@ from .inference import Predictor
 
 def main():
     parser = argparse.ArgumentParser(description="Xiangqi General inference with complete game history")
-    parser.add_argument("--adapter", default="runs/pilot-v1/adapter.pt")
-    parser.add_argument("--weights", default="models/px0-latest.pb.gz")
+    parser.add_argument("--adapter", default="runs/pilot-v1/adapter.pt", help="Checkpoint file or exported model directory")
+    parser.add_argument("--weights", help="Px0 weights; exported model directories include their own weights")
     parser.add_argument("--initial-fen", default=START_FEN)
     parser.add_argument("--moves", nargs="*", default=[])
     parser.add_argument("--question", required=True)

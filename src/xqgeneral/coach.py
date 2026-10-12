@@ -51,8 +51,8 @@ def print_advice(result):
 
 def main():
     parser = argparse.ArgumentParser(description='中国象棋学习：显示棋盘、分析局面并保存完整历史')
-    parser.add_argument('--checkpoint', required=True)
-    parser.add_argument('--weights', default='models/px0-latest.pb.gz')
+    parser.add_argument('--checkpoint', required=True, help='Checkpoint file or exported model directory')
+    parser.add_argument('--weights', help='Px0 weights; exported model directories include their own weights')
     parser.add_argument('--initial-fen', default=START_FEN)
     parser.add_argument('--moves', nargs='*', default=[])
     parser.add_argument('--resume', help='之前保存的学习记录 JSON')
