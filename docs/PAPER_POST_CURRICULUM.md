@@ -77,13 +77,13 @@
   --config configs/matches-paper-sft-baseline-v1.json --output runs/paper-sft-v1/baseline
 ```
 
-`--producer-session` 指向实际拥有对应前序工作的会话；这里的后两项会话名与本服务器队列一致，复用时改成自己的实际会话。每个阶段要求正确的完成清单、原始配置及输入字节。确认原会话退出后，已有合同的 SFT／能力／对弈入口可以加 `--resume`；已完成部分读回后复用，未完成原始评测或词元预检按入口要求保留并改用新目录。不要仅因观察超时重启仍存活的任务。
+`--producer-session` 指向实际拥有对应前序工作的会话；示例会话名按自己的实际部署修改。本服务器当前会话见下一节。每个阶段要求正确的完成清单、原始配置及输入字节。确认原会话退出后，已有合同的 SFT／能力／对弈入口可以加 `--resume`；已完成部分读回后复用，未完成原始评测或词元预检按入口要求保留并改用新目录。不要仅因观察超时重启仍存活的任务。
 
 ## 本服务器当前队列
 
-当前保存入口位于 `runs/heldout-reference-prose-v1/worktree/runs/paper-followthrough-reference-v1/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-reference-v1`。`plan.json` 绑定入口、五份配置、修订数据清单及完整独立读回。实际父课程为 `runs/curriculum-paper-v4`，准备会话为 `xqgeneral-paper-curriculum-preparation-v6`；讲解输出为 `runs/paper-sft-reviewed-reference-v1`，新训练／验证索引为 `data/astra-explanations-reference-paper-index-v1`。
+当前保存入口位于 `runs/paper-position-catalog-v1/worktree/runs/paper-followthrough-catalog-v1/entry.py`，tmux 会话为 `xqgeneral-paper-followthrough-catalog-v1`。`plan.json` 绑定入口、五份配置、修订数据清单及完整独立读回。实际父课程为 `runs/curriculum-paper-v5`，准备会话为 `xqgeneral-paper-curriculum-preparation-v7`；讲解输出为 `runs/paper-sft-reviewed-reference-v2`，训练／验证索引为 `data/astra-explanations-reference-paper-index-v1`。
 
-新课程继续使用通过原生分批及四卡更新控制的优化源码。讲解 GPU 阶段保留已验证显存设置的 88 份模块，与真实四卡控制的源码哈希完全相同；接受修订清单的 CPU 词元／特征预检另用冻结的 89 份模块。CPU 入口变动没有替换已控制的神经训练源码。双方配置绑定同一实际新特征存储。确认新索引、新等待任务和全部来源后，只退役旧 `xqgeneral-paper-followthrough-v5` 等待进程，旧配置、索引与冻结记录保留；课程数据生产继续运行。新队列没有提前启动学生或教师。
+新课程的 CPU 问答准备使用冻结的 95 份模块与已完成的全量原生目录证明，GPU 特征／课程阶段保留通过原生分批及四卡更新控制的 88 份模块。讲解 GPU 阶段另保留已验证显存设置的 88 份模块，与对应真实四卡控制的源码哈希相同；接受修订清单的 CPU 词元／特征预检使用冻结的 89 份模块。模块数量相同不代表两个 GPU 快照相同，具体字节按各自计划核对。双方配置绑定同一实际新特征存储。确认新生成工作进程实际写出并继续增长后，旧准备 `v6` 与讲解等待 `reference-v1` 已完成退役，原部分数据、配置、索引及日志保留；见 [交接证据](../evidence/native-position-catalog-handoff-v1.json)。新队列尚未加载学生或教师。
 
 只有新四课完整证明出现后，队列才复查新缓存、执行正式 SFT、三组能力验证和 384 局基线；首次 SFT 等待四卡各至少空闲 90GiB，正文评测等待 GPU 0 至少 80GiB，对弈等待 GPU 2 至少 48GiB。这些是保守启动条件，实际显存容量仍由真实预检决定。私有保存入口与运行数据不随软件包发布；复用公开命令即可执行相同阶段。
 

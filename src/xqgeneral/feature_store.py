@@ -85,22 +85,48 @@ class FeatureStoreWriter:
         if self.shards or self.finished:
             raise ValueError('The preserved base cache must precede every new shard')
         path, proof_path = Path(path).resolve(), Path(proof_path).resolve()
+        proof_before = file_signature(proof_path)
         proof = json.loads(proof_path.read_text())
+        proof_binding = _binding(proof_path)
         bindings = {str(Path(p).resolve()): b for p, b in proof.get('outputs', {}).items()}
         if (proof.get('status') != 'complete' or
                 proof.get('verification', {}).get('expert_sha256') != self.expert_sha or
                 proof.get('code', {}).get('source_sha256', {}).get('src/xqgeneral/expert.py') !=
                 digest(Path(__file__).with_name('expert.py'))):
             raise ValueError('Preserved expert weights or encoder contract differ')
-        before = file_signature(path)
-        cache = torch.load(path, map_location='cpu', weights_only=True, mmap=True)
-        self._add(path, cache, existing=True)
-        if self.inputs[str(path)] != bindings.get(str(path)) or file_signature(path) != before:
-            raise ValueError('Preserved base cache bytes changed')
-        self.inputs[str(proof_path)] = _binding(proof_path)
-        self.signatures[str(proof_path)] = file_signature(proof_path)
+        if is_feature_store(path):
+            if path != proof_path:
+                raise ValueError('A sharded base cache must use its own completion manifest')
+            cache = FeatureStore(path, max_open_shards=1)
+            if cache.proof != proof or cache.depths != self.depths or cache.width != self.width:
+                raise ValueError('Preserved feature store manifest, depths or width differ')
+            # Check each actual shard's schema and ordered keys with one bounded
+            # mmap handle. FeatureStore already freshly hashed every file.
+            for number in range(len(cache.shards)):
+                cache._cache(number)
+            cache.check_unchanged()
+            self.keys.extend(cache.keys)
+            self.seen.update(cache.keys)
+            self.shards.extend(dict(shard) for shard in cache.shards)
+            storage = {str(Path(p).resolve()): b for p, b in
+                       {**proof['inputs'], **proof['outputs']}.items()}
+            self.inputs.update({str(p.resolve()): storage[str(p.resolve())]
+                                for p in feature_paths(path)[1:]})
+            self.signatures.update(cache._signatures)
+        else:
+            before = file_signature(path)
+            cache = torch.load(path, map_location='cpu', weights_only=True, mmap=True)
+            self._add(path, cache, existing=True)
+            if self.inputs[str(path)] != bindings.get(str(path)) or file_signature(path) != before:
+                raise ValueError('Preserved base cache bytes changed')
+        if file_signature(proof_path) != proof_before:
+            raise ValueError('Preserved base proof changed during verification')
+        self.inputs[str(proof_path)] = proof_binding
+        self.signatures[str(proof_path)] = proof_before
         self.base_roots = len(self.keys)
         self.config.update(base_cache=str(path), base_proof=str(proof_path))
+        atomic_json(self.output / 'progress.json', {'status': 'building', 'roots': len(self.keys),
+                                                   'shards': len(self.shards)})
 
     def append(self, cache):
         if self.finished:
