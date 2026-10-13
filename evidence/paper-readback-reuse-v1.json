@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "paper_full_question_readback_reuse_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "created_utc": "2026-10-13T13:22:02.672858+00:00",
+  "control": {
+    "questions": 300,
+    "actual_original_and_new_readback_all_common_results_equal": true,
+    "original_producer_modules": 95,
+    "gpu_cache_modules": 88,
+    "new_reader_modules": 100,
+    "source_bindings_unchanged": true,
+    "actual_px0_features_used": true,
+    "official_qwen_tokenizer_and_base_hashes_used": true,
+    "old_cache_prefix_bitwise_preserved": true,
+    "full_native_gold_proof_reused_with_all_input_hashes": true,
+    "no_second_source_regeneration_in_reused_output": true,
+    "transitive_input_bindings_carried_forward": true,
+    "durations_seconds": {
+      "original_readback": 58.81368940509856,
+      "reused_readback": 11.758469396270812
+    },
+    "tiny_control_is_not_full_corpus_speedup_measurement": true,
+    "constructed_native_fixture_not_recorded_human_game": true,
+    "student_training_executed": false,
+    "formal_new_curriculum_updates": 0
+  },
+  "independent_readback": {
+    "kind": "independent_real_cli_reuse_control_readback",
+    "native_questions_checked": 300,
+    "unique_question_histories_checked": 12,
+    "actual_cache_histories": 13,
+    "old_prefix_rows_bitwise_checked": 1,
+    "common_original_and_reused_results_equal": true,
+    "all_completed_readback_transitive_source_artifacts_freshly_rehashed": true,
+    "bound_files": 24,
+    "bound_bytes": 1991467,
+    "cpu95_gpu88_reader100_source_snapshots_unchanged": true,
+    "torch_cuda_initialized": false,
+    "student_training_executed": false,
+    "formal_new_curriculum_updates": 0
+  },
+  "verification_sha256": "c5fb68353fea7f994420f3dcddc420dcac0f1caa68cb085353cb92e00d4b3f01",
+  "independent_readback_sha256": "299ee89d40508f531547a183378175f78f5ecd0011d6a9e37a4a722a0cd087b4",
+  "cpu_tests": {
+    "passed": 1503,
+    "full_suite_source_test_config_bindings_unchanged": true,
+    "bound_files": 239
+  },
+  "full_corpus_performance_measured": false,
+  "production_frozen_source_or_recipe_modified": false,
+  "formal_new_curriculum_updates": 0,
+  "initial_full_sft_complete": false,
+  "actual_distillation_complete": false,
+  "model_strength_or_teaching_quality_proven": false,
+  "overall_goal_complete": false
+}
