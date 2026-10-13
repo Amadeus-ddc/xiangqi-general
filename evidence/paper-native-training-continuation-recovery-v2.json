@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "kind": "paper_native_training_continuation_partial_publication_recovery",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-13T19:54:46.365547+00:00",
+  "status": "recovery_fixed_continuation_queued_waiting_for_full_prerequisites",
+  "execution_identity": {
+    "entry_sha256": "e9d3e419c971504b3e7262fece822196f1f2a4296cb329239cb1a4b5b43300ed",
+    "plan_sha256": "2608f10d52f4a1c9a7c37ac29e0ca13113ecf62195e6770cf6f21dd65c3e7429",
+    "cpu_math_modules": 95,
+    "gpu_training_modules": 88,
+    "optional_readback_modules": 100,
+    "frozen_modules_and_recipe_changed": false,
+    "additional_orchestration_and_capacity_code_declared": true
+  },
+  "original_bug": {
+    "partial_publication_recovery_failure_reproduced": true,
+    "production_handoff_was_not_executed": true,
+    "original_entry_and_plan_preserved": true
+  },
+  "atomic_publication": {
+    "durable_source_and_target_bound_intent": true,
+    "complete_files_written_before_atomic_directory_publication": true,
+    "unknown_partial_directories_or_files_refused": true,
+    "completed_source_bytes_and_inodes_preserved": true
+  },
+  "actual_os_control": {
+    "cases": 22,
+    "all_passed": true,
+    "case_names": [
+      "complete_300_all_26_tasks_three_splits_same_producer_publication",
+      "changed_native_verification_leaf_refused",
+      "actual_writer_killed_at_empty_preparing_publication_recovers",
+      "actual_writer_killed_at_partial_leaf_publication_recovers",
+      "actual_writer_killed_at_partial_manifest_publication_recovers",
+      "actual_writer_killed_at_complete_directory_before_symlink_publication_recovers",
+      "unowned_partial_publication_directories_not_adopted",
+      "publication_intent_with_changed_source_binding_refused",
+      "unknown_file_in_owned_partial_directory_preserved_and_refused",
+      "precommit_failure_restores_only_owned_parent_and_workers",
+      "foreign_parent_stop_not_adopted_or_resumed",
+      "foreign_worker_stop_retained_after_partial_owned_pause_failure",
+      "reused_pid_and_command_identity_not_signalled",
+      "dead_coordinator_actual_watchdog_restores_owned_tree",
+      "stale_live_coordinator_actual_watchdog_restores_owned_tree",
+      "committed_owner_death_finishes_terminal_handoff_and_permit_crash_window",
+      "actual_watchdog_finishes_committed_handoff_after_partial_manifest_writer_death",
+      "changed_freshly_verified_gold_signature_refused_before_commit",
+      "aborted_owned_verifier_terminated_original_parent_retained",
+      "single_gpu_below_threshold_resets_continuous_four_gpu_gate",
+      "gpu_observation_failure_cannot_launch_training",
+      "actual_tmux_producer_session_retains_live_continuation_during_retirement"
+    ],
+    "production_processes_signalled_by_control": false,
+    "gpu_free_memory_values_are_fixtures": true
+  },
+  "independent_native_publication_control": {
+    "questions": 300,
+    "all_26_tasks_each_split": true,
+    "published_proof_accepted_by_original_complete_reuse_entry": true,
+    "fresh_complete_input_output_hashes_checked": true,
+    "full_production_scope_proven_by_control": false
+  },
+  "live_queue": {
+    "coordinator_and_recovery_handles_independently_confirmed": true,
+    "torch_or_cuda_libraries_mapped": false,
+    "independent_recovery_live": true,
+    "owned_stop_intents": 0,
+    "committed": false,
+    "actual_production_handoff_complete": false,
+    "uncommitted_empty_v1_waiting_queue_retired": true,
+    "native_reader_preflight_or_original_pipeline_signalled_by_replacement": false
+  },
+  "feature_production": {
+    "status": "complete",
+    "new_history_roots": 2067071,
+    "all_history_roots": 2236975,
+    "shards": 4038,
+    "manifest_sha256": "71f4b34aef115cef1edffcdab0c7e32480d86fb92b11d0581456f7282ebcf831",
+    "full_independent_source_cache_base_readback_completed": false,
+    "output_files_including_index": 4039,
+    "shard_bytes": 3048221401968
+  },
+  "full_native_reader": {
+    "status": "drafting_adaptive_queries_in_original_order",
+    "live_query_drafts": 5353238,
+    "required_questions": 10833161,
+    "draft_counter_is_not_native_verification_completion": true,
+    "full_production_proof_published": false
+  },
+  "formal_new_curriculum_updates": 0,
+  "complete_initial_sft_executed": false,
+  "authentic_distillation_executed": false,
+  "student_strength_or_coaching_quality_proven": false,
+  "overall_goal_complete": false,
+  "public_verification": {
+    "cpu_tests_passed": 1514,
+    "source_test_config_bindings": 243,
+    "source_and_config_unchanged": true,
+    "package_build_passed": true,
+    "release_check_passed": true,
+    "public_code_changed_in_this_milestone": false
+  }
+}
