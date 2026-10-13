@@ -119,20 +119,37 @@ def checked_preserved_cache(cache, previous):
     return count
 
 
-def checked_course_sources(data, data_proof, contexts, cached_keys, expected_contexts, output):
+def checked_course_sources(data, data_proof, contexts, cached_keys, expected_contexts, output, *,
+                           completed_question_readback=None):
     """Route source reconstruction through the declared data producer contract."""
     data = Path(data)
     question_keys, recorded = checked_question_contexts(contexts, cached_keys, expected_contexts)
     profile = data_proof['config'].get('task_profile', 'legacy')
     corpus_preserves_prefix(data_proof, profile)
     if profile == PAPER_PROFILE:
-        from .paper_curriculum import readback
-        result = readback(data, output)
-        source_proof_path = Path(output) / 'manifest.json'
+        if completed_question_readback is not None:
+            from .paper_readback_reuse import VerifiedPaperReadback, verify_completed_readback
+            receipt = completed_question_readback
+            if not isinstance(receipt, VerifiedPaperReadback):
+                receipt = verify_completed_readback(data, receipt)
+            result = receipt.for_corpus(data, data_proof)
+            source_inputs = list(receipt.inputs)
+            reused = {'paper_question_readback_reused': True,
+                      'paper_question_regeneration_executed_this_readback': False,
+                      'paper_question_readback_manifest_sha256': receipt.manifest_sha256,
+                      'reused_native_readback_artifacts_freshly_rehashed': True}
+        else:
+            from .paper_curriculum import readback
+            result = readback(data, output)
+            source_inputs = [Path(output) / 'manifest.json']
+            reused = {'paper_question_readback_reused': False,
+                      'paper_question_regeneration_executed_this_readback': True}
         result = {'all_supplied_paper_roots_and_question_bytes_regenerated': True,
                   'paper_questions_regenerated': result['questions_regenerated_and_compared'],
-                  'paper_source_counts': result['counts'], 'task_profile': PAPER_PROFILE}
-        return question_keys, result, [source_proof_path]
+                  'paper_source_counts': result['counts'], 'task_profile': PAPER_PROFILE, **reused}
+        return question_keys, result, source_inputs
+    if completed_question_readback is not None:
+        raise ValueError('Completed paper readback cannot be reused for a legacy corpus')
     source_games, source_inputs = {}, []
     for folder in data_proof['config']['games']:
         source, source_proof_path = Path(folder) / 'games.jsonl', Path(folder) / 'manifest.json'
@@ -168,6 +185,8 @@ def main():
     parser.add_argument('--output', required=True)
     parser.add_argument('--public-evidence', required=True)
     parser.add_argument('--cpu-threads', type=int, default=8)
+    parser.add_argument('--completed-question-readback',
+                        help='Reuse this same-producer complete paper readback after hashing every bound artifact')
     args = parser.parse_args()
     root, recipe_path = Path(args.output), Path(args.config)
     if root.exists() or args.cpu_threads < 1:
@@ -175,6 +194,8 @@ def main():
     recipe = json.loads(recipe_path.read_text())
     clean_recipe(recipe)
     profile = recipe_profile(recipe)
+    if args.completed_question_readback and profile != PAPER_PROFILE:
+        raise ValueError('Completed question readback reuse requires a paper course recipe')
     proof_path = Path(args.preflight) / 'manifest.json'
     proof = json.loads(proof_path.read_text())
     if Path(proof['config']['config']).resolve() != recipe_path.resolve():
@@ -217,9 +238,14 @@ def main():
             len(cache['keys']) != observed['cache_keys']):
         raise ValueError('Cache keys or expert depths differ from the completed preflight')
     contexts_path = Path(args.preflight) / 'unique-contexts.jsonl'
+    completed_readback = None
+    if args.completed_question_readback:
+        from .paper_readback_reuse import verify_completed_readback
+        completed_readback = verify_completed_readback(data, args.completed_question_readback)
     question_keys, source_result, source_inputs = checked_course_sources(
         data, data_proof, rows(contexts_path), cached_keys,
-        observed['actual_unique_histories_natively_replayed'], root / 'question-source-readback')
+        observed['actual_unique_histories_natively_replayed'], root / 'question-source-readback',
+        completed_question_readback=completed_readback)
     old_cache_path = Path(cache_proof['config']['base_cache'])
     old_proof_path = Path(cache_proof['config']['base_proof'])
     old_proof = json.loads(old_proof_path.read_text())
@@ -234,6 +260,8 @@ def main():
         raise ValueError('Previous cache key coverage differs from extension generation')
     if hasattr(cache, 'check_unchanged'):
         cache.check_unchanged()
+    if completed_readback is not None:
+        completed_readback.check_unchanged()
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
               'total_rule_records': observed['total_rule_records'], 'records_by_split': counts,
               'train_validation_records_tokenized': observed['train_validation_records_tokenized'],
@@ -250,8 +278,11 @@ def main():
     atomic_json(root / 'verification.json', result)
     inputs = [recipe_path, proof_path, base_path, data_proof_path, cache_proof_path, contexts_path,
               *source_inputs, old_cache_path, old_proof_path]
-    atomic_json(root / 'manifest.json', manifest('recorded_foundation_source_and_cache_readback', vars(args),
-                                               inputs, [root / 'verification.json'], result))
+    receipt = manifest('recorded_foundation_source_and_cache_readback', vars(args),
+                       inputs, [root / 'verification.json'], result)
+    if completed_readback is not None:
+        completed_readback.check_unchanged()
+    atomic_json(root / 'manifest.json', receipt)
     atomic_json(args.public_evidence, dict(result, manifest_sha256=digest(root / 'manifest.json')))
     print(json.dumps(result), flush=True)
 
