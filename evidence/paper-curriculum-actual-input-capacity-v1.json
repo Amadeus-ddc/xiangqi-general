@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "kind": "formal_curriculum_observed_input_capacity_control",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "controlled_input_tokens": 1024,
+  "formal_max_tokens": 2048,
+  "world_size": 4,
+  "global_batch": 256,
+  "micro_batch": 4,
+  "trainable_parameters": 671806496,
+  "actual_pretrained_qwen_and_px0_used": true,
+  "continuous_updates": 2,
+  "resume_after_update": 1,
+  "all_parameters_optimizer_rng_data_and_traces_bitwise_equal": true,
+  "rank_zero_peak_allocated_gib": {
+    "continuous": 50.7384238243103,
+    "resumed": 50.745747566223145
+  },
+  "all_rank_observed_device_memory_used_mib": {
+    "0": 55965,
+    "1": 70476,
+    "2": 70788,
+    "3": 57088
+  },
+  "observed_peaks_include_existing_other_device_consumers": true,
+  "capacity_margin_mib": 4096,
+  "conditional_required_free_mib_per_gpu": 74884,
+  "all_88_formal_gpu_modules_unchanged": true,
+  "independent_readback": {
+    "full_fresh_artifact_bindings": 43,
+    "full_fresh_bound_bytes": 24209413192,
+    "native_original_gold_questions_recomputed": 35,
+    "padded_train_rows_individually_reconstructed": 512,
+    "padded_validation_rows_individually_reconstructed": 14,
+    "all_complete_history_and_answer_fields_equal_to_originals": true,
+    "all_actual_indexed_reader_rows_equal": true,
+    "all_total_input_and_answer_lengths_exactly_controlled_tokens": true,
+    "supervised_tokens_by_split": {
+      "train": 28272,
+      "validation": 780
+    },
+    "all_resume_parameters_optimizer_rng_data_selection_and_logs_equal": true,
+    "storage_feature_dtype": "torch.float16",
+    "runtime_feature_dtype": "torch.bfloat16",
+    "every_runtime_gather_value_equal_to_explicit_bf16_conversion": true,
+    "four_rank_device_memory_samples": 795,
+    "gpu_initialized": false
+  },
+  "control_verification_sha256": "e9b2b82e3c09c3f0b752e76d3114ddce68fc40177e52a2ae3e611678d5109ed1",
+  "independent_readback_sha256": "622ab32a7a44c30284880213b9a7e2bcbf82b713ff8ddb9c599c8704aa7521f8",
+  "production_token_length_coverage_complete": false,
+  "full_production_preflight_required_before_capacity_gate_change": true,
+  "production_recipe_modified": false,
+  "formal_capacity_guard_modified": false,
+  "capacity_padding_is_production_data": false,
+  "formal_new_curriculum_updates": 0,
+  "model_strength_or_coaching_quality_measured": false,
+  "overall_goal_complete": false,
+  "cpu_tests": {
+    "passed": 1503,
+    "source_test_config_bindings_unchanged": true,
+    "bound_files": 240
+  }
+}
