@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "kind": "paper_native_grouped_readback_control_and_wait",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-13T18:07:43.748481+00:00",
+  "status": "verified_candidate_full_source_hashing",
+  "source_code": {
+    "runtime_helper_sha256": "0b6aeca4e01cc604d980c775c22c5bad28178ce6190211cb17b95e5f6f59fe34",
+    "original_math_module_count": 95,
+    "original_math_revision": "db2779a8e6c117a2bafeb48b6596996d520ff696",
+    "original_math_module_files_modified": false,
+    "additional_runtime_code_declared": true
+  },
+  "complete_profile_control": {
+    "questions": 207,
+    "counts": {
+      "test": 52,
+      "validation": 52,
+      "train": 103
+    },
+    "all_declared_tasks_present_by_split": {
+      "train": true,
+      "validation": true,
+      "test": true
+    },
+    "task_budgets_filled": true,
+    "every_question_regenerated_and_compared": true,
+    "complete_verification_equal_to_original": true,
+    "native_history_checks_preserved": true,
+    "fixture_is_training_data": false
+  },
+  "verified_catalog_reuse_control": {
+    "questions": 36,
+    "complete_verification_equal_to_original": true,
+    "copied_catalog_bytes_equal": true
+  },
+  "long_history_control": {
+    "derived_histories": 192,
+    "source_games": 12,
+    "repeats": 3,
+    "original_workers": 4,
+    "grouped_workers": 4,
+    "wall_speedup_by_repeat": [
+      1.351883656485353,
+      1.9356898536485625,
+      1.5068460431369828
+    ],
+    "worker_cpu_fraction": 0.37228775506362466,
+    "all_answer_bytes_and_sampler_state_equal": true,
+    "inputs_are_not_training_samples": true,
+    "production_speedup_proven": false
+  },
+  "owned_process_control": {
+    "cases": 9,
+    "all_passed": true,
+    "production_processes_signalled_by_control": false,
+    "pid_reuse_refused": true,
+    "foreign_stops_preserved": true,
+    "candidate_failure_and_dead_or_stale_owner_recovery": true
+  },
+  "local_catalog": {
+    "bytes": 55110930432,
+    "sha256": "6d0a606168127ce62fafe6005055b9bc3798bdd5fed6d5ef924aaab9e93ede3b",
+    "source_and_copy_independently_hashed": true,
+    "source_bytes_changed": false
+  },
+  "complete_cpu_suite": {
+    "passed": 1514,
+    "seconds": 710.1033034054562,
+    "source_and_config_unchanged": true,
+    "bound_files": 243
+  },
+  "production_candidate": {
+    "questions_required": 10833161,
+    "actual_native_workers": 64,
+    "isolation_workers": 64,
+    "maximum_groups_per_game_job": 256,
+    "phase": "original_full_corpus_and_catalog_input_hashing",
+    "canonical_completed_proof_published": false,
+    "original_gold_pause_requested": false,
+    "original_parent_signalled": false,
+    "production_recipe_or_frozen_module_files_modified": false
+  },
+  "formal_new_curriculum_updates": 0,
+  "complete_initial_sft_executed": false,
+  "authentic_distillation_executed": false,
+  "student_strength_or_coaching_quality_proven": false,
+  "overall_goal_complete": false
+}
