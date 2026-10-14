@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "paper_course_token_preflight_stage_readback",
+  "status": "complete_intermediate_token_stage",
+  "observed_utc": "2026-10-14T14:01:13.926770+00:00",
+  "evidence_state": "reconstructed_baseline",
+  "scope": "All training/validation encodings and additional validation formats; not the final foundation preflight or model quality.",
+  "corpus_counts": {
+    "train": 10804561,
+    "validation": 2600,
+    "test": 26000,
+    "total": 10833161
+  },
+  "train_validation_records_tokenized": 10807161,
+  "extra_validation_format_encodings": 5200,
+  "maximum_tokens_by_stage": {
+    "static_current": 299,
+    "dynamic_current": 305,
+    "static_future": 327,
+    "dynamic_future": 301
+  },
+  "token_certificate_sha256": "8deebb163b3f3418eaa968a5185894531e2b4f71b1e37ce23f3fabc0ed23ea4d",
+  "corpus_manifest_sha256": "b009b683f7a39b102bd5e5d1ef9bc44dfdb84d297f053a030610d9f7ce895bfb",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "execution_source_files_freshly_rehashed": 95,
+  "input_signatures_checked": 4143,
+  "all_input_signatures_unchanged": true,
+  "recorded_data_hashes_match_complete_corpus_bindings": true,
+  "fresh_whole_input_hashes_recomputed_by_this_readback": false,
+  "signature_check_is_not_a_new_whole_input_hash_proof": true,
+  "independent_test_answers_tokenized_by_token_stage": false,
+  "independent_test_used_for_training_or_selection": false,
+  "full_preflight_complete": false,
+  "formal_new_curriculum_updates": 0,
+  "initial_full_sft_updates": 0,
+  "trained_distillation_rounds": 0,
+  "strength_or_coaching_acceptance_proven": false,
+  "remaining_before_formal_curriculum": [
+    "All unique-history native replay",
+    "All root and future split verification",
+    "Complete manifest input hashing",
+    "Independent source/cache/base readback",
+    "Continuous four-GPU capacity verification"
+  ],
+  "historical_model_card_original_sha256": "74b454d5b29e67080836820749434c668274959e41689d7d27fe4a5b484af895",
+  "historical_model_card_original_bytes": 151444,
+  "historical_model_card_original_lines": 1853,
+  "historical_model_card_original_bytes_preserved_after_archive_header": true,
+  "runtime_configuration_changed_by_documentation_closeout": false
+}
