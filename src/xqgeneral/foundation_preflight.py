@@ -127,8 +127,13 @@ def token_initializer(recipe):
 
 
 def token_chunk(rows):
-    lengths, extra, checked = {}, 0, 0
+    lengths, extra, checked, validated = {}, 0, 0, 0
+    profile = recipe_profile(_RECIPE)
     for row in rows:
+        validate_task(row, profile)
+        validated += 1
+        if row['split'] == 'test':
+            continue
         selected = [row]
         if row['split'] == 'validation':
             # Always check both explicit alternate forms as well as the stored request.
@@ -140,7 +145,8 @@ def token_chunk(rows):
                 raise ValueError('Course record has no supervised answer')
             lengths[row['stage']] = max(lengths.get(row['stage'], 0), len(tokens))
         checked += 1
-    return {'checked': checked, 'extra_validation_formats': extra, 'maximum_tokens_by_stage': lengths}
+    return {'checked': checked, 'validated': validated,
+            'extra_validation_formats': extra, 'maximum_tokens_by_stage': lengths}
 
 
 def native_chunk(rows):
@@ -220,7 +226,6 @@ def main():
             for row in iter_rows(data):
                 if row['id'] in ids or row['feature_key'] not in keys:
                     raise ValueError('Duplicate label identity or missing expert full-history key')
-                validate_task(row, profile)
                 ids.add(row['id'])
                 counts[f"{row['split']}/{row['stage']}"] += 1
                 task_counts[f"{row['split']}/{row['stage']}/{row['task_type']}"] += 1
@@ -248,14 +253,16 @@ def main():
                         index = rng.randrange(pool_counts[group])
                         if index < args.answer_samples_per_task:
                             pool[index] = row
-                if row['split'] != 'test':
-                    yield row
+                # Every row is query-validated in the worker. Independent test
+                # rows are checked there without tokenizing their answers.
+                yield row
         print(json.dumps({'phase': 'full_train_validation_token_preflight', 'workers': args.workers}), flush=True)
-        checked, extra, lengths = 0, 0, {}
+        checked, validated, extra, lengths = 0, 0, 0, {}
         with ProcessPoolExecutor(max_workers=args.workers, mp_context=multiprocessing.get_context('spawn'),
                                  initializer=token_initializer, initargs=(recipe,)) as pool:
             for result in bounded_results(pool, token_chunk, inspected_rows(), args.workers, 256):
                 checked += result['checked']
+                validated += result['validated']
                 extra += result['extra_validation_formats']
                 for stage, value in result['maximum_tokens_by_stage'].items():
                     lengths[stage] = max(lengths.get(stage, 0), value)
@@ -263,7 +270,8 @@ def main():
                     print(json.dumps({'train_validation_records_tokenized': checked,
                                       'extra_validation_formats': extra}), flush=True)
     expected_counts = data_proof['verification']['counts']
-    if len(ids) != sum(expected_counts.values()) or checked != expected_counts['train'] + expected_counts['validation']:
+    if (len(ids) != sum(expected_counts.values()) or validated != len(ids) or
+            checked != expected_counts['train'] + expected_counts['validation']):
         raise ValueError('Preflight record counts differ from the completed course manifest')
     if any(sum(n for group, n in counts.items() if group.startswith(split + '/')) != number
            for split, number in expected_counts.items()):
@@ -318,6 +326,7 @@ def main():
         cache.check_unchanged()
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
               'total_rule_records': len(ids), 'records_by_split_stage': dict(counts),
+               'actual_rule_records_query_validated_in_workers': validated,
               'records_by_source_kind': dict(source_kinds), 'actual_future_horizons': dict(horizons),
               **tokens, 'actual_unique_histories_natively_replayed': len(histories),
               'all_question_history_keys_cached': True, 'cache_keys': len(keys), 'cache_depths': cache['depths'],
