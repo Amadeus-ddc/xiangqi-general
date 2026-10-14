@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "kind": "paper_training_continuation_completion_contract_repair",
+  "status": "complete_qualified_queue_replacement",
+  "evidence_state": "reconstructed_baseline",
+  "installed_utc": "2026-10-14T10:33:35.503276+00:00",
+  "entry_sha256": "1ceaeb8168ff8ed297c157fb7f074a8b705bc780fd25781026f1aa120ace1c7b",
+  "plan_sha256": "fe9978302fde02c40088fb066b0f8fe7921eb5a721f4b9d393f6f9f5093d13d5",
+  "reproduced_previous_failures": [
+    "completed_feature_producer_writes_cache_exit_but_queue_reads_generic_exit",
+    "final_ready_check_requires_released_previous_guard_after_current_queue_acquired_pause"
+  ],
+  "completion_receipts": {
+    "feature_preparation": "cache-exit.json",
+    "foundation_preflight": "exit.json"
+  },
+  "current_pause_ownership_required_after_transfer": true,
+  "completed_verifier_identity_cleared_before_pause_transfer": true,
+  "qualification": {
+    "ownership_publication_recovery_cases": 22,
+    "ready_regression_cases": 16,
+    "complete_coordinator_cli_cases": 2,
+    "total_cases": 40,
+    "native_fixture_questions": 300,
+    "fixture_cli_adapter_scope": "child routing and CPU-only post-permit consumer; exact production coordinator, verifier, publication and watchdog functions",
+    "production_processes_signalled_by_controls": false,
+    "first_fixture_environment_routing_failure_preserved": true
+  },
+  "installed": {
+    "only_empty_previous_queue_replaced": true,
+    "original_preflight_worker_identity_preserved": true,
+    "original_preflight_parent_hold_preserved": true,
+    "complete_native_guard_identity_and_exact_34_gold_holds_preserved": true,
+    "new_queue_has_no_pause_or_worker_at_installation": true
+  },
+  "preserved": {
+    "cpu_math_files": 95,
+    "gpu_math_files": 88,
+    "readback_files": 100,
+    "foundation_recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+    "native_full_questions": 10833161,
+    "native_full_manifest_sha256": "b3577d689c21e98e0d0ddab4cd274b5012f152f9e627a4a707b6a340a840fe14"
+  },
+  "full_production_preflight_complete": false,
+  "full_production_handoff_performed": false,
+  "formal_new_curriculum_updates": 0,
+  "initial_full_sft_completed": false,
+  "authentic_student_distillation_completed": false,
+  "strong_play_and_coaching_acceptance_proven": false,
+  "overall_goal_complete": false,
+  "public_execution_template": "scripts/templates/native_training_continuation.py",
+  "public_execution_template_sha256": "1ceaeb8168ff8ed297c157fb7f074a8b705bc780fd25781026f1aa120ace1c7b"
+}
