@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "complete_native_proof_wait_and_verified_training_continuation",
+  "evidence_state": "reconstructed_baseline",
+  "status": "qualified_waiters_installed_before_full_native_proof",
+  "observed_utc": "2026-10-14T08:19:16.051095+00:00",
+  "original_completed_handoff_wait_seconds": 3600,
+  "new_maximum_completed_owned_wait_seconds": 86400,
+  "guard_entry_sha256": "6b6acf16916fcf460376dcf05efb9e052500354b4e44d0c783a16c57343fbb97",
+  "guard_plan_sha256": "7dbea5fa302d0368467ebdacdebff58545f37d2606473c1cde02654685789c10",
+  "continuation_entry_sha256": "9f5f7dc257eb045276dda8a4fb3afc6d3ec76181dcefa7caac2100a4964ccabc",
+  "continuation_plan_sha256": "07f69d07175c3e1d54eacf5a3709969524799411259fa4324c90c5c180c45702",
+  "controls": {
+    "actual_ownership_recovery_cases": 8,
+    "actual_full_command_and_successor_ready_cases": 3,
+    "actual_native_records": 300,
+    "successor_handoff_cases": 22,
+    "whole_native_source_and_output_rehash_exercised": true,
+    "uncompleted_proof_cannot_transfer_pause": true,
+    "foreign_stops_and_changed_command_identities_not_adopted": true,
+    "software_test_config_bindings_unchanged": 243,
+    "previous_same_binding_cpu_tests_passed": 1517
+  },
+  "production": {
+    "installed_with_all_four_waiter_and_recovery_handles_verified": true,
+    "only_empty_v4_queue_retired": true,
+    "original_grouped_reader_and_holds_preserved": true,
+    "preflight_worker_preserved": true,
+    "new_guard_pause_acquired_at_installation": false,
+    "all_10833161_native_question_checks_complete": true,
+    "ordered_answer_emission_in_progress": true,
+    "whole_source_and_output_native_proof_verification_required_before_pause_transfer": true,
+    "whole_native_readback_complete": false,
+    "whole_preflight_complete": false,
+    "source_cache_base_readback_complete": false,
+    "formal_new_curriculum_updates": 0,
+    "complete_initial_sft_executed": false,
+    "authentic_distillation_executed": false,
+    "student_strength_or_coaching_quality_proven": false,
+    "overall_goal_complete": false
+  }
+}
