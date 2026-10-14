@@ -1,8 +1,10 @@
 # 论文对齐的新四课实验
 
-核对日期：2026-10-14。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。旧实验权重与证据保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
+核对日期：2026-10-15。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。旧实验权重与证据保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
 
-本服务器当前生产会话为 `xqgeneral-paper-curriculum-preparation-v7`，入口在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7/`，实际输出为 `data/paper-courses-v5` 与 `runs/curriculum-paper-v5`。CPU 问答使用 95 份冻结模块，GPU 特征／课程阶段保留原来的 88 份已验证模块；完整目录已经核对 6301835 个根、52964340 个目标及 105352 盘来源棋局。题库和特征缓存已完成生成，全部10833161题的逐局来源／金标核对已完成暂存与独立读回；10807161条训练／验证编码及5200份额外验证问法也已检查完成。全量预检仍在复演历史，后续完整隔离、文件哈希、来源／缓存／基座独立读回与持续四卡容量检查按保存计划衔接；正式新四课仍为0步。编码阶段的完成与边界见[中间证据](../evidence/paper-course-token-preflight-complete-v1.json)。四卡全局 256／微批量 4／完整 2048 token 的容量已另行[实测](PAPER_CURRICULUM_CAPACITY.md)。后续讲解等待会话见[当前衔接队列](PAPER_POST_CURRICULUM.md#本服务器当前队列)。
+本服务器当前生产会话为 `xqgeneral-paper-curriculum-preparation-v7`，入口在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7/`，实际输出为 `data/paper-courses-v5` 与 `runs/curriculum-paper-v5`。CPU 问答使用 95 份冻结模块，GPU 特征／课程阶段保留原来的 88 份已验证模块；完整目录已经核对 6301835 个根、52964340 个目标及 105352 盘来源棋局。题库和特征缓存已完成生成，全部10833161题的逐局来源／金标核对已完成暂存与独立读回。
+
+完整预检已于2026-10-15 05:27（北京时间）成功退出并发布清单：全部10833161题查询、2081078条唯一历史、10807161条训练／验证编码及5200份额外验证问法已检查，完整当前／未来隔离无重叠；4143个输入文件、3386878285696字节完成哈希绑定。实际预检源码的查询验证调度改动已通过资格控制并在清单中声明。见[完整预检完成证据](../evidence/paper-course-full-preflight-complete-v1.json)。完整金标证明已完成输入／输出哈希重核对，并于05:39正式发布；原暂存证明保留。来源／缓存／基座独立读回已启动，仍须该阶段和持续四卡容量门槛通过后才开始新四课；正式新四课仍为0步。四卡全局256／微批量4／完整2048 token的容量已另行[实测](PAPER_CURRICULUM_CAPACITY.md)，实际输入长度的1024-token控制也已完成；正式门槛由完整证明及独立读回共同决定。后续讲解等待会话见[当前衔接队列](PAPER_POST_CURRICULUM.md#本服务器当前队列)。
 
 ## 组合与选模
 
@@ -53,4 +55,4 @@ v6 的自动交接守卫 `xqgeneral-native-preparation-handoff-v4` 要求新任�
 
 v6 的历史入口保留在 `runs/native-prefix-cache-v1/worktree/runs/paper-curriculum-preparation-v6/`。v7 已确认新问答进程实际写出并推进后完成 v6 准备及旧讲解等待的退役，交接依据见[目录切换记录](../evidence/native-position-catalog-handoff-v1.json)。实际观察与续跑使用文首所列 v7 的 `state.json`／`plan.json`；确认原会话退出后才按对应保存计划恢复。部分输出或配置改变使用新输出。完整来源、四课预算、课程比例、零初始化起点和选模规则保持原合同。
 
-完整新问答、正式缓存和四课尚未完成；四课完成后还须执行初始讲解 SFT、原始能力与棋力评测、足量搜索蒸馏，以及独立教学正文验收。模型交付目标保持未完成。
+完整新问答、特征缓存和完整预检已完成；来源／缓存／基座独立读回与正式容量门槛仍待完成，随后才进入新四课。四课完成后还须执行初始讲解 SFT、原始能力与棋力评测、足量搜索蒸馏，以及独立教学正文验收。模型交付目标保持未完成。

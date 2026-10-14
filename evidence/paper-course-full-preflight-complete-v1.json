@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "kind": "complete_paper_course_foundation_preflight",
+  "status": "complete_preflight",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-14T21:42:16.377556+00:00",
+  "actual_preflight_completion_utc": "2026-10-14T21:27:37.371882+00:00",
+  "preflight_manifest_sha256": "5cc93c2826abb2a5987c3207541c0eff6663e7d3792c5e43f3a138541ada5d69",
+  "completed_input_hash_bindings": {
+    "files": 4143,
+    "bytes": 3386878285696
+  },
+  "execution_source": {
+    "modules": 95,
+    "revision": "6aea03ca30377d4d2c8cb154d85eee84c5cd0953",
+    "fresh_hashes_match_plan_and_completed_manifest": true,
+    "changed_modules_vs_original": [
+      "foundation_preflight.py"
+    ],
+    "qualified_scheduling_only_change": true,
+    "qualification_sha256": "88610421a625c1c0a34dd0380355959f77b35acb0c816a1ae84db4b9dbe923e7"
+  },
+  "current_input_identity_checks": {
+    "unchanged_stat_signatures": 4143,
+    "all_large_input_hashes_recomputed_by_this_completion_readback": false
+  },
+  "successful_preflight_exit_read_back": true,
+  "preflight_lease_released": true,
+  "verification": {
+    "total_rule_records": 10833161,
+    "actual_rule_records_query_validated_in_workers": 10833161,
+    "train_validation_records_tokenized": 10807161,
+    "extra_validation_format_encodings": 5200,
+    "maximum_tokens_by_stage": {
+      "static_current": 299,
+      "dynamic_current": 305,
+      "static_future": 327,
+      "dynamic_future": 301
+    },
+    "actual_unique_histories_natively_replayed": 2081078,
+    "cache_keys": 2236975,
+    "native_answer_samples": 832,
+    "split_verification": {
+      "games": {
+        "train": 73654,
+        "validation": 66,
+        "test": 591
+      },
+      "roots": {
+        "train": 2069901,
+        "validation": 865,
+        "test": 8744
+      },
+      "game_overlap": 0,
+      "root_and_future_overlap": 0
+    }
+  },
+  "independent_test_used_for_training_or_selection": false,
+  "full_native_answer_readback_evidence": "paper-complete-native-readback-v1.json",
+  "native_answer_sample_is_not_full_label_accuracy": true,
+  "source_cache_base_independent_readback_complete": false,
+  "continuous_formal_four_gpu_capacity_gate_passed": false,
+  "formal_new_curriculum_updates": 0,
+  "complete_initial_explanation_sft_updates": 0,
+  "trained_student_search_distillation_rounds": 0,
+  "final_playing_strength_and_coaching_accepted": false,
+  "overall_goal_complete": false,
+  "preflight_completion_readback_observed_utc": "2026-10-14T21:30:46.287819+00:00",
+  "native_gold_handoff": {
+    "status": "complete",
+    "completed_utc": "2026-10-14T21:39:03.519953+00:00",
+    "questions": 10833161,
+    "staged_manifest_sha256": "b3577d689c21e98e0d0ddab4cd274b5012f152f9e627a4a707b6a340a840fe14",
+    "published_manifest_sha256": "cc8d9d01b2fc52661681d3733b94f73e3d8dc77dea44fe8e3ede87520b944b5a",
+    "source_and_output_bindings_freshly_rehashed_before_handoff": 56,
+    "current_bound_file_signatures_unchanged": true,
+    "original_staging_preserved": true,
+    "canonical_output_bytes_match": true,
+    "owned_process_retirement_and_lease_release_complete": true,
+    "continuation_readback_modules_freshly_hashed": 100,
+    "continuation_readback_revision": "475303da6aa3528b9516bc64fb0034bfd86467d8",
+    "source_cache_base_readback_started": true,
+    "source_cache_base_readback_complete": false
+  }
+}
