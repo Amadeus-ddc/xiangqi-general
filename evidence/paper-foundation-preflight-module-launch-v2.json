@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "kind": "paper_foundation_preflight_canonical_module_launch_repair",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-13T23:54:18.410423+00:00",
+  "status": "launch_repaired_full_preflight_restarted_continuation_waiting",
+  "production_failure": {
+    "observed_utc": "2026-10-13T23:31:33.534459+00:00",
+    "returncode": 1,
+    "error_type": "PicklingError",
+    "old_failure_partial_staging_source_and_plan_preserved": true,
+    "no_completed_full_preflight_proof_reused": true
+  },
+  "root_cause": {
+    "reproduced": true,
+    "previous_launch": "runpy.run_module run_name __main__ default alter_sys False",
+    "callbacks": [
+      "token_initializer",
+      "token_chunk",
+      "native_chunk"
+    ],
+    "canonical_module_pickle_round_trip_passed": true
+  },
+  "execution_identity": {
+    "preflight_entry_sha256": "29362b48717131b2fe28352a7e0197dafe4fa7adaa7154f372a34d4a064d0b60",
+    "preflight_plan_sha256": "23abadb4558aae837ae384f51fb8105d0a6bea3a9a386743f46feb85bdbc2164",
+    "continuation_entry_sha256": "e9d3e419c971504b3e7262fece822196f1f2a4296cb329239cb1a4b5b43300ed",
+    "continuation_plan_sha256": "e205bbb4ed5256515d6c50ea9c975cff73f5df3aee687754ff8a5a9b180a50ac",
+    "frozen_module_counts": {
+      "cpu": 95,
+      "gpu": 88,
+      "reuse": 100
+    },
+    "frozen_modules_and_recipe_unchanged": true,
+    "full_preflight_workers": 64,
+    "corrected_entry": "canonical_imported_frozen_module_main",
+    "worker_traceback_written_inside_log_redirection": true
+  },
+  "actual_preflight_control": {
+    "os_cases": 9,
+    "os_case_names": [
+      "normal_release_idempotent",
+      "foreign_hold_not_acquired_or_resumed",
+      "pid_reuse_guard",
+      "controller_death_worker_and_child_terminated_parent_resumed",
+      "stale_heartbeat_parent_recovered",
+      "atomic_complete_publication_retains_leaf_bytes_and_staging",
+      "existing_publication_refused",
+      "changed_artifact_refused_without_canonical_partial",
+      "atomic_link_noreplace_guard_on_actual_nfs"
+    ],
+    "all_passed": true,
+    "actual_pool_workers": 4,
+    "token_and_native_pools_completed": true,
+    "rule_records": 300,
+    "train_validation_records_tokenized": 200,
+    "native_histories_checked": 12,
+    "manifest_sha256": "2e2d4cdfafb506958a5ba65b07b3bfd85b10c605d4b9a1bc6bf310671f41ddb9",
+    "cuda_initialized": false,
+    "full_production_scope_proven_by_control": false
+  },
+  "live_replacement": {
+    "new_preflight_controller_worker_and_recovery_independently_confirmed": true,
+    "new_continuation_coordinator_and_recovery_independently_confirmed": true,
+    "continuation_entry_byte_identical_to_22_case_controlled_v2": true,
+    "old_empty_uncommitted_waiting_queue_confirmed_terminal": true,
+    "production_processes_signalled_by_waiting_queue_replacement": false,
+    "new_waiting_queue_owned_holds": 0,
+    "actual_production_handoff_complete": false
+  },
+  "feature_production": {
+    "status": "complete",
+    "new_history_roots": 2067071,
+    "all_history_roots": 2236975,
+    "feature_shards": 4038,
+    "output_files_including_index": 4039,
+    "shard_bytes": 3048221401968,
+    "manifest_sha256": "71f4b34aef115cef1edffcdab0c7e32480d86fb92b11d0581456f7282ebcf831",
+    "full_independent_source_cache_base_readback_completed": false
+  },
+  "full_native_reader": {
+    "status": "drafting_adaptive_queries_in_original_order",
+    "query_drafts": 8088015,
+    "required_questions": 10833161,
+    "draft_count_is_not_native_verification_completion": true,
+    "full_production_proof_published": false
+  },
+  "formal_new_curriculum_updates": 0,
+  "complete_initial_sft_executed": false,
+  "authentic_distillation_executed": false,
+  "student_strength_or_coaching_quality_proven": false,
+  "overall_goal_complete": false,
+  "public_verification": {
+    "cpu_tests_passed": 1514,
+    "source_test_config_bindings": 243,
+    "source_and_config_unchanged": true,
+    "package_build_passed": true,
+    "release_check_passed": true,
+    "public_code_changed_in_this_milestone": false
+  }
+}
