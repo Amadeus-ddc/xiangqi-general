@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "complete_native_readback_owned_hold_transfer",
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_full_native_proof_independently_rehashed_owned_hold_transferred",
+  "observed_utc": "2026-10-14T09:47:57.294061+00:00",
+  "questions": 10833161,
+  "staged_manifest_sha256": "b3577d689c21e98e0d0ddab4cd274b5012f152f9e627a4a707b6a340a840fe14",
+  "verification": {
+    "all_native_source_and_output_bindings_freshly_rehashed": true,
+    "all_certificate_signatures_read_back_unchanged": true,
+    "actual_owned_original_gold_members": 34,
+    "exact_original_pid_start_parent_command_bindings_verified": true,
+    "all_original_gold_members_confirmed_stopped": true,
+    "old_grouped_holder_and_recovery_retired": true,
+    "old_grouped_lease_released": true,
+    "original_parent_pause_still_owned_by_preflight": true,
+    "preflight_worker_identity_preserved": true,
+    "canonical_native_proof_published": false
+  },
+  "remaining": {
+    "full_preflight_complete": false,
+    "source_cache_base_readback_complete": false,
+    "formal_new_curriculum_updates": 0,
+    "complete_initial_sft_executed": false,
+    "authentic_distillation_executed": false,
+    "student_strength_or_coaching_quality_proven": false,
+    "overall_goal_complete": false
+  },
+  "software_verification": {
+    "same_source_test_config_bindings": 243,
+    "previous_same_binding_cpu_tests_passed": 1517,
+    "release_check_passed": true
+  }
+}
