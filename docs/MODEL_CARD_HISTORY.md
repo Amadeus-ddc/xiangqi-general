@@ -1,0 +1,1859 @@
+# Historical model-card record
+
+Archived on 2026-10-14. This file preserves earlier experimental and software-control snapshots. Use [the current model card](MODEL_CARD.md) and [STATUS.md](../STATUS.md) for the active model plan and verified status. Historical progress and capacities must not be attributed to the new formal run. The complete previous model card follows unchanged.
+
+---
+
+# Xiangqi General model card
+
+Completed distillation rounds now reuse the [development capability and match entries](PAPER_DISTILLATION_TRAINING.md#每轮训练之后的开发验证): the selected full FP32 state, compiled recipe, source inputs, protected validation and actual round count are checked before paired raw answers, blinded auxiliary prose ratings and the same selected model's full matches. Thirteen controlled CPU cases preserve invalid answers, rejected ratings and censored games; model, engine and teacher outputs are fixtures. All 1486 tests pass with 239 source, test and JSON-configuration bindings unchanged. Actual new curriculum, initial full SFT, mined and trained rounds, and final independent strength/coaching acceptance remain incomplete. See [the entry evidence](../evidence/post-distillation-development-evaluation-v1.json).
+
+The [portable inference directory](MODEL_INFERENCE_BUNDLE.md) carries local decoder assets, tokenizer, every trained tensor and the matching Px0. Relocation is checked with the existing two-update frozen-decoder capacity checkpoint: all 624 live parameter tensors, buffers, token inputs, expert features, first-step logits and raw outputs (at most eight new tokens) match for 35 native questions. Only 671,806,496 bridge/board parameters participated in that capacity training. Independent CPU readback freshly hashes 39 artifacts (21.80 GB) and compares every trained value and runtime configuration. All 1473 tests pass with 188 source/test/test-configuration bindings unchanged. This verifies software delivery; formal new courses, full-decoder initial SFT, distillation and independent strength/coaching acceptance remain incomplete. See [the evidence](../evidence/model-inference-bundle-v1.json).
+
+The frozen-decoder [four-GPU curriculum capacity control](PAPER_CURRICULUM_CAPACITY.md) runs global batch 256, microbatch 4 and complete 2048-token examples with the actual pretrained student and pinned expert features. Two continuous updates and a one-plus-one restoration match every parameter, optimizer, RNG, data and selection state and step log. Rank 0 peaks at 79.82/79.87 GiB allocated; the largest observed device use across four ranks is 86,505 MiB. Independent readback rehashes 43 artifacts, about 24.21 GB, and reconstructs every padded input and complete answer. The 35 native original questions, repetition and constructed length padding are capacity fixtures. All 1452 tests pass with 186 source, test and test-configuration bindings unchanged. Formal new-course updates and measured strength/coaching outcomes remain zero or unmeasured. See [the evidence](../evidence/paper-curriculum-capacity-v1.json).
+
+The [additional recorded search sources](PUBLIC_RECORDED_SEARCH_SOURCES.md) contribute 22,714 newly retained games and 1,333,655 plies. An independent entry checks every retained original export and native history prefix, with 221 fresh artifact bindings. Source-declared human and human/computer counts are 16,695 and 6,019; participant labels do not authenticate identities, unassisted play or optimal moves. A CPU preparation queue waits for the actual complete new-course readback before protecting used games and all held-out histories, explanation branches and color positions across nine sources. Its real candidate pool, student labels, trained rounds and coaching benefit remain unproduced or unmeasured; the controlled 18-root reader check is a fixture. All 1452 tests pass with 186 source, test and test-configuration bindings unchanged. See [the evidence](../evidence/public-recorded-search-source-v1.json).
+
+Xiangqi General couples a frozen Px0 Xiangqi Transformer expert with a Qwen3
+language model through trainable gated cross-attention. It is an independent
+adaptation of the [Queen paper](https://arxiv.org/abs/2610.03695v1).
+
+The intended use is Chinese-chess study: propose a move, describe the board facts,
+and explain verifiable continuations. Use the independent evaluation evidence to
+decide how much to trust a checkpoint. A completed training run alone establishes
+neither strong play nor accurate strategic explanations.
+
+The optional [vLLM consolidator](PAPER_TEACHER_VLLM.md) verifies all official BF16 teacher shards, preserves raw token IDs, and completes sixteen distinct near-window inputs on one H20. Its full-output control measures 292.71 token/s versus the HF control's 62.35; seeds and outputs differ, so the ratio is specific to these constructed queries. An actual CLI batch completes sixteen queries with 50,404 generated tokens. Standard HF and vLLM both load 27,356,728,560 main-model parameters; the checkpoint also preserves 424,699,392 inactive MTP parameters. All 1452 local tests pass. This establishes bounded unquantized inference and artifact readback, not trained-student yield, strategic explanation quality or playing strength. Formal new-course updates remain zero. See [the evidence](../evidence/paper-teacher-vllm-v1.json).
+
+The optional [read-only recorded position catalog](NATIVE_POSITION_CATALOG.md) has completed full verification of 6,301,835 roots, 52,964,340 native target masks and 105,352 source games, binding 48 input artifacts (126.27 GB). Root JSON, sampling headers and game ownership match; complete past-history and isolation proofs are inherited only for unchanged bytes. Every selected question still requires full native history checks and fresh gold answers. Six-game controls also establish identical fresh/reused questions, order and sampling reports; all 1,364 CPU tests pass and 178 source/test files remain unchanged. New CPU preparation and the post-course follower have started with separate preserved GPU control sources. Ownership transferred after 32 actual native question workers and two increasing output observations; both old owned queues are terminal and partial outputs remain preserved. An independent startup reader validates full histories and native answers for 128 completed prefix rows in each original split (384 total); this establishes startup, not full-corpus completion. See [the handoff evidence](../evidence/native-position-catalog-handoff-v1.json). Formal new training, distillation and strength/coaching acceptance remain unproven. Generated terminal variants use the original builder; unused position-reservation rows are not recomputed by this reuse verifier. See [the full verification and startup evidence](../evidence/native-position-catalog-production-v1.json).
+
+The explicit consolidation profile uses a 16,384-token total window, an 8,192-token output cap, temperature 1.0, top-k 20, top-p 0.95 and low reasoning. Actual unquantized Qwen3.8-27B inference completes two constructed search queries; the 16,382-token boundary gets a two-token cap and the full-window input never reaches generation. Raw thoughts, responses and errors are retained. That earlier HF control did not establish original vLLM execution, 16-request capacity, trained-student yield or strategic coaching quality. See [the control](../evidence/paper-teacher-context-v1.json).
+
+The optional 1,024-token chunked prefill completes sixteen 16,382-token inputs with two output tokens each on one H20 (76.34 GiB peak allocated), and sixteen distinct constructed queries with an 8,192-token budget (actual outputs 1,852–6,023 tokens). Same-input 128-token measurements show 12.87/54.95 token/s for serial/batch-16; this is a short-budget throughput result. Local and library-native chunked greedy outputs match; chunked and unchunked outputs differ. This remains HF execution and constructed fixtures; strategic coaching quality, actual student distillation labels and strength remain unproven. See [the batch control](../evidence/paper-teacher-prefill-v1.json).
+
+Optional CPU question workers preserve sequential adaptive queries and frequency updates, validate every complete source history, and emit native answers in the original order. A 64-game/256-question control measures 33.63/3.60 seconds for serial/configured-32 workers; 23 native worker processes actually participate. This local comparison does not measure the full catalog, dataset, or training speed. All 3,340 control questions across 26 task types match the previous frozen implementation byte for byte, and an independent reader rechecks native gold, histories and frequencies. All 1,339 local tests pass. Parallel mode requires declared position sampling without color mirrors; existing serial mode stays available. The full catalog is verified; ownership and formal training progress are tracked in [STATUS.md](../STATUS.md). See [the control](../evidence/paper-question-render-v1.json).
+
+## Inputs and outputs
+
+Input: Xiangqi FEN, all supplied move history, and a Chinese question. Tactical
+fragments preserve an explicit boundary where earlier history is unavailable. Coordinates
+are `a0` to `i9`. Red is at the bottom. Structured move explanations include a
+move, principal variation, candidates, evaluation perspective, and board facts.
+Raw model generations must be evaluated before correction or oracle assistance.
+
+## Training and evaluation
+
+The explicit `paper_recursive` mining policy now audits clean child prefixes, retains removed-move boundaries, accepts strictly closer numerical evaluations for equivalent/prefix lines, and chooses recursion targets using the authors' ordering/truth/prefix/divergence conditions. Unmodified author-function AST controls match 256 decisions, 256 sanitations and 256 boundaries; six divergence controls use a Xiangqi board adapter rather than the original chess rule engine. A 32-game native control executes 154 actual searches, preserves 144 constructed outputs and checks six cached child reuses. Its 30 accepted consolidation queries are fixtures, not student yield or training labels. All 1,272 local tests pass. Structured JSON, Xiangqi adjudication, material-conditioned Pikafish WDL and a 32-ply target limit remain explicit local adaptations; batched mining, trained-student searches and independent strength/coaching results remain pending. The separate full BF16 teacher control below covers its window and sampling settings. See [the workflow](PAPER_SEARCH_GENERATION.md) and `evidence/paper-search-recursive-acceptance-v1.json`.
+
+Explicit mining options now fill missing or illegal root recommendations with actual engine MultiPV moves and reuse a recursive child's raw numerical analysis only at its identical complete history. Raw student output and its structural errors remain preserved. A native NNUE control queried 32 distinct recorded training games at 100,000 nodes per root/child, checked 64 full histories, filled 62 recommendations and reused 32 numerical child analyses. Predictions and recursive triggers were constructed fixtures; no pretrained language student or explanation teacher was loaded and no distillation labels were produced. Interrupted MultiPV parsing now retains distinct previously exact-scored candidates without treating score bounds as exact. Those acceptance rules were incomplete at the candidate/reuse milestone and are separately verified by the later explicit recursive policy above. See [the search workflow](PAPER_SEARCH_GENERATION.md) and `evidence/paper-search-candidates-reuse-v1.json`.
+
+Explicit numerical root retries now follow the authors' initial-attempt-plus-three budget and retry predicate. Every raw attempt retains its structural verification and separate numerical acceptance; exhaustion rejects before engine search. A random CPU decoder matched independent sampling for 128 short outputs across 32 roots, preserved prefix/resume/reorder traces, and actually generated four 4,096-token attempts. Constructed structured cases also verify fourth-attempt success, overflow, candidate versus child failures, and changed-budget rejection before student loading. No pretrained student or teacher was used, and no distillation labels or strength results were produced. See [the retry workflow](PAPER_SEARCH_GENERATION.md) and `evidence/paper-search-root-retry-v1.json`.
+
+An explicit [search generation policy](PAPER_SEARCH_GENERATION.md) adopts the authors' released temperature 0.6, top-k 20, top-p 0.95 and 4,096 output-token budget. Per-root call seeds are a local resume convention, not a replay of the authors' vLLM random stream. A random CPU decoder matched independent sampling for 64 seeds, preserved 32-root prefix/resume/order results, and actually emitted 4,096 tokens. Two CUDA devices checked RNG restoration using tensors only; no pretrained student, expert or teacher was loaded in this control. Raw invalid generations remained rejected. Search resume now binds every expert feature shard. These checks do not establish real student search yield, distillation labels, strength or teaching quality; the sampled 512-root template also retains local consolidation limits. See `evidence/paper-search-generation-v1.json`.
+
+Before the fresh paper-aligned student's explanation training, GPT-6-Astra Low independently reviewed all 448 legacy held-out references. Of these, 164 were actually rewritten and independently accepted: 73 validation and 91 independent-test prose bodies. The corrected dataset preserves all 10,758 training rows byte-for-byte and every label identity, structured answer, full history and game split. All 11,142 training/validation rows fit the pinned tokenizer limit without truncation; no independent-test row was tokenized for training. These are reference-data checks and auxiliary neural judgments, not human ratings or measured student improvement. The new follower waits for all four actual new courses. See [reference prose corrections](REFERENCE_PROSE.md) and `evidence/heldout-reference-prose-v1.json`.
+
+The paper-aligned initial explanation recipe explicitly disables AdamW foreach temporaries and enables DDP gradient bucket views; undeclared settings retain the historical defaults, and exact resume rejects changes. A real pinned Qwen frozen-decoder four-GPU control used the full-width 671,806,496-parameter bridge/token state: eight continuous updates and four plus four resumed updates match bitwise, including optimizer, RNG and data traces, and all final trainable gradients were views. The full suite passes 1,149 checks. A meta-only count gives 4,694,274,592 full-decoder trainable parameters; its 69.95GiB FP32 parameter/gradient/two-moment estimate excludes activations, initialization, communication and allocator costs. This is not a measured full-decoder memory fit. The current SFT follower waits for the actual new four-course parent before full-decoder preflight, SFT and development evaluation. See [the post-curriculum workflow](PAPER_POST_CURRICULUM.md) and `evidence/paper-sft-memory-policy-v1.json`.
+
+Explicit [indexed JSONL training](PAPER_INDEXED_TRAINING.md) maps compact row metadata and reads only requested question payloads, while preserving original file order, finite mixture selection, validation sampling and data resume state. All 2,831,004 training and 173,272 validation records from the existing corpus were indexed and compared field-for-field through an independent sequential read path; native label/history validation was inherited from the same source bytes. A constructed CUDA tensor model matched memory, indexed and resumed runs bitwise, and all 1,058 CPU tests pass. No pretrained student was trained with this storage control, and existing production courses retain their frozen reader. New formal paper data, feature storage at its scale, multi-GPU neural resume and strength/coaching evaluation remain incomplete.
+
+Explicit [sharded expert storage](PAPER_FEATURE_STORE.md) references an unchanged base cache and extracts new histories into bounded immutable FP16 feature shards with FP32 WDL. All 125,266,821,120 feature values and 509,712 WDL values from the 169,904-history base matched the original byte values; 16 new native histories were extracted by the pinned Px0 on GPU and matched an independent repeat. A constructed CUDA tensor model matched monolithic, sharded and interrupted/resumed optimizer trajectories bitwise. All 1,113 CPU checks passed with 159 source/test bindings unchanged. The full base readback RSS is not a neural training memory measurement. Formal expanded corpus/cache, real multi-GPU neural execution, strength and coaching acceptance remain unproven.
+
+The current model is an adapted baseline, with a narrower bridge, incomplete transferable task coverage, example-normalized loss, replacement sampling and combined replay validation selection. These differ from the authors' released implementation. The source-backed [paper training comparison](PAPER_REPRODUCTION.md) records aligned settings, public paper/configuration conflicts and required follow-up; the audit did not modify frozen training jobs.
+
+A separately selected [finite course traversal](PAPER_FINITE_TRAINING.md) retains the largest-weight source, fixes rounded subsets of replay sources and shuffles the complete selected mixture each epoch. It preserves producer task frequencies, records distributed microbatch tail padding and binds exact resume to selected row identities and epoch position. Six controls using the unmodified pinned author mixer and 243 controls using actual seedable/sharded loaders agree on every tested row sequence. A constructed CUDA tensor model completes eight actual training-entry updates identically to four updates plus checkpoint resume; pretrained models and student quality are outside that control. All 1,004 CPU tests pass. Frozen production courses and queued SFT retain their previous traversal; full new corpus/cache preparation and trained-student evaluation remain incomplete. See `evidence/paper-finite-training-v1.json`.
+
+The separately declared [native paper task profile](PAPER_COURSE_TASKS.md) implements seven static and six dynamic task types in current and future positions. It adds geometric controllers, check evasions and current-position checkmate judgment, distinguishes Xiangqi stalemate loss, and tracks future pieces by their initial square. Its generator preserves game splits and prior root/future/color ownership; source readback reconstructs every native label. Parsed tag accuracy, format validity and raw-text equality are reported separately without repairing predictions or grading strategic prose. Pinned, unmodified Pikafish agrees on all 69,570 squares of 773 rule positions. The explicit `author_answer_frequency_xiangqi_v1` sampler adds cumulative answer-class weights and distinct per-root queries using the author's training multiplicities; heldout splits use one query per task and maintain independent counters. Written color mirrors contribute their actual final-board answer classes. Readback reconstructs the complete frequency summary. A separate recorded-terminal pool recovers actual checkmate/stalemate endings and nearby histories with native per-horizon classes, retained source mate lines, unchanged prior game ownership and reservation of structured explanation PVs/branches. Distance to a recorded mate does not prove forced mate under optimal play. The explicit `author_task_position_budget_mix_xiangqi_v1` profile implements the fixed author per-task position budgets and finite difficult-source mixtures. Future targets lock a matching native horizon before question rendering; single-source selections shuffle before cumulative-frequency rendering, while mixed selections keep the author weighted order. Exhausted sources are dropped without cycling and every actual shortfall is recorded. Within each course/split, tasks reserve disjoint query boards and color counterparts; clock variants do not add position capacity. Full new formal data, feature caches and student training/evaluation remain incomplete; the additional exhaustive static test mode is not part of this profile.
+
+A separately implemented [paper-form dense bridge](PAPER_DENSE_BRIDGE.md) uses decoder-width attention, 16 heads, a 2x ReLU-squared FFN and zero gates with randomly initialized output projections. CPU checks cover learning after the initially closed gates, frozen-decoder preservation, BF16 computation with FP32 trainable parameters, checkpoint handoff and SFT architecture inheritance. Historical configurations keep their original default. The 16-block Qwen/Px0 geometry plus both board embeddings has 671,806,496 trainable parameters; large-shape checks use meta tensors. Full GPU training, throughput and student strength with this architecture have not been measured. See `evidence/paper-dense-bridge-cpu-v1.json`.
+
+Tactical terminal sources preserve the original split, source identity, declared participants and unavailable pre-fragment history. Actual recorded endings retain their recorded mate witnesses; exhaustive legal one-ply extensions from supplied puzzle positions instead declare generated witnesses and never become recorded moves, additional independent games or best-move labels. Completed native course/structured-label forecasts may be reused with every original input freshly bound; this producer adds missing color counterparts and rejects ownership conflicts. Additional prior corpora and all declared canonical source histories also participate in reservation. Source regeneration and exact readback cover native classes, provenance, duplicates and exclusions. Full formal pool production, feature caches and student training remain separate acceptance steps. The curriculum sampler binds alternate generated terminal descendants to their preserved source parent and makes eligible horizons available to future source mixtures without creating new game identities.
+
+The full recorded-match root producer examines every native source prefix without a per-game cap, preserves prior split ownership and actual future/mate lines, and excludes roots whose complete footprint conflicts with another split. It replaces the overlapping older generic and full-match terminal pools. An eight-import capacity scan counts 107,678 full recorded matches and 8,413,544 supplied history observations, including duplicates and unfiltered split conflicts; native final boards include 3,716 checkmates and 60 stalemates. A separate six-archive real-source probe replays nine games and verifies 600 roots with every recorded future. Full formal root production/readback is running; the counts do not establish independent position capacity, completed formal questions, training or model quality. See `evidence/paper-full-recorded-roots-v1.json`.
+
+At a preserved snapshot with two courses complete, independently verified third-course update 7680 scores 757/768 future-static, 756/768 static replay and 549/640 dynamic replay answers, with 84/128 exact move lists. Combined correctness is 2062/2176, below update 7168's 2080/2176; the selected checkpoint remains at 7168 with one check without improvement. All fifteen same-question raw checks and the latest 2176 native answers were read back. The failed update-4096 observer and its source are preserved; the replacement checks declared scheduled steps without restarting training. See `evidence/static-future-fifteenth-raw-validation-v1.json`; the update-8192 observer is queued. Initial clean SFT, trained search distillation and final strength/coaching acceptance remain pending.
+
+Optional BF16 teacher batching has passed CPU protocol and resume checks. A CI collection failure exposed an optional Transformers import in a tensor fixture; the PyTorch-only replacement passes all 18 affected cases with Transformers blocked and all 724 canonical CPU tests. Production code was unchanged by that fix. Real batched neural throughput and answer differences remain unmeasured. Existing frozen queues keep their original execution sources.
+
+A separate BF16 teacher benchmark is queued from a 76-file frozen source after the actual clean SFT, paired capability validation and original search mining. It selects up to eight distinct training queries across prompt character lengths, waits for 70GiB free on GPU 3 and compares serial, size-two and size-four generation with the same 1536-token budget. Timing excludes loading and warmup; CUDA synchronization, actual token counts, process memory peaks and raw text differences are retained. Completed comparison groups resume without repeated generation; completed results and zero-query mining need no teacher load. All 759 CPU tests pass, including 35 added admission, resource and continuation cases. A real wait guard observed the live prerequisite without CUDA initialization or teacher loading; see `evidence/teacher-benchmark-real-wait-v1.json`. Actual throughput and answer differences remain unmeasured, and this benchmark produces no training labels or evidence of strategic prose quality or student strength.
+
+Pinned source/model identities are in `configs/sources.json`; per-experiment
+configuration, hashes, code revisions, validation selection, and independent
+test results are in run manifests. Synthetic legal games are split before QA
+creation, and root/future positions are checked for overlap. Validation selects
+checkpoints. Test games do not train or select checkpoints.
+
+At the 2026-10-10 process/log snapshot, the existing clean recorded-game foundation
+has completed three of four courses; the fourth course is running. Its latest
+completed update-3584 validation scores 432/640 current-course and 2442/2816
+combined answers. This is a legacy-profile progress observation, not independent
+strength or prose acceptance; see `evidence/paper-full-recorded-roots-v1.json`. Clean explanation SFT and accepted clean-model
+search labels remain pending. The reviewed initial corpus contains 10758/384/512
+training/validation/test rows, including existing color-derived rows. The joint
+495306-history search pool is candidate material, not accepted distillation
+labels or evidence of model strength. See `STATUS.md` for verified checkpoints.
+
+At third-course step 3584, future-static accuracy is 751/768, static replay
+757/768 and dynamic replay 559/640, for 2067/2176 raw exact answers. On the
+identical questions from step 3072, future/static/dynamic changes are +13/+3/-8.
+Move enumeration falls from 88 to 79/128 while capture/check enumeration rises
+by one answer each. Selection adopts step 3584; training continues. All 2176
+native answers, full histories and checkpoint identity were verified. Aggregate
+improvement does not establish a broad move-capability gain. See
+`evidence/static-future-seventh-raw-validation-v1.json`.
+
+The original 80-step checkpoint is a historical pipeline pilot. Both first research arms
+completed four 800-step courses, but balanced validation accuracy and ablations
+do not establish a reliable expert benefit. All original roots were black to
+move; this sampling defect is corrected for new runs. Current measurements and
+their limits are recorded in `STATUS.md`, with lightweight evidence in `evidence/`.
+
+Recorded opening suites support full-history matches from protected validation
+or final-test games. The real validation suite contains 64 distinct 12-ply
+prefixes, declared as 63 human matches and one human versus computer match;
+source and isolation limits are in `evidence/recorded-match-openings-real-v1.json`.
+Matches save raw turns and resume under the original frozen source, input and
+budget contract. A controlled interruption after game two's third saved turn
+reused one complete game and 11 turns, preserving previous bytes and raw history.
+The scripted student and real engine made 2048 total queries for 256 eight-ply
+protocol games. A second resume loaded neither player and changed no match files;
+all 515 match outputs were hashed again. The 669 CPU tests passed.
+This control uses no trained-student inference and measures neither student
+strength nor explanation quality. See `evidence/match-resume-real-v1.json`.
+
+A clean initial-model full-match baseline is queued after actual four-course SFT
+and paired capability validation. It uses 64 protected validation openings,
+both colors, three node budgets and up to 256 new plies per game: 384 planned
+matches, with raw failures and censoring retained. The frozen worker passed
+input admission and is waiting; trained-student matches have not executed.
+The 701 CPU tests passed. This baseline will support distillation comparison;
+final independent testing remains pending. See
+`evidence/clean-sft-full-match-baseline-real-wait-v1.json`.
+
+## Differences from the paper
+
+This is Chinese chess, with Px0 rather than Lc0 and a pinned Qwen decoder. The
+pilot uses four 384-wide bridge blocks. The expanded configuration uses 16
+768-wide blocks and 105 board tokens. Earlier experimental arms completed four
+expert adaptation courses and GPU resume checks. Full explanation SFT updates
+the decoder with FP32 master parameters and BF16 computation. Both earlier
+matched explanation SFT runs completed. Their selected expert checkpoint produced legal recommendations on only
+22 of 96 validation roots; completed training does not establish useful play. Additional move
+lessons use independently searched root and continuation positions, preserving
+the held-out game and position split. An optional experiment supplies the same 90-square text
+dictionary to both expert and text arms; this differs from expert-only board
+input and requires separate reporting and ablations.
+Frozen-decoder move training can preserve trainable bridge, token and LoRA
+parameters in FP32 while computing in BF16. Older runs retain their original
+parameter precision; new execution verification is not a model-strength claim.
+An earlier experimental explanation recipe averages supervised loss within each example before
+averaging examples, so long prose does not overwhelm short move replay. It also
+requires deterministic GPU algorithms. Validation still uses token-average NLL;
+these changes are experiments, not established improvements in model quality.
+The earlier initial data was synthetic; the current clean corpus includes
+recorded-game teacher material. Initial prose annotations are generated by
+authorized GPT-6-Astra Low subagents. Qwen3.8-27B is the designated search
+consolidator, using official unquantized weights and BF16 inference. All official
+weight hashes and an actual full BF16 load and generation have been verified;
+completed search distillation is still pending. Derived color/rank
+annotations preserve parent split ownership and do not count as independent
+teacher calls. The source code does not claim the paper's Elo, human-game data
+coverage, or Western-chess rule equivalence.
+
+## Limitations and release assets
+
+AXF engine adjudication is a fixed software rule profile, not certification under
+every competition rule book. Mechanical explanation checks cover declared
+facts, moves, score perspectives, and continuations. An optional blinded neural
+review scores prose against independently checked board and engine evidence.
+The reviewer shares its base model with the training consolidator, so correlated
+bias remains and these scores are not human ratings. A match stopped at a ply
+limit is reported as censored.
+
+An optional move-only decoding mode restricts the language model to a trie of
+rule-legal moves and chooses using model probabilities. It uses no engine move
+selection, is labeled separately from raw generation, and imposes legal output
+by construction. Its games do not establish explanation quality. An earlier
+move warmup won only 1 of 12 such matches; useful playing strength remains unproven.
+Expanded explanation SFT reached 72 legal recommendations and 57 without a
+large fitted-score loss out of 96 validation answers at its 1024-step checkpoint.
+Only four complete principal variations were legal and no answer passed the
+whole explanation contract. At 2048 steps, the same validation set yielded 78
+legal recommendations, 63 without a large loss, five legal principal variations
+and one answer passing the complete contract. These are interim results, not a usable
+coaching model or independent test result.
+At 3072 steps, the same raw validation set yielded 79 legal recommendations,
+67 without a large loss, 11 legal principal variations and three complete
+contracts. Prose semantics remain unmeasured.
+At 4096 steps, the same set yielded 80 legal recommendations, 62 without a large
+loss, 22 legal principal variations and seven complete contracts. First-move
+quality regressed despite improved contracts; this motivates validation selection
+across moves, planning and complete explanations, with prose requiring separate
+semantic review. A training-label-pool diagnostic of the same 4096-step model
+sampled 16 rows per side: 30 of 32 recommendations were legal and 28 avoided a
+large loss, but only five principal variations and one complete contract were
+valid. This is not held-out evaluation; individual rows were not confirmed as
+drawn during training. It does not select checkpoints or establish generalization.
+The formal four-course move arm
+has also completed 12 rule-constrained matches: one win, ten losses and one draw.
+Strong bridge-model play has not been established.
+Grounded Astra Low review of 32 uniformly sampled raw 4096-step validation
+answers scored factual correctness 1.59/5 and strategic reasoning 1.44/5;
+none reached four on all four rubric dimensions. Review packets omit checkpoint
+identity, but agents retain prior project context and share the initial teacher's
+foundation model. This is neural sample review, not a fully blinded or human rating.
+The separate four-course initialized SFT v4, at 512 steps, parsed only 39 of the
+same 96 validation answers, recommended 37 legal moves and 28 without a large loss;
+one principal variation was legal and complete contracts remained zero.
+Repeated or unclosed output is preserved as failure.
+The standalone frozen expert won 7, lost 2, drew 2 and had 1 censored game under
+the same opening/node protocol. This diagnostic uses the native policy directly,
+without the language decoder, and does not establish bridge-model strength.
+Match opponents select legal engine moves at their fixed budgets without
+consuming scores; independent quality judgments still require exact scores.
+
+Additional train-only engine self-play covers opening, middlegame and endgame
+contexts with complete histories. Early exploration is limited to candidates
+within 0.03 of the best fitted WDL score; this score is not a measured winning
+probability. Reserved root/future positions are excluded, and supplemental move
+labels require independent searches. These contexts do not supply neural prose
+and their availability does not establish a strength improvement.
+Completed supplemental searches yielded 22,248 train move labels, with unchanged
+validation/test files. An additional planning course teaches up to six-ply best
+and conditional variations from preserved engine searches. Full histories stop
+at terminal states and train rows overlapping any held-out continuation are
+excluded. Raw planning evaluation separately measures legality, requested first
+move, horizon length and independent per-ply quality; an inferior forced first
+move is excluded from optimal-move quality. The first real 2000-step planning
+candidate produced six-ply answers for all 96 validation questions and matched
+every conditional first move, but only ten full lines passed the contract.
+Of 192 raw move answers, 158 were legal and 141 avoided a large loss. The
+two-capability validation score is 0.4823; training and final selection continue,
+and this is not a strong-match or independent test result.
+The 3072-step model's selfplay search pilot completed 128 training roots, 168
+root attempts and 40 recursive descents without any accepted strict improvement.
+All raw traces are preserved; no teacher consolidation or distillation training
+was executed for this empty result.
+
+New rule grounding supports four-course questions from independently searched
+selfplay histories and one-to-six-ply prefixes of the best engine variation.
+Historical terminal roots/futures and reserved continuations are excluded,
+including color-derived questions. Existing course validation/test labels stay
+unchanged. These are rule questions with reused root features, not neural prose
+or proof of improved student performance. A real 512-root verification generated
+22,528 new questions from 108 training games. Every new answer was independently
+checked against rules; all 70,532 training records fit within 521 tokens and have
+cached root features. Serial and eight-process generation produced byte-identical
+train, validation and test files with identical rejection counts. Color-derived
+records do not count as new games. The larger new dataset remains queued
+behind independent searches and requires length/feature checks before training.
+
+A supplemental 384 original self-play explanations, balanced across sides,
+were independently cross-reviewed by authorized Astra subagents. Thirty-nine
+revisions were accepted on repeat review; original annotations and rejections
+remain archived. Only these reviewed originals enter the new training pool.
+New mirrored prose remains a separate candidate after finding explicit rank
+and unqualified advisor-name errors. The selected combined pool has 6662 train
+rows, with unchanged validation and test files. The adaptive next recipe samples
+the new originals at 15% and includes 10% multi-step planning replay. This is
+additional initial-teacher data, not a completed search-distillation round.
+
+A paired sample of 384 old originals and their 384 mirrored train annotations
+was reviewed by authorized Astra Low agents. Twenty-seven original and 34 mirrored
+prose revisions were independently accepted, with one mirror revision requiring
+a second correction. Generic unambiguous piece names alone do not count as
+factual rejection. A fresh dataset applies those 61 prose changes while preserving
+structured labels, histories, features and byte-identical validation/test files.
+The remaining old annotations have not been fully reviewed; this curation does
+not establish a student improvement or human-rated data quality. Subsequent
+training uses a new run and optimizer, with three raw capabilities selecting
+checkpoints and prose quality assessed separately.
+Shared-base-model review is not a human assessment or student-quality proof.
+
+A completed warm move parent was evaluated on all 22 board-QA task groups,
+with 12 validation questions each. Its raw QA accuracy is 68.9%, including
+2/12 current captures and 0/12 future captures; its full planning contract
+rate is zero. An optional foundation selector combines balanced raw QA, raw
+move quality and complete plans from the same checkpoint. The original mixed
+foundation queue has been superseded before any training by sequential raw-QA
+gated courses, described below. This is not evidence of improved strength or explanation quality.
+
+At actual planning step 2000, warm/formal initialization yields 141/152
+non-mistake raw moves out of 192, 10/17 complete plans out of 96, and
+69.7%/74.2% balanced raw board QA. Neither has reliable capture enumeration
+or strong-play evidence. The planned comparison of completed planning parents
+was superseded by the foundation-volume review and expanded course recipe below.
+No independent test is used.
+
+Native replay independently recomputed all 24 formal step-2000 capture targets;
+all match and none crosses a historical terminal position. Ignoring answer order
+still yields 1/12 current and 2/12 future exact capture sets. Both groups omit
+captures on nine items, and contain illegal or legal non-capturing extra moves.
+Decoded answers use at most 20 text tokens against a 384-token budget. This is
+an error audit on fixed validation examples; raw answers and metrics are retained
+and no population or single-cause conclusion follows.
+
+All remaining 5510 old train prose annotations, including originals and mirrors,
+have genuine individual neural decisions: 5143 texts accepted unchanged and 367 flagged
+for revision. Exact source annotation, decision, final-review and continuation
+prefix hashes were checked. Reviewers were explicitly configured as Astra Low;
+backend identity has no independent attestation. Previously resolved bundles
+cover 98 of those revisions; the other 269 genuine revisions are now authored
+and bind their exact rejected ancestors. All 269 now have genuine independent
+acceptances. The remaining 3698-item bundle has 3429 unchanged accepts and 269
+accepted revisions, disjoint from both prior bundles. All 5510 selected annotations
+and their exact rejection-to-acceptance chains were read back. Fresh dataset
+`data/astra-explanations-full-v6` now applies all 367 prose revisions and retains
+6662/192/256 rows. All 6662 train records preserve their prompts, full histories,
+feature keys and structured labels; the added review provenance binds the exact
+original annotation and independent acceptance chain. Held-out files remain byte
+identical. All train rows pass the 1024-token preflight, with a maximum of 943.
+Dataset hashes, all 5510 review ancestries and every row contract were read back;
+see `evidence/reviewed-prose-dataset-v6.json`. Active runs keep their frozen older
+inputs. The new 2048 selfplay seed annotations are not included, and student
+improvement from this version remains unmeasured.
+Source training labels and archived runs are preserved; these neural judgments
+are neither human ratings nor evidence of student improvement.
+
+A fixed 532-item prefix is fully resolved: 502 original texts were accepted and
+30 revisions independently accepted, including one requiring a second revision.
+All exact rejection, ancestry and final-acceptance hashes were verified. The
+bundle preserves originals and has not changed the current training dataset;
+this prefix does not estimate an overall error rate or complete the 5510-item
+review. Further repair and review remain separate from student-quality evidence.
+A further nonoverlapping 1280-item reviewed range is resolved: 1212 unchanged
+texts and 68 genuine revisions independently accepted. Both bundles verify
+exact ancestry and final acceptance for 1812 items in total. Source training
+labels used by active runs remain unchanged. A third disjoint resolved bundle
+completes all 5510 remaining old annotations; measured student benefit is pending.
+
+The early-initialization planning run at step 4000 has 177/192 legal raw moves,
+152/192 non-mistake moves and 21/96 complete planning contracts, compared with
+158/141/10 at step 2000. Its two-capability score rises from 0.4823 to 0.5625.
+Weights and raw outputs were verified; 74 plans remain illegal and one continues
+after a full-history terminal position. This is interim validation without
+final selection, game strength or prose-semantic evidence.
+
+At actual warm planning step 6000, the same validation inputs and judge budget
+yield 171/192 legal raw moves, 153/192 non-mistake moves and 28/96 complete plans.
+The two-capability score reaches 0.5948, while raw legality falls from step 4000.
+Actual FP32 parameter count, training identity and all raw artifact hashes were
+read back; see `evidence/move-planning-v1-interim-6000.json`. Planning remains
+weak, and training, final selection, game strength and prose quality are pending.
+
+The formal-initialization planning run at step 4000 has 170/192 legal raw moves,
+160/192 non-mistake moves and 30/96 complete plans, compared with 165/152/17
+at step 2000. Its two-capability score rises from 0.5458 to 0.6250. Actual steps,
+training contracts and raw artifact hashes were verified; 65 plans remain
+illegal and one continues after termination. Training and final selection
+remain in progress; prose semantics, complete games and independent test
+strength are not measured by this result.
+
+At actual formal planning step 6000, the same raw validation yields 177/192
+legal moves, 164/192 non-mistake moves and 32/96 complete plans, for a score
+of 0.6458. Actual weights, FP32 parameter count, training identity and all raw
+artifact hashes were read back; see `evidence/move-planning-v2-interim-6000.json`.
+Training and final selection remain incomplete.
+
+The formal-initialization full-decoder run at step 2048 has 154/192 non-mistake
+raw moves, 9/96 complete planning contracts and only 2/96 complete explanation
+contracts. All three evaluations bind the same real weights and verified raw
+outputs. At actual step 4096, the same evaluation has 170/192 legal and 157/192
+non-mistake raw moves, 15/96 complete plans, and 87/96 legal recommendations,
+77/96 non-mistake recommendations and 21/96 legal PVs in explanations. Complete
+explanation contracts remain only 2/96. Its three-capability score rises from
+0.3479 to 0.3667; actual FP32 parameter count, training identity, weights and all
+raw artifacts were verified. These are interim validation results; prose
+semantics and full-game strength are unmeasured and the model cannot yet serve
+as a reliable coach.
+
+At actual formal full-decoder step 6144, raw validation has 170/192 legal moves,
+149/192 non-mistake moves and 16/96 complete plans. Its 96 explanations contain
+86 legal recommendations, 77 non-mistake recommendations, 21 legal main PVs and
+6 complete contracts. The score is 0.3688; complete contracts improve while move
+quality declines from step 4096. Exact weights and all raw artifacts were read
+back; see `evidence/explanation-v4-after-6144.json`. This interim result does
+not measure prose semantics, complete-game strength or independent-test quality.
+
+The expanded warm-initialization full-decoder run completed 6656 steps and
+selected actual step 4608 by validation NLL (0.5271). All outputs, selected
+checkpoint step and FP32 trainable parameter count were read back and verified.
+Completed training and low loss do not establish strong play or reliable
+teaching; a new reviewed-data continuation uses a separate optimizer.
+
+Its actual NLL-selected step 4608 now has complete raw three-capability validation:
+167/192 legal and 150/192 non-mistake moves, zero complete plans out of 96, and
+17/96 legal main variations with 6/96 complete explanation contracts. Its score
+is 0.3375. The actual 4.162-billion FP32 trainable parameters, step, weight hash
+and all raw artifacts were read back. Training is complete, but this is not a
+final capability-selected coach or prose-semantic, game-strength or independent
+test result.
+
+The reviewed-data continuation from that parent, with a reset optimizer and
+61 accepted prose revisions, has actual step-2048 raw validation of 164/192
+legal and 141/192 non-mistake moves, 19/96 complete plans, and 81/96 legal
+explanation recommendations, 67/96 non-mistake recommendations, 19/96 legal PVs
+and 4/96 complete explanation contracts. Its score is 0.3500 versus the parent's
+0.3375, but raw move quality and complete explanation count decline. Actual
+4.162-billion FP32 parameters, training identity, identical validation inputs
+and all raw artifact hashes were read back; see
+`evidence/explanation-v5-after-2048.json`. This run retains its frozen v5 inputs
+and has not incorporated v6's additional 367 revisions or v7's new 2048 items.
+Training completed 3584 steps, with loss-based step 512 recorded separately:
+NLL changes from 0.527066 to 0.525724, with 3514677 supervised tokens and actual
+decoder updates. All step records, source, input/output hashes and FP32 weights
+were independently read back; see
+`evidence/explanation-sft-v5-reviewed-completed.json`. Final capability selection
+is now complete, with the neural prose sample review below also complete.
+Human teaching ratings, game-strength and independent-test evidence remain pending.
+The interim scores and completed training do not establish overall improvement
+or a reliable coach.
+
+The actual completed step 3584 has 168/192 legal raw moves, 154/192 non-mistake
+moves and 22/96 complete plans. The 96 explanations contain 83 legal and 75
+non-mistake recommendations, 18 legal main PVs and only 7 complete contracts.
+Its score is 0.3958 versus the parent's 0.3375. Actual weights, FP32 parameter
+count, training identity and all raw artifacts were read back; see
+`evidence/explanation-v5-after-3584.json`. Final capability selection compares
+actual steps 2048, 3584 and loss-selected 512 on the same raw validation inputs,
+with respective scores 0.3500, 0.3958 and 0.3729, and selects step 3584. All three
+candidate weights, raw evaluation outputs and the selected 4.162-billion FP32
+parameters were independently read back. The loss-selected step 512 remains
+preserved, and an immutable initialization export hardlinks the unchanged
+selected weights. See `evidence/explanation-v5-functional-selection.json` and
+`evidence/explanation-v5-functional-selection-readback.json`. Reliable teaching
+and full-game strength remain unproven.
+
+A fixed-seed uniform sample of 32 original step-3584 validation explanations has
+complete grounded neural review with the full unquantized BF16 Qwen3.8-27B
+(27356728560 actual BF16 parameters). All packets recompute from original raw
+student outputs, and all responses and artifact hashes were independently read
+back. Mean factual/strategic/clarity/adherence scores are
+1.46875/1.78125/2.59375/2.0625 out of five. All 32 ratings identify unsupported
+claims; none scores at least four in every dimension. One response was truncated
+at both 1536 and 3072 tokens due to repetitive text; a genuine concise-output
+retry retains the same scoring rubric, evidence and student packet, with the
+other 31 raw reviewer responses unchanged. Both failed attempts are preserved.
+A native rule crosscheck also catches the reviewer calling the h0 red horse a
+red rook, although the student's recommended cannon capture is illegal. These
+are sample neural ratings, not objective correctness rates, human assessments,
+matched training gains or estimates of overall reviewer accuracy. The reviewer
+shares the consolidation foundation model; native student checks remain separate.
+See `evidence/explanation-v5-selected-grounded-review.json`.
+
+The old v6 full-decoder continuation has been stopped at the user's request,
+along with its selector. Its last logged update is 1878 and its latest saved
+optimizer checkpoint is step 1536; all original weights, inputs and logs remain.
+The true lineage is old dynamic-current (the second course), early move training,
+explanation v3, v5 and then v6. It is not downstream of the new four-course route.
+At actual step 1024, raw validation finds 167 legal and 155 non-mistake moves out
+of 192, 19/96 structurally complete plans, 16/96 legal explanation main lines and
+6/96 complete explanation contracts. The declared three-part score is 0.3875,
+versus the parent's 0.395833; prose semantics are unmeasured. Training and final
+selection did not complete. See `evidence/explanation-v6-interim-1024.json` and
+`evidence/foundation-clean-route-switch.json`. No trained distillation is counted.
+
+A read-only audit of the preserved early step-3072 search replayed all 117
+generated child records with complete history and ran 123 real 100K-node
+Pikafish queries. Of 86 legal recommendations, 43 satisfy both the recommended
+move quality and evaluation-error thresholds; only one of these has a legal
+full main PV. There are only two legal full main PVs overall. Two of 40 visited
+roots have all child move/evaluation checks passing, but no root has all child
+main PVs legal, including the prefixes consumed by the existing six-ply target.
+The extra full-schema predicate is stricter than the paper's child checks and
+rejects eligible move/evaluation answers. This audit also measures substantive
+continuation errors; it does not establish valid target yield under a changed
+contract or a causal effect on final strength. All original responses, metrics
+and acceptance contracts remain unchanged, with no new labels, consolidation
+or valid distillation round. See `evidence/search-child-quality-audit-v1.json`.
+
+The larger self-play search produced 27408 new independent queries and exactly
+preserved all 11348 old query records. Old records were regrouped by split; an
+incorrect global-order assertion failed after successful label generation.
+A separate verified continuation completed features without repeating searches.
+The actual 115370410864-byte, 16-layer cache contains 78236 full-history roots;
+all inputs/outputs, shapes, dtypes, requested keys and 23420 preserved old keys
+were checked. Validation/test bytes are unchanged. Full foundation preflight and its independent readback are now complete as
+recorded below; cached inputs do not establish student strength.
+
+Four-course self-play grounding generated 360448 new rule questions from 8192
+original train roots (4096 per color, 499 games). All output hashes and unchanged
+heldout bytes were read back. Full-dataset token and feature preflight is now complete; generated rule
+labels do not prove neural training gains.
+
+The expanded planning dataset now has 299952 independently searched six-ply
+lessons (298168 train) and 451236 total records. Full native history, terminal
+and heldout isolation checks passed. Old planning validation/test files are byte
+identical, and every nonplanning record is preserved: 125068/14976/11240 for
+train/validation/test. All hashes and actual counts were independently read back;
+see `evidence/move-planning-selfplay-data-v3.json`. Feature/token preflight and the independent readback are now complete;
+the original mixed foundation queue was superseded before training. These are engine labels, with no neural
+prose, valid search-distillation round or measured student improvement.
+
+All 2048 new original initial-teacher annotations are now genuinely authored,
+from 485 isolated self-play train games with 1024 roots per color. The three
+shards contain 683/683/682 items. All exact query records, unique global ID
+coverage, intra-shard order, configured teacher identity and preparation hashes
+were verified. Global query order differs from shard concatenation; no source
+records were replaced. Configured Astra Low identity has no independent backend
+attestation.
+
+All three shards are independently resolved: 670/666/667 original accepts and
+13/17/15 genuinely corrected texts independently accepted, including one
+second revision in shard 1. The disjoint bundles cover all 2048 items: 2003
+unchanged texts and 45 revisions. All exact original, rejection, ancestry and
+final-acceptance hashes, and all 45 actual prose changes against the original
+author files, were read back. Original annotations remain preserved. Fresh v7
+assembly and full feature/token preflight completed: 8710/192/256 rows, 4355
+train items per color, with every old v6 record and train byte prefix preserved.
+All 2048 new rows match original queries and exact accepted annotations;
+heldout files remain byte identical. All 9158 feature keys and the actual 115GB
+cache hash were independently read back. All 8710 train rows pass the 1024-token
+limit with a maximum of 964; see `evidence/reviewed-selfplay-teacher-data-v3.json`.
+Earlier runs retain their frozen older inputs; the new continuation above uses
+v7 only after its complete mixed-data preflight. These seed annotations have no
+completed search distillation, measured student benefit or human teaching ratings.
+
+Actual two-H20 frozen-decoder bridge execution verifies global batch 32,
+microbatch 4 and example-normalized loss. Continuous four steps and a 2+2-step
+resume have bitwise-identical 258 trainable tensors (139920416 FP32 parameters),
+optimizer and random states, and per-step losses, gradients and token counts.
+All states and output hashes were independently read back; see
+`evidence/two-gpu-example-normalized-resume.json`. The 24-train/12-val execution
+fixture does not prove a completed course, full-decoder or cross-world resume,
+or improved strength. Historical v2/v3 waiters were superseded before training.
+The later inherited-initialization v4 course was actually stopped after 210
+updates, before its first raw QA gate or an optimizer checkpoint. Its data and
+execution evidence are preserved. Old v6 explanation training is also stopped.
+The active replacement prepares diverse recorded games and clean initialization;
+no new full curriculum has started yet.
+
+Split-footprint verification now accepts an optional bounded process pool while
+preserving the default serial API and all alternative future branches. A fixed
+1152-context real planning sample produces identical serial and eight-worker
+results in 25.81 and 6.04 seconds (4.27x for this sample). Full-pipeline speed is
+unmeasured. Native full-history adjudication remains a data-generation contract;
+this checker preserves the existing geometry-based split-footprint checks.
+See `evidence/parallel-split-verification.json`.
+
+Source code uses GPL-3.0-or-later. Base weights and expert weights are downloaded
+separately and excluded from Git. See `THIRD_PARTY_NOTICES.md` for asset licensing
+and redistribution boundaries. This repository is not affiliated with the
+Queen, Qwen, Px0, or Pikafish authors.
+
+Full foundation readiness now covers 811684 mixed records and all 799424
+train/validation encodings. Independent readback freshly hashes every input
+and output, including the actual 115370410864-byte cache, checks all 78236
+full-history feature roots at 16 FP16 depths, and exactly preserves the
+move/planning-only replay rows. Sixteen workers independently replay all
+future branches with the same split result as the completed serial preflight.
+The v3 data, token and architecture contract matches the preflight recipe;
+optimizer and batch changes remain explicit. The readback does not retokenize
+the entire corpus: the source preflight performed that complete encoding.
+See `evidence/selfplay-foundation-training-ready.json` and
+`evidence/selfplay-foundation-training-readback.json`. These checks establish
+input readiness, with no foundation training gain or independent-test claim.
+
+Foundation volume was audited against actual logs and the paper's configured
+budgets: local v3 executed 5750 updates at global batch 16 (92000 sample
+presentations); the paper allows 50000/60000/30000/100000 updates at effective
+batch 256 with early stopping. Its 61.44M configured presentations are an upper
+limit, not a disclosed unique-example count or an assertion of actual updates.
+See `evidence/paper-foundation-volume-audit.json`. Data, game and architecture
+differences remain; volume has not been isolated as a causal explanation.
+
+Expanded native-rule generation completed 1081344 new questions from 24576
+balanced original roots across 612 training games, with 1155116 total records.
+All hashes were read back, heldout bytes are unchanged, and game/future split
+overlap is zero; see `evidence/selfplay-grounding-expanded-v2.json`. Roots are
+sampled from existing completed searches, with horizons up to eight plies and three
+question paraphrases. Each task uses one paraphrase; canonical native answers
+and mirrored lineage are preserved. Mirrors and paraphrases do not create new
+independent games or searches. Finite-budget engine labels are fallible chess
+supervision; rule targets are recomputed on the requested board. Full preflight
+has now completed: 1144132 train/validation encodings, 29568 additional validation
+question-format checks, 52506 natively replayed history keys, and all future split
+footprints. The longest encoding is 528 tokens under the 768-token limit. The
+preflight completion snapshot is `evidence/foundation-curriculum-v4-training-ready.json`.
+These checks establish input readiness; their snapshot precedes actual training.
+
+`configs/foundation-curriculum-v4.json` preserves the completed v3 bridge,
+dictionary input and architecture, resets the optimizer per course, and uses
+two GPUs with global batch 256/microbatch 4. Actual global-256 continuous and
+resumed execution was independently checked: all weights, optimizer/RNG states
+and step losses agree. This tiny four-update fixture is not a completed course.
+Each new stage assesses 128 raw validation answers per introduced task; both
+stage accuracy and worst-task accuracy must meet the declared targets before
+advancement. NLL alone cannot advance a course. The v4 static-current course was stopped at update 210 before that gate.
+Its preserved training-start snapshot still proves the earlier 84 updates,
+not a completed course. Full preparation readback is now complete: all 1155116
+rows, 52506 full-history contexts, all future split footprints and cached feature
+hashes agree. A native answer sample of 704 rows (32 per each of 22 tasks) also
+agrees; this is a sample checked by the same pinned rule implementation, not an
+independent solver or a full-corpus answer audit. See
+`evidence/foundation-curriculum-v4-training-readback.json`. The historical recipe
+remains in `evidence/foundation-curriculum-v4-queue.json`; no curriculum gain or
+independent-test result is established.
+
+An additional fixed 64-root training-only engine audit (32 per color) repeats all
+archived 100K-node best moves. Raising the requested budget to 1M nodes preserves
+39 choices and changes 25. Deeper unrestricted and original-move-restricted
+searches show no sampled loss of at least 0.10 in engine expected score; mean
+positive loss is 0.0020234 and maximum is 0.04. Fifteen negative raw differences
+are retained: equal budgets are allocated differently in restricted searches.
+Every raw engine answer, actual node range, sample identity, history, probability
+and hash was independently read back. Mate search may finish before exhausting
+the requested budget. This same-engine finite-search sample is not an independent
+solver, corpus-wide error estimate, absolute optimum or human win probability;
+original labels remain unchanged. See `evidence/engine-search-depth-audit-v1.json`.
+
+Search mining now optionally accepts a child on its raw recommended move and
+calibrated evaluation (`--child-contract move_eval`). The original full output
+and its structural errors remain in the trace; the default `full` predicate
+is preserved. Unused defective facts and lines are excluded from the teacher
+packet, with the actual used PV, native notation and separate full
+and move/evaluation verification supplied explicitly. Unverified student prose
+remains in the raw trace and is omitted from the consolidation packet. Every reachable raw
+prefix is checked for reserved positions, and every final used target line
+remains subject to native full-history legality, termination, heldout isolation
+and strict improvement. The current CPU suite has 129 passing tests.
+The fixed completed formal-model pilot in
+`configs/search-v4-selected-move-eval-pilot.json` does not isolate the effect
+of this predicate. It processed 64 training roots and mined one structurally
+valid improvement. The original teacher prose contained nine incorrect move
+names and is ineligible for training. A genuine full BF16 regeneration passed
+notation checks but failed independent Astra Low semantic review; the second
+regeneration passed that review. Root oracle scores and reversed child estimates
+are now explicitly distinguished. Move-name checks require adjacent matching
+coordinates, and arbitrary strategic prose still needs separate review.
+Future mining archives every successful unrestricted and restricted oracle query.
+Some original forced-query raw answers are missing; new repeats are separately
+recorded evidence, not recovered originals. See
+`evidence/search-v4-selected-move-eval-pilot.json` and
+`evidence/search-v4-grounded-prose-retry.json`. One accepted teacher example
+does not establish teacher accuracy, student improvement, human rating or a
+completed trained distillation round; the trained-round count remains zero.
+
+The formal full-decoder explanation experiment has now actually completed
+9216 steps and 9640198 supervised tokens, with loss-selected step 6144 kept
+separately. Independent readback verifies all step records, original frozen
+source, input/output hashes, actual 4162388512 FP32 trainable parameters, and
+a decoder probe update against the official base. All five capability
+candidates and fifteen raw validation evaluations were read back; the declared
+validation recipe selects step 9216. It has 173/192 legal raw moves, 154/192
+non-mistake raw moves, 17/96 complete plans, 23/96 legal main explanation PVs
+and only 8/96 complete explanation contracts (score 0.3896). An immutable
+hardlink export supplies that unchanged model to the new search pilot. See
+`evidence/explanation-sft-v4-formal-completed.json`,
+`evidence/explanation-v4-functional-selection.json` and
+`evidence/explanation-v4-functional-selection-readback.json`. No reliable
+prose, full-game strength or independent-test claim follows from completion.
+
+
+The new route starts from the pinned pretrained Px0 expert and official Qwen
+language base with freshly initialized bridge parameters and board-token rows.
+The paper's SC, DC, SF and DF sequence is itself bridge adaptation; there is no
+separately trained, course-free bridge checkpoint. All four raw QA gates must
+pass in order before explanation SFT inherits the final course weights. Data
+collection and annotation may precede this dependency. The production recipe is
+`configs/foundation-human-engine-clean-v2.json`; full new-data preflight has
+completed and the first course is training. The decoder receives no literal FEN or 90-square dictionary: the board
+is read through expert memory. Earlier dictionary recipes remain separate
+comparisons. A real four-H20 fixture with global batch 256/microbatch 4 verifies
+139920416 FP32 trainable parameters, frozen decoder, nonzero gradients, and
+bitwise equality of continuous four-step versus 2+2 resumed weights, optimizer,
+RNG states and step logs. It enables `ddp_find_unused_parameters` to keep the
+same-world reduction contract stable; switching this flag on resume is rejected.
+Mapped cache loading and streamed JSONL loading also preserve exact numerical
+results against their earlier materialized-loading fixtures. Inference honors
+the same cache setting. See `evidence/four-gpu-clean-latent-streamed-resume-v2.json`
+and `evidence/four-gpu-clean-foundation-mmap-resume.json`. Earlier failed fixtures
+are preserved; the four-update check does not prove learned foundation skills.
+
+Source-verified recorded games are being added for coaching-relevant positions,
+without assuming recorded moves are optimal or source metadata is authentic.
+The complete CCPD import contains 22628 canonical unique games and 1867475
+recorded plies: 22585 source-declared human, 22 computer and 21 human-computer
+matches. Its pre-question game splits contain 18068/2286/2274 games. See
+`evidence/recorded-games-ccpd-native-import-v3.json`; the initial 512-game import
+is a preserved historical subset. The pinned CCPD tree
+has 53685 human-category PGN files, 167 computer-category files and 41
+human-computer files before deduplication; duplicate files are not unique games.
+A bounded recent collection has completed
+93 games and 6989 plies from 2019--2023 with 18 participant labels; see
+`evidence/recent-recorded-games-native-import-v2.json`. Its original 46 accepted
+lines are preserved, and a confirmed source draw enum accounts for the expansion;
+source moves/results were not repaired. Participant/team aliases, both-player caps,
+source event-group caps, source kind, decade and result are used in later sampling;
+event grouping is a metadata heuristic and label counts
+are not independently verified person counts. Original prose and website analysis
+branches are excluded from neural labels. See
+`evidence/human-master-games-native-import-v2.json` and `THIRD_PARTY_NOTICES.md`.
+This is not a paper-scale seven-iteration corpus or a trained teaching model.
+
+Two additional public PGN archives are pinned to the mirror revision
+`0d550401ea9b0c8542e01843ce03a708326692ff`; their actual bytes match the Git blob
+identities. Actual Game-header counts are 99771 and 41743, totaling 141514,
+versus the source-declared 141556. These are raw candidate headers, not independent
+validated games. The full eight-CPU producer has completed native full-history
+replay and cross-source deduplication: 81711 new unique mainlines, 6246714 plies,
+46826 duplicate records and 12977 quarantined records. The separate observer has now replayed all 141514 original candidates and
+matched every retained canonical history/split, original byte hash/ordinal,
+duplicate attribution and quarantine reason. All 15 declared artifacts and
+53 executed frozen source files were freshly checked after completion. See
+`evidence/additional-recorded-games-native-import-v1.json` and
+`evidence/additional-recorded-games-independent-readback-v1.json`. The observer
+uses the shared pinned segmentation/native parser contracts; this is a second
+complete execution, not an independent rules implementation.
+The importer streams ZIP
+members, preserves record ordinal/byte hashes and source attribution differences,
+quarantines illegal or post-terminal play, and assigns the original canonical
+split seed before any questions. It does not inherit CCPD identity or license.
+Both actual archive prefixes of 64 records were processed with one and four
+workers: all accepted histories, quarantine results and source facts match;
+37 new games, 81 duplicates and ten rejected records were found across the two
+prefixes. This bounded fixture does not estimate whole-corpus yield. See
+`evidence/additional-recorded-source-acquisition-v1.json` and
+`evidence/bundled-recorded-games-real-fixture-v1.json`. Source authenticity,
+participant identities and redistribution permissions remain unestablished;
+raw/derived records remain excluded from releases, and live foundation inputs
+are unchanged.
+
+A separate bounded modern collection examined 910 actual game pages. Filtering
+the years declared in game records to 2024--2026 retains 240 native-legal games,
+18641 plies and 245 participant labels, split into 177/25/38 train/validation/test
+games. The original batch also retained 80 games whose declared date is in 2029
+despite a 2026 event name. The source dates are preserved and those records are
+quarantined; no event-year substitution is performed. The corrected importer
+replays the pinned cache without new requests and accepts an optional `--max-year`,
+with the historical unbounded default retained. Complete offline native replay
+and independent readback match every retained history and quarantine reason.
+One previously quarantined duplicate page is also reclassified by the year check;
+81 complete native pages carry conflicting future dates, representing 80 formerly
+accepted unique mainlines. Both failed observers and the completed offline replay
+are preserved; the final observer reuses and rehashes that completed replay.
+See `evidence/modern-recorded-games-native-import-v2.json`,
+`evidence/modern-recorded-games-native-readback-v3.json` and
+`evidence/recorded-source-future-date-audit-v1.json`. Cross-source canonical-file
+readback finds no additional duplicates among these 240 lines and the complete
+archive/prior pools. No new records have changed live foundation inputs.
+
+The initial two-source capacity audit rehashes and counts both canonical-game files:
+22720 unique mainlines and 1874419 plies after one cross-source duplicate.
+There are 18103 training-split human/published-match candidates, whose identities
+have not been independently authenticated. The paper samples 210000 human
+positions per search iteration, at most six per game, with disjoint games across
+seven iterations. This implies a minimum of 35000 games per iteration and
+245000 over seven; these are arithmetic lower bounds, not paper-reported game
+totals. Our training candidates provide at most 108618 positions under that cap.
+The paper does not disclose unique foundation-corpus sizes. Current course JSONL
+files total 20053894578 bytes; the expert cache is separately 250548260661 bytes.
+Each original recorded root yields 44 rule questions across task groups and native
+color counterparts; these are neither independent roots nor explanation labels.
+See `evidence/recorded-dataset-paper-capacity.json`. Data volume does not establish
+mastery or coaching quality, and the audit does not change live training inputs.
+
+The newer four-source intake audit counts 104671 canonical games and 8139774
+plies, with 83757/10504/10410 train/validation/test games and 845959918 canonical
+JSONL bytes. There are 83726 training candidates declared human or published
+matches. Their generous six-position capacity upper bound is 502356 positions,
+at most two complete paper-sized human-source iterations; source authentication,
+root/forecast quality and terminal filtering are not deducted from this bound.
+The published-match category does not prove that every game was human play.
+The additional archive's full independent native replay subsequently completed
+in a separate run. The size audit retains its original completion snapshot; it
+rehashes immutable canonical files but does not replay all their histories again. See `evidence/recorded-dataset-paper-capacity-v2.json`.
+
+Original recorded-game coaching queries are prepared separately from course
+training. A side-balanced 3744-root batch produced 3740 engine fact queries;
+the four missing scored best-move responses are preserved and their rejection
+reproduced. All raw scores, board/move/line facts and complete-history candidate
+forecasts were read back. Full current-course and prior structured-answer
+forecasts were streamed for isolation. Forty actual roots and queries validate
+the reusable curator and query observer; see
+`evidence/recorded-coach-portable-original-roots-real-v1.json` and
+`evidence/recorded-coach-engine-query-real-readback-v1.json`.
+
+Qualification selects 2496 unchanged original queries, split 2048/192/256,
+one per source game and balanced by side. The source categories are 2432 human
+and 64 published matches, with 1583 normalized participant labels. Forty-six
+candidates overlap other reserved splits and another two overlap newly selected
+forecasts. Serial runtime and eight-CPU portable query/shard files are byte
+identical; see `evidence/recorded-coach-original-query-isolation-v1.json`.
+Final independent readback binds the completed full-history audit and recomputes
+legal FEN-play footprints for all candidate/recorded continuations and their
+color counterparts; every cross-split overlap is zero. It does not repeat
+complete-history terminal adjudication. The first observer's tuple/list contract
+failure is preserved; the corrected observer completed, with completed artifacts
+freshly rehashed. See `evidence/recorded-coach-selected-query-independent-readback-v2.json`.
+Counterpart geometry is reserved without derived queries or score recomputation.
+Three explicitly authorized Astra Low authors have completed all 2496 original
+annotations (832 each; 2048/192/256 train/validation/test). Identity readback
+binds query IDs, order, exact prose and author fields. Preparation checks every
+teacher contract, Chinese/coordinate references, complete past and structured
+answer line; all complete review packets and declared artifacts are hash-bound.
+Recorded futures and unauthenticated identity metadata are hidden from reviewers.
+See `evidence/recorded-coach-full-authoring-review-preparation-v1.json`.
+Three authorized Astra Low reviewers have each completed another author's 832
+original annotations: 2363 unchanged originals were accepted and 133 rejected.
+Readback checks complete ordered coverage, exact annotation/packet hashes and
+foreign reviewer contracts; see
+`evidence/recorded-coach-complete-original-cross-review-v1.json`. Rejections
+require genuine changed prose and independent acceptance before collection.
+All 133 genuinely changed final bodies have now received acceptance from a
+different actor; three needed a second revision. Portable resolution and
+collection have completed 2496 labels (2048/192/256), without derived mirrors
+and with zero cross-split game or root/future geometry overlap. Independent
+readback traverses every actual rejection/acceptance ancestor and matches every
+collected field to its qualified query, engine structure and exact final prose.
+It freshly hashes 57 declared artifacts and checks 57 executed frozen collection
+source files; see `evidence/recorded-coach-complete-reviewed-labels-v1.json`.
+Complete native histories and answer-line checks reuse completed production and
+query proofs; this field reader does not rerun all histories. Cross-review is a
+neural opinion, does not prove every semantic statement true, and provides
+neither independent backend attestation nor human ratings. Student benefit has
+not been measured and new SFT remains conditional on the four course gates.
+These preparations are not teacher accuracy, student benefit or a completed SFT
+run. SFT remains conditional on all four new course gates. Explanations must not
+use unauthenticated player/event metadata or hidden recorded futures as facts,
+nor turn finite search scores into actual human win probabilities.
+
+The portable footprint interface has now executed on all 3171812 course rows
+and 9158 prior explanation labels. Its complete game/root/forecast sets are
+byte-identical to the preserved original run, including both recorded futures
+and structured-answer PVs. All twelve declared artifacts were freshly rehashed
+after completion; see `evidence/recorded-coach-portable-full-footprints-v1.json`.
+This does not repeat complete-history terminal adjudication or load/recompute
+the full expert feature cache.
+
+`recorded_coach_prose` freezes only complete authored shards bound to the original
+query-isolation audit. Neural decisions bind exact annotation/packet hashes and
+require a reviewer distinct from that annotation's author. Rejected revisions
+must retain their exact rejected ancestry and receive independent acceptance;
+conflicting verdicts cannot directly pass. Collection requires accepted coverage
+of the entire original query batch, preserving game splits, histories, recorded
+futures and all structured-answer continuations without mirrored labels or
+student training. Twenty-four focused contract tests pass. Actual preparation of
+four genuine existing Astra annotations produces identical serial/four-CPU
+review packets and refuses unreviewed prose and an incomplete full-batch shard.
+See `evidence/recorded-coach-prose-real-preparation-v2.json`. A failed runtime
+driver without a spawn main guard is preserved; its native four-query isolation
+observer completed, and a corrected fresh driver then passed preparation.
+This four-query preparation is historical; full-batch final acceptance and
+label collection have since completed as recorded above.
+Contract checks and these four preparation examples do
+not establish corpus-wide teaching quality, backend identity attestation, human
+ratings, student benefit or any completed SFT/distillation round.
+
+`prepare-repairs` consumes completed original review preparations and fixed
+actual neural decisions. It copies rejection documents byte-for-byte, binds
+exact rejected ancestry, recomputes complete native histories, board/move facts
+and structured-answer lines, and groups repair queries by their original author.
+It generates neither prose nor acceptance. A genuine frozen prefix contains
+856 decisions and 52 rejected originals (40 train, 12 test). Serial/eight-CPU CLI
+outputs match the preserved native preparation for all 52, except destination
+reference paths; completed producer artifacts were freshly rehashed. See
+`evidence/recorded-coach-repair-portable-real-v1.json`. No teacher repair or
+full semantic acceptance is established by this preparation; every final
+revision still requires foreign acceptance. Human ratings and student benefit
+remain unmeasured.
+
+A frozen authored prefix contains 1672 actual annotations (560/552/560 from
+the three writers; 1416 train and 256 test). All pass the teacher contract,
+Chinese length, coordinate references, complete past and structured answer-line
+mechanical checks. Fourteen declared artifacts were freshly rehashed. See
+`evidence/recorded-coach-authored-prefix-mechanical-audit-v1.json`. This proof
+only covers the captured prefix and does not establish independent semantic
+acceptance; no prose was rewritten, training labels collected or student
+training started by that audit.
+
+Cache-header inventory covers all 2496 original coaching contexts and their
+4992 native original/color histories in the current 169904-key, sixteen-layer
+FP16 feature/FP32 WDL cache. All 9158 prior reviewed-label contexts are also
+present, so this batch requires no additional GPU extraction or cache copy.
+Native color histories use the existing bounded extension interface, and all
+21 declared inventory artifacts were freshly rehashed. See
+`evidence/recorded-coach-expert-feature-coverage-v1.json`. This inspects actual
+header keys, dimensions and dtypes, binding the completed producer hash; it
+does not freshly hash the full cache, recompute feature values, create mirrored
+teacher prose or establish complete SFT-data readiness or student benefit.
+
+The original two-source canonical deduplication gives 22720 unique mainlines. One identical
+45-ply mainline has conflicting player/event/date attribution between the two
+sources; neither attribution has been independently authenticated. It was not
+selected for the current course corpus and contributes no rule roots. Preserve
+both inputs and do not use disputed attribution as a neural teaching fact. See
+`evidence/recorded-source-metadata-conflict-audit.json`.
+
+A real recorded-course integration fixture selects 45 recent games, 90 original
+roots and 180 roots including color counterparts. It adds 3960 native rule
+questions to three real engine questions and verifies game/root/future isolation
+against all reserved prior training and holdout footprints. It covers one through
+eight recorded future plies, three request variants and all 22 course task groups.
+See `evidence/recorded-curriculum-real-fixture-v1.json`. The complete production
+build selects 6144 diverse games; 6118 contribute 45834 isolated original roots
+and 91668 roots with native color counterparts. It adds 2016696 rule questions
+to 1155116 preserved engine questions, totaling 3171812 records with
+2831004/173272/167536 train/validation/test rows. Production generation verifies
+complete root/future isolation and exact old-file byte prefixes. See
+`evidence/recorded-curriculum-human-engine-full-v1.json`. Augmentation and request
+variants do not increase independent game/root counts. Production cache generation,
+full token/native-history preflight and independent readback have now completed;
+fresh production course training has started as recorded below.
+
+The incremental expert cache has a four-GPU real fixture and independent
+recomputation of all eight new histories at all 16 depths, within declared FP16
+storage tolerances. Three real old-cache cutouts remain bitwise identical. Color
+counterparts use native replay: naïve per-FEN mirrors have different fullmove
+counters and full-history keys. The first failing fixture and stopped production
+waiter remain archived. The corrected cache builder leaves course files and old
+caches unchanged. See `evidence/recorded-expert-cache-extension-real-fixture-v2.json`.
+The separate four-H20 production extraction and merge have now completed:
+91668 new histories extend 78236 preserved keys to 169904 keys, 16 FP16 feature
+layers and FP32 WDL values, totaling 250548260661 bytes. Producer checks preserve
+all previous keys/features/WDL bitwise; original caches and course files remain
+unchanged. See `evidence/recorded-foundation-expert-cache-full-v1.json`. This is
+completed extraction/merge evidence; the eight-history independent expert
+recomputation above does not cover every production feature. Full course preflight
+and independent readback are now complete; the earlier cache-generation snapshot
+retains its original pending flags. Student improvement is unmeasured.
+
+Bounded, ordered parallel native history preparation was independently exercised
+on 90 actual recorded roots with four GPUs. All 183 merged keys, 16 feature
+layers and WDL values are bitwise identical to the serial real fixture; see
+`evidence/recorded-native-history-parallel-feature-readback.json`. The reusable
+full preflight has also completed on the separate 3963-row/183-key integration
+fixture: 3346 train/validation encodings, 1058 alternate validation requests,
+complete native history/future isolation and 23 native answer checks. See
+`evidence/recorded-foundation-full-preflight-real-fixture-v2.json`. Four legacy
+independent-test terminal probes are preserved and checked by native rules;
+they never enter training, validation sampling or the 22-task course gates.
+
+All 11 actual Qwen base assets, including three untouched weight shards, were
+rehashed against pinned project download ETags at revision
+`cdbee75f17c01a7cc42f958dc650907174af0554`. This readback uses archived pinned
+download metadata, not a new remote identity query; see
+`evidence/recorded-foundation-base-asset-identity.json`. Fresh production training
+has passed full corpus/cache/source readback and the validated GitHub milestone;
+no old trained bridge or SFT weights initialize the new foundation.
+
+The reusable `foundation_readback` CLI has completed on the actual 3963-row,
+183-history fixture. All 90 original recorded roots from 45 games match their
+source prefixes and maximum futures; native color keys, prior/new holdout
+isolation, every old feature layer/WDL value, complete preflight artifact hashes,
+and pinned base-asset hashes pass readback. See
+`evidence/recorded-foundation-source-readback-real-v1.json`. This read-only fixture
+does not replace the separate frozen full-production readback or train a student.
+
+Full production preflight and its frozen independent readback have now completed.
+All 3004276 train/validation rows and 346544 alternate validation requests were
+encoded, with per-course maximum lengths of 122/134/149/163 tokens. All 144174
+question histories were natively replayed and cached; 1408 native answer samples
+cover both source cohorts and all 22 task groups. Every one of the 45834 recorded
+roots matches its original source prefix and maximum future; both colors of all
+maximum futures exclude reserved old/new holdout footprints. All 78236 old cache
+keys, feature layers and WDL values are bitwise preserved. See
+`evidence/recorded-foundation-full-training-ready.json` and
+`evidence/recorded-foundation-full-training-readback.json`. These establish
+preparation integrity, not complete label accuracy or stronger student play.
+
+The actual fresh static-current production run has begun, with its step-0 weights
+pinned and read back: 258 FP32 trainable tensors and 139920416 parameters, no
+course/SFT initialization and no literal board text. Its first 20 optimizer
+updates have finite positive gradient norms; training loss changes from 7.5131
+to 5.8944, while initial validation NLL is 8.0673. The retained bridge attention
+and feed-forward gate parameters start at 1.0 in this implementation. Four owned
+training processes have ranks/local CUDA ranks 0--3 on the four-H20 inventory,
+with global batch 256 and microbatch 4. NVML host PIDs cannot be matched directly
+to container PIDs; this evidence explicitly relies on owned rank metadata and
+the unchanged numerical-contract code, not NVML ownership attribution. See
+`evidence/recorded-foundation-clean-startup-twenty-updates.json`. The first raw
+mastery gate is at step 512; no new course has completed, and explanation SFT,
+search-distillation training and final teaching/playing strength remain unproven.
+
+The actual first optimizer checkpoint at step 256 has now been pinned and read
+back against the actual zero-step model. All 258 trainable tensors changed;
+139920416 weight elements and their Adam moments are finite FP32, and all 258
+Adam states record step 256. The checkpoint records world size four, all four
+CUDA RNG states, CPU/Python RNG state, unchanged input hashes and frozen code.
+Initial/step-256 validation NLL is 8.0673/1.0133, and all first 256 gradient norms
+are finite and positive. This CPU-only observer does not restart training or
+load CUDA, and does not establish raw QA mastery or stronger play. See
+`evidence/recorded-foundation-clean-first-optimizer.json`.
+
+The first static-current raw gate at step 512 has completed on 768 validation
+questions, 128 for each of six tasks across three request formats. Accuracy is
+0.518229; minimum task accuracy is 0.1640625, so the gate rejects course advancement.
+Count/empty/locate/material/piece/rank accuracies are
+0.8828125/0.6484375/0.296875/0.578125/0.5390625/0.1640625. An independent CPU reader
+recomputes every sampled native history/answer, question format and correctness;
+the pinned checkpoint, validation file and raw outputs are freshly rehashed.
+The feature hash matches the previously completed full preflight and actual
+producer manifest; that reader does not rehash the entire 250GB cache again.
+First-course training continues toward its next gate; no new course, explanation
+SFT or search-distillation round has completed. See
+`evidence/recorded-foundation-clean-first-raw-gate.json`. The source cohorts have
+unequal sample counts and are not a causal comparison of human and engine data.
+
+The second static-current gate at step 1024 uses the exact same 768 validation
+sample identities, questions, formats and gold answers. Accuracy is 0.5403645833
+and minimum task accuracy is 0.15625, so course advancement remains rejected.
+Count/empty/locate/material/piece/rank accuracies are
+0.890625/0.8203125/0.296875/0.5546875/0.5234375/0.15625. Paired raw outputs contain
+351 unchanged correct answers, 64 newly correct, 47 newly wrong and 306 unchanged
+wrong: the net gain of 17 answers does not establish spatial mastery. The CPU
+reader recomputes every native context, gold answer, format and raw correctness,
+checks the finite checkpoint and rehashes the completed artifacts. Cache identity
+matches actual producer and full-preflight manifests; it does not rehash the
+entire cache again. See `evidence/recorded-foundation-clean-second-raw-gate.json`.
+There are still zero mastered new courses and zero trained distillation rounds;
+explanation SFT has not started.
+
+The third/fourth static-current gates at steps 1536/2048 use the same 768
+validation examples. Accuracy is 0.6119791667/0.6744791667 and minimum task
+accuracy is 0.140625/0.21875; both gates reject advancement. The fourth gate has
+417 unchanged correct answers, 101 newly correct, 53 newly wrong and 197
+unchanged wrong, a net gain of 48. Count/empty/locate/material/piece/rank accuracy
+at step 2048 is 0.953125/0.84375/0.4921875/0.75/0.7890625/0.21875. Native sample
+histories, gold answers, formats, raw correctness and finite checkpoint tensors
+were checked again; all completed declared artifacts were subsequently rehashed.
+Cache identity is bound to the full preflight and actual feature producer rather
+than freshly hashing the full cache in each observer. See
+`evidence/recorded-foundation-clean-third-raw-gate.json` and
+`evidence/recorded-foundation-clean-fourth-raw-gate.json`. New mastered courses
+and trained distillation rounds remain zero; explanation SFT has not started.
+
+The fifth static-current gate at step 2560 answers 575/768 identical validation
+questions correctly (0.7486979167); minimum task accuracy is 0.2578125, so
+advancement remains rejected. Count/empty/locate/material/piece/rank accuracy is
+0.984375/0.9609375/0.5625/0.8046875/0.921875/0.2578125. Paired step-2048 outputs
+contain 487 unchanged correct, 88 newly correct, 31 newly wrong and 162 unchanged
+wrong answers, a net gain of 57. Native histories, answers, formats, raw
+correctness and finite checkpoint tensors were independently checked; all
+15 completed declared artifacts were subsequently rehashed. Cache identity
+continues to bind the completed producer and full preflight rather than a new
+full-cache hash in the observer. See
+`evidence/recorded-foundation-clean-fifth-raw-gate.json`. The controller continues
+the first course; new mastered courses and trained distillation rounds remain
+zero, and explanation SFT has not started.
+
+The sixth static-current gate at step 3072 answers 623/768 identical validation
+questions correctly (0.8111979167); minimum task accuracy is 0.484375, so
+advancement remains rejected. Count/empty/locate/material/piece/rank accuracy is
+0.9609375/0.9765625/0.6015625/0.84375/1.0/0.484375. Paired step-2560 outputs
+contain 536 unchanged correct, 87 newly correct, 39 newly wrong and 106 unchanged
+wrong answers, a net gain of 48. Native histories, answers, formats, raw
+correctness and finite checkpoint tensors were independently checked; all
+15 completed declared artifacts were subsequently rehashed. Cache identity
+continues to bind completed production and full preflight. See
+`evidence/recorded-foundation-clean-sixth-raw-gate.json`. The controller continues
+the first course; new mastered courses and trained distillation rounds remain
+zero, and explanation SFT has not started.
+
+Both old planning experiments and final selections were read back completely:
+v1 trained 12000 updates and selects 10000, with 153/192 non-mistake moves and
+33/96 structural plans; v2 trained/selects 11500, with 165/192 and 37/96.
+Thirteen actual candidate checkpoints and 26 raw evaluation manifests were
+verified. See `evidence/move-planning-completed-readback-v1.json`. Structural
+completion, full-game strength and prose quality are separate claims.
+
+The seventh static-current gate at step 3584 answers 695/768 identical validation
+questions correctly (90.49%); rank accuracy is 71.09%, still below the gate.
+Count/empty/locate/material/piece/rank accuracies are
+1.0/0.9921875/0.796875/0.9296875/1.0/0.7109375. Relative to step 3072, it corrects
+88 errors and introduces 16, a net gain of 72. All raw sample histories, native
+answers, question formats, output correctness and finite FP32 checkpoint
+contracts were independently checked, and all fifteen completed declared
+artifacts were freshly hashed. Cache identity is bound to completed production
+and full preflight, without another complete cache hash by this reader. See
+`evidence/recorded-foundation-clean-seventh-raw-gate.json`. The controller
+continues the first course; mastered new courses and trained search-distillation
+rounds remain zero, with no new explanation SFT or general coaching claim.
+
+The raw QA thresholds are a local project policy, not reported paper stopping
+criteria: course aggregate targets are 99%/98%/98%/97%, with at least 95% for
+each task. These numeric thresholds have not been systematically calibrated.
+[Paper section 3.2 and appendix A.2](https://arxiv.org/html/2610.03695v1)
+specify validation-based early stopping and transfer of each stage's best
+checkpoint, without publishing these thresholds or task-level stopping rules.
+Table 10 contains final test outcomes, rather than advance criteria. The active
+experiment configuration and all previously reported raw gates are preserved.
+
+The eighth raw first-course gate at step 4096 has been independently read back:
+713/768 correct (92.8%), with rank recognition 82.8%. Relative to step 3584,
+43 errors were corrected and 25 correct answers became wrong, a net gain of 18.
+All actual histories, native gold answers, question formats, raw correctness and
+finite FP32 checkpoint tensors were checked; completed artifact hashes were
+read back. Feature identity reuses the completed full preflight and producer.
+See `evidence/recorded-foundation-clean-eighth-raw-gate.json`. This remains below
+99% overall / 95% worst task; no new course is mastered, no new SFT has started,
+and strong play or reliable coaching is unproven.
+
+The ninth raw gate at step 4608 has 728/768 correct (94.8%). Count, empty-square,
+location, material, single-square and rank recognition respectively score
+100%/100%/90.6%/94.5%/100%/83.6%. The same validation items at step 4096 show
+34 corrected and 19 newly wrong answers, a net gain of 15. Actual histories,
+native answers, question formats, raw correctness and finite FP32 checkpoint
+contracts were independently checked; all fifteen completed declared artifacts
+were freshly hashed. Feature identity continues to reuse completed production
+and full preflight. See `evidence/recorded-foundation-clean-ninth-raw-gate.json`.
+The first course still fails the 99% overall / 95% worst-task gate; no new SFT,
+trained search-distillation round or general coaching benefit is established.
+
+`platform_games` imports hash-bound public PlayStrategy NDJSON exports without
+network calls or account credentials. Original JSON/PGN moves, results, registered
+player/BOT metadata and UTC dates must agree; one-based ranks are explicitly
+converted before full native-history validation. Only standard-start matches
+with two registered accounts and at least 20 plies are admitted by default.
+The real 37-record serial/eight-CPU pilot has byte-identical record outputs,
+retains 18 games and quarantines 19; retained fields match the preserved pilot
+and its completed second-entrance replay. See
+`evidence/playstrategy-recorded-games-portable-real-readback-v1.json`.
+A subsequent bounded capture of 16 public users contains 3784 records, of which
+3163 pass native history, 621 are quarantined and 174 duplicate prior/new games.
+The 2989 new games contain 165010 plies, with source-declared human/human-computer
+counts 2251/738 and 394 participant labels. A separate entrance replays all
+passing histories, reproduces every quarantine cause and preserves duplicate
+first attribution; 52 declared producer/acquisition artifacts and 58 executed
+frozen source files are checked. See
+`evidence/playstrategy-public-users-independent-readback-v1.json`.
+Six qualified collections now contain 107678 unique games, 8305866 plies and
+866087221 JSONL bytes. The 85530 human-or-published training candidates support
+at most 513180 positions under six-per-game sampling, or two complete paper-sized
+human rounds, assuming every candidate qualifies. The seven-round arithmetic
+minimum remains 245000 training games; see
+`evidence/recorded-dataset-paper-capacity-v3.json`. Capacity readback does not
+repeat full native replay. Public categories do not authenticate real identities,
+unassisted play or redistribution rights, and the separate entrance shares the
+pinned native rules. Raw exports/site text are excluded from source distribution;
+no new neural labels, live curriculum changes or measured student gains follow
+from these imports.
+
+The new latent-only explanation candidate dataset combines completed collected
+labels by preserving every source split segment byte for byte. It contains
+10758/384/512 train/validation/test rows and 11654 distinct full-history keys,
+including 3363 existing color-derived rows; the new independent recorded-game
+annotations remain 2496. Native history, terminal, answer-fact and complete
+continuation checks precede cross-split game/forecast/color isolation. The 384
+legacy training labels without inline review metadata match an exact completed
+supplemental acceptance pool. The 448 legacy held-out labels retain their original
+contents and review status; no fresh semantic acceptance is claimed for them.
+
+All 11142 train/validation sequences fit the actual latent-only tokenizer and
+105 board tokens without truncation (maximum 649/625, limit 1024). Test answers
+are not tokenized. All 11654 keys are in the existing 169904-context feature
+cache. A separate entrance verifies source bytes, legally replays all past
+histories, recomputes root facts and every forecast/color geometry and checks
+every token-length result; 61 source/producer artifacts and 60 executed frozen
+source files are hash-checked. See
+`evidence/clean-explanation-data-independent-preflight-v1.json`. Full-history
+terminal adjudication is reused from completed production. Feature checks inspect
+cache keys, dimensions and precision while reusing completed production/full
+preflight; they do not rehash the entire cache or recompute its values. All 272
+CPU tests pass. No model weights are loaded by data preflight, current foundation
+inputs are unchanged, and all four new raw course gates are still required
+before explanation SFT. These checks establish prepared data, with no new
+semantic review, student training or measured coaching gain.
+
+The foundation-to-SFT handoff verifies a completed, ordered four-course raw-gated
+curriculum with clean initialization, each inherited candidate, actual update
+counts and immutable artifact identities. It recomputes all four raw validation
+gates and the sampled native past/future histories and gold answers. Each
+distinct declared large input is freshly hashed once, with file identity checked
+through verification. Only validation answers are read. Every selected
+checkpoint must contain the complete bridge and both board-token matrices with
+the exact architecture, finite FP32 values and preserved execution/input metadata.
+
+The exporter creates a byte-identical hard link to the final candidate plus its
+configuration and completed manifest. SFT validates the handoff and rejects
+changed configuration or architecture overrides before loading a model. The
+31 new CPU cases exercise controlled four-course artifact integration and
+failure handling; all 303 CPU tests pass. These fixtures are not actual trained
+four-course models. The real step-4608 first-course candidate separately passes
+the complete 258-tensor / 139920416-parameter finite FP32 shape check, while its
+incomplete real curriculum is rejected without creating an export directory.
+See `evidence/foundation-handoff-real-partial-guard-v1.json`. A real completed
+four-course export, new SFT and any resulting coaching benefit remain unexecuted.
+
+The actual first-course step-5120 raw validation answers 743/768 correctly
+(96.7%), with rank identification at 123/128 (96.1%) and the weakest location
+task at 116/128 (90.6%). It still fails the current local gate. Relative to
+step 4608, 30 answers improve and 15 regress, a net gain of 15. The completed
+independent reader recomputes every sampled native history, gold answer,
+question variant and raw correctness, and verifies the finite FP32 checkpoint.
+See `evidence/recorded-foundation-clean-tenth-raw-gate.json`. No new course is
+mastered and new SFT and trained search-distillation rounds remain unstarted.
+
+The initial clean explanation recipe requires a completed four-course handoff,
+preserves its latent architecture and expands to full decoder training. The
+controller launches the configured DDP worker count and can prepare the exact
+configuration without starting workers; changed prepared configurations and
+legacy parents for this recipe are rejected. The 25 new CPU tests cover
+single/multiple-worker commands, continuation, preparation and failure handling.
+All 328 CPU tests pass; they do not execute GPU training. The actual 10758 training rows give 2690
+updates and 43040 sample presentations at global batch 16 for four nominal
+epochs. Sampling with replacement does not imply four visits to every row.
+All 384 validation examples select checkpoints; 512 test examples stay reserved.
+
+Bridge/decoder/token rates 1e-5/1e-6/1e-6, batch 16, four epochs, 5% warmup,
+constant subsequent rate and weight decay 0.1 follow the initial seeding settings
+in [paper Appendix B.2, Table 12](https://arxiv.org/html/2610.03695v1).
+Teacher, game domain, sequence length, sampling and validation size are local
+adaptations. The actual label/token proofs and partial step-5120 architecture
+reference are bound by `evidence/clean-explanation-sft-budget-preflight-v2.json`.
+This planning check rejects the actual incomplete curriculum, reuses completed
+full-cache identity and loads no GPU model. A completed real four-course
+handoff, four-GPU full-decoder memory/update/exact-resume preflight and actual
+initial SFT remain required; no student benefit is claimed.
+The second entrance freshly hashes 36 declared planning/raw-gate artifacts,
+verifies 61/60 executed frozen source files and both public JSON/UTF8 bytes,
+and independently recounts training rows and the update budget. It reuses the
+completed tenth reader's native-answer/history and finite-tensor proof.
+
+The actual first-course step-5632 raw validation answers 752/768 correctly
+(97.9%). Its weakest rank identification is 121/128 (94.5%), so the current
+local gate still fails. Relative to step 5120, 19 answers improve and 10 regress,
+a net gain of nine. The completed independent reader recomputes all sampled
+native histories, gold answers, formats and raw correctness, verifies the
+finite FP32 checkpoint, and has a further readback of all 15 declared artifacts,
+61 executed frozen source files and exact public bytes. See
+`evidence/recorded-foundation-clean-eleventh-raw-gate.json`. This is within-training
+validation, not evidence of useful coaching or completed courses.
+
+The sequential controller waits for the existing four-course producer, exports
+its clean final checkpoint, requires a full-decoder four-GPU preflight, and then
+launches initial explanation SFT. The preflight uses the longest actual 24/12
+train/validation labels, compares continuous four versus resumed two-plus-two
+updates including all weights, Adam states, RNG states and step logs, checks
+actual updates in decoder/bridge/token groups, and records each worker's memory.
+Selected formal SFT weights are read back against the complete initial parameter
+shape and FP32 contract. Changed source, recipes, labels or feature-cache identity
+are rejected, and failures preserve partial outputs. The 25 new controlled CPU
+cases and all 353 CPU tests pass; these are execution contracts, not GPU training.
+The real controller has separately been observed waiting on the still-live,
+incomplete curriculum without creating a handoff, GPU probe or SFT run. Only
+this bounded observation was terminated; the curriculum was not restarted or
+stopped. See `evidence/clean-sft-sequential-real-wait-guard-v1.json`. The actual
+full-decoder GPU preflight, new SFT, subsequent search distillation and coaching
+benefit still require execution and independent evaluation.
+
+Clean initial SFT now has a preserved downstream capability controller. It waits
+for the completed clean training pipeline and reads back the actual selected
+full-decoder state and its input/shape contract before loading an inference model.
+All 384 validation histories use the same questions and generation budgets in
+normal, zero and within-batch shuffled expert-memory conditions. Independent
+Pikafish judgments use one million nodes per position and retain every raw error;
+the controller checks complete paired coverage, unmodified raw/judged bindings
+and aggregate statistics. The normal group receives full BF16, grounded neural
+prose review blinded to the checkpoint identity. Truncated/invalid reviewer
+answers remain rejected and count in the all-query denominator. Reviewer scores
+are not human ratings, and the reviewer shares the future search consolidator's
+base model.
+
+The 17 new controlled CPU cases and all 370 CPU tests pass. The actual controller
+has separately been observed waiting on the live, incomplete SFT queue without
+creating raw-evaluation or neural-review outputs. Its 65 executed frozen source
+files, all 384 distinct protected validation histories, and 18 declared teacher
+shard identities/current sizes were read back; this observation does not freshly
+hash the full teacher weights or execute GPU inference. See
+`evidence/clean-sft-capability-real-wait-guard-v1.json`. New SFT completion,
+actual paired capability measurements, neural review, independent final tests
+and useful coaching remain unproven.
+
+The actual first-course step-6144 raw validation still answers 752/768 correctly
+(97.9%), with the weakest location task at 119/128 (93.0%). Nine answers improve
+and nine regress relative to step 5632, so the net change is zero. The current
+local gate fails. All sampled native histories, gold answers, question variants,
+raw correctness and finite FP32 weights were independently recomputed; a further
+readback verifies all 15 declared artifacts, 64 executed frozen source files and
+exact public bytes. Full-cache identity reuses the completed producer/preflight.
+See `evidence/recorded-foundation-clean-twelfth-raw-gate.json`.
+
+The clean curriculum-to-SFT and downstream capability queues are now actually
+running from their independently preserved 64/65-file source snapshots after CI
+and merge. Both have been observed live in their prerequisite waiting states.
+No new full-decoder probe, initial SFT, capability generation or prose review has
+yet executed; no new course is mastered or search-distillation round trained.
+
+Fresh expert features now round through FP16 before conversion to BF16, matching
+the stored features used in training and cached inference. Direct FP32-to-BF16
+conversion previously differed in 92536 of 1474560 feature elements (6.28%) in
+an actual CPU expert computation on two original validation histories with red
+and black to move. After the fix, both inference paths are bitwise identical in
+that comparison; original FP32 and stored FP16 tensors are unchanged. Both
+65-file execution snapshots and 146 distinct artifact/source bindings were
+read back. Four regressions fail before the fix and pass after it; all 14 focused
+checks and all 374 CPU tests pass. An earlier manifest-assembly failure is preserved. See
+`evidence/live-expert-cache-precision-v1.json`. This verifies CPU feature-reading
+consistency, without loading the language model or using GPU or independent
+test data. It does not establish CPU/GPU bitwise equivalence or improved play
+and prose. Live training and the existing frozen queues are unchanged.
+
+The thirteenth first-course raw gate at step 6656 answers 743/768 correctly
+(96.7%), with location at 117/128 (91.4%). Eight answers improve and seventeen
+regress relative to step 6144, for a net decrease of nine. The local gate fails.
+All native samples, golds, question formats, raw correctness and finite FP32
+weights were independently recomputed; a further readback verifies all 15
+declared artifacts, 65 frozen source files and exact public bytes. Two failed
+reader path/key checks are preserved before the completed corrected readback.
+Full-cache identity reuses the completed producer/preflight. See
+`evidence/recorded-foundation-clean-thirteenth-raw-gate.json`. New course completions and trained
+distillation rounds remain zero; new SFT is waiting.
+
+
+The clean curriculum now selects the best raw-validation checkpoint instead of
+requiring the uncalibrated local reference thresholds. The first course completed
+7168 validated updates; 5632 is selected, with 752/768 correct (97.9167%) and a
+121/128 worst task (94.5313%). Subsequent checks at 6144, 6656 and 7168 do not
+improve its score. The 7168 candidate has 746/768 correct and a 120/128 worst task.
+Reference gates remain false in the original artifacts. The new policy ranks
+balanced raw accuracy, then worst-task accuracy, then earlier update; three
+non-improving checks after local minimum budgets stop a course. Minimum budgets
+are 3072/4096/2048/6144 and maximum budgets/replay mixtures are unchanged. These
+selection details are local choices, not published paper hyperparameters.
+
+`configs/foundation-human-engine-clean-v3.json` imports only the preserved clean
+first-course candidates and their original 51-file execution source. Later
+courses start fresh optimizers from the actual selected parent bytes. A real CPU
+import freshly hashes the complete declared inputs including the feature cache,
+recomputes all 14 raw checks and verifies the complete finite FP32 selected state.
+An independent readback rehashes 144 declared files and both source snapshots
+(51/67 files), replays 730 selected native histories and recomputes 768 gold
+answers; it reuses the import's full-cache identity without hashing that cache a
+second time. See `evidence/foundation-best-validation-import-v1.json` and
+`evidence/recorded-foundation-clean-fourteenth-raw-gate.json`. Nineteen new
+controlled checks and all 393 CPU tests pass, including ordered progression,
+original-source retention, best-parent inheritance, tamper rejection, four-course
+handoff and downstream SFT consumption with honest failed reference gates. This
+is one selected clean course, not four completed courses or a coaching result.
+
+The new downstream recipes `configs/explanation-sft-clean-v2.json` and
+`configs/evaluation-clean-sft-v2.json` retain the reviewed 10758/384/512 labels,
+2690-update initial SFT budget and held-out validation protocol. All four courses
+must complete before any full-decoder GPU probe/SFT. Initial-label counts include
+existing color-derived examples and do not establish equal teacher-label
+quality. The paper's initial 15000 annotations yield 8402 training and 200
+validation positions. Its search iterations instead use about 375000-425000
+candidate positions, retaining approximately 150000-285000 training examples per
+round. Current 85530 human/published training-game candidates offer only a generous
+513180-position upper bound at six per game; this is not a generated distillation
+dataset or proven seven-round capacity. Additional tactical/endgame/diverse play
+and actual student-engine games will supplement the pool; acceptance yield and
+validation strength, full-line accuracy and prose quality govern expansion and
+round count. No new clean SFT or trained search-distillation round has completed.
+
+The second clean course has now started on four GPUs with a fresh optimizer and
+10% first-course replay. Its actual zero-update state has 258 tensors and
+139920416 finite FP32 parameters, bitwise equal to the selected first-course
+5632 checkpoint. The first twenty actual updates have finite nonzero gradients.
+An independent readback checks the weights, original training prefix, first
+selection and downstream waiting queues. Execution uses the merged `34154f0`
+67-file source snapshot; the first-course origin retains its original 51 files.
+See `evidence/dynamic-current-best-parent-startup-v1.json`. This establishes
+inheritance and startup, not second-course accuracy or completed SFT.
+
+All 384 existing teacher validation labels have an independent 1M-node Pikafish
+reference: 381/384 first moves have expected-score loss below 0.10, and 352/384
+complete PVs have every move below that loss cutoff. All first moves, complete PVs
+and structured contracts are legal/valid. There are 46 mistakes among 2276
+scored PV plies. An independent reader rechecks unchanged labels, full histories,
+archived engine responses and all aggregate metrics. See
+`evidence/clean-teacher-validation-engine-reference-v1.json`. These are teacher
+validation-label metrics, not student results, human win probabilities, prose
+semantic ratings or proof of quality across all training labels. No label was
+rewritten and no independent test answer was read. The failed first reader is
+preserved separately from the completed corrected readback.
+
+The second course's first raw validation, at step 512, answers 334/640 dynamic
+questions correctly, including 16/128 captures and 18/128 move-list questions.
+Static replay accuracy is 732/768. Adding the dynamic task groups changes the
+single-RNG balanced sampler: only 13 static record IDs overlap the previous
+5632-step reference, and just three have identical question text and variant.
+These static aggregate scores are not a paired regression measurement. An
+independent reader recomputes all 1408 native answers and raw results, checks
+1299 full histories and the actual FP32 checkpoint. See
+`evidence/dynamic-current-first-raw-validation-v1.json`. This interim check
+precedes the 4096-step minimum for second-course selection; one of four courses
+is complete and new clean SFT and trained distillation remain pending.
+
+A complete CPU preparation of the existing 2831004-row, 17.96GB training file
+produces 128682 distinct full-history search candidates, retaining 64341 existing
+color-derived histories. Source-declared human/computer/mixed/published/old-engine
+or rules counts are 75822/256/240/1030/51334. There are 5538 stored game identifiers;
+this does not certify independent human games. Actual preparation takes about
+202 seconds with 2.37GiB peak process RSS. An independent full-file scan recomputes
+the training SHA256, matches every candidate's first original record field for
+field and reproduces the complete historical seeded order. Existing cache keys
+and header shapes/dtypes are checked; 320 contexts are natively replayed, with
+complete native preflight and the large cache hash reused from prior evidence.
+See `evidence/search-inputs-human-engine-full-v1.json`. All 412 CPU tests pass.
+These are retained search inputs: no student search, teacher consolidation,
+accepted distillation labels, trained round, effective yield or model benefit is
+measured here. Unused training game records and actual student-engine games must
+expand the raw pool before paper-scale filtered labels can be claimed.
+
+At second-course step 1024, the same 1408 question IDs, reference answers, text and
+variants are checked against step 512. Dynamic accuracy improves from 334/640 to
+426/640, correcting 96 answers and introducing four errors. Captures and move
+lists reach 51/128 and 36/128. Static replay reaches 739/768, with nine corrected
+answers and two new errors. Independent native/weight/source readback is recorded
+in `evidence/dynamic-current-second-raw-validation-v1.json`. Selection still
+requires at least 4096 second-course updates; only one of four clean courses is
+complete. These rule QA results do not establish playing or coaching strength.
+
+Unused canonical training games now provide 478650 additional original history
+candidates from 80117 games, with no newly generated color mirrors. Source
+declarations account for 87544 human, 387678 published and 3428 human-computer
+candidates; these declarations do not authenticate the players or dates. Red and
+black counts are 240740 and 237910; early, middle and late counts are 103461,
+179575 and 195614. Each game contributes at most six histories.
+
+`evidence/unused-recorded-search-inputs-full-v2.json` binds the actual producer,
+independent reader and production-adapter consumption. All 478650 rows match the
+original records field for field; all six source files are independently
+streamed and rehashed. Complete heldout histories, explanation branches and color
+counterparts reserve 2715684 positions. Native replay samples 192 complete pasts
+and recorded futures; completed canonical native imports are reused rather than
+replaying every history again. The actual adapter selects 512 records, checks the
+complete pool tail and freshly hashes all three base course split files. No
+student, teacher, engine or feature cache is loaded in these checks.
+
+Preparation takes 560.67 seconds and peaks at 1126352 KiB process RSS. Missing
+optional platform provenance is preserved explicitly, with the failed first
+attempt retained and corrected execution in a fresh directory. All 431 CPU tests
+pass against 120 unchanged source and test bindings. This increases the measured
+candidate pool, not accepted distillation labels: new student search,
+consolidation, acceptance yield, trained rounds and model benefit remain unmeasured.
+
+The step-2560 second-course check uses exactly the same 1408 questions as the
+four earlier checks. Dynamic accuracy progresses from 334 to 426 to 468 to 503
+to 517/640 (80.78125%). Compared with step 2048, 37 answers are corrected and 23
+new errors appear. Captures reach 88/128, move lists 58/128, checks 117/128, and
+both legal and illegal judgments 127/128. Static replay falls from 742 to 733/768
+(95.4427%), with seven corrections and 16 new errors. The independent reader
+recomputes all 1408 native answers, replays 1299 distinct histories, and checks
+all five checkpoint contracts and the actual 67-file training/QA source; see
+`evidence/dynamic-current-fifth-raw-validation-v1.json`. Earlier raw results and
+errors remain preserved. The minimum of 4096 updates is not yet reached; one
+clean course is complete and these results do not establish playing strength.
+The first-course step-5632 static sample differs.
+
+Final search-label collection now inherits the recorded miner's complete heldout
+reservations. It requires a completed matching miner, byte-bound queries and pool,
+fresh base-data identities, and native ownership of selected roots or recursive
+descendants. Tagged recorded queries cannot fall back to legacy collection when
+miner metadata or explicit flags are missing. All target lines and alternatives
+are checked against the additional reservations; original validation/test bytes
+are required and copied unchanged.
+
+`evidence/recorded-search-collection-isolation-v1.json` records 16 new controlled
+checks and 447 passing CPU tests with 120 unchanged source/test bindings. An actual
+CPU run recollects one preserved historical BF16 teacher response with identical
+label fields and original heldout bytes, and rejects the actual old miner as the
+new recorded pool. All 69 execution source files are rehashed. This performs no
+new student, teacher or engine inference; the historical compatibility row is
+not a new clean-model distillation label. Full current-model recorded mining,
+collection yield, strategic prose correctness and student benefit remain unproven.
+
+The `search_pilot` controller waits for the exact completed clean SFT paired
+validation before any student or consolidator load. It verifies the selected
+parent, then executes existing mining, full BF16 consolidation and isolated
+collection commands. The first pilot requests 512 unused original histories,
+100K engine nodes and recursion depth five. A zero-query search skips teacher
+inference and collection; a completed pilot records measured yield and zero
+trained distillation rounds. Structured acceptance does not certify all strategic
+prose. The 18 new controlled CPU cases exercise CLI orchestration and refusal
+paths, without real student, teacher or engine inference.
+
+All 465 CPU tests pass against 122 unchanged source/test identities. An actual
+bounded CPU observation verifies that the three existing owned jobs remain live
+before, during and after the new controller's wait; only its own observation
+process group is stopped. The frozen 70-file execution source is rehashed, and
+no child commands, model loads or search outputs occur. At that v1 snapshot the
+production pilot was queued with the same source, waiting for clean SFT capability
+validation. `evidence/clean-search-pilot-queue-v1.json` records the observation
+and queue snapshot. It does not rehash all teacher weights or revalidate the
+complete candidate tail during waiting, and proves no current-model search yield,
+accepted new labels, trained distillation rounds or student benefit.
+
+The current `configs/search-clean-sft-pilot-v2.json` queue uses the completed
+eight-source candidate pool. It changes only the pool path and preserves the
+512-root, 100K-node, depth-five budgets and exact evaluated-parent prerequisite.
+Its 72-file frozen source supports tactical fragments and zero-move positions
+with their missing-prehistory context. The real CPU waiting guard passes and
+the production queue contract matches it field for field. All 531 CPU tests
+pass with 127 source/test identities and the new recipe unchanged across the run.
+See `evidence/clean-search-pilot-queue-v2.json`.
+
+The former six-source v1 waiting queue is retired before any search child starts;
+its config, contract, plan and 70 source files remain preserved and are rehashed.
+The first exit readback fails at an immediate post-signal process assertion and
+is preserved. A separate read-only follow-up verifies that the old tmux session
+and exact legacy launcher/pilot command processes are absent, while all six
+current owned panes remain alive at three observations. The original signalled
+PID list was not saved by the failed readback and is not reconstructed. Waiting
+checks reuse the completed full-pool consumption proof and check teacher-asset
+sizes; they do not rehash all teacher weights or the full course files again.
+No student/teacher inference, new search labels or trained distillation is
+claimed by this queue migration. Course, SFT and capability jobs are not restarted.
+
+The four pinned CCPD tactical categories are now fully imported separately from
+full-match collections. The 3614 source paths contain 2818 distinct Git blobs;
+2259 new canonical legal lines retain 68565 supplied-history plies, with source
+splits of 1805/236/218. Another 505 canonical lines duplicate prior or newly
+retained lines, and 54 blobs are quarantined. Missing pre-fragment history is
+explicit in 1988 records; 349 lack one or both participant fields. Source moves
+and comments are not treated as optimal moves or neural explanations.
+
+`evidence/recorded-tactical-lines-ccpd-native-import-v1.json` binds full native
+import and independent re-extraction/replay of every distinct blob. Retained
+records, duplicate splits and quarantine reasons match exactly. The reader
+reuses the same pinned PGN/native-rules contract, freshly hashes 2930 artifact
+and source bindings including all 71 execution modules, and reuses prior native
+full-game proofs through their exact canonical outputs. All 479 CPU tests pass
+with 124 unchanged source/test bindings; 14 controlled cases are new.
+
+Canonical lines are not independent puzzle counts: there are 1929 initial
+position geometries, with 22 shared across source splits. These source splits
+are not proved unseen by earlier student training and are not an independent
+benchmark. Of the training lines, 430 contain at most 12 plies, requiring
+sampling that can include fragment roots. The separate tactical candidate pool
+now enforces global heldout, future and color isolation while retaining that
+missing-history context; its measured scope is described below. This import changes no live course input, existing
+search pool or queued SFT recipe. It provides no new neural labels, trained
+distillation rounds, authenticated puzzle solutions or model benefit.
+
+
+The tactical candidate pool contains 8982 histories from 1601 canonical training
+lines, with 4601 red and 4381 black roots. The source imports retain 109937 total
+canonical identities across seven sources; this includes fragments and is not a
+count of full matches or independent puzzles. Candidate selection is restricted
+to tactical lines while all seven sources contribute heldout reservations,
+including 2738116 existing and canonical root/future/color positions. There are
+7744 candidates with unknown pre-fragment history and 1238 from the standard
+initial position. Phase buckets describe the supplied line, not an authenticated
+stage of the original match. The final pre-terminal decision remains eligible,
+including one-move fragments; terminal positions never become roots.
+
+`evidence/tactical-search-inputs-full-v1.json` binds the actual frozen 71-module
+preparation, full independent readback and production adapter consumption.
+Every emitted row matches its canonical source fields, supplied-history boundary,
+training ownership, seeded ordering and per-line cap. The reader independently
+rebuilds the complete heldout and explanation-branch color reservations and
+natively replays every candidate's supplied past and recorded future. It shares
+native rules with the importer and does not independently reimplement sampling
+inclusion. Actual preparation takes 54.41 seconds; full readback takes 183.67
+seconds with eight native replay workers. The production adapter selects 512
+roots, including 443 with unknown earlier history, checks the full tail and
+freshly hashes all three base course files. No student, teacher, engine or
+feature cache is loaded. Controlled search and collection checks preserve the
+source context in recursive queries, grounded teacher prompts and final labels;
+source fields and boolean types cannot change during collection. All 501 CPU
+tests pass against 125 unchanged source/test bindings; 22 new cases and the
+102-test focused suite cover these contracts.
+
+The earlier two-pool inventory found 40 shared history keys and 541 old roots
+inside the new reservations, so those pools were not directly concatenated.
+The completed seven-source pool and its proof remain preserved.
+`evidence/recorded-all-sources-search-inputs-full-v1.json` binds the new joint
+pool rebuilt from all eight canonical sources with the full 2741974-position
+root/future/color reservation. It contains 495306 histories from 89448 canonical
+training identifiers: 87390 source-declared human-match, 387693 published-match,
+3487 human-computer, 8982 tactical-line and 7754 isolated-position histories,
+with no new color augmentation. Identifiers include fragments and zero-move
+positions; they are not all complete matches or independently sourced puzzles.
+Every candidate is compared field for field and all eight source files are
+freshly streamed and hashed. The independent reader natively checks all 8982
+tactical histories and recorded futures, all 7754 isolated positions and 192
+sampled ordinary histories. Remaining full-match native proofs are reused from
+completed imports. Native rules are shared; full-match and fragment sampling
+inclusion is not independently rewritten, while zero-move position inclusion
+is independently recomputed. Production takes 672.47 seconds and readback
+692.01 seconds. The real adapter selects 512 roots, including four tactical-line
+and nine isolated-position roots, preserves the 13 missing-prehistory markers,
+checks the full tail and hashes all three base course files. No student, teacher,
+engine or feature cache is
+loaded. Candidate production did not alter the then-existing pilot or course/SFT
+queues. The later v2 search queue migration described above uses this pool;
+course/SFT/capability jobs retain their original execution contracts.
+Canonical source splits are not proved unseen by earlier training and are not
+new independent benchmark results. Accepted clean-model labels, trained
+search-distillation rounds and model benefit remain zero or unmeasured.
+
+The sixteenth second-course raw check at step 8192 scores 579/640 dynamic
+questions (90.46875%), including 99/128 move-list answers (77.34375%). Static
+replay is 742/768 (96.6145833%). Relative to step 5632, dynamic predictions
+correct 32 errors and introduce 20; static replay corrects 17 and introduces 19.
+Combined correctness is 1321/1408 (93.8210227%), the same as step 7680's
+581/640 dynamic and 740/768 static results. Neither exceeds step 7168's
+1325/1408 (94.1051136%); the selected best stays at 7168 with two checks
+without improvement. All sixteen checks use identical
+question identities, text, variants and gold answers. The native reader replays
+1299 histories, checks every candidate contract and hashes the actual 67-module
+execution source; see `evidence/dynamic-current-fifteenth-raw-validation-v1.json`
+and `evidence/dynamic-current-sixteenth-raw-validation-v1.json`.
+
+`evidence/dynamic-current-learning-curve-v5.json` binds all sixteen checks and
+a continuous training-log prefix through step 8192. Its vertical marker comes
+from the actual selected-best decision. The last complete 512-update mean
+training loss is 0.0190590, versus 0.0224380 at step 7168. The 29 incorrect
+move lists include 11 with missing moves only, ten with extra moves only and
+eight with both. Recent gains are smaller than early gains and the last two
+checks have no net validation improvement.
+Declining training loss does not establish future gains or an
+overfitting cause. At that sixteen-check snapshot the policy was waiting for
+step 8704 and one of four clean courses was complete. Earlier curves and raw
+errors remain preserved; the following completed handoff supersedes that wait.
+
+The seventeenth check at step 8704 scores 590/640 dynamic questions (92.1875%),
+including 100/128 move-list answers (78.125%), and 726/768 static replay
+(94.53125%). Combined correctness is 1316/1408 (93.4659091%). Relative to the
+selected step 7168, dynamic predictions correct 19 errors and introduce 11,
+while static replay corrects 13 and introduces 30: a net gain of eight dynamic
+answers and loss of seventeen old-course answers. All seventeen checks use the
+same 1408 question identities, text, variants and gold; every raw numerator is
+recomputed. The native reader replays 1299 histories, validates all candidate
+contracts and hashes the 67-file actual execution source. See
+`evidence/dynamic-current-seventeenth-raw-validation-v1.json`.
+
+`evidence/dynamic-current-learning-curve-v6.json` binds the continuous 8704-row
+training prefix and preserves the first sixteen series values exactly. The last
+512-update mean loss is 0.0177602; the 28 incorrect move lists have eleven
+missing-only, ten extra-only and seven mixed errors. The actual controller
+completes the second course after three checks without improvement and selects
+step 7168, whose combined correctness is 1325/1408 (94.1051136%). Late dynamic
+gains are offset by old-course regression. The recipe and live training are not
+manually changed; rule-question accuracy does not establish playing strength.
+
+The third course now starts from that actual selected parent, SHA256
+`1996f8a3aa0bde98414604e9acc8407b40370c8bd80266421124166a9b0a01e0`.
+`evidence/static-future-best-parent-startup-v1.json` verifies the actual completed
+second-course handoff, bitwise inheritance of all 258 tensors and 139920416 FP32
+parameters at update zero, a fresh optimizer, four owned ranks and the first
+twenty updates' finite nonzero gradients. It checks the full execution config
+and 6% static-current / 8% dynamic-current / 86% static-future mixture. All
+second-course candidate contracts and scores are recomputed; native answers
+are verified by the separate seventeenth reader rather than replayed again by
+the startup observer. Full feature/train/validation hashes are reused from the
+completed full preflight, with current size and file identity checks. All 531
+CPU tests pass with 127 unchanged source/test identities and an unchanged
+training recipe. Two of four courses are complete. The third course's first
+raw step-512 QA and native readback are complete, as described below; four-course completion,
+clean SFT, trained distillation and reliable strategic coaching remain unproven.
+
+The completed step-512 CPU observer is v2. Its startup dependency binds the
+original execution declaration to the preserved, byte-identical
+`initial-execution.json`; subsequent real training resumes may replace the live
+`execution.json`. `evidence/static-future-startup-archive-binding-v1.json`
+checks the exact helper extracted from the queued v2 entry against the actual
+already-resumed second course and the third-course startup archive. The correct
+archives are accepted, and the real resumed second-course execution is rejected
+as an initial archive. Every other declared reference is preserved, although
+this metadata check does not hash all model/data references again.
+
+The v1 observer is retired while waiting, before producing raw-readback outputs.
+Its entry, plan and frozen source remain unchanged; the signalled process
+identities are saved before retirement, and bounded exit polling confirms their
+exit and the old tmux session's removal. The four original course/SFT/capability/
+search panes remain alive at three observations before and after the transition;
+both 67-file observer sources are rehashed. Only the waiting CPU observer changes.
+The completed startup proof, curriculum recipe, GPU training and selection are
+preserved. This proves no new third-course raw accuracy or model benefit.
+
+`evidence/static-future-first-raw-validation-v1.json` records the actual third
+course's first raw step-512 validation: 655/768 future-static answers (85.2865%),
+741/768 static-current replay (96.4844%), 573/640 dynamic-current replay
+(89.5313%), and 1969/2176 overall (90.4871%). Future count/empty/locate/material/
+piece/rank numerators are 125/128/106/85/128/83, each over 128. The independent
+reader checks all 2176 native answers across 1907 histories, including 768 future
+answers in 738 distinct future contexts, the actual selected step-7168 parent,
+finite FP32 checkpoint contracts and all 67 producer source files. Full feature
+and training hashes reuse completed preflight identities rather than being
+computed again. The course remains active under its 2048-update minimum budget.
+
+A separate artifact readback rehashes all 404 declared references (19548722232
+bytes) and recalculates raw correctness and all 17 task numerators. It reuses
+the completed native replay. The real resumed execution differs from the initial
+archive, while the completed first-raw proof excludes the mutable live file.
+The 1408 prior-course IDs and reference answers match the selected second-course
+check, but 954 wording variants change; cross-course aggregate differences do
+not provide a same-wording paired estimate of forgetting. At the first-check
+milestone, the step-1024 reader was queued with 67 frozen files and three verified
+waiting observations,
+requiring identical IDs, games, stages, tasks, questions, variants and gold before
+counting corrections and new errors. The four original training/downstream panes
+remain live. Fresh 531-test CPU verification passes with 127 unchanged source/test
+bindings and the unchanged curriculum recipe. There are no independent test
+answers, repaired predictions, completed clean SFT or trained distillation rounds.
+
+`evidence/static-future-second-raw-validation-v1.json` verifies actual step 1024:
+704/768 future-static answers (91.6667%), 740/768 static-current replay (96.3542%),
+561/640 dynamic-current replay (87.6563%) and 2005/2176 overall (92.1415%). All
+2176 IDs, games, tasks, questions, variants and gold match step 512. Future answers
+correct 62 prior errors and introduce 13; static replay corrects 13 and introduces
+14, and dynamic replay corrects 14 and introduces 26. Future material and rank
+net gains are 21 and 22, while current move enumeration loses 10 correct answers
+to 87/128 (67.9688%). The overall net gain of 36 preserves these old-course losses.
+
+The second reader checks all 2176 native answers, including 768 future answers,
+1907 histories and 738 future contexts, and rehashes 67 producer files. A separate
+artifact reader hashes all 416 declared references (20110006159 bytes), recomputes
+raw correctness, all 17 task numerators and the paired counts, and reuses the
+completed native proof. Full cache/train identities reuse completed preflight
+proof. At the second-check milestone the step-1536 reader was waiting, with three
+observations of all four original queues and the new 67-file reader. Fresh 531-test
+CPU verification
+passes with 127 unchanged source/test identities and the unchanged recipe. The
+third course continues under its 2048-update minimum; no four-course completion,
+clean SFT, trained distillation, independent playing strength or reliable coaching
+is established by these validation results.
+
+`evidence/static-future-third-raw-validation-v1.json` verifies actual step 1536:
+719/768 future-static answers (93.6198%), 751/768 static replay (97.7865%),
+554/640 dynamic replay (86.5625%) and 2024/2176 overall (93.0147%). All questions,
+wording variants and gold match step 1024. Future answers correct 34 prior errors
+and introduce 19; static replay corrects 18 and introduces seven, while dynamic
+replay corrects 32 and introduces 39. Current per-piece move enumeration corrects
+15 and introduces 26 errors, falling by 11 to 76/128 (59.375%). The overall gain
+of 19 retains that regression. All 2176 native answers, 1907 histories, 768 future
+answers, 738 future contexts and the actual checkpoint are verified. Large
+cache/train identities reuse completed preflight; there is no additional second
+pass over all declared references. `evidence/static-future-learning-curve-v1.json`
+binds three identical-question checks and the continuous 1536-update log; the
+last 512-update mean loss is 0.0358788. Fresh 531 CPU tests pass with 127 unchanged
+source/test identities and recipe. The completed step-1536 reader is followed by
+the actual waiting step-2048 reader. Two courses are complete; clean SFT,
+trained distillation and independent playing/coaching strength remain unproven.
+
+`evidence/static-future-fourth-raw-validation-v1.json` verifies actual step 2048:
+727/768 future-static answers (94.6615%), 755/768 static replay (98.3073%),
+558/640 dynamic replay (87.1875%) and 2040/2176 overall (93.75%). All 2176 IDs,
+questions, variants and gold match step 1536. Future/static/dynamic answers correct
+28/15/29 prior errors and introduce 20/11/25, for a total net gain of 16. All native
+answers, 1907 histories, 768 future answers, 738 future contexts and 67 producer
+files are verified. Cache/train identities reuse completed full preflight; no
+additional second full-reference hash pass is claimed.
+
+The reusable CPU command separately diagnoses 256 move-list answers and rechecks
+128 native histories and answers while freshly hashing the validation corpus.
+Move-list correctness rises from 76 to 79/128 (61.7188%), with 18 corrections and
+15 new errors. All 49 current errors have missing or extra moves: 50 missing moves
+across 25 answers and 59 extra moves across 43 answers, all illegal. There are no
+format-only failures. Missing moves decrease by 11 but illegal extras increase by
+19; rook strict answers fall by two. This does not establish recovery of rule
+competence. The four-check plot binds 2048 continuous training updates; its first
+three series/windows match the preserved plot, and the last 512-update mean loss
+is 0.0255115. The minimum budget is met, but the course continues with provisional
+best step 2048 and zero stale checks. The step-2560 native reader is waiting with
+67 pinned files. All 560 CPU tests pass with 129 unchanged source/test identities
+and recipe. Two courses are complete; clean SFT, trained distillation and independent
+playing/coaching strength remain unproven.
+
+`evidence/curriculum-move-enumeration-diagnostic-v1.json` diagnoses 2432 preserved
+answers from the second course's 17 checks and the third course's first two
+checks. It freshly scans and hashes all 173272 validation rows and replays the
+128 selected full histories and native per-piece move-list answers. Strict raw
+scores stay unchanged. Second-course selected/latest raw correctness is 99/128
+and 100/128; complete move-set correctness is 100/128 at both. All 28 latest errors have missing
+or extra moves, with 29 missing and 25 extra moves across 18/17 answers. All extra
+moves are illegal in their native board context. At third-course step 1024,
+only one of 41 errors is solely ordering; 40 have move-set errors. Cannon answers
+fall from 31/42 to 24/42, with one correction and eight new errors. Piece and
+answer-length groups are descriptive, and per-move precision/recall are diagnostic
+rather than strict scores or playing strength. The actual step-2048 reader is
+waiting with 67 pinned source files and requires the completed step-1536 native
+proof. A title-literal preparation failure never launched a job and is preserved;
+the reader uses a fresh v2 directory. Training and recipes remain unchanged.
+
+`evidence/move-enumeration-portable-real-v1.json` records the reusable CPU
+`xqgeneral.diagnose_moves` command on all 384 current-move answers from third-course
+steps 512, 1024 and 1536. It freshly hashes all 173272 validation rows and rechecks
+128 histories and native answers. All candidate summaries, three paired comparisons
+and item fields match the completed specialized diagnostic, using shared native
+rules. Step 1536 has 76/128 strict answers and 77/128 exact move sets: 51 errors
+have missing or extra moves and one has duplicates only. There are 61 missing moves
+across 41 answers and 41 extra moves across 32 answers; 40 extras are illegal and
+one is a legal move from another piece. From step 1024, missing moves increase from
+48 to 61, while cannon/rook strict answers fall from 24/42 and 29/41 to 19/42 and
+26/41. The command preserves strict scoring and rejects changed questions, invalid
+native gold, non-validation data and changing inputs. Future-board diagnosis has
+controlled contract tests, without a real fourth-course diagnosis yet. The 73-file
+analysis snapshot retains the producer's native helper identities; live training
+keeps its original 67 files and recipe. Checkpoint ancestry reuses completed raw
+validation evidence and is outside this command's scope. These diagnostics do not
+establish playing strength, coaching quality or a causal explanation of forgetting.
+All 560 CPU tests pass, including 29 new diagnostic contract cases, with 129
+source/test identities verified; the prior 127 identities and training recipe are
+unchanged.
+
+Fresh counts and hashes of the clean initial-label files separate training's
+10758 rows into 7619 rows without a color-derivation marker and 3139 existing
+color-derived rows. Validation is 288 plus 96, and test is 384 plus 128.
+`evidence/clean-explanation-original-capacity-v1.json` does not repeat semantic,
+tokenizer or native review. Unmarked rows are not all independent human games.
+The paper's filtered initial corpus has 8402 training and 200 validation rows;
+the current total does not prove equal quality or more independent annotations.
+
+`evidence/public-tactical-source-acquisition-v1.json` preserves the original
+acquisition snapshot: 209 cached files (5866937 bytes) from
+`dffge552/xiangqi-pwa-offline` revision
+`3ff21f4502a03f30bb0df55db6f3814ceeb989f5`, actual Git tree
+`85c7e92ef00fe5e3fad0d086fe844dcab13439bf`. Subsequent complete native import
+and independent readback are in `evidence/public-tactical-positions-native-import-v1.json`.
+All 9990 source rows are reconstructed; 9683 new native positions are retained
+with 7754/966/963 training/validation/test identifiers. There are 248 duplicates
+against prior canonical histories or their colors, 58 source-internal position
+or color duplicates, and one rejected row. The reader rehashes every raw file,
+rebuilds 6370398 prior-history color orbits, and compares every retained,
+duplicate and rejected record. Source parsing and dedup aggregation are
+independently rebuilt; native rules are shared and previous full-match native
+proofs are reused rather than replaying every prior move again. These are
+supplied zero-move positions, not verified full-game histories or proof of
+historical reachability. Missing counters use explicitly recorded native
+defaults; pre-position history is always unavailable. Source solution text,
+titles and unverified player identities are not used as labels.
+
+`evidence/tactical-position-search-inputs-full-v1.json` binds a separate
+7754-root pool with joint reservations from all eight canonical sources.
+Every zero-move root's inclusion, field values, original ownership and native
+status is rechecked, and all 2741974 reserved root/future/color positions are
+rebuilt. The real adapter selects 512 roots, validates the entire tail and
+freshly hashes all three base course files. All roots retain unavailable
+prehistory and contain no recorded continuations. The source directions are
+7750 red and four black; no new color augmentation is generated. A zero-ply
+phase bucket does not identify a real game phase. Preparation takes 53.62
+seconds, readback 102.97 seconds and real consumption 22.61 seconds. All 531
+CPU tests pass with 127 unchanged source/test bindings, including 30 new
+position-contract cases. Native rules are loaded; neural models, external
+search engines and feature caches are not used for this preparation.
+At that isolated-pool preparation snapshot, the existing pools and four
+training/waiting queues retained their frozen inputs. Pools are
+not simply concatenated; joint future mining needs the shared reservations.
+No new clean-model labels, distillation training or model benefit is proved.
+The upstream MIT declaration does not independently authenticate underlying
+puzzle rights. Raw and derived files are excluded from source releases.
+
+The reusable enumeration diagnostic now supports `--task-type captures|checks`
+with the existing `moves` default. An actual CPU run diagnoses 768 preserved
+answers from third-course steps 2048 and 2560, rechecks 384 native answers and
+freshly hashes all 173272 validation rows for each of three task scans. Capture
+strict answers fall from 102/128 to 86/128: seven corrections and 23 new errors.
+Of the final 42 errors, 41 have set errors and one is ordering only. Missing
+captures increase from 31 to 47, including rook captures from five to 21;
+25 of 27 extra moves are illegal and two are legal non-captures. Current move
+answers rise from 79/128 to 83/128 while missing moves grow from 50 to 60;
+check answers fall from 123/128 to 120/128. Task filtering distinguishes legal
+moves outside the requested task from illegal moves, without repairing raw
+answers. Default step-2048 move summaries and groups match the prior proof.
+`evidence/enumeration-task-diagnostic-real-v1.json` binds the 74-file execution
+snapshot to the tested code commit and shared producer rule helpers. All 624
+CPU tests pass, including 32 added cases; 129 other source/test identities and
+the training recipe are unchanged. Checkpoint ancestry reuses completed native
+readers. These groups do not establish causation, playing strength or coaching
+quality; no student, teacher, engine search or independent test was run.
+
+The [fresh paper-aligned curriculum recipe](PAPER_FOUNDATION_EXPERIMENT.md) combines the full-width bridge with finite indexed/sharded data, answer-token loss and current-course checkpoint selection. A real pretrained four-GPU eight-update/four-plus-four resume control is bitwise identical; this does not establish curriculum completion, strength or coaching quality. Complete native recorded-source regeneration is finished, and the preserved preparation queue is generating the full question corpus. Formal curriculum training and final model acceptance remain unfinished.
+
+The [post-curriculum recipe](PAPER_POST_CURRICULUM.md) prepares full-decoder SFT only from the actual completed new four-course handoff. Its 10758 training and 384 validation rows match the preserved reviewed sources; four finite passes compile to 2692 updates, with 43032 valid presentations and eight distributed padding presentations. The 512 independent test labels are excluded from training indexes and budget compilation. The live preserved follower is waiting for the new four-course completion proof and has not loaded a student or reviewer. Planned three-memory raw validation, BF16 non-quantized teacher review and a 384-game development baseline do not establish completed SFT, search distillation or final strength and coaching acceptance. Legacy held-out review status is inherited; no new semantic label review was performed for this preparation milestone.
+
+原生分批优化通过 4096 实战训练根的目标字节比较、1158 项检查及同源码四卡连接桥短控制；新旧连续八步参数／优化器／随机状态一致。它只证明准备计算与更新合同，正式新四课、讲解、蒸馏、棋力及教学正文仍未完成，见 `evidence/paper-native-prefix-cache-v1.json`。

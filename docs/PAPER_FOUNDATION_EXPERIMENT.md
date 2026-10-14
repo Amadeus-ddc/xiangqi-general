@@ -1,8 +1,8 @@
 # 论文对齐的新四课实验
 
-核对日期：2026-10-13。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。当前原冻结课程保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
+核对日期：2026-10-14。新配方为 [foundation-paper-v1.json](../configs/foundation-paper-v1.json)，数据预算为 [paper-task-position-budgets-v1.json](../configs/paper-task-position-budgets-v1.json)。旧实验权重与证据保留；这套新实验从固定 Qwen3-4B 预训练基础开始，没有课程或讲解权重初始化。
 
-本服务器当前生产会话为 `xqgeneral-paper-curriculum-preparation-v7`，入口在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7/`，实际输出为 `data/paper-courses-v5` 与 `runs/curriculum-paper-v5`。CPU 问答使用 95 份冻结模块，GPU 特征／课程阶段保留原来的 88 份已验证模块；完整目录已经核对 6301835 个根、52964340 个目标及 105352 盘来源棋局。当前仍在生成问答，后续全量金标复核、缓存、索引、预检与四课按保存计划衔接。四卡全局 256／微批量 4／完整 2048 token 的容量已另行[实测](PAPER_CURRICULUM_CAPACITY.md)。后续讲解等待会话见[当前衔接队列](PAPER_POST_CURRICULUM.md#本服务器当前队列)。
+本服务器当前生产会话为 `xqgeneral-paper-curriculum-preparation-v7`，入口在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7/`，实际输出为 `data/paper-courses-v5` 与 `runs/curriculum-paper-v5`。CPU 问答使用 95 份冻结模块，GPU 特征／课程阶段保留原来的 88 份已验证模块；完整目录已经核对 6301835 个根、52964340 个目标及 105352 盘来源棋局。题库和特征缓存已完成生成，全部10833161题的逐局来源／金标核对已完成暂存与独立读回；10807161条训练／验证编码及5200份额外验证问法也已检查完成。全量预检仍在复演历史，后续完整隔离、文件哈希、来源／缓存／基座独立读回与持续四卡容量检查按保存计划衔接；正式新四课仍为0步。编码阶段的完成与边界见[中间证据](../evidence/paper-course-token-preflight-complete-v1.json)。四卡全局 256／微批量 4／完整 2048 token 的容量已另行[实测](PAPER_CURRICULUM_CAPACITY.md)。后续讲解等待会话见[当前衔接队列](PAPER_POST_CURRICULUM.md#本服务器当前队列)。
 
 ## 组合与选模
 
