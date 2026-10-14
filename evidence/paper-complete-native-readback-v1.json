@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "kind": "complete_native_paper_course_source_readback",
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_native_readback_staged_transfer_rehash_running",
+  "observed_utc": "2026-10-14T09:26:51.550478+00:00",
+  "actual_reader_returncode": 0,
+  "questions_regenerated_and_compared": 10833161,
+  "counts": {
+    "test": 26000,
+    "validation": 2600,
+    "train": 10804561
+  },
+  "split_verification": {
+    "games": {
+      "train": 73654,
+      "validation": 66,
+      "test": 591
+    },
+    "roots": {
+      "train": 2069901,
+      "validation": 865,
+      "test": 8744
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "staged_manifest_sha256": "b3577d689c21e98e0d0ddab4cd274b5012f152f9e627a4a707b6a340a840fe14",
+  "verification": {
+    "original_mathematical_code_identity_matches_corpus": true,
+    "all_staged_outputs_freshly_hashed_and_read_back": true,
+    "full_original_native_history_and_answer_checks_complete": true,
+    "all_original_question_bytes_match": true,
+    "full_root_and_future_split_check_complete": true,
+    "sampling_frequency_and_position_budget_check_complete": true,
+    "extra_runtime_execution_declared": true,
+    "canonical_production_proof_published": false,
+    "independent_transfer_source_and_output_rehash_running": true,
+    "guard_owns_gold_pause_at_snapshot": false
+  },
+  "remaining": {
+    "whole_preflight_complete": false,
+    "source_cache_base_readback_complete": false,
+    "formal_new_curriculum_updates": 0,
+    "complete_initial_sft_executed": false,
+    "authentic_distillation_executed": false,
+    "student_strength_or_coaching_quality_proven": false,
+    "overall_goal_complete": false
+  },
+  "software_verification": {
+    "same_source_test_config_bindings": 243,
+    "previous_same_binding_cpu_tests_passed": 1517,
+    "release_check_passed": true
+  }
+}
