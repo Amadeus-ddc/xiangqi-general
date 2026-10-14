@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "kind": "foundation_preflight_full_query_validation_worker_execution",
+  "evidence_state": "reconstructed_baseline",
+  "observed_utc": "2026-10-14T05:51:49.295525+00:00",
+  "status": "execution_fix_verified_production_handoff_not_yet_qualified",
+  "problem": {
+    "actual_parent_future_rule_replay_with_idle_token_workers_reproduced": true,
+    "original_actual_cli_red_probe_reproduced": true
+  },
+  "change": {
+    "all_queries_validated_in_existing_worker_pool": true,
+    "all_three_splits_validated": true,
+    "independent_test_answers_not_tokenized": true,
+    "all_other_preflight_checks_and_recipe_preserved": true,
+    "actual_rule_validation_coverage_count_required": true,
+    "frozen_production_sources_or_plans_changed": false
+  },
+  "actual_cli_control": {
+    "rule_records": 300,
+    "workers": 4,
+    "all_original_verification_fields_identical": true,
+    "token_and_native_sample_bytes_identical": true,
+    "train_validation_records_tokenized": 200,
+    "unique_native_histories_checked": 12,
+    "parent_future_probe_no_longer_fails": true,
+    "manifest_sha256": "ae2bf57cfea390568030c6b6adeeb76bae92b164d770bd3f6b561e1b9512f80a",
+    "full_production_scope_proven": false
+  },
+  "actual_local_performance": {
+    "distinct_history_records": 128,
+    "actual_spawn_workers": 4,
+    "serial_seconds": 29.055761905387044,
+    "warm_parallel_seconds": 8.077877448871732,
+    "spawn_and_warmup_seconds": 2.605975382961333,
+    "warm_speedup": 3.5969550280123865,
+    "same_original_native_checks_completed": true,
+    "full_production_throughput_proven": false,
+    "earlier_repeated_small_sample_did_not_show_speedup": true
+  },
+  "public_verification": {
+    "cpu_tests_passed": 1517,
+    "source_test_config_bindings": 243,
+    "only_two_source_test_files_changed": true,
+    "bindings_unchanged_during_checks": true,
+    "package_build_passed": true,
+    "release_check_passed": true
+  },
+  "production": {
+    "full_question_drafts_complete": true,
+    "native_rule_questions_checked_at_snapshot": 4788775,
+    "expected_rule_questions": 10833161,
+    "native_rule_phase": "checking_every_native_history_and_answer_by_game",
+    "serial_frozen_preflight_remains_running": true,
+    "full_native_gold_complete": false,
+    "full_preflight_complete": false,
+    "source_cache_base_readback_complete": false,
+    "new_execution_production_handoff_qualified": false,
+    "formal_new_curriculum_updates": 0,
+    "complete_initial_sft_executed": false,
+    "authentic_distillation_executed": false,
+    "student_strength_or_coaching_quality_proven": false,
+    "overall_goal_complete": false
+  }
+}

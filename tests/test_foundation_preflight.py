@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+import xqgeneral.foundation_preflight as preflight
+from xqgeneral.course_tasks import PAPER_PROFILE
 from xqgeneral.evidence import history_key
 from xqgeneral.foundation_preflight import clean_recipe, native_answer, native_context, validate_task
 from xqgeneral.rules import START_FEN, replay
@@ -55,3 +57,55 @@ def test_independent_terminal_probes_never_enter_training_or_validation_contract
             validate_task(dict(row, split=split))
     with pytest.raises(ValueError, match='native rules'):
         validate_task(dict(row, answer='无'))
+
+
+def paper_future(split='train'):
+    return dict(context(), split=split, stage='static_future', task_profile=PAPER_PROFILE,
+                task_type='piece', query={'square': 'c2'}, future_moves=['b0c2'],
+                answer='红马', question='What occupies c2 after the supplied moves?')
+
+
+def token_worker_environment(monkeypatch, *, profile=PAPER_PROFILE):
+    monkeypatch.setattr(preflight, '_TOKENIZER', object())
+    monkeypatch.setattr(preflight, '_RECIPE',
+                        {'max_tokens': 128, 'task_profile': profile,
+                         'raw_qa_gates': {'task_profile': profile}})
+    calls = []
+
+    def encode(tokenizer, row, *args):
+        calls.append(row['split'])
+        return [1, 2], [-100, 2]
+
+    monkeypatch.setattr(preflight, 'encode_record', encode)
+    monkeypatch.setattr(preflight, 'question_variant', lambda row, variant: f'variant {variant}')
+    return calls
+
+
+def test_token_worker_performs_real_future_validation_before_encoding(monkeypatch):
+    calls = token_worker_environment(monkeypatch)
+    invalid = dict(paper_future(), future_moves=['z0z1'])
+    with pytest.raises(ValueError):
+        preflight.token_chunk([invalid])
+    assert calls == []
+
+
+def test_token_worker_checks_independent_test_without_encoding_test_answers(monkeypatch):
+    calls = token_worker_environment(monkeypatch, profile='legacy')
+    terminal = dict(context(), split='test', stage='dynamic_current', task_type='terminal',
+                    future_moves=[], query={}, answer='有')
+    result = preflight.token_chunk([terminal])
+    assert result['validated'] == 1
+    assert result['checked'] == 0
+    assert calls == []
+    with pytest.raises(ValueError, match='native rules'):
+        preflight.token_chunk([dict(terminal, answer='无')])
+
+
+def test_token_worker_keeps_full_validation_coverage_and_token_split_budgets(monkeypatch):
+    calls = token_worker_environment(monkeypatch)
+    result = preflight.token_chunk([paper_future(split) for split in ('train', 'validation', 'test')])
+    assert result['validated'] == 3
+    assert result['checked'] == 2
+    assert result['extra_validation_formats'] == 2
+    assert result['maximum_tokens_by_stage'] == {'static_future': 2}
+    assert calls == ['train', 'validation', 'validation', 'validation']
