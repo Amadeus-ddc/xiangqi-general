@@ -1,6 +1,6 @@
 # 新四课之后的讲解与评测
 
-这套流程接在[论文对齐四课](PAPER_FOUNDATION_EXPERIMENT.md)之后，只接受该实验实际完成的四门交接权重。截至2026-10-15，课程题库、特征缓存和[完整预检](../evidence/paper-course-full-preflight-complete-v1.json)已完成，正式新四课仍为0步；来源／缓存／基座独立读回和正式容量门槛仍待完成。讲解索引与配置已准备，后续队列等待新四课实际完成证明。它没有提前加载学生或教师，也没有启动讲解训练。
+这套流程接在[论文对齐四课](PAPER_FOUNDATION_EXPERIMENT.md)之后，只接受该实验实际完成的四门交接权重。截至2026-10-15，题库、特征缓存、[完整预检](../evidence/paper-course-full-preflight-complete-v1.json)、来源／缓存／基座独立读回和正式容量门槛均已完成；[真实开训读回](../evidence/paper-course-v5-training-startup-v1.json)已确认第一课完成200次更新。四课整体尚未完成，讲解索引与配置已准备，后续队列继续等待四课完成证明，没有启动讲解训练。
 
 ## 初始讲解训练
 
@@ -21,6 +21,8 @@
 [evaluation-paper-sft-v1.json](../configs/evaluation-paper-sft-v1.json)对同一正式 SFT 权重及全部 384 条验证项分别使用正常、清零和错配专家特征，保留原始回答与规则评分，再以完整 BF16、未量化 Qwen3.8-27B 进行匿名正文辅助评分。学生和教师在 GPU 0 顺序加载；教师评分不当作人工评价，也不自动构成最终验收。
 
 [matches-paper-sft-baseline-v1.json](../configs/matches-paper-sft-baseline-v1.json)接在完整能力验证之后：64 个保留验证开局、交换红黑、Pikafish 100／1000／10000 节点，共 384 局，每局最多新增 256 半回合，使用 GPU 2。非法首着或变化照实计入失败，不由引擎代答；逐回合保存与续跑沿用现有对弈入口。这是开发基线，独立最终棋力和教学验收仍须另做。
+
+最终独立验收的固定数据、模型选择记录及公开命令见[独立测试协议](FINAL_INDEPENDENT_EVALUATION.md)。其输入准备已完成，模型评分等待正式训练和开发选模完成，不使用本节的验证集入口替代独立测试。
 
 [search-paper-sft-pilot-v1.json](../configs/search-paper-sft-pilot-v1.json)只声明后续 512 根搜索试批。新课程完成后须重新核查来源与全部新保留范围的可用容量，再依据实际有效标签产量、能力和对弈分数调整搜索量与蒸馏轮数。当前队列不会自动训练这个试批；不能把已准备搜索局面、配置或教师调用算作完成蒸馏。
 

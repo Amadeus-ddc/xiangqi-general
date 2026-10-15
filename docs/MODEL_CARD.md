@@ -4,6 +4,8 @@ Xiangqi General is an independent Chinese-chess adaptation of the [Queen researc
 
 **No trained checkpoint has passed final playing-strength and coaching acceptance.** The new formal four-course run is training its current-static course. The [2026-10-15 startup readback](../evidence/paper-course-v5-training-startup-v1.json) verified 200 continuous optimizer updates from fresh initialization across four live DDP ranks, with finite losses and gradient norms. The four courses are not yet complete; full initial explanation SFT and student-search distillation have not started. Earlier checkpoints and GPU capacity controls are separate experiments. Current execution evidence belongs in [STATUS.md](../STATUS.md); the complete previous model-card snapshots are preserved in the [historical record](MODEL_CARD_HISTORY.md).
 
+The [final independent protocol](FINAL_INDEPENDENT_EVALUATION.md) fixes 26,000 test QA items, 512 test explanations and 384 planned matches from 64 distinct test games. [Input preparation](../evidence/final-independent-evaluation-inputs-v1.json) checked the protected files and replayed the selected opening prefixes, with no selected-game overlap with current training or validation. No final checkpoint has been locked or scored; these are prepared inputs rather than model-quality results.
+
 ## Intended use and interface
 
 The intended use is studying positions, comparing candidate moves, explaining verifiable continuations and reviewing games. A completed training run or high curriculum accuracy alone does not establish useful playing strength or good coaching.

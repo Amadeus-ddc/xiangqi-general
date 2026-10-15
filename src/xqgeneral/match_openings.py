@@ -16,6 +16,26 @@ MATCH_KINDS = {'recorded_human_match', 'published_recorded_match',
 PACK_KIND = 'heldout_recorded_match_openings'
 
 
+def source_split_seed(parent):
+    """Keep inherited paper ownership; legacy corpora declare a direct hash split."""
+    if parent.get('status') != 'complete':
+        raise ValueError('Require the completed isolated recorded curriculum source')
+    if parent.get('kind') == 'isolated_recorded_engine_four_course_questions':
+        seed = parent.get('config', {}).get('split_seed')
+        if type(seed) is int:
+            return seed
+    elif parent.get('kind') == 'paper_xiangqi_four_course_questions':
+        proof = parent.get('verification', {})
+        if (parent.get('config', {}).get('task_profile') == 'paper_xiangqi_v1' and
+                proof.get('game_split_assigned_before_questions') is True and
+                proof.get('prior_corpus_isolation_verified') is True and
+                proof.get('independent_test_used_for_training_or_selection') is False and
+                proof.get('split_verification', {}).get('game_overlap') == 0 and
+                proof.get('split_verification', {}).get('root_and_future_overlap') == 0):
+            return None
+    raise ValueError('Require completed recorded splits or the isolated paper curriculum')
+
+
 def checked_opening(row):
     """Check the supplied past without using recorded answers or future moves."""
     if (not isinstance(row, dict) or
@@ -43,10 +63,7 @@ def prepare_openings(data, output, *, split='validation', count=32, plies=12, se
     bound = BoundInputs()
     parent_path, source = data / 'manifest.json', data / f'{split}.jsonl'
     parent = bound.json(parent_path)
-    if (parent.get('status') != 'complete' or
-            parent.get('kind') != 'isolated_recorded_engine_four_course_questions' or
-            type(parent.get('config', {}).get('split_seed')) is not int):
-        raise ValueError('Require the completed isolated recorded curriculum source')
+    split_seed = source_split_seed(parent)
     expected = [item for name, item in parent.get('outputs', {}).items()
                 if Path(name).resolve() == source.resolve()]
     if len(expected) != 1:
@@ -60,6 +77,8 @@ def prepare_openings(data, output, *, split='validation', count=32, plies=12, se
             rows_read += 1
             if row.get('split') != split:
                 raise ValueError('Protected source contains a different split')
+            if split_seed is None and row.get('task_profile') != 'paper_xiangqi_v1':
+                raise ValueError('Paper opening sources must preserve their declared task profile')
             if (row.get('augmentation_parent') or row.get('stage') != 'static_current' or
                     row.get('recorded_source_kind') not in MATCH_KINDS):
                 excluded['derived_or_noncurrent_or_nonmatch_rows'] += 1
@@ -67,7 +86,7 @@ def prepare_openings(data, output, *, split='validation', count=32, plies=12, se
             game = row.get('game_id')
             if (not isinstance(game, str) or not game.startswith('recorded-') or
                     row.get('recorded_source_game_id') != game or
-                    assigned_split(game, parent['config']['split_seed']) != split or
+                    split_seed is not None and assigned_split(game, split_seed) != split or
                     not isinstance(row.get('id'), str) or not row['id'] or
                     not isinstance(row.get('moves'), list) or
                     any(not isinstance(m, str) for m in row['moves']) or
@@ -175,9 +194,8 @@ def load_openings(directory):
     parent = bound.json(parent_path)
     expected = [item for name, item in parent.get('outputs', {}).items()
                 if Path(name).resolve() == source.resolve()]
-    if (parent.get('status') != 'complete' or
-            parent.get('kind') != 'isolated_recorded_engine_four_course_questions' or
-            expected != [proof['inputs'][str(source)]]):
+    split_seed = source_split_seed(parent)
+    if expected != [proof['inputs'][str(source)]]:
         raise ValueError('Opening suite differs from its completed curriculum source')
     by_source = {r.get('source_row_id'): r for r in rows}
     if len(by_source) != len(rows) or any(not isinstance(k, str) or not k for k in by_source):
@@ -187,6 +205,8 @@ def load_openings(directory):
         scanned += 1
         if original.get('split') != proof['config']['split']:
             raise ValueError('Protected source contains a different split')
+        if split_seed is None and original.get('task_profile') != 'paper_xiangqi_v1':
+            raise ValueError('Paper opening sources must preserve their declared task profile')
         key = original.get('id')
         if key not in by_source:
             continue

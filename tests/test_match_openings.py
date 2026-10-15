@@ -48,6 +48,19 @@ def pack(tmp_path, split='validation'):
     return data, out
 
 
+def paper_source(root, split='test'):
+    data = make_source(root, [dict(row, task_profile='paper_xiangqi_v1')
+                              for row in source_rows(split)], split)
+    path = data / 'manifest.json';proof = json.loads(path.read_text())
+    proof.update(kind='paper_xiangqi_four_course_questions', config={'task_profile': 'paper_xiangqi_v1'},
+                 verification={'game_split_assigned_before_questions': True,
+                               'prior_corpus_isolation_verified': True,
+                               'independent_test_used_for_training_or_selection': False,
+                               'split_verification': {'game_overlap': 0, 'root_and_future_overlap': 0}})
+    atomic_json(path, proof)
+    return data
+
+
 def rebind_output(out, rows):
     write_jsonl(out / 'openings.jsonl', rows)
     proof = json.loads((out / 'manifest.json').read_text())
@@ -148,6 +161,64 @@ def test_loader_refuses_unfinished_suite(tmp_path):
     proof = json.loads((out / 'manifest.json').read_text());proof['status'] = 'failed'
     atomic_json(out / 'manifest.json', proof)
     with pytest.raises(ValueError, match='completed'):load_openings(out)
+
+
+@pytest.mark.parametrize('split', ['validation', 'test'])
+def test_openings_accept_completed_paper_curriculum_with_inherited_game_ownership(tmp_path, split):
+    data = paper_source(tmp_path / 'data', split);out = tmp_path / 'suite'
+    # The paper producer can inherit a prior corpus's ownership rather than hash
+    # the new canonical identity again. Preserve that already verified split.
+    path = data / f'{split}.jsonl';rows = load_jsonl(path)
+    other = 'test' if split == 'validation' else 'validation'
+    rows[0]['game_id'] = rows[0]['recorded_source_game_id'] = source_rows(other)[0]['game_id']
+    write_jsonl(path, rows)
+    parent = json.loads((data / 'manifest.json').read_text())
+    parent['outputs'][str(path)] = {'sha256': digest(path), 'bytes': path.stat().st_size}
+    atomic_json(data / 'manifest.json', parent)
+    prepare_openings(data, out, split=split, count=3, plies=2)
+    selected, proof = load_openings(out)
+    assert len(selected) == 3 and {r['split'] for r in selected} == {split}
+    assert rows[0]['game_id'] in {r['game_id'] for r in selected}
+    assert proof['verification']['source_import_and_global_split_proof_reused']
+    assert all('answer' not in r and 'future_moves' not in r for r in selected)
+
+
+@pytest.mark.parametrize('change', ['status', 'profile', 'isolation', 'test_used',
+                                    'game_overlap', 'position_overlap'])
+def test_incomplete_or_nonisolated_paper_sources_are_rejected_before_output_creation(tmp_path, change):
+    data = paper_source(tmp_path / 'data');path = data / 'manifest.json'
+    proof = json.loads(path.read_text())
+    if change == 'status':proof['status'] = 'failed'
+    if change == 'profile':proof['config']['task_profile'] = 'other'
+    if change == 'isolation':proof['verification']['prior_corpus_isolation_verified'] = False
+    if change == 'test_used':proof['verification']['independent_test_used_for_training_or_selection'] = True
+    if change in {'game_overlap', 'position_overlap'}:
+        key = 'game_overlap' if change == 'game_overlap' else 'root_and_future_overlap'
+        proof['verification']['split_verification'][key] = 1
+    atomic_json(path, proof)
+    with pytest.raises(ValueError):prepare_openings(data, tmp_path / 'suite', split='test', count=2, plies=2)
+    assert not (tmp_path / 'suite').exists()
+
+
+def test_paper_source_row_profile_is_checked_even_after_rebinding_its_hash(tmp_path):
+    data = paper_source(tmp_path / 'data');path = data / 'test.jsonl'
+    rows = load_jsonl(path);rows[0]['task_profile'] = 'other';write_jsonl(path, rows)
+    proof = json.loads((data / 'manifest.json').read_text())
+    proof['outputs'][str(path)] = {'sha256': digest(path), 'bytes': path.stat().st_size}
+    atomic_json(data / 'manifest.json', proof)
+    with pytest.raises(ValueError, match='profile'):
+        prepare_openings(data, tmp_path / 'suite', split='test', count=2, plies=2)
+
+
+def test_loader_rechecks_paper_isolation_after_rebinding_parent_bytes(tmp_path):
+    data = paper_source(tmp_path / 'data');out = tmp_path / 'suite'
+    prepare_openings(data, out, split='test', count=2, plies=2)
+    parent = data / 'manifest.json';proof = json.loads(parent.read_text())
+    proof['verification']['split_verification']['game_overlap'] = 1;atomic_json(parent, proof)
+    manifest_path = out / 'manifest.json';suite = json.loads(manifest_path.read_text())
+    suite['inputs'][str(parent)] = {'sha256': digest(parent), 'bytes': parent.stat().st_size}
+    atomic_json(manifest_path, suite)
+    with pytest.raises(ValueError):load_openings(out)
 
 
 def test_match_cli_runs_each_recorded_opening_as_both_colors_at_each_budget(tmp_path, monkeypatch):
