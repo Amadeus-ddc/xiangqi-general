@@ -16,6 +16,7 @@ from .foundation_preflight import clean_recipe
 from .gated_curriculum import raw_gate_from_artifacts
 from .modeling import foundation_state_summary
 from .select_checkpoint import snapshot_checkpoint
+from .verified_inputs import input_session_from_environment
 
 
 def verify_pending(artifacts):
@@ -187,13 +188,18 @@ def run_curriculum(recipe_path, *, resume=False, prepare_only=False):
     return completed
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', required=True)
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--prepare-only', action='store_true', help='Verify inherited courses and prepare the next config without GPU training')
     args = parser.parse_args()
     run_curriculum(args.config, resume=args.resume, prepare_only=args.prepare_only)
+
+
+def main():
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':

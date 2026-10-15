@@ -380,6 +380,8 @@ python scripts/freeze_run.py --output runs/recorded-foundation-clean-launch-v2/s
   python -m xqgeneral.validation_curriculum --config configs/foundation-human-engine-clean-v3.json
 ```
 
+大规模固定输入可通过[已核验输入哈希复用](docs/VERIFIED_INPUT_DIGESTS.md)减少分段续训时的重复读盘。该模式显式接收完整生产者证明，保留输入变更检查，并单独记录复用与实际哈希；训练配方和选模规则沿用原合同。
+
 相同冻结入口可加 `--resume` 恢复已完成课程和当前门的精确优化器合同；配置、源码或输入变动须使用新目录。`--prepare-only` 核验已完成／导入课程并准备下一门配置，不启动新的课程训练。课程交接重新核验完整候选历史、实际最佳权重、原始题目与答案、逐门父权重和全部四门完成状态；原始参考目标未达标的事实保留。新讲解／能力队列使用 `configs/explanation-sft-clean-v2.json` 和 `configs/evaluation-clean-sft-v2.json`，数据及预算不变，仍等待四门完成。
 
 旧 v4 继承旧四门权重，首门实际更新 210 步后按用户要求停止，未到首次问答验收；原数据、源码、特征和日志保留。其 1155116 条规则题的完整历史、未来隔离、特征及原生答案抽样已再次读回，见 `evidence/foundation-curriculum-v4-training-readback.json`。这些引擎来源题将与经过规则检查的多样真实棋谱合并，合并后重新预检，不改写旧实验输入。

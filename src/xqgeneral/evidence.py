@@ -5,11 +5,11 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from .verified_inputs import digest_with_verified_inputs, input_digest_execution
 
 
 def digest(path):
-    with Path(path).open("rb") as handle:
-        return hashlib.file_digest(handle, "sha256").hexdigest()
+    return digest_with_verified_inputs(path)
 
 
 def file_signature(path):
@@ -66,7 +66,11 @@ def code_identity():
 def manifest(kind, config, inputs=(), outputs=(), verification=None, code=None):
     def artifacts(paths):
         return {str(p): {"sha256": digest(p), "bytes": Path(p).stat().st_size} for p in paths}
-    return {"schema_version": 1, "kind": kind, "status": "complete",
+    result = {"schema_version": 1, "kind": kind, "status": "complete",
             "evidence_state": "reconstructed_baseline", "created_utc": datetime.now(timezone.utc).isoformat(),
             "config": config, "code": code or code_identity(), "inputs": artifacts(inputs),
             "outputs": artifacts(outputs), "verification": verification or {}}
+    execution = input_digest_execution()
+    if execution:
+        result['runtime_execution'] = execution
+    return result
