@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "kind": "recorded_search_recovery_queues_actual_start",
+  "status": "data_preparation_running_pilot_waiting_for_full_sft_baseline",
+  "captured_utc": "2026-10-15T06:14:45.957244+00:00",
+  "old_failed_inputs_and_pilot_preserved": true,
+  "original_source_modules": 98,
+  "unchanged_original_modules": 97,
+  "only_changed_module": "recorded_search_inputs.py",
+  "completed_course_footprints_and_used_histories_reused": true,
+  "started_after_actual_new_curriculum_updates": true,
+  "queues": {
+    "fresh-paper-search-inputs-v2": {
+      "state": {
+        "status": "unused_recorded_training_roots",
+        "gpu_or_models_loaded": false,
+        "student_search_labels_generated": 0
+      },
+      "controller_and_entry_processes_live": true,
+      "plan_sha256": "04bb59a0bcb03c1e04f948a665fed150bf4fff02c11b287f314111004bd340b3",
+      "entry_sha256": "ed139fe18199f766ff4b739902a7f8e3424d32936c430f29c810912a7b730de0",
+      "source_revision": "recorded-search-paths-v1-derived-from-frozen-98",
+      "actual_execution_modules": 98,
+      "student_search_labels_generated": 0,
+      "formal_distillation_started": false
+    },
+    "fresh-paper-search-pilot-v2": {
+      "state": {
+        "status": "waiting_for_actual_clean_sft_baseline_and_unused_data",
+        "owned_handles": {
+          "clean_sft_baseline": "1730010 0",
+          "unused_search_data": "3148698 0"
+        },
+        "source_observed_utc": "2026-10-15T06:14:29Z",
+        "student_or_teacher_loaded": false,
+        "pilot_started": false,
+        "formal_distillation_started": false
+      },
+      "controller_and_entry_processes_live": true,
+      "plan_sha256": "2c0bce88e07230600421506da874ef0ba57450905d2488b85e36165b98cf6652",
+      "entry_sha256": "5b1321e472f178eb9f8062e88411f8ea4e08b6b18d55fe4574d2e8842ef722e4",
+      "source_revision": "recorded-search-paths-v1-derived-from-frozen-98",
+      "actual_execution_modules": 98,
+      "student_search_labels_generated": 0,
+      "formal_distillation_started": false
+    }
+  },
+  "student_or_teacher_loaded_by_new_queues": false,
+  "student_search_labels_generated": 0,
+  "formal_distillation_started": false,
+  "pilot_size_is_not_full_distillation": true,
+  "overall_goal_complete": false
+}
