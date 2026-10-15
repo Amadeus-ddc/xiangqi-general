@@ -1,6 +1,6 @@
 # Xiangqi General（象棋将军）
 
-[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)已通过；1024-token输入下恢复结果一致，显存分配峰值约50.75 GiB。正式语料的[完整预检](evidence/paper-course-full-preflight-complete-v1.json)及[完整来源／缓存／基座读回](evidence/paper-course-full-source-readback-complete-v1.json)均已完成，训练／验证最大长度为327词元。[准备交接](evidence/verified-completed-preparation-handoff-v1.json)及正式四卡持续容量检查已通过；[第一课第4000步真实验证](docs/PAPER_SECOND_RAW_VALIDATION.md)的答案内容／标签正确率为65.71%（2000步38.86%），原始全文匹配率为41.29%，最弱题型32%；700题及全部可训练权重已独立复核。[同配置四卡续训](evidence/paper-course-v5-second-validation-resumption-v1.json)已确认至4021步。第一课继续训练，四课、讲解、蒸馏及最终验收仍待完成。
+[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)及完整语料预检、来源／缓存／基座读回和正式四卡持续容量检查已通过。[第一课第6000步真实验证](docs/PAPER_THIRD_RAW_VALIDATION.md)的答案内容／标签正确率为600/700（85.71%，4000步65.71%，2000步38.86%），原始全文匹配403/700（57.57%），最弱题型为子力统计73%。定位79%、对角线87%、横行74%，均较4000步改善；子力统计由76%降至73%，保留这一下降。700份原始回答及全部可训练权重已独立复核。[同配置四卡续训](evidence/paper-course-v5-third-validation-resumption-v1.json)已确认至6026步。第一课继续训练，四课、讲解、蒸馏及最终验收仍待完成。
 
 当前执行进度见[状态记录](STATUS.md)和[当前模型卡](docs/MODEL_CARD.md)；下文保留各开发阶段的实现与验证记录。
 
