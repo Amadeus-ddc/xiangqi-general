@@ -1,6 +1,6 @@
 # Xiangqi General（象棋将军）
 
-[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)已通过；1024-token输入下恢复结果一致，显存分配峰值约50.75 GiB。正式语料的[完整预检](evidence/paper-course-full-preflight-complete-v1.json)及[完整来源／缓存／基座读回](evidence/paper-course-full-source-readback-complete-v1.json)均已完成，训练／验证最大长度为327词元。[准备交接](evidence/verified-completed-preparation-handoff-v1.json)及正式四卡持续容量检查已通过；[第一课第2000步真实验证](docs/PAPER_FIRST_RAW_VALIDATION.md)的答案标签正确率为38.86%，原始全文匹配率为24.43%；700题已独立复核。[同配置四卡续训](evidence/paper-course-v5-first-validation-resumption-v1.json)已确认，课程、讲解、蒸馏及最终验收仍待完成。
+[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)已通过；1024-token输入下恢复结果一致，显存分配峰值约50.75 GiB。正式语料的[完整预检](evidence/paper-course-full-preflight-complete-v1.json)及[完整来源／缓存／基座读回](evidence/paper-course-full-source-readback-complete-v1.json)均已完成，训练／验证最大长度为327词元。[准备交接](evidence/verified-completed-preparation-handoff-v1.json)及正式四卡持续容量检查已通过；[第一课第4000步真实验证](docs/PAPER_SECOND_RAW_VALIDATION.md)的答案内容／标签正确率为65.71%（2000步38.86%），原始全文匹配率为41.29%，最弱题型32%；700题及全部可训练权重已独立复核。[同配置四卡续训](evidence/paper-course-v5-second-validation-resumption-v1.json)已确认至4021步。第一课继续训练，四课、讲解、蒸馏及最终验收仍待完成。
 
 当前执行进度见[状态记录](STATUS.md)和[当前模型卡](docs/MODEL_CARD.md)；下文保留各开发阶段的实现与验证记录。
 
@@ -357,13 +357,13 @@ python scripts/freeze_run.py --output runs/planning-selection/source-run -- \
 
 干净主线从 `configs/foundation-human-engine-clean-v2.json` 开始：冻结固定版本的预训练 Px0 专家和官方 Qwen 基座，重新初始化桥接及 105 个棋盘词元，不加载旧课程或讲解权重。解码器不再直接读取完整 FEN 或 90 格字典，棋盘状态通过专家特征进入桥接。论文的四门 SC → DC → SF → DF 本身就是桥接训练，必须依次完成，再从最终课程权重做讲解 SFT。棋谱下载、规则出题和教师标注可以先准备；旧字典配方保留作对照。
 
-当前选模配方为 `configs/foundation-human-engine-clean-v3.json`，输出到新目录。它只导入上述干净第一门至第 7168 步的完整原始验收和冻结源码，不修改或恢复旧优化器；按总正确率、最弱题型、较早步数依次选择，继承第 5632 步的原始权重。每 512 步检查所有已引入题型；三次检查无改善时早停，各门至少执行 3072／4096／2048／6144 步以覆盖预热。步数上限、混合比例及训练率保留。早停次数、最少步数及排序方式是本地选择，不是论文公布的参数；99%／98%／98%／97% 与最弱题型 95% 保留为诊断。第一门原始结果为 97.9167%／94.5313%，旧通过字段仍为假；按最佳验证选择完成该门，不宣称达到原门槛。
+旧小宽桥接实验的选模配方为 `configs/foundation-human-engine-clean-v3.json`，输出到新目录。它只导入上述干净第一门至第 7168 步的完整原始验收和冻结源码，不修改或恢复旧优化器；按总正确率、最弱题型、较早步数依次选择，继承第 5632 步的原始权重。每 512 步检查所有已引入题型；三次检查无改善时早停，各门至少执行 3072／4096／2048／6144 步以覆盖预热。步数上限、混合比例及训练率保留。早停次数、最少步数及排序方式是本地选择，不是论文公布的参数；99%／98%／98%／97% 与最弱题型 95% 保留为诊断。第一门原始结果为 97.9167%／94.5313%，旧通过字段仍为假；按最佳验证选择完成该门，不宣称达到原门槛。
 
-论文的训练回放与检查点选择应分别理解：[§3.2 和表 8—9](https://arxiv.org/html/2610.03695v1) 明确旧课混入新课训练、按验证早停并继承最佳权重，未给出新旧课综合选模公式。公开的一条 SmolLM3／Flamingo 配方链每 2000 步评估当门 `val_dataset.arrow`，如[第二门配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage2/flamingo.yaml)。50K／60K／30K／100K 是训练预算；后续配置分别指向 20K／32K／22K／48K 的父权重，最后一项见[初始讲解配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/sol_distill.yaml)。这些初始化字段不是完整停训日志，且该公开链的第三门学习率与论文表 9 不同，不能视为已核验的论文实际训练步数。我们的回放比例沿用论文，综合排序与三次无改善停训属于本地适配。
+论文的训练回放与检查点选择应分别理解：[§3.2 和表 8—9](https://arxiv.org/html/2610.03695v1) 明确旧课混入新课训练、按验证早停并继承最佳权重，未给出新旧课综合选模公式。公开的一条 SmolLM3／Flamingo 配方链每 2000 步评估当门 `val_dataset.arrow`，如[第二门配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/stage2/flamingo.yaml)。50K／60K／30K／100K 是训练预算；后续配置分别指向 20K／32K／22K／48K 的父权重，最后一项见[初始讲解配置](https://github.com/queen-project/queen/blob/c372da22ca75e95c3c79bee8a83c220fc54d0dcb/configs/train/sol_distill.yaml)。这些初始化字段不是完整停训日志，且该公开链的第三门学习率与论文表 9 不同，不能视为已核验的论文实际训练步数。该旧实验的回放比例沿用论文，综合排序与三次无改善停训属于当时的本地适配。当前全宽主线按当门原始问答成绩选模，旧课回放单独报告，见[当前课程配方](docs/PAPER_FOUNDATION_EXPERIMENT.md)。
 
 第二门已在第 8704 步按三次无改善策略结束，并选用第 7168 步最佳权重：582／640 动态题、743／768 静态回放、1325／1408 综合（94.11%）。末次动态题为 590／640（92.19%），完整走法列表 100／128（78.13%），静态回放 726／768（94.53%），综合 1316／1408（93.47%）；相对最佳，动态净增 8 题，静态净减 17 题。十七次同题、原始正确数、原生答案及候选身份已读回，见 `evidence/dynamic-current-seventeenth-raw-validation-v1.json`；更新曲线见 `evidence/dynamic-current-learning-curve-v6.json`，最后完整 512 步平均损失为 0.017760。近期继续训练的动态收益被旧课回落抵消，实际控制器已按原配方交接，没有手动停训或改训练率。
 
-第三门静态未来已在第 8704 步按连续三次无改善策略完成，选中第 7168 步最佳权重，综合原始验证为 2080／2176（95.59%）。前三门已完成，第四门动态未来继续训练及生成复核；实时步数和逐课成绩以 `runs/curriculum-human-engine-clean-v3/state.json`、`dynamic_future/training/training.jsonl` 和 `dynamic_future/selection-progress.json` 为准。此前第 7680 步的完整独立证明保留于 `evidence/static-future-fifteenth-raw-validation-v1.json`。当前课程问答分数尚不证明实际棋力或讲解能力；正式干净 SFT 和搜索蒸馏仍等待四门完成。
+第三门静态未来已在第 8704 步按连续三次无改善策略完成，选中第 7168 步最佳权重，综合原始验证为 2080／2176（95.59%）。该旧实验当时已完成前三门，第四门动态未来继续训练及生成复核；其历史步数和逐课成绩以 `runs/curriculum-human-engine-clean-v3/state.json`、`dynamic_future/training/training.jsonl` 和 `dynamic_future/selection-progress.json` 为准。此前第 7680 步的完整独立证明保留于 `evidence/static-future-fifteenth-raw-validation-v1.json`。当前课程问答分数尚不证明实际棋力或讲解能力；正式干净 SFT 和搜索蒸馏仍等待四门完成。
 
 走法枚举诊断覆盖 19 个检查点、2432 份回答，并重新核验同批 128 个完整历史及原生答案，见 `evidence/curriculum-move-enumeration-diagnostic-v1.json`。第二门末次 28 道错误均有实际漏招或多招；第三门第 1024 步 41 道错误只有 1 道纯顺序问题，炮题净回落 7 道。按棋子／答案长度分组和逐走法精确率只作诊断，保留原始严格评分；这不证明错误原因或实际棋力。这份历史诊断止于第 1024 步；最新三类诊断及原生验证见下文及上文证明。
 
