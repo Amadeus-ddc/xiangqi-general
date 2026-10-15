@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "kind": "fresh_recorded_search_pool_complete_readback",
+  "status": "complete",
+  "captured_utc": "2026-10-15T06:28:10.059439+00:00",
+  "evidence_state": "reconstructed_baseline",
+  "producer_manifest_sha256": "8ee64df8879e34b89ddd16f4a0cb8a0678c1120acb4ecae24a874292244304b3",
+  "independent_reader_manifest_sha256": "e4b6d13fc7c89b0bac102ca7b44cb2d55568f47eae7cf30b10e8a188950f0900",
+  "actual_search_interface_roots": 512,
+  "actual_search_interface_reserved_positions": 3185552,
+  "candidate_training_histories": 187451,
+  "distinct_canonical_training_lines": 38197,
+  "canonical_source_records": 142334,
+  "counts_by_source_declared_kind": {
+    "recorded_human_match": 93135,
+    "recorded_computer_match": 12,
+    "recorded_human_computer_match": 28474,
+    "published_recorded_match": 49168,
+    "recorded_tactical_line": 8911,
+    "recorded_tactical_position": 7751
+  },
+  "counts_by_side": {
+    "black": 89654,
+    "red": 97797
+  },
+  "counts_by_phase_relative_to_supplied_line": {
+    "1": 71459,
+    "2": 80699,
+    "0": 35293
+  },
+  "all_original_candidates_compared_field_for_field": 187451,
+  "canonical_source_files_independently_streamed_and_rehashed": 9,
+  "all_candidate_roots_and_recorded_color_futures_disjoint_from_full_reservations": true,
+  "used_course_and_initial_teacher_games_and_history_keys_excluded": true,
+  "native_selected_supplied_pasts_and_recorded_futures_replayed": 16866,
+  "every_tactical_candidate_natively_replayed_again": true,
+  "every_candidate_natively_replayed_again": false,
+  "full_match_native_sample_per_source_kind_cap": 64,
+  "completed_canonical_native_imports_reused": true,
+  "unknown_pre_fragment_history_reconstructed": false,
+  "canonical_identifiers_include_fragments_and_isolated_positions": true,
+  "full_match_and_fragment_sampling_inclusion_independently_reimplemented": false,
+  "isolated_position_zero_move_inclusion_independently_recomputed": true,
+  "source_module_files_freshly_hashed": 98,
+  "source_revision": "recorded-search-paths-v1-derived-from-frozen-98",
+  "successful_queue_exit_verified": true,
+  "teacher_inference_executed": false,
+  "student_search_labels_generated": 0,
+  "formal_distillation_started": false,
+  "student_benefit_proven": false,
+  "overall_goal_complete": false
+}
