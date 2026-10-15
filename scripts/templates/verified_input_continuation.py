@@ -129,6 +129,28 @@ def pinned(plan):
         if any(ownership[key].get(field) != plan[name].get(field)
                for field in ['pid', 'start_ticks', 'ppid', 'cmdline_sha256']):
             raise ValueError('Original process is not bound by its completed ownership proof')
+    policy = plan.get('handoff_policy', 'pause')
+    if policy not in {'pause', 'retire_completed_restartable_preparation'}:
+        raise ValueError('Unknown preparation handoff policy')
+    if policy != 'pause':
+        path = plan.get('restartable_preparation_admission')
+        if not path or path not in plan['bound_files'] or not Path(path).resolve().is_relative_to(project):
+            raise ValueError('Restartable preparation retirement requires a bound admission')
+        admission = read(path)
+        if (admission.get('kind') != 'completed_restartable_preparation_parent' or
+                admission.get('status') != 'complete' or
+                admission.get('preparation_only_no_model_weights_or_formal_output') is not True or
+                admission.get('original_parent') != plan['original_parent'] or
+                admission.get('original_entry_sha256') != sha(plan['original_entry']) or
+                admission.get('complete_readback_sha256') != sha(plan['readback_manifest'])):
+            raise ValueError('Restartable preparation admission differs from its completed owner')
+        stages = admission.get('completed_stage_manifest_sha256', {})
+        if not {plan['preflight_manifest'], plan['readback_manifest']} <= set(stages):
+            raise ValueError('Restartable preparation admission lacks completed stage proofs')
+        for name, expected in stages.items():
+            if (not Path(name).resolve().is_relative_to(project) or sha(name) != expected or
+                    read(name).get('status') != 'complete'):
+                raise ValueError('Restartable preparation stage proof changed')
 
 
 def validate_readback(plan):
@@ -181,6 +203,17 @@ def acquire_parent(plan, processes):
         raise ValueError('Cannot adopt a missing or foreign-stopped parent')
     if len(processes.tree(plan['original_parent'])) != 1:
         raise ValueError('Original parent still owns a child')
+    if plan.get('handoff_policy') == 'retire_completed_restartable_preparation':
+        if Path(plan['paper_output']).exists() or validate_readback(plan) is None:
+            raise ValueError('Only completed preparation without formal output may retire early')
+        def record_retirement(value):
+            if value['released'] or value['holds'] or value.get('preparation_handoff_committed'):
+                raise ValueError('Preparation ownership was already acquired or released')
+            value.update(preparation_handoff_committed=True, preparation_retirement_intent=parent)
+        change(plan, record_retirement)
+        retire(processes, parent)
+        change(plan, lambda value: value.update(original_preparation_retired=True))
+        return
     def record(value):
         if value['released'] or value['holds']:
             raise ValueError('Continuation pause was already acquired or released')
@@ -188,15 +221,16 @@ def acquire_parent(plan, processes):
     change(plan, record)
     if not processes.send(parent, signal.SIGSTOP):
         raise ValueError('Original parent changed before its owned pause')
-    deadline = time.monotonic() + 10
+    write(Path(plan['run']) / 'state.json', {'status': 'waiting_for_owned_parent_pause_confirmation',
+                                           'original_parent': parent, 'utc': now()})
     while True:
         actual = processes.same(parent)
         if actual is None or actual['state'] in {'Z', 'X'}:
             raise ValueError('Original parent ended before pause confirmation')
         if actual['state'] == 'T':
             break
-        if time.monotonic() >= deadline:
-            raise TimeoutError('Owned parent pause was not confirmed')
+        # NAS I/O can delay a group stop. Keep the owned intent until confirmed;
+        # the independent watchdog cancels it if this controller actually dies.
         time.sleep(.02)
     if len(processes.tree(parent)) != 1:
         raise ValueError('A child appeared during parent pause acquisition')
@@ -207,10 +241,7 @@ def retire(processes, expected):
         return
     if not processes.same(expected, parent=False) or not processes.send(expected, signal.SIGKILL):
         raise ValueError('Owned retirement identity changed')
-    deadline = time.monotonic() + 10
     while not terminal(processes, expected):
-        if time.monotonic() >= deadline:
-            raise TimeoutError('Owned process did not retire')
         time.sleep(.02)
 
 
@@ -219,6 +250,9 @@ def recover(plan, reason):
     def restore(value):
         if value['released']:
             return
+        if value.get('preparation_handoff_committed'):
+            retire(processes, value['preparation_retirement_intent'])
+            value['original_preparation_retired'] = True
         if value['committed']:
             for expected in value.get('retire_intents', []):
                 retire(processes, expected)
@@ -295,9 +329,11 @@ class OriginalCalls:
                 raise ValueError('Worker launch was released before registration')
             if prepare and not value['committed']:
                 processes = helper(plan)
-                if (not value['holds'] or any(not processes.same(p) or processes.same(p)['state'] != 'T'
-                                             for p in value['holds']) or Path(plan['paper_output']).exists()):
-                    raise ValueError('Fresh preparation output requires the confirmed owned parent pause')
+                paused = bool(value['holds']) and all(processes.same(p) and processes.same(p)['state'] == 'T'
+                                                     for p in value['holds'])
+                retired = value.get('preparation_handoff_committed') and terminal(processes, plan['original_parent'])
+                if not (paused or retired) or Path(plan['paper_output']).exists():
+                    raise ValueError('Fresh preparation output requires exclusive predecessor ownership')
                 value['preparation_output_owned'] = True
             value.update(pending_worker=request_id, pending_worker_sha256=sha(request), worker=None)
         change(plan, pending)
@@ -343,11 +379,13 @@ def worker(plan, request_path):
 
 def commit_capacity(plan, processes):
     def commit(value):
-        if value['released'] or value['committed'] or not value['holds']:
+        retired = value.get('preparation_handoff_committed') and terminal(processes, plan['original_parent'])
+        if value['released'] or value['committed'] or (not value['holds'] and not retired):
             raise ValueError('Takeover cannot commit without its confirmed owned parent')
         if any(not processes.same(p) or processes.same(p)['state'] != 'T' for p in value['holds']):
             raise ValueError('Owned parent pause changed')
-        value.update(committed=True, retire_intents=list(value['holds']))
+        intents = [value['preparation_retirement_intent']] if retired else list(value['holds'])
+        value.update(committed=True, retire_intents=intents)
     lease = change(plan, commit)
     for expected in lease['retire_intents']:
         retire(processes, expected)
@@ -423,10 +461,13 @@ def coordinate(plan, *, resume_committed=False):
     run = Path(plan['run'])
     processes = helper(plan)
     lease_path = run / 'lease.json'
+    previous = {}
     if resume_committed:
         previous = read(lease_path)
-        if (not previous['committed'] or not previous['released'] or not terminal(processes, previous['controller']) or
-                not terminal(processes, plan['original_parent']) or not Path(plan['paper_output']).exists()):
+        owned = previous['committed'] or previous.get('preparation_handoff_committed')
+        output_matches = Path(plan['paper_output']).exists() == bool(previous['committed'])
+        if (not owned or not previous['released'] or not terminal(processes, previous['controller']) or
+                not terminal(processes, plan['original_parent']) or not output_matches):
             raise ValueError('Resume requires a released committed owner, terminal original parent and preserved curriculum')
         worker_state = previous.get('worker')
         if worker_state and any(not terminal(processes, worker_state[key]) for key in ['bootstrap', 'execution']):
@@ -445,7 +486,10 @@ def coordinate(plan, *, resume_committed=False):
         raise ValueError('Preserve an existing continuation; use --resume-committed only after committed-owner recovery')
     controller = processes.identity(os.getpid())
     write(lease_path, {'controller': controller, 'holds': [], 'worker': None,
-        'committed': resume_committed, 'retirement_complete': resume_committed, 'released': False,
+        'committed': bool(previous.get('committed')), 'retirement_complete': resume_committed, 'released': False,
+        'preparation_handoff_committed': bool(previous.get('preparation_handoff_committed')),
+        'preparation_retirement_intent': previous.get('preparation_retirement_intent'),
+        'original_preparation_retired': bool(previous.get('original_preparation_retired')),
         'output_initially_absent': not Path(plan['paper_output']).exists(), 'resume_committed': resume_committed,
         'attempt_id': uuid.uuid4().hex})
     try:

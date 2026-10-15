@@ -1,10 +1,10 @@
 # Xiangqi General（象棋将军）
 
-[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)已通过；1024-token输入下恢复结果一致，显存分配峰值约50.75 GiB。正式语料的[完整预检](evidence/paper-course-full-preflight-complete-v1.json)已于2026-10-15 05:27（北京时间）完成，训练／验证最大长度为327词元。来源／缓存／基座独立读回和正式启动时的持续四卡容量门槛仍待完成，正式新四课仍为0步。
+[实际输入长度的四卡容量控制](docs/PAPER_CURRICULUM_CAPACITY.md#按实际输入长度验证容量)已通过；1024-token输入下恢复结果一致，显存分配峰值约50.75 GiB。正式语料的[完整预检](evidence/paper-course-full-preflight-complete-v1.json)及[完整来源／缓存／基座读回](evidence/paper-course-full-source-readback-complete-v1.json)均已完成，训练／验证最大长度为327词元。[准备交接](evidence/verified-completed-preparation-handoff-v1.json)已完成，输入复用证明已发布，正在原冻结入口内继续准备；正式四卡持续容量检查及课程更新仍待完成，正式新四课仍为0步。
 
 当前执行进度见[状态记录](STATUS.md)和[当前模型卡](docs/MODEL_CARD.md)；下文保留各开发阶段的实现与验证记录。
 
-完整读回后的[输入哈希复用接续模板](docs/VERIFIED_INPUT_CONTINUATION.md)已通过完整1557项检查并接入实际等待队列。它等待完整读回、沿用原四卡容量检查，并提供进程所有权、失败回滚及同合同恢复控制；正式新四课仍须以实际更新记录确认启动，见[接续证据](evidence/verified-input-continuation-real-v1.json)。
+完整读回后的[输入哈希复用接续模板](docs/VERIFIED_INPUT_CONTINUATION.md)已通过完整1568项检查及27项进程控制，并完成实际准备交接。它支持默认暂停和已完成准备的显式退役交接，沿用原四卡容量检查；准备所有权与训练许可分别提交，正式开训以实际更新记录确认，见[交接证据](evidence/verified-completed-preparation-handoff-v1.json)。
 
 源数据读回可显式[复用同一题库已完成的全量原生复核](docs/PAPER_READBACK_REUSE.md)，重新核验所有绑定文件的哈希并保留特征／基座检查，减少整库重复重建。默认仍重新生成，正式新课程与模型质量仍待验收。
 
