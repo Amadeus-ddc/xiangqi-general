@@ -1,0 +1,78 @@
+{
+  "kind": "paper_course_first_raw_validation_readback",
+  "status": "complete",
+  "stage": "static_current",
+  "actual_training_updates": 2000,
+  "continuous_updates_from_fresh_initialization": true,
+  "trainable_fp32_parameters": 671806496,
+  "all_adapter_parameters_finite_and_bitwise_equal_to_actual_source_checkpoint": true,
+  "first_segment_all_losses_and_gradient_norms_finite": true,
+  "captured_training_prefix_sha256": "d2ac5c6eeef68e7690e59fcdd5eb1cad9f66ebbd76dd22113deff5e2f635aee2",
+  "checkpoint_sha256": "41170934d2c08524bf20731153ea48c73dc4b36ae12e8e7152e307d221c0fb07",
+  "snapshot_sha256": "0dcac9eda219d24787b248dd6a1fba3788a1af96b014be0ff6b84e667b0de306",
+  "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "actual_gpu_source_modules": 89,
+  "all_700_raw_predictions_independently_regraded": true,
+  "exact_predeclared_questions_order_and_variants_verified": true,
+  "raw_validation_metrics": {
+    "examples": 700,
+    "accuracy": 0.38857142857142857,
+    "by_task": {
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 0.53
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.38
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 0.34
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 0.2
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.3
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 0.71
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 0.26
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.38857142857142857,
+    "raw_exact_correct_rate": 0.24428571428571427,
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 318.3340489314869
+  },
+  "minimum_task_accuracy": 0.2,
+  "correct_by_task": {
+    "counts": 53,
+    "diagonal": 38,
+    "file": 34,
+    "locate": 20,
+    "materials": 30,
+    "piece": 71,
+    "rank": 26
+  },
+  "first_selection_eligible_step": 4000,
+  "first_course_minimum_stopping_step": 20000,
+  "four_courses_completed": false,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coaching_proven": false
+}
