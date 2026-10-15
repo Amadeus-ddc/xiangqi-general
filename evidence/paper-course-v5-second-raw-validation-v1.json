@@ -1,0 +1,125 @@
+{
+  "kind": "paper_course_second_raw_validation_readback",
+  "status": "complete",
+  "stage": "static_current",
+  "actual_training_updates": 4000,
+  "continuous_updates_from_fresh_initialization": true,
+  "trainable_fp32_parameters": 671806496,
+  "all_adapter_parameters_finite_and_bitwise_equal_to_actual_source_checkpoint": true,
+  "first_4000_updates_all_losses_and_gradient_norms_finite": true,
+  "captured_training_prefix_sha256": "ae2efb5276e0f11cddc9ca0d27ea145102e7246ea6f972acf3b2f659a589d0a7",
+  "checkpoint_sha256": "53e3bff9563f4ed7d9d0cbe517b110722c40bb572491dd22865d1d664fd82f64",
+  "snapshot_sha256": "c35f5e9de7a3ad8e19fd1e53d3b3c6c5c5dfc0337f5b885ee04197b7b545799a",
+  "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "actual_gpu_source_modules": 89,
+  "all_700_raw_predictions_independently_regraded": true,
+  "exact_predeclared_questions_order_and_variants_verified": true,
+  "raw_validation_metrics": {
+    "examples": 700,
+    "accuracy": 0.6571428571428571,
+    "by_task": {
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 0.84
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.41
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 0.82
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 0.32
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.76
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 0.96
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 0.49
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.6571428571428571,
+    "raw_exact_correct_rate": 0.41285714285714287,
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 296.1732788551599
+  },
+  "comparison_with_step_2000": {
+    "from_step": 2000,
+    "to_step": 4000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40b058e9fdca1ecb2756ae023bb5855775ff8748551ed10a1385d82fabcd59a0",
+    "accuracy_change": 0.26857142857142857,
+    "canonical_tag_correct_rate_change": 0.26857142857142857,
+    "raw_exact_correct_rate_change": 0.1685714285714286,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.53,
+        "to_accuracy": 0.84,
+        "change": 0.30999999999999994
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.38,
+        "to_accuracy": 0.41,
+        "change": 0.02999999999999997
+      },
+      "static_current/file": {
+        "from_accuracy": 0.34,
+        "to_accuracy": 0.82,
+        "change": 0.4799999999999999
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.2,
+        "to_accuracy": 0.32,
+        "change": 0.12
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.3,
+        "to_accuracy": 0.76,
+        "change": 0.46
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.71,
+        "to_accuracy": 0.96,
+        "change": 0.25
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.26,
+        "to_accuracy": 0.49,
+        "change": 0.22999999999999998
+      }
+    }
+  },
+  "same_recipe_resume_from_2000_and_exact_epoch_batch_order_verified": true,
+  "minimum_task_accuracy": 0.32,
+  "correct_by_task": {
+    "counts": 84,
+    "diagonal": 41,
+    "file": 82,
+    "locate": 32,
+    "materials": 76,
+    "piece": 96,
+    "rank": 49
+  },
+  "first_selection_eligible_step": 4000,
+  "first_course_minimum_stopping_step": 20000,
+  "four_courses_completed": false,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coaching_proven": false
+}
