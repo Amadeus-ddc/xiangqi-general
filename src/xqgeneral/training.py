@@ -20,6 +20,7 @@ from .board_tokens import decode_board_text, encode_board_text
 from .finite_training import data_profile, prepare_finite_epochs
 from .training_index import IndexedTrainingRows, index_paths, training_row_indexes
 from .feature_store import FeatureStore, feature_paths, gather_features, is_feature_store, open_feature_cache
+from .verified_inputs import input_digest_execution, input_session_from_environment
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
@@ -270,7 +271,7 @@ def compatible_resume(saved, requested):
             raise ValueError('Resume bridge architecture or attention heads differ; initialize a new experiment instead')
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='configs/pilot.json')
     parser.add_argument('--resume')
@@ -400,7 +401,7 @@ def main():
         initial_loss = resume['initial_loss'] if resume else best_loss
         atomic_json(dest / 'execution.json', {'code': execution_code, 'input_hashes': input_hashes,
                                             'resumed_from_step': begin, 'initial_loss': initial_loss,
-                                            'compute_contract': compute_contract})
+                                            'compute_contract': compute_contract, **input_digest_execution()})
         if finite_epochs is not None:
             atomic_json(dest / 'training_data.json', finite_epochs.contract())
         handle = (dest / 'training.jsonl').open('a' if resume else 'w')
@@ -587,6 +588,11 @@ def main():
     if world > 1:
         dist.barrier()
         dist.destroy_process_group()
+
+
+def main():
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':

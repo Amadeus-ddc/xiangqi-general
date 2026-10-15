@@ -10,6 +10,7 @@ from .evidence import atomic_json, load_jsonl, manifest, write_jsonl
 from .curriculum_data import STAGES
 from .course_tasks import PAPER_PROFILE, grade_answer, row_profile
 from .feature_store import feature_paths
+from .verified_inputs import input_session_from_environment
 
 
 def balanced_rows(rows, per_task, seed, stages=None):
@@ -61,7 +62,7 @@ def prediction_record(row, answer):
     return result
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--checkpoint', required=True)
     parser.add_argument('--data', default='data/research-v1')
@@ -120,6 +121,11 @@ def main():
     atomic_json(dest / 'manifest.json', manifest('balanced_board_qa', vars(args),
                 [args.checkpoint, path, *feature_paths(args.features)], [dest / 'predictions.jsonl', dest / 'metrics.json'], proof))
     print(json.dumps(proof), flush=True)
+
+
+def main():
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':
