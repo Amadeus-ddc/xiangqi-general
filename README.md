@@ -14,7 +14,7 @@
 
 正式课程的四卡容量已实测：全局批量 256、微批量 4、完整 2048 token，连续两次更新与中断恢复一致，rank 0 分配显存峰值约 79.87 GiB。原配方可用，新课程仍在准备语料；见[容量证据与边界](docs/PAPER_CURRICULUM_CAPACITY.md)。
 
-后续搜索新增 22714 盘真实对局、1333655 个半回合，全部原始记录与完整原生历史已独立复核。候选准备等待新课程数据的全量复核后共同隔离九份来源；当前没有新增学生标签或模型训练。见[新增棋谱与接入流程](docs/PUBLIC_RECORDED_SEARCH_SOURCES.md)。
+后续搜索的[完整候选池](evidence/fresh-recorded-search-pool-complete-v2.json)已准备并独立读回：187451条候选历史，来自38197条对局／棋谱线／独立局面记录。正式搜索接口已核验512根及完整尾部；神经标签产量仍等待新四课、完整初始讲解和评测基线后的实际搜索量测。来源及边界见[新增棋谱与接入流程](docs/PUBLIC_RECORDED_SEARCH_SOURCES.md)。
 
 将 [Queen 论文](https://arxiv.org/abs/2610.03695v1) 的棋类专家与语言模型桥接路线迁移到中国象棋，目标是同时提供强走法和可核对的中文讲解。当前能力与实测限制见 [STATUS.md](STATUS.md)，模型用途与评测边界见 [模型说明](docs/MODEL_CARD.md)。
 
