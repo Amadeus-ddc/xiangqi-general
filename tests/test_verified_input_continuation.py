@@ -9,9 +9,12 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 import time
+import uuid
+from types import SimpleNamespace
 
 import pytest
 
@@ -256,12 +259,154 @@ def await_capacity(indices, threshold, state, phase, observations):
     time.sleep(2.03)
     yield dict(plan=plan, module=module, processes=processes, run=run, data=data, output=output,
                original=original, reader=reader, readback=readback_value, proof_output=proof_output,
-               refresh=refresh, start=start, sleeper=sleeper, children=children, recipe=recipe)
+               refresh=refresh, start=start, sleeper=sleeper, children=children, recipe=recipe, bound_paths=bound)
 
 
 def read_lease(case):
     path = case['run'] / 'lease.json'
     return json.loads(path.read_text()) if path.exists() else None
+
+
+def test_owned_pause_waits_for_delayed_disk_io_stop_confirmation(case, monkeypatch):
+    # Signal a real isolated process; model delayed kernel stop acknowledgement.
+    # The virtual clock crosses the former ten-second deadline immediately.
+    module, processes = case['module'], case['processes']
+    save(case['run'] / 'lease.json', dict(released=False, committed=False, holds=[], worker=None))
+    sent, pending_observations = False, []
+
+    def send(expected, kind):
+        nonlocal sent
+        result = processes.send(expected, kind)
+        if kind == signal.SIGSTOP:
+            sent = True
+        return result
+
+    def same(expected):
+        actual = processes.same(expected)
+        if sent and actual is not None and len(pending_observations) < 3:
+            pending_observations.append(actual)
+            return dict(actual, state='D')
+        return actual
+
+    ticks = iter([0, 11, 12, 13, 14])
+    monkeypatch.setattr(module, 'time', SimpleNamespace(
+        monotonic=lambda: next(ticks), sleep=lambda seconds: time.sleep(.01)))
+    delayed = SimpleNamespace(same=same, send=send, tree=processes.tree)
+    module.acquire_parent(case['plan'], delayed)
+    assert len(pending_observations) == 3
+    assert processes.same(case['original'])['state'] == 'T'
+    assert read_lease(case)['holds'][0]['pid'] == case['original']['pid']
+    module.recover(case['plan'], 'delayed_io_control_finished')
+    await_value(lambda: processes.same(case['original'])['state'] != 'T')
+    assert read_lease(case)['released']
+
+
+def admit_restartable_preparation(case):
+    plan = case['plan']
+    path = case['run'] / 'restartable-admission.json'
+    save(path, dict(kind='completed_restartable_preparation_parent', status='complete',
+        preparation_only_no_model_weights_or_formal_output=True, original_parent=plan['original_parent'],
+        original_entry_sha256=digest(plan['original_entry']), complete_readback_sha256=digest(plan['readback_manifest']),
+        completed_stage_manifest_sha256={p: digest(p) for p in [plan['preflight_manifest'], plan['readback_manifest']]}))
+    plan.update(handoff_policy='retire_completed_restartable_preparation', restartable_preparation_admission=str(path))
+    case['bound_paths'].append(path)
+    case['refresh']()
+    return path
+
+
+def test_explicit_completed_preparation_retirement_still_requires_real_capacity_before_training(case):
+    admit_restartable_preparation(case)
+    child = case['start']()
+    assert child.wait(timeout=15) == 0, (case['run'] / 'coordinator.log').read_text()
+    lease = read_lease(case)
+    assert lease['preparation_handoff_committed'] and lease['original_preparation_retired']
+    assert lease['committed'] and lease['released'] and not lease['holds']
+    assert case['module'].terminal(case['processes'], case['original'])
+    assert (case['output'] / 'prepare.json').exists() and (case['output'] / 'train.json').exists()
+
+
+def test_retired_preparation_owner_death_recovers_and_resumes_same_config_without_training_permission(case):
+    recipe = json.loads(case['recipe'].read_text())
+    recipe['hold'] = 'prepare'
+    save(case['recipe'], recipe)
+    admit_restartable_preparation(case)
+    first = case['start']()
+    await_value(lambda: (case['output'] / 'prepare.json').exists())
+    first.kill(); first.wait(timeout=5)
+    await_value(lambda: read_lease(case)['released'])
+    prior = read_lease(case)
+    assert prior['preparation_handoff_committed'] and not prior['committed']
+    assert case['module'].terminal(case['processes'], case['original'])
+    assert not case['output'].exists()
+    second = case['start'](resume=True)
+    await_value(lambda: (case['output'] / 'prepare.json').exists())
+    lease = read_lease(case)
+    assert lease['preparation_handoff_committed'] and not lease['committed']
+    assert not (case['output'] / 'train.json').exists()
+    second.kill(); second.wait(timeout=5)
+    await_value(lambda: read_lease(case)['released'])
+
+
+@pytest.mark.parametrize('problem', ['different_parent', 'missing_completed_stage'])
+def test_restartable_preparation_admission_cannot_retire_an_unqualified_owner(case, problem):
+    path = admit_restartable_preparation(case)
+    value = json.loads(path.read_text())
+    if problem == 'different_parent':
+        value['original_parent']['start_ticks'] += 1
+    else:
+        value['completed_stage_manifest_sha256'].pop(case['plan']['preflight_manifest'])
+    save(path, value); case['refresh']()
+    with pytest.raises(ValueError, match='Restartable preparation'):
+        case['module'].pinned(case['plan'])
+    assert case['processes'].same(case['original'])['state'] not in {'T', 'Z', 'X'}
+
+
+def test_preparation_retirement_alone_never_authorizes_training(case):
+    admit_restartable_preparation(case)
+    save(case['run'] / 'lease.json', dict(released=False, committed=False, holds=[], worker=None,
+        preparation_handoff_committed=True))
+    with pytest.raises(ValueError, match='before committed capacity-qualified takeover'):
+        case['module'].OriginalCalls(case['plan']).run(
+            [sys.executable, '-m', 'xqgeneral.validation_curriculum', '--config', str(case['run'] / 'recipe.json')])
+    assert not case['output'].exists()
+
+
+@pytest.mark.skipif(shutil.which('tmux') is None, reason='tmux required for actual direct-pane regression')
+def test_real_tmux_direct_pane_auto_continues_stop_and_explicit_retirement_completes(case):
+    session = 'xqgeneral-owned-control-' + uuid.uuid4().hex
+    ready, continued = case['run'] / 'pane-ready', case['run'] / 'pane-continued'
+    script = ('import signal,time; from pathlib import Path; '
+              f'signal.signal(signal.SIGCONT, lambda *a: Path({str(continued)!r}).write_text("continued")); '
+              f'Path({str(ready)!r}).write_text("ready"); time.sleep(600)')
+    import shlex
+    command = [sys.executable, '-c', script]
+    pane_pid = int(subprocess.check_output(['tmux', 'new-session', '-d', '-P', '-F', '#{pane_pid}',
+        '-s', session, '-c', str(case['run']), 'exec ' + shlex.join(command)], text=True))
+    expected_command = hashlib.sha256(b'\0'.join(os.fsencode(x) for x in command) + b'\0').hexdigest()
+    direct = None
+    try:
+        await_value(ready.exists)
+        direct = case['processes'].identity(pane_pid)
+        assert direct['cmdline_sha256'] == expected_command
+        case['processes'].send(direct, signal.SIGSTOP)
+        await_value(continued.exists)
+        assert case['processes'].same(direct)['state'] not in {'T', 'Z', 'X'}
+        unrelated = case['original']
+        case['original'] = direct
+        case['plan']['original_parent'] = direct
+        ownership = Path(case['plan']['ownership_proof'])
+        proof = json.loads(ownership.read_text()); proof['continuation'] = direct; save(ownership, proof)
+        admit_restartable_preparation(case)
+        child = case['start']()
+        assert child.wait(timeout=15) == 0, (case['run'] / 'coordinator.log').read_text()
+        lease = read_lease(case)
+        assert lease['preparation_handoff_committed'] and lease['committed'] and lease['released']
+        assert case['module'].terminal(case['processes'], direct)
+        assert case['processes'].same(unrelated)['state'] not in {'T', 'Z', 'X'}
+    finally:
+        if direct is not None:
+            case['processes'].send(direct, signal.SIGKILL)
+        subprocess.run(['tmux', 'kill-session', '-t', '=' + session], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def test_real_cli_routes_prepare_and_training_and_preserves_unrelated_process(case):

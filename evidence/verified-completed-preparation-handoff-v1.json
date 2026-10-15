@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "verified_completed_preparation_handoff",
+  "status": "software_controls_passed_production_preparation_handed_off",
+  "captured_utc": "2026-10-15T05:22:33.925848+00:00",
+  "entry_sha256": "cc90b524aea22b1c3c5fde2e706ba2560c31d2a56caf92e16d0f67934589131c",
+  "handoff_policy": "retire_completed_restartable_preparation",
+  "production_source_cache_base_readback_sha256": "c134650ddc6a9e6099c099fa00d8ea8f80bc741efe186d0ee826606df2fb2491",
+  "completed_stage_proofs_bound": 7,
+  "original_tmux_direct_pane_auto_SIGCONT_reproduced": true,
+  "original_implementation_actual_tmux_failure_reproduced": true,
+  "focused_process_controls": {
+    "passed": 27,
+    "seconds": 96.97,
+    "real_pidfds_signals_exec_and_tmux": true,
+    "curriculum_and_capacity_are_explicit_non_neural_stand_ins": true
+  },
+  "full_cpu_checks": {
+    "passed": 1568,
+    "all_snapshot_files": 629,
+    "execution_bindings": 270,
+    "original_and_snapshot_bytes_unchanged": true,
+    "ended_utc": "2026-10-15T05:20:57.845106+00:00"
+  },
+  "actual_production_preparation": {
+    "old_preparation_identity_terminal": true,
+    "controller_and_recovery_exact_identities_live": true,
+    "preparation_handoff_committed": true,
+    "training_permission_committed": false,
+    "input_receipt_published": true,
+    "receipt_input_bindings": 4046,
+    "formal_curriculum_output_exists": false,
+    "formal_updates": 0
+  },
+  "cpu_execution_profile": "verified-input-reuse-v1-derived-from-frozen-95",
+  "gpu_execution_profile": "verified-input-reuse-v1-derived-from-frozen-88",
+  "model_optimizer_sampling_and_recipe_changed": false,
+  "real_gpu_numeric_qualification_reused": true,
+  "new_model_strength_measured": false,
+  "overall_goal_complete": false
+}

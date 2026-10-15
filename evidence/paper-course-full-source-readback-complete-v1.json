@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "paper_course_full_source_cache_base_readback",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "completion_readback_utc": "2026-10-15T04:55:11.469057+00:00",
+  "production_manifest_sha256": "c134650ddc6a9e6099c099fa00d8ea8f80bc741efe186d0ee826606df2fb2491",
+  "staged_manifest_sha256": "94805ab32e96c86bdb8d05da8f026245a21a59fcb81a0b2948023c09129f92f2",
+  "records": 10833161,
+  "records_by_split": {
+    "test": 26000,
+    "validation": 2600,
+    "train": 10804561
+  },
+  "train_validation_records_tokenized": 10807161,
+  "extra_validation_format_encodings": 5200,
+  "maximum_tokens_by_stage": {
+    "static_current": 299,
+    "dynamic_current": 305,
+    "static_future": 327,
+    "dynamic_future": 301
+  },
+  "actual_cached_full_histories": 2236975,
+  "actual_question_full_histories": 2081078,
+  "previous_cached_histories_bitwise_preserved": 169904,
+  "previous_feature_layers_bitwise_preserved": 16,
+  "all_preflight_input_output_hashes_read_back": true,
+  "completed_native_question_proof_reused": true,
+  "all_native_proof_bound_artifacts_freshly_rehashed": true,
+  "actual_readback_code_modules_freshly_hashed": 100,
+  "current_seed_signatures_checked": 4046,
+  "seed_signatures_match_original_full_hashing_vectors": true,
+  "official_base_assets_match_pinned_cached_download_hashes": true,
+  "official_remote_independently_requeried": false,
+  "extra_large_file_byte_hashing_by_completion_observer": false,
+  "student_training_performed_by_readback": false,
+  "student_strength_measured": false,
+  "formal_new_four_course_updates_at_completion": 0,
+  "overall_goal_complete": false
+}
