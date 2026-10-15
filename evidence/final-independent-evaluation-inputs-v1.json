@@ -1,0 +1,97 @@
+{
+  "kind": "final_independent_evaluation_inputs_prepared",
+  "status": "complete",
+  "protocol_sha256": "756b8f9387657329bc0d397f823ec172cc7d7be38a577da0e17d1fe7a75d3d62",
+  "qa": {
+    "examples": 26000,
+    "distinct_source_games": 591,
+    "counts_by_task": {
+      "dynamic_current/captures": 1000,
+      "dynamic_current/checks": 1000,
+      "dynamic_current/controllers": 1000,
+      "dynamic_current/mate": 1000,
+      "dynamic_current/moves": 1000,
+      "dynamic_current/parries": 1000,
+      "dynamic_future/captures": 1000,
+      "dynamic_future/checks": 1000,
+      "dynamic_future/controllers": 1000,
+      "dynamic_future/mate": 1000,
+      "dynamic_future/moves": 1000,
+      "dynamic_future/parries": 1000,
+      "static_current/counts": 1000,
+      "static_current/diagonal": 1000,
+      "static_current/file": 1000,
+      "static_current/locate": 1000,
+      "static_current/materials": 1000,
+      "static_current/piece": 1000,
+      "static_current/rank": 1000,
+      "static_future/counts": 1000,
+      "static_future/diagonal": 1000,
+      "static_future/file": 1000,
+      "static_future/locate": 1000,
+      "static_future/materials": 1000,
+      "static_future/piece": 1000,
+      "static_future/rank": 1000
+    },
+    "test_binding": {
+      "sha256": "7af3c3709f6e50f037a82f6b84fec61e5244a62d71b46fac95734ae6e94037ea",
+      "bytes": 221362929
+    }
+  },
+  "explanations": {
+    "examples": 512,
+    "distinct_histories": 512,
+    "test_binding": {
+      "sha256": "db218093dfbb2587918d52ce95ce1fcad7af88d98e971b73b67c0ad6c67c5cc4",
+      "bytes": 3655338
+    }
+  },
+  "matches": {
+    "status": "complete",
+    "split": "test",
+    "source_rows_read": 26000,
+    "eligible_original_recorded_games": 116,
+    "openings": 64,
+    "distinct_source_games": 64,
+    "distinct_opening_histories": 64,
+    "distinct_opening_positions": 64,
+    "opening_plies": 12,
+    "by_source_declared_kind": {
+      "published_recorded_match": 51,
+      "recorded_human_match": 12,
+      "recorded_human_computer_match": 1
+    },
+    "excluded": {
+      "short_supplied_histories": 82,
+      "derived_or_noncurrent_or_nonmatch_rows": 19000,
+      "duplicate_opening_positions_or_histories": 6
+    },
+    "selected_full_prefixes_native_checked": true,
+    "answers_or_recorded_future_used": false,
+    "source_import_and_global_split_proof_reused": true,
+    "opening_geometry_unseen_during_training_proven": false,
+    "source_player_identities_authenticated": false,
+    "new_training_labels": 0,
+    "student_or_teacher_model_loaded": false,
+    "planned_games": 384,
+    "nodes": [
+      100,
+      1000,
+      10000
+    ],
+    "selected_games_reserved_in_current_course_and_explanation_test": true,
+    "selected_game_overlap_with_training": 0,
+    "selected_game_overlap_with_validation": 0,
+    "suite_manifest_sha256": "635a7912284b53fe2b8f6e18d5c98529739a7b6368af4e2ba4eaa1038cd1d334",
+    "opening_rows_sha256": "f0b401992bfef67349770781a745824e1e6668291767ef8ff81e4a605cbd3539"
+  },
+  "isolation_footprints_sha256": "1cf6f4804cf4e24f204949dbd49d5b53666916cdf46cb52dc3d6fa1ca3d87adf",
+  "existing_full_source_isolation_proof_reused": true,
+  "training_corpus_or_feature_store_fully_reread": false,
+  "student_or_teacher_model_loaded": false,
+  "final_checkpoint_selected_or_locked": false,
+  "final_independent_model_scores_generated": false,
+  "new_training_labels": 0,
+  "independent_test_used_for_training_or_selection": false,
+  "strong_play_or_reliable_coaching_proven": false
+}

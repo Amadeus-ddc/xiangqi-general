@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "purpose": "final_independent_test_after_development_selection",
+  "selection": {
+    "checkpoint_locked_before_test_generation": true,
+    "required_completed_stages": [
+      "four_courses",
+      "initial_explanation_sft",
+      "search_distillation"
+    ],
+    "independent_test_used_for_training_or_selection": false
+  },
+  "qa": {
+    "data": "data/paper-courses-v5",
+    "features": "data/paper-courses-v5/feature-store/manifest.json",
+    "split": "test",
+    "examples": 26000,
+    "per_task": 1000,
+    "question_formats": 3,
+    "memories": [
+      "normal",
+      "zero",
+      "shuffled"
+    ],
+    "batch_size": 8,
+    "max_new_tokens": 384,
+    "seed": 20261015
+  },
+  "explanations": {
+    "data": "data/astra-explanations-reference-corrected-v3",
+    "features": "data/paper-courses-v5/feature-store/manifest.json",
+    "split": "test",
+    "limit": 512,
+    "memories": [
+      "normal",
+      "zero",
+      "shuffled"
+    ],
+    "batch_size": 4,
+    "max_new_tokens": 768,
+    "nodes": 1000000,
+    "workers": 8,
+    "seed": 20261015
+  },
+  "matches": {
+    "opening_source": "data/paper-courses-v5",
+    "opening_suite": "runs/final-independent-evaluation-v1/openings-v3",
+    "split": "test",
+    "opening_count": 64,
+    "opening_plies": 12,
+    "opening_seed": 20261079,
+    "nodes": [
+      100,
+      1000,
+      10000
+    ],
+    "model_colors": [
+      "red",
+      "black"
+    ],
+    "max_plies": 256,
+    "action_mode": "explanation",
+    "move_beams": 4,
+    "expert_weights": "models/px0-latest.pb.gz"
+  },
+  "engine": {
+    "executable": "vendor/pikafish/src/pikafish",
+    "weights": "vendor/pikafish/src/pikafish.nnue"
+  },
+  "prose_review": {
+    "limit": 512,
+    "seed": 20261015,
+    "teacher_config": "configs/teachers.json",
+    "max_new_tokens": 1536,
+    "human_rating": false,
+    "reviewer_also_used_for_training_consolidation": true
+  },
+  "report": {
+    "retain_all_raw_errors": true,
+    "oracle_repairs": 0,
+    "censored_games_counted_as_draws": false,
+    "paper_elo_equivalence_claim": false,
+    "neural_rating_alone_proves_coaching_quality": false
+  }
+}
