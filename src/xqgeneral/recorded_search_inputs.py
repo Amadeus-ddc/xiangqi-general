@@ -86,6 +86,19 @@ class BoundInputs:
             raise ValueError('Recorded search inputs changed during preparation')
 
 
+def canonical_import_output(proof, path):
+    """Resolve legacy relative declarations in the caller's project directory.
+
+    Keep the original proof intact and require the exact canonical path; equal
+    basenames do not identify an artifact, and conflicting aliases are invalid.
+    """
+    target = Path(path).resolve()
+    values = [binding for name, binding in proof['outputs'].items() if Path(name).resolve() == target]
+    if not values or any(not isinstance(value, dict) or value != values[0] for value in values):
+        raise ValueError('Completed canonical import has a missing or conflicting exact output binding')
+    return values[0]
+
+
 def checked_game(game, split_seed):
     if (not {'game_id', 'initial_fen', 'moves', 'history', 'split', 'source_kind',
              'source', 'headers', 'native_terminal'} <= game.keys() or
@@ -206,7 +219,7 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
                 proof['config']['seed'] != split_seed):
             raise ValueError('Completed canonical native imports with the same split seed are required')
         path = directory / 'games.jsonl'
-        bound.bind(path, proof['outputs'][str(path)])
+        bound.bind(path, canonical_import_output(proof, path))
         sources.append(path)
     unique, source_counts, duplicate_games = {}, Counter(), 0
     for path in sources:
