@@ -1,0 +1,263 @@
+{
+  "kind": "paper_course_fifth_raw_validation_readback",
+  "status": "complete",
+  "stage": "static_current",
+  "actual_training_updates": 10000,
+  "continuous_updates_from_fresh_initialization": true,
+  "trainable_fp32_parameters": 671806496,
+  "all_adapter_parameters_finite_and_bitwise_equal_to_actual_source_checkpoint": true,
+  "first_10000_updates_all_losses_and_gradient_norms_finite": true,
+  "captured_training_prefix_sha256": "aaf8f484fdb2e244e3bb8dd81ae4211d5bf3e079efd882c1dabbdfd7976081cb",
+  "checkpoint_sha256": "9df04c00bee1b585d222c2f7f7fcbe2bc99abe7b99ddce37e7a08ca0deaf9e6f",
+  "snapshot_sha256": "bf014073451007cc2a9632585c0ea14adc683ff39ad57ae0b8c5ceb03ea31f68",
+  "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "actual_gpu_source_modules": 89,
+  "all_700_raw_predictions_independently_regraded": true,
+  "exact_predeclared_questions_order_and_variants_verified": true,
+  "raw_validation_metrics": {
+    "examples": 700,
+    "accuracy": 0.93,
+    "by_task": {
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 0.95
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.94
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 0.87
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.8
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 0.95
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.93,
+    "raw_exact_correct_rate": 0.6157142857142858,
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 373.7417127760127
+  },
+  "comparison_with_step_2000": {
+    "from_step": 2000,
+    "to_step": 10000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40b058e9fdca1ecb2756ae023bb5855775ff8748551ed10a1385d82fabcd59a0",
+    "accuracy_change": 0.5414285714285715,
+    "canonical_tag_correct_rate_change": 0.5414285714285715,
+    "raw_exact_correct_rate_change": 0.3714285714285715,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.53,
+        "to_accuracy": 0.95,
+        "change": 0.41999999999999993
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.38,
+        "to_accuracy": 0.94,
+        "change": 0.5599999999999999
+      },
+      "static_current/file": {
+        "from_accuracy": 0.34,
+        "to_accuracy": 1.0,
+        "change": 0.6599999999999999
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.2,
+        "to_accuracy": 0.87,
+        "change": 0.6699999999999999
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.3,
+        "to_accuracy": 0.8,
+        "change": 0.5
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.71,
+        "to_accuracy": 1.0,
+        "change": 0.29000000000000004
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.26,
+        "to_accuracy": 0.95,
+        "change": 0.69
+      }
+    }
+  },
+  "comparison_with_step_4000": {
+    "from_step": 4000,
+    "to_step": 10000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "d73222d456e4df324a492cf524c622e95622cc4b46666ffff36c3e43d2b28819",
+    "accuracy_change": 0.2728571428571429,
+    "canonical_tag_correct_rate_change": 0.2728571428571429,
+    "raw_exact_correct_rate_change": 0.2028571428571429,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.84,
+        "to_accuracy": 0.95,
+        "change": 0.10999999999999999
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.41,
+        "to_accuracy": 0.94,
+        "change": 0.53
+      },
+      "static_current/file": {
+        "from_accuracy": 0.82,
+        "to_accuracy": 1.0,
+        "change": 0.18000000000000005
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.32,
+        "to_accuracy": 0.87,
+        "change": 0.55
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.76,
+        "to_accuracy": 0.8,
+        "change": 0.040000000000000036
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.49,
+        "to_accuracy": 0.95,
+        "change": 0.45999999999999996
+      }
+    }
+  },
+  "comparison_with_step_6000": {
+    "from_step": 6000,
+    "to_step": 10000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "ccee0d734067c9728dc1184bbfb0eb65ca4f42c80010ed8762ca8409326a66da",
+    "accuracy_change": 0.07285714285714295,
+    "canonical_tag_correct_rate_change": 0.07285714285714295,
+    "raw_exact_correct_rate_change": 0.040000000000000036,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 0.95,
+        "change": 0.039999999999999925
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.87,
+        "to_accuracy": 0.94,
+        "change": 0.06999999999999995
+      },
+      "static_current/file": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.79,
+        "to_accuracy": 0.87,
+        "change": 0.07999999999999996
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.8,
+        "change": 0.07000000000000006
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.74,
+        "to_accuracy": 0.95,
+        "change": 0.20999999999999996
+      }
+    }
+  },
+  "comparison_with_step_8000": {
+    "from_step": 8000,
+    "to_step": 10000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40d04a1df949d9aa1e3ca8e5815ab35975c781bc596cc46bd4657e3800186ebc",
+    "accuracy_change": 0.08714285714285719,
+    "canonical_tag_correct_rate_change": 0.08714285714285719,
+    "raw_exact_correct_rate_change": 0.08000000000000007,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.81,
+        "to_accuracy": 0.95,
+        "change": 0.1399999999999999
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.67,
+        "to_accuracy": 0.94,
+        "change": 0.2699999999999999
+      },
+      "static_current/file": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 1.0,
+        "change": 0.050000000000000044
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.83,
+        "to_accuracy": 0.87,
+        "change": 0.040000000000000036
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.8,
+        "change": 0.07000000000000006
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 0.95,
+        "change": 0.039999999999999925
+      }
+    }
+  },
+  "same_recipe_resumes_from_2000_and_4000_and_6000_and_8000_and_exact_epoch_batch_order_verified": true,
+  "minimum_task_accuracy": 0.8,
+  "correct_by_task": {
+    "counts": 95,
+    "diagonal": 94,
+    "file": 100,
+    "locate": 87,
+    "materials": 80,
+    "piece": 100,
+    "rank": 95
+  },
+  "first_selection_eligible_step": 4000,
+  "first_course_minimum_stopping_step": 20000,
+  "four_courses_completed": false,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coaching_proven": false
+}
