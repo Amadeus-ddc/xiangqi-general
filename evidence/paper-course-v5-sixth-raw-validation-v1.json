@@ -1,0 +1,309 @@
+{
+  "kind": "paper_course_sixth_raw_validation_readback",
+  "status": "complete",
+  "stage": "static_current",
+  "actual_training_updates": 12000,
+  "continuous_updates_from_fresh_initialization": true,
+  "trainable_fp32_parameters": 671806496,
+  "all_adapter_parameters_finite_and_bitwise_equal_to_actual_source_checkpoint": true,
+  "first_12000_updates_all_losses_and_gradient_norms_finite": true,
+  "captured_training_prefix_sha256": "0ca0b3ce1fa02e44b20036d6a4526175429ae1721e742d77c342a040b10656a3",
+  "checkpoint_sha256": "523fe1f4bd9bdcabe1ec06c68d387f62e3abb377d79596bad74ec63c8c6b228f",
+  "snapshot_sha256": "03f65e5182247a3f05ce75617740d12ce797a16dc07cfd658148a98a32a642b0",
+  "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "actual_gpu_source_modules": 89,
+  "all_700_raw_predictions_independently_regraded": true,
+  "exact_predeclared_questions_order_and_variants_verified": true,
+  "raw_validation_metrics": {
+    "examples": 700,
+    "accuracy": 0.8771428571428571,
+    "by_task": {
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.64
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 0.88
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.7
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 0.92
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.8771428571428571,
+    "raw_exact_correct_rate": 0.5671428571428572,
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 334.5848164707422
+  },
+  "comparison_with_step_2000": {
+    "from_step": 2000,
+    "to_step": 12000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40b058e9fdca1ecb2756ae023bb5855775ff8748551ed10a1385d82fabcd59a0",
+    "accuracy_change": 0.48857142857142855,
+    "canonical_tag_correct_rate_change": 0.48857142857142855,
+    "raw_exact_correct_rate_change": 0.3228571428571429,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.53,
+        "to_accuracy": 1.0,
+        "change": 0.47
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.38,
+        "to_accuracy": 0.64,
+        "change": 0.26
+      },
+      "static_current/file": {
+        "from_accuracy": 0.34,
+        "to_accuracy": 1.0,
+        "change": 0.6599999999999999
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.2,
+        "to_accuracy": 0.88,
+        "change": 0.6799999999999999
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.3,
+        "to_accuracy": 0.7,
+        "change": 0.39999999999999997
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.71,
+        "to_accuracy": 1.0,
+        "change": 0.29000000000000004
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.26,
+        "to_accuracy": 0.92,
+        "change": 0.66
+      }
+    }
+  },
+  "comparison_with_step_4000": {
+    "from_step": 4000,
+    "to_step": 12000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "d73222d456e4df324a492cf524c622e95622cc4b46666ffff36c3e43d2b28819",
+    "accuracy_change": 0.21999999999999997,
+    "canonical_tag_correct_rate_change": 0.21999999999999997,
+    "raw_exact_correct_rate_change": 0.1542857142857143,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.84,
+        "to_accuracy": 1.0,
+        "change": 0.16000000000000003
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.41,
+        "to_accuracy": 0.64,
+        "change": 0.23000000000000004
+      },
+      "static_current/file": {
+        "from_accuracy": 0.82,
+        "to_accuracy": 1.0,
+        "change": 0.18000000000000005
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.32,
+        "to_accuracy": 0.88,
+        "change": 0.56
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.76,
+        "to_accuracy": 0.7,
+        "change": -0.06000000000000005
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.49,
+        "to_accuracy": 0.92,
+        "change": 0.43000000000000005
+      }
+    }
+  },
+  "comparison_with_step_6000": {
+    "from_step": 6000,
+    "to_step": 12000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "ccee0d734067c9728dc1184bbfb0eb65ca4f42c80010ed8762ca8409326a66da",
+    "accuracy_change": 0.020000000000000018,
+    "canonical_tag_correct_rate_change": 0.020000000000000018,
+    "raw_exact_correct_rate_change": -0.008571428571428563,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 1.0,
+        "change": 0.08999999999999997
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.87,
+        "to_accuracy": 0.64,
+        "change": -0.22999999999999998
+      },
+      "static_current/file": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.79,
+        "to_accuracy": 0.88,
+        "change": 0.08999999999999997
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.7,
+        "change": -0.030000000000000027
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.74,
+        "to_accuracy": 0.92,
+        "change": 0.18000000000000005
+      }
+    }
+  },
+  "comparison_with_step_8000": {
+    "from_step": 8000,
+    "to_step": 12000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40d04a1df949d9aa1e3ca8e5815ab35975c781bc596cc46bd4657e3800186ebc",
+    "accuracy_change": 0.03428571428571425,
+    "canonical_tag_correct_rate_change": 0.03428571428571425,
+    "raw_exact_correct_rate_change": 0.03142857142857147,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.81,
+        "to_accuracy": 1.0,
+        "change": 0.18999999999999995
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.67,
+        "to_accuracy": 0.64,
+        "change": -0.030000000000000027
+      },
+      "static_current/file": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 1.0,
+        "change": 0.050000000000000044
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.83,
+        "to_accuracy": 0.88,
+        "change": 0.050000000000000044
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.7,
+        "change": -0.030000000000000027
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 0.92,
+        "change": 0.010000000000000009
+      }
+    }
+  },
+  "comparison_with_step_10000": {
+    "from_step": 10000,
+    "to_step": 12000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "a9e8dbb172758f91b328f99399c2ae7978082d4e3cec40ea814eb3f8cccc04f3",
+    "accuracy_change": -0.052857142857142936,
+    "canonical_tag_correct_rate_change": -0.052857142857142936,
+    "raw_exact_correct_rate_change": -0.0485714285714286,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 1.0,
+        "change": 0.050000000000000044
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.94,
+        "to_accuracy": 0.64,
+        "change": -0.29999999999999993
+      },
+      "static_current/file": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.87,
+        "to_accuracy": 0.88,
+        "change": 0.010000000000000009
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.8,
+        "to_accuracy": 0.7,
+        "change": -0.10000000000000009
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 0.92,
+        "change": -0.029999999999999916
+      }
+    }
+  },
+  "same_recipe_resumes_from_2000_and_4000_and_6000_and_8000_and_10000_and_exact_epoch_batch_order_verified": true,
+  "minimum_task_accuracy": 0.64,
+  "correct_by_task": {
+    "counts": 100,
+    "diagonal": 64,
+    "file": 100,
+    "locate": 88,
+    "materials": 70,
+    "piece": 100,
+    "rank": 92
+  },
+  "first_selection_eligible_step": 4000,
+  "first_course_minimum_stopping_step": 20000,
+  "four_courses_completed": false,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coaching_proven": false
+}
