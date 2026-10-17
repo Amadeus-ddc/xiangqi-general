@@ -35,6 +35,8 @@ All 10,807,161 training/validation examples and 5,200 additional validation-form
 
 The reviewed initial explanation corpus has **10,758 training, 384 validation and 512 independent-test rows**. Existing color-derived rows preserve their parent split and do not count as independent games or teacher calls. [Reference-prose provenance](REFERENCE_PROSE.md) records authoring, cross-review and corrections. Recorded-game categories and names are source declarations; native legal replay does not establish human identity or unassisted play. Raw and derived datasets are excluded from the source release.
 
+An additional [anonymous PvP source](PUBLIC_ANONYMOUS_GAMES.md) provides 8,828 independently read-back native full histories (486,754 plies), split into 7,072 train / 886 validation / 870 test games before question generation. Source PvP labels do not authenticate human identity or unassisted play. Source analysis and CPL are not neural labels. Reserved-position/color isolation and actual student-search yield remain pending; the current course, initial SFT and pilot inputs retain their frozen versions. No playing or coaching benefit has been measured for this source.
+
 ## Training plan
 
 The [formal curriculum recipe](PAPER_FOUNDATION_EXPERIMENT.md) uses finite mixed-data traversal, answer-token-average loss, four GPUs, global batch 256 and microbatch 4. Old-course examples participate in training as well as separate replay diagnostics.
