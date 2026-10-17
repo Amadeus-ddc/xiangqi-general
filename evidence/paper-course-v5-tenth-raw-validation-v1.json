@@ -1,0 +1,511 @@
+{
+  "kind": "paper_course_tenth_raw_validation_readback",
+  "status": "complete",
+  "stage": "static_current",
+  "actual_training_updates": 20000,
+  "continuous_updates_from_fresh_initialization": true,
+  "trainable_fp32_parameters": 671806496,
+  "all_adapter_parameters_finite_and_bitwise_equal_to_actual_source_checkpoint": true,
+  "first_20000_updates_all_losses_and_gradient_norms_finite": true,
+  "captured_training_prefix_sha256": "bc9af12c7a35ea8aa368086e57867f84232587077aebcbd24aebcb621f5a601d",
+  "checkpoint_sha256": "738392498d24b50d36e9e638b968eaf02a9d8b341f6b5fe41d87eb109c6dd03d",
+  "snapshot_sha256": "776ce72e868fa09514e67925f47caca3296655f75d1ab0327c8fee3fff43ef4b",
+  "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+  "recipe_sha256": "2ed7e7242b260cae97ab35671d17f7c5b711ed54817f09f9595422e4455ed72f",
+  "actual_gpu_source_modules": 89,
+  "all_700_raw_predictions_independently_regraded": true,
+  "exact_predeclared_questions_order_and_variants_verified": true,
+  "raw_validation_metrics": {
+    "examples": 700,
+    "accuracy": 0.95,
+    "by_task": {
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.82
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 0.94
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.91
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 0.98
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.9485714285714286,
+    "raw_exact_correct_rate": 0.6014285714285714,
+    "raw_generation": true,
+    "oracle_used": false,
+    "split": "validation",
+    "seconds": 304.7200633492321
+  },
+  "comparison_with_step_2000": {
+    "from_step": 2000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40b058e9fdca1ecb2756ae023bb5855775ff8748551ed10a1385d82fabcd59a0",
+    "accuracy_change": 0.5614285714285714,
+    "canonical_tag_correct_rate_change": 0.56,
+    "raw_exact_correct_rate_change": 0.35714285714285715,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.53,
+        "to_accuracy": 1.0,
+        "change": 0.47
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.38,
+        "to_accuracy": 0.82,
+        "change": 0.43999999999999995
+      },
+      "static_current/file": {
+        "from_accuracy": 0.34,
+        "to_accuracy": 1.0,
+        "change": 0.6599999999999999
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.2,
+        "to_accuracy": 0.94,
+        "change": 0.74
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.3,
+        "to_accuracy": 0.91,
+        "change": 0.6100000000000001
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.71,
+        "to_accuracy": 1.0,
+        "change": 0.29000000000000004
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.26,
+        "to_accuracy": 0.98,
+        "change": 0.72
+      }
+    }
+  },
+  "comparison_with_step_4000": {
+    "from_step": 4000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "d73222d456e4df324a492cf524c622e95622cc4b46666ffff36c3e43d2b28819",
+    "accuracy_change": 0.2928571428571428,
+    "canonical_tag_correct_rate_change": 0.2914285714285715,
+    "raw_exact_correct_rate_change": 0.18857142857142856,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.84,
+        "to_accuracy": 1.0,
+        "change": 0.16000000000000003
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.41,
+        "to_accuracy": 0.82,
+        "change": 0.41
+      },
+      "static_current/file": {
+        "from_accuracy": 0.82,
+        "to_accuracy": 1.0,
+        "change": 0.18000000000000005
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.32,
+        "to_accuracy": 0.94,
+        "change": 0.6199999999999999
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.76,
+        "to_accuracy": 0.91,
+        "change": 0.15000000000000002
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.49,
+        "to_accuracy": 0.98,
+        "change": 0.49
+      }
+    }
+  },
+  "comparison_with_step_6000": {
+    "from_step": 6000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "ccee0d734067c9728dc1184bbfb0eb65ca4f42c80010ed8762ca8409326a66da",
+    "accuracy_change": 0.09285714285714286,
+    "canonical_tag_correct_rate_change": 0.09142857142857153,
+    "raw_exact_correct_rate_change": 0.02571428571428569,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 1.0,
+        "change": 0.08999999999999997
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.87,
+        "to_accuracy": 0.82,
+        "change": -0.050000000000000044
+      },
+      "static_current/file": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 1.0,
+        "change": 0.040000000000000036
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.79,
+        "to_accuracy": 0.94,
+        "change": 0.1499999999999999
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.91,
+        "change": 0.18000000000000005
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.74,
+        "to_accuracy": 0.98,
+        "change": 0.24
+      }
+    }
+  },
+  "comparison_with_step_8000": {
+    "from_step": 8000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "40d04a1df949d9aa1e3ca8e5815ab35975c781bc596cc46bd4657e3800186ebc",
+    "accuracy_change": 0.1071428571428571,
+    "canonical_tag_correct_rate_change": 0.10571428571428576,
+    "raw_exact_correct_rate_change": 0.06571428571428573,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.81,
+        "to_accuracy": 1.0,
+        "change": 0.18999999999999995
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.67,
+        "to_accuracy": 0.82,
+        "change": 0.1499999999999999
+      },
+      "static_current/file": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 1.0,
+        "change": 0.050000000000000044
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.83,
+        "to_accuracy": 0.94,
+        "change": 0.10999999999999999
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.73,
+        "to_accuracy": 0.91,
+        "change": 0.18000000000000005
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.91,
+        "to_accuracy": 0.98,
+        "change": 0.06999999999999995
+      }
+    }
+  },
+  "comparison_with_step_10000": {
+    "from_step": 10000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "a9e8dbb172758f91b328f99399c2ae7978082d4e3cec40ea814eb3f8cccc04f3",
+    "accuracy_change": 0.019999999999999907,
+    "canonical_tag_correct_rate_change": 0.018571428571428572,
+    "raw_exact_correct_rate_change": -0.014285714285714346,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 1.0,
+        "change": 0.050000000000000044
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.94,
+        "to_accuracy": 0.82,
+        "change": -0.12
+      },
+      "static_current/file": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.87,
+        "to_accuracy": 0.94,
+        "change": 0.06999999999999995
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.8,
+        "to_accuracy": 0.91,
+        "change": 0.10999999999999999
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 0.98,
+        "change": 0.030000000000000027
+      }
+    }
+  },
+  "comparison_with_step_12000": {
+    "from_step": 12000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "74da991fa2c752380104f6e1690baffb15939d2727f6eab5b820ca2841baef73",
+    "accuracy_change": 0.07285714285714284,
+    "canonical_tag_correct_rate_change": 0.07142857142857151,
+    "raw_exact_correct_rate_change": 0.03428571428571425,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.64,
+        "to_accuracy": 0.82,
+        "change": 0.17999999999999994
+      },
+      "static_current/file": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.88,
+        "to_accuracy": 0.94,
+        "change": 0.05999999999999994
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.7,
+        "to_accuracy": 0.91,
+        "change": 0.21000000000000008
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.92,
+        "to_accuracy": 0.98,
+        "change": 0.05999999999999994
+      }
+    }
+  },
+  "comparison_with_step_14000": {
+    "from_step": 14000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "1e6bab732c73b54c1371c10728b75baddfab0054024d17954888adf91b18d215",
+    "accuracy_change": 0.055714285714285716,
+    "canonical_tag_correct_rate_change": 0.05428571428571438,
+    "raw_exact_correct_rate_change": 0.020000000000000018,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.75,
+        "to_accuracy": 0.82,
+        "change": 0.06999999999999995
+      },
+      "static_current/file": {
+        "from_accuracy": 0.98,
+        "to_accuracy": 1.0,
+        "change": 0.020000000000000018
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.92,
+        "to_accuracy": 0.94,
+        "change": 0.019999999999999907
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.66,
+        "to_accuracy": 0.91,
+        "change": 0.25
+      },
+      "static_current/piece": {
+        "from_accuracy": 0.99,
+        "to_accuracy": 1.0,
+        "change": 0.010000000000000009
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 0.98,
+        "change": 0.020000000000000018
+      }
+    }
+  },
+  "comparison_with_step_16000": {
+    "from_step": 16000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "9071083dddf8756853a750077f36927c8ee7c6b50039506f5742760df4ebebef",
+    "accuracy_change": 0.008571428571428563,
+    "canonical_tag_correct_rate_change": 0.0071428571428572285,
+    "raw_exact_correct_rate_change": -0.0028571428571428914,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.72,
+        "to_accuracy": 0.82,
+        "change": 0.09999999999999998
+      },
+      "static_current/file": {
+        "from_accuracy": 0.98,
+        "to_accuracy": 1.0,
+        "change": 0.020000000000000018
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.96,
+        "to_accuracy": 0.94,
+        "change": -0.020000000000000018
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.94,
+        "to_accuracy": 0.91,
+        "change": -0.029999999999999916
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.99,
+        "to_accuracy": 0.98,
+        "change": -0.010000000000000009
+      }
+    }
+  },
+  "comparison_with_step_18000": {
+    "from_step": 18000,
+    "to_step": 20000,
+    "same_predeclared_700_validation_questions": true,
+    "previous_verification_sha256": "0e2874f1d190b87ce1b1518da3b67e38dae41af93fc88828953c32784edc807e",
+    "accuracy_change": 0.037142857142857144,
+    "canonical_tag_correct_rate_change": 0.03571428571428581,
+    "raw_exact_correct_rate_change": 0.01571428571428568,
+    "by_task": {
+      "static_current/counts": {
+        "from_accuracy": 0.99,
+        "to_accuracy": 1.0,
+        "change": 0.010000000000000009
+      },
+      "static_current/diagonal": {
+        "from_accuracy": 0.71,
+        "to_accuracy": 0.82,
+        "change": 0.10999999999999999
+      },
+      "static_current/file": {
+        "from_accuracy": 0.99,
+        "to_accuracy": 1.0,
+        "change": 0.010000000000000009
+      },
+      "static_current/locate": {
+        "from_accuracy": 0.95,
+        "to_accuracy": 0.94,
+        "change": -0.010000000000000009
+      },
+      "static_current/materials": {
+        "from_accuracy": 0.76,
+        "to_accuracy": 0.91,
+        "change": 0.15000000000000002
+      },
+      "static_current/piece": {
+        "from_accuracy": 1.0,
+        "to_accuracy": 1.0,
+        "change": 0.0
+      },
+      "static_current/rank": {
+        "from_accuracy": 0.99,
+        "to_accuracy": 0.98,
+        "change": -0.010000000000000009
+      }
+    }
+  },
+  "same_recipe_resumes_from_2000_and_4000_and_6000_and_8000_and_10000_and_12000_and_14000_and_16000_and_18000_and_finite_epoch_batch_order_verified": true,
+  "finite_epoch_rows": 3200005,
+  "optimizer_updates_per_epoch": 12501,
+  "first_epoch_tail_and_second_epoch_start_verified": true,
+  "all_20000_update_batch_reports_match_finite_epoch_geometry": true,
+  "first_epoch_tail_batch": {
+    "epoch": 0,
+    "optimizer_batch_in_epoch": 12500,
+    "global_valid_rows": 5,
+    "global_padding_rows": 11,
+    "global_rows": 16
+  },
+  "second_epoch_first_batch": {
+    "epoch": 1,
+    "optimizer_batch_in_epoch": 0,
+    "global_valid_rows": 256,
+    "global_padding_rows": 0,
+    "global_rows": 256
+  },
+  "minimum_task_accuracy": 0.82,
+  "correct_by_task": {
+    "counts": 100,
+    "diagonal": 82,
+    "file": 100,
+    "locate": 94,
+    "materials": 91,
+    "piece": 100,
+    "rank": 98
+  },
+  "first_selection_eligible_step": 4000,
+  "first_course_minimum_stopping_step": 20000,
+  "four_courses_completed": false,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_reliable_coaching_proven": false
+}
