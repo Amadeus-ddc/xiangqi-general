@@ -1,0 +1,124 @@
+{
+  "kind": "complete_unused_recorded_search_pool_v3_readback",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "candidate_histories": 229882,
+  "distinct_canonical_training_records": 45268,
+  "canonical_source_records": 151162,
+  "canonical_source_files": 10,
+  "canonical_identifiers_include_games_fragments_and_positions": true,
+  "new_anonymous_source_candidate_histories": 42432,
+  "candidate_counts_by_source_declared_kind": {
+    "recorded_human_match": 135567,
+    "recorded_computer_match": 12,
+    "recorded_human_computer_match": 28474,
+    "published_recorded_match": 49168,
+    "recorded_tactical_line": 8911,
+    "recorded_tactical_position": 7750
+  },
+  "candidate_counts_by_side": {
+    "black": 110878,
+    "red": 119004
+  },
+  "candidate_counts_by_supplied_history_phase": {
+    "1": 87820,
+    "2": 95636,
+    "0": 46426
+  },
+  "canonical_source_splits": {
+    "validation": 15181,
+    "train": 120954,
+    "test": 15027
+  },
+  "reserved_game_identifiers": 30250,
+  "reserved_root_and_recorded_future_color_positions": 3366490,
+  "excluded_existing_game_identifiers": 74615,
+  "excluded_existing_full_history_keys": 2081462,
+  "per_record_root_cap": 6,
+  "seed": 20261013,
+  "split_seed": 20261051,
+  "min_ply": 0,
+  "source_revision": "e558b704b891c270280ecc129c0430becaa67203",
+  "source_modules": 103,
+  "pool_manifest_sha256": "503b785295f6719e8af4422efea38dd4ea5ef8c9f49a2e07abb3912982e7d8e7",
+  "artifacts": {
+    "roots.jsonl": {
+      "sha256": "7cd666ab98122e6b3626b37b798c8b0f3790981d05cb35a85c5688ee9fc9f4bf",
+      "bytes": 1049544192
+    },
+    "counts.json": {
+      "sha256": "354d34ed969bac5dec2f32043d2ed87497056654dc7c631c4002b7ff3583c8c7",
+      "bytes": 3034
+    },
+    "heldout-positions.json": {
+      "sha256": "522287794ad3a9adb3a45df18b5d50ccda6d1055c99710fbdc694bf41ba4cdb3",
+      "bytes": 210144577
+    }
+  },
+  "independent_readback": {
+    "native_candidate_replay_workers": 8,
+    "every_selected_tactical_supplied_history_context_compared_to_source_record": true,
+    "canonical_training_identifiers_include_lines_and_positions_not_all_full_matches": true,
+    "native_rules_implementation_shared_with_importer": true,
+    "unknown_pre_fragment_history_reconstructed": false,
+    "phase_buckets_relative_to_supplied_line": true,
+    "canonical_source_splits_claimed_unseen_by_prior_training": false,
+    "full_match_and_fragment_sampling_inclusion_independently_reimplemented": false,
+    "isolated_position_zero_move_inclusion_independently_recomputed": true,
+    "all_original_candidates_compared_field_for_field": 229882,
+    "all_canonical_source_files_independently_streamed_and_rehashed": 10,
+    "all_original_training_ownership_keys_priority_and_per_game_caps_checked": true,
+    "all_candidate_roots_and_recorded_color_futures_disjoint_from_full_reservations": true,
+    "full_canonical_heldout_and_explanation_branch_color_reservations_recomputed": true,
+    "used_course_and_initial_teacher_games_and_history_keys_excluded": true,
+    "canonical_unique_games": 151162,
+    "native_selected_supplied_pasts_and_recorded_futures_replayed": 16865,
+    "native_full_replay_counts_by_source_declared_kind": {
+      "published_recorded_match": 64,
+      "recorded_human_match": 64,
+      "recorded_tactical_line": 8911,
+      "recorded_human_computer_match": 64,
+      "recorded_tactical_position": 7750,
+      "recorded_computer_match": 12
+    },
+    "every_candidate_natively_replayed_again": false,
+    "every_tactical_candidate_natively_replayed_again": true,
+    "full_match_native_sample_per_source_kind_cap": 64,
+    "completed_canonical_native_imports_reused": true,
+    "model_or_feature_cache_loaded": false,
+    "new_distillation_targets_generated": false,
+    "teacher_inference_executed": false,
+    "student_benefit_proven": false,
+    "actual_preparation_source_revision": "e558b704b891c270280ecc129c0430becaa67203",
+    "all_producer_source_files_rehashed": 103
+  },
+  "actual_search_interface": {
+    "selected_roots": 512,
+    "complete_pool_tail_verified": true,
+    "reserved_positions": 3366490,
+    "student_or_teacher_loaded": false
+  },
+  "recovery_provenance": {
+    "original_runtime_wrapper_failed_after_complete_generation": true,
+    "return_counts_misread_as_manifest": true,
+    "original_failure_preserved": true,
+    "complete_existing_output_reused": true,
+    "generation_reexecuted": false,
+    "recovery_closeout_reader_and_parent_exit_codes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "claim_boundaries": {
+    "candidate_histories_equal_neural_training_labels": false,
+    "current_course_or_queued_sft_or_pilot_inputs_changed": false,
+    "v2_pilot_inputs_remain_frozen": true,
+    "actual_student_search_executed": false,
+    "new_neural_labels_generated": 0,
+    "student_training_started_by_pool_preparation": false,
+    "model_strength_or_coaching_benefit_measured": false,
+    "raw_or_derived_dataset_bundled_with_source": false,
+    "full_goal_complete": false
+  }
+}
