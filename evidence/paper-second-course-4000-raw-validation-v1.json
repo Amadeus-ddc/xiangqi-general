@@ -1,0 +1,699 @@
+{
+  "status": "complete",
+  "kind": "same_question_second_course_2000_to_4000_raw_validation",
+  "evidence_state": "reconstructed_baseline",
+  "observed_at_utc": "2026-10-18T17:17:10.902104+00:00",
+  "from_step": 2000,
+  "to_step": 4000,
+  "ordered_1300_questions_and_variants_identical": true,
+  "full_cpu_readbacks_reused": true,
+  "trainable_fp32_parameters": 671806496,
+  "same_frozen_recipe_and_finite_data_contract": true,
+  "overall": {
+    "examples": 1300,
+    "correct": {
+      "from_correct": 1040,
+      "to_correct": 1159,
+      "gained": 152,
+      "lost": 33,
+      "net": 119
+    },
+    "canonical_tag_correct": {
+      "from_correct": 1030,
+      "to_correct": 1155,
+      "gained": 155,
+      "lost": 30,
+      "net": 125
+    },
+    "raw_exact_correct": {
+      "from_correct": 777,
+      "to_correct": 883,
+      "gained": 210,
+      "lost": 104,
+      "net": 106
+    },
+    "answer_format_valid": {
+      "from_correct": 1289,
+      "to_correct": 1293,
+      "gained": 8,
+      "lost": 4,
+      "net": 4
+    }
+  },
+  "by_course": {
+    "static_current": {
+      "examples": 700,
+      "correct": {
+        "from_correct": 645,
+        "to_correct": 661,
+        "gained": 32,
+        "lost": 16,
+        "net": 16
+      },
+      "canonical_tag_correct": {
+        "from_correct": 644,
+        "to_correct": 661,
+        "gained": 32,
+        "lost": 15,
+        "net": 17
+      },
+      "raw_exact_correct": {
+        "from_correct": 421,
+        "to_correct": 411,
+        "gained": 80,
+        "lost": 90,
+        "net": -10
+      },
+      "answer_format_valid": {
+        "from_correct": 700,
+        "to_correct": 700,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": {
+        "from_correct": 395,
+        "to_correct": 498,
+        "gained": 120,
+        "lost": 17,
+        "net": 103
+      },
+      "canonical_tag_correct": {
+        "from_correct": 386,
+        "to_correct": 494,
+        "gained": 123,
+        "lost": 15,
+        "net": 108
+      },
+      "raw_exact_correct": {
+        "from_correct": 356,
+        "to_correct": 472,
+        "gained": 130,
+        "lost": 14,
+        "net": 116
+      },
+      "answer_format_valid": {
+        "from_correct": 589,
+        "to_correct": 593,
+        "gained": 8,
+        "lost": 4,
+        "net": 4
+      }
+    }
+  },
+  "by_task": {
+    "dynamic_current/captures": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 58,
+        "to_correct": 85,
+        "gained": 30,
+        "lost": 3,
+        "net": 27
+      },
+      "canonical_tag_correct": {
+        "from_correct": 54,
+        "to_correct": 82,
+        "gained": 31,
+        "lost": 3,
+        "net": 28
+      },
+      "raw_exact_correct": {
+        "from_correct": 54,
+        "to_correct": 82,
+        "gained": 31,
+        "lost": 3,
+        "net": 28
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "dynamic_current/checks": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 77,
+        "to_correct": 93,
+        "gained": 17,
+        "lost": 1,
+        "net": 16
+      },
+      "canonical_tag_correct": {
+        "from_correct": 77,
+        "to_correct": 93,
+        "gained": 17,
+        "lost": 1,
+        "net": 16
+      },
+      "raw_exact_correct": {
+        "from_correct": 77,
+        "to_correct": 93,
+        "gained": 17,
+        "lost": 1,
+        "net": 16
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "dynamic_current/controllers": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 56,
+        "to_correct": 67,
+        "gained": 14,
+        "lost": 3,
+        "net": 11
+      },
+      "canonical_tag_correct": {
+        "from_correct": 56,
+        "to_correct": 67,
+        "gained": 14,
+        "lost": 3,
+        "net": 11
+      },
+      "raw_exact_correct": {
+        "from_correct": 56,
+        "to_correct": 67,
+        "gained": 14,
+        "lost": 3,
+        "net": 11
+      },
+      "answer_format_valid": {
+        "from_correct": 89,
+        "to_correct": 94,
+        "gained": 8,
+        "lost": 3,
+        "net": 5
+      }
+    },
+    "dynamic_current/mate": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 87,
+        "to_correct": 96,
+        "gained": 12,
+        "lost": 3,
+        "net": 9
+      },
+      "canonical_tag_correct": {
+        "from_correct": 87,
+        "to_correct": 96,
+        "gained": 12,
+        "lost": 3,
+        "net": 9
+      },
+      "raw_exact_correct": {
+        "from_correct": 57,
+        "to_correct": 75,
+        "gained": 20,
+        "lost": 2,
+        "net": 18
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 99,
+        "gained": 0,
+        "lost": 1,
+        "net": -1
+      }
+    },
+    "dynamic_current/moves": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 62,
+        "to_correct": 76,
+        "gained": 18,
+        "lost": 4,
+        "net": 14
+      },
+      "canonical_tag_correct": {
+        "from_correct": 62,
+        "to_correct": 76,
+        "gained": 18,
+        "lost": 4,
+        "net": 14
+      },
+      "raw_exact_correct": {
+        "from_correct": 62,
+        "to_correct": 76,
+        "gained": 18,
+        "lost": 4,
+        "net": 14
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "dynamic_current/parries": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 55,
+        "to_correct": 81,
+        "gained": 29,
+        "lost": 3,
+        "net": 26
+      },
+      "canonical_tag_correct": {
+        "from_correct": 50,
+        "to_correct": 80,
+        "gained": 31,
+        "lost": 1,
+        "net": 30
+      },
+      "raw_exact_correct": {
+        "from_correct": 50,
+        "to_correct": 79,
+        "gained": 30,
+        "lost": 1,
+        "net": 29
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/counts": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 96,
+        "to_correct": 96,
+        "gained": 2,
+        "lost": 2,
+        "net": 0
+      },
+      "canonical_tag_correct": {
+        "from_correct": 96,
+        "to_correct": 96,
+        "gained": 2,
+        "lost": 2,
+        "net": 0
+      },
+      "raw_exact_correct": {
+        "from_correct": 47,
+        "to_correct": 38,
+        "gained": 10,
+        "lost": 19,
+        "net": -9
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/diagonal": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 64,
+        "to_correct": 80,
+        "gained": 18,
+        "lost": 2,
+        "net": 16
+      },
+      "canonical_tag_correct": {
+        "from_correct": 64,
+        "to_correct": 80,
+        "gained": 18,
+        "lost": 2,
+        "net": 16
+      },
+      "raw_exact_correct": {
+        "from_correct": 35,
+        "to_correct": 34,
+        "gained": 12,
+        "lost": 13,
+        "net": -1
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/file": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 100,
+        "to_correct": 97,
+        "gained": 0,
+        "lost": 3,
+        "net": -3
+      },
+      "canonical_tag_correct": {
+        "from_correct": 100,
+        "to_correct": 97,
+        "gained": 0,
+        "lost": 3,
+        "net": -3
+      },
+      "raw_exact_correct": {
+        "from_correct": 45,
+        "to_correct": 46,
+        "gained": 28,
+        "lost": 27,
+        "net": 1
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/locate": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 98,
+        "to_correct": 92,
+        "gained": 2,
+        "lost": 8,
+        "net": -6
+      },
+      "canonical_tag_correct": {
+        "from_correct": 97,
+        "to_correct": 92,
+        "gained": 2,
+        "lost": 7,
+        "net": -5
+      },
+      "raw_exact_correct": {
+        "from_correct": 97,
+        "to_correct": 92,
+        "gained": 2,
+        "lost": 7,
+        "net": -5
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/materials": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 88,
+        "to_correct": 96,
+        "gained": 9,
+        "lost": 1,
+        "net": 8
+      },
+      "canonical_tag_correct": {
+        "from_correct": 88,
+        "to_correct": 96,
+        "gained": 9,
+        "lost": 1,
+        "net": 8
+      },
+      "raw_exact_correct": {
+        "from_correct": 45,
+        "to_correct": 49,
+        "gained": 8,
+        "lost": 4,
+        "net": 4
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/piece": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      },
+      "canonical_tag_correct": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      },
+      "raw_exact_correct": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    },
+    "static_current/rank": {
+      "examples": 100,
+      "correct": {
+        "from_correct": 99,
+        "to_correct": 100,
+        "gained": 1,
+        "lost": 0,
+        "net": 1
+      },
+      "canonical_tag_correct": {
+        "from_correct": 99,
+        "to_correct": 100,
+        "gained": 1,
+        "lost": 0,
+        "net": 1
+      },
+      "raw_exact_correct": {
+        "from_correct": 52,
+        "to_correct": 52,
+        "gained": 20,
+        "lost": 20,
+        "net": 0
+      },
+      "answer_format_valid": {
+        "from_correct": 100,
+        "to_correct": 100,
+        "gained": 0,
+        "lost": 0,
+        "net": 0
+      }
+    }
+  },
+  "from_scores": {
+    "static_current": {
+      "examples": 700,
+      "correct": 645,
+      "accuracy": 0.9214285714285714,
+      "minimum_task_accuracy": 0.64,
+      "by_task": {
+        "static_current/counts": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "static_current/diagonal": {
+          "n": 100,
+          "accuracy": 0.64
+        },
+        "static_current/file": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 100,
+          "accuracy": 0.98
+        },
+        "static_current/materials": {
+          "n": 100,
+          "accuracy": 0.88
+        },
+        "static_current/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 100,
+          "accuracy": 0.99
+        }
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": 395,
+      "accuracy": 0.6583333333333333,
+      "minimum_task_accuracy": 0.55,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 100,
+          "accuracy": 0.58
+        },
+        "dynamic_current/checks": {
+          "n": 100,
+          "accuracy": 0.77
+        },
+        "dynamic_current/controllers": {
+          "n": 100,
+          "accuracy": 0.56
+        },
+        "dynamic_current/mate": {
+          "n": 100,
+          "accuracy": 0.87
+        },
+        "dynamic_current/moves": {
+          "n": 100,
+          "accuracy": 0.62
+        },
+        "dynamic_current/parries": {
+          "n": 100,
+          "accuracy": 0.55
+        }
+      }
+    }
+  },
+  "to_scores": {
+    "static_current": {
+      "examples": 700,
+      "correct": 661,
+      "accuracy": 0.9442857142857143,
+      "minimum_task_accuracy": 0.8,
+      "by_task": {
+        "static_current/counts": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "static_current/diagonal": {
+          "n": 100,
+          "accuracy": 0.8
+        },
+        "static_current/file": {
+          "n": 100,
+          "accuracy": 0.97
+        },
+        "static_current/locate": {
+          "n": 100,
+          "accuracy": 0.92
+        },
+        "static_current/materials": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "static_current/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 100,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": 498,
+      "accuracy": 0.83,
+      "minimum_task_accuracy": 0.67,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 100,
+          "accuracy": 0.85
+        },
+        "dynamic_current/checks": {
+          "n": 100,
+          "accuracy": 0.93
+        },
+        "dynamic_current/controllers": {
+          "n": 100,
+          "accuracy": 0.67
+        },
+        "dynamic_current/mate": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "dynamic_current/moves": {
+          "n": 100,
+          "accuracy": 0.76
+        },
+        "dynamic_current/parries": {
+          "n": 100,
+          "accuracy": 0.81
+        }
+      }
+    }
+  },
+  "step_4000_decision": {
+    "stop": false,
+    "selected_step": 4000,
+    "steps_completed": 4000,
+    "checks_without_improvement": 0,
+    "stopping_reason": null,
+    "selected_accuracy": 0.83,
+    "selected_minimum_task_accuracy": 0.67
+  },
+  "selected_by_current_course_accuracy": true,
+  "source_bindings": {
+    "2000": {
+      "cpu_verification_sha256": "a8d3bd13efe47827db639bb44c0086865cc6af03da2fd20043017fd0dddf563e",
+      "actual_cpu_process_binding_sha256": "bedc8c793643b1d8ddcadb1524b026e549715d59f76e075b9975755b53f9fe6f",
+      "exit_sha256": "fac169e78720fc65e012c9465c2b5d09d1af4828966c177416f5c9d42ea6f4a4",
+      "qa_manifest_sha256": "16870259f313ccca00c6dcfa5291faa6ba0283b73723433fd5d216f03a717c17",
+      "checkpoint_sha256": "7f004a1b96db03f33d93ad766c010804e874c985f7061b8228b09564ce126e9b"
+    },
+    "4000": {
+      "cpu_verification_sha256": "b0e2ba3c8bab2e4e41ef219280d3ef4cfb37f051a5730946c00b9c454bd957d0",
+      "actual_cpu_process_binding_sha256": "55b83b05f16563f9fe8fb635617221a470e371dd3930ee35e34c18e31d2ef65d",
+      "exit_sha256": "34cb07fb033c695fb13226b74276c137ac3dc2a312e32182bb50d9c0ba81225e",
+      "qa_manifest_sha256": "aefb7cf311bb20d9af8188940b2eac33648c42b065c0b17861227ad353730cb6",
+      "checkpoint_sha256": "6cceadde334d8076e0765d2c2d7e7a81b41d09cceaac6ec029c2e2a531409e22"
+    }
+  },
+  "actual_4000_live_qa_process_binding_sha256": "1199f82a92f3d7b3db52897a8703dd8bf8ea436c3ec4794d49957bfd40bc3a02",
+  "first_4000_update_prefix_sha256": "69f151ee30b5158f72a781955510eb2dd770c330f84830d2098cd7922fb2ff3d",
+  "training_valid_presentations": 1024000,
+  "minimum_stopping_step": 32000,
+  "maximum_updates": 60000,
+  "next_raw_validation_step": 6000,
+  "courses_completed": 1,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "strong_play_or_coaching_proven": false,
+  "existing_grading_algorithm_reused": true,
+  "new_native_chess_rule_engine": false,
+  "new_model_or_gpu_job_launched": false,
+  "large_inputs_rehashed": false,
+  "script_sha256": "7afd8fd0107ddb6b95bd0e1d768ae4b80ed7ca05c6a07125248f7ae2a03b3ea0",
+  "full_goal_complete": false,
+  "source_runtime_review_sha256": "8a0ea391443f0e182e01e8ffd670c39509e93ce2ad42ba6b97038137bd8d6524",
+  "validation_question_ids_omitted": true,
+  "step_4000_live_qa_and_cpu_process_bindings_available": true,
+  "step_2000_live_qa_process_binding_available": false
+}
