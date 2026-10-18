@@ -1,0 +1,74 @@
+{
+  "status": "complete_actual_4000_four_rank_continuation",
+  "observed_at_utc": "2026-10-18T17:20:35.922216+00:00",
+  "resumed_from_step": 4000,
+  "first_observed_step": 4007,
+  "last_observed_step": 4012,
+  "all_eight_live_identities_checked_twice": true,
+  "exact_live_identities": [
+    {
+      "pid": 3136482,
+      "start_time": 568743694,
+      "ppid": 90914,
+      "command_sha256": "58d445980c4a87d93d806927779496ba69aad7748e5fe8f79cfcf05fc744c3db"
+    },
+    {
+      "pid": 3136487,
+      "start_time": 568743755,
+      "ppid": 3136482,
+      "command_sha256": "855bed86f5b9e4fe22a7afa4be116dd257092ebe102b0c16cea7d5ff494a2723"
+    },
+    {
+      "pid": 3137623,
+      "start_time": 568765447,
+      "ppid": 3136482,
+      "command_sha256": "10d1afd744c27e118b50126eb02b8e6431e0aa124c77e50269e3284b45adb595"
+    },
+    {
+      "pid": 213263,
+      "start_time": 598951094,
+      "ppid": 3137623,
+      "command_sha256": "07acd7161588c62a5562d61119eb03e21fae48828b4801497384be0bcea9d7c3"
+    },
+    {
+      "pid": 213336,
+      "start_time": 598951356,
+      "ppid": 213263,
+      "command_sha256": "4585aa86b89705f218e4af2a16b6215112b0dfbe78951955c46627adb7f8ca53"
+    },
+    {
+      "pid": 213337,
+      "start_time": 598951357,
+      "ppid": 213263,
+      "command_sha256": "4585aa86b89705f218e4af2a16b6215112b0dfbe78951955c46627adb7f8ca53"
+    },
+    {
+      "pid": 213338,
+      "start_time": 598951357,
+      "ppid": 213263,
+      "command_sha256": "4585aa86b89705f218e4af2a16b6215112b0dfbe78951955c46627adb7f8ca53"
+    },
+    {
+      "pid": 213339,
+      "start_time": 598951357,
+      "ppid": 213263,
+      "command_sha256": "4585aa86b89705f218e4af2a16b6215112b0dfbe78951955c46627adb7f8ca53"
+    }
+  ],
+  "actual_live_ddp_ranks": 4,
+  "source_modules_freshly_hashed": 89,
+  "same_source_inputs_and_training_configuration_as_actual_4000_checkpoint": true,
+  "actual_finite_epoch_contract_unchanged": true,
+  "all_observed_update_losses_and_gradient_norms_finite": true,
+  "all_observed_batch_geometry_verified": true,
+  "completed_4000_readback_byte_prefix_preserved": true,
+  "captured_training_prefix_sha256": "ba5faf779ee7d4f591b6cb164d99d82abcbb2de6258eb197d219607722f44074",
+  "actual_execution_sha256": "c88d9d1ecc0612865a9a48f67bd9034370d8ad8f644474d559e07e40aac33f2d",
+  "actual_segment_binding_sha256": "b6e50182f501e382239bed966c7f62b1ae23b15fc40735c584176603acf6e0ae",
+  "selected_step": 4000,
+  "next_raw_validation_step": 6000,
+  "courses_completed": 1,
+  "production_training_modified": false,
+  "large_inputs_rehashed": false,
+  "full_goal_complete": false
+}
