@@ -1,0 +1,132 @@
+{
+  "status": "complete_actual_second_course_continuation",
+  "observed_at_utc": "2026-10-18T16:29:02.441335+00:00",
+  "current_step": 3737,
+  "last_update": {
+    "step": 3737,
+    "loss": 0.03818874806165695,
+    "gradient_norm": 0.369161993265152,
+    "supervised_tokens": 33613907,
+    "lr": 7.99687392272638e-06,
+    "seconds": 14994.833908805624,
+    "data_batch": {
+      "epoch": 0,
+      "optimizer_batch_in_epoch": 3736,
+      "global_valid_rows": 256,
+      "global_padding_rows": 0,
+      "global_rows": 256
+    }
+  },
+  "stage": "dynamic_current",
+  "courses_completed": 1,
+  "actual_live_ddp_ranks": 4,
+  "exact_live_identities": [
+    {
+      "pid": 3136482,
+      "start_time": 568743694,
+      "ppid": 90914,
+      "command_sha256": "58d445980c4a87d93d806927779496ba69aad7748e5fe8f79cfcf05fc744c3db"
+    },
+    {
+      "pid": 3136487,
+      "start_time": 568743755,
+      "ppid": 3136482,
+      "command_sha256": "855bed86f5b9e4fe22a7afa4be116dd257092ebe102b0c16cea7d5ff494a2723"
+    },
+    {
+      "pid": 3137623,
+      "start_time": 568765447,
+      "ppid": 3136482,
+      "command_sha256": "10d1afd744c27e118b50126eb02b8e6431e0aa124c77e50269e3284b45adb595"
+    },
+    {
+      "pid": 143178,
+      "start_time": 597169221,
+      "ppid": 3137623,
+      "command_sha256": "3048d588e4558c90e3796bd9144d563827dc585a4f4dd6ef231ae56dea3a1e01"
+    },
+    {
+      "pid": 143252,
+      "start_time": 597169551,
+      "ppid": 143178,
+      "command_sha256": "9de201f123f6248d1d71c4a4bbf29a2c2d87a4857dfae153043f62c0e4a79dcf"
+    },
+    {
+      "pid": 143253,
+      "start_time": 597169551,
+      "ppid": 143178,
+      "command_sha256": "9de201f123f6248d1d71c4a4bbf29a2c2d87a4857dfae153043f62c0e4a79dcf"
+    },
+    {
+      "pid": 143254,
+      "start_time": 597169551,
+      "ppid": 143178,
+      "command_sha256": "9de201f123f6248d1d71c4a4bbf29a2c2d87a4857dfae153043f62c0e4a79dcf"
+    },
+    {
+      "pid": 143255,
+      "start_time": 597169551,
+      "ppid": 143178,
+      "command_sha256": "9de201f123f6248d1d71c4a4bbf29a2c2d87a4857dfae153043f62c0e4a79dcf"
+    }
+  ],
+  "all_eight_identities_checked_twice": true,
+  "source_modules_freshly_hashed": 89,
+  "current_execution_sha256": "d7ec61b269ca67cae1b488bfb87ee72e2f5fd459cafd3f741934ff95823333b9",
+  "actual_training_prefix_sha256": "1d29932cbc0622b439c1218fc2f8888d05ad4738d1cb08f5d4e64e3d5d31c79c",
+  "all_observed_updates_finite_and_batch_geometry_checked": true,
+  "parent_selected_step": 24000,
+  "parent_checkpoint_sha256": "9f1aacb529342b6650b588db9e094897cb39f1d8f448964a969b623520779bf0",
+  "full_initialization_parameters_directly_compared_at_zero_updates": false,
+  "actual_training_data_contract": {
+    "profile": "author_finite_mixture_epochs_xiangqi_v1",
+    "anchor_stage": "dynamic_current",
+    "source_rows_by_stage": {
+      "static_current": 3200005,
+      "dynamic_current": 2109061
+    },
+    "selected_rows_by_stage": {
+      "static_current": 234340,
+      "dynamic_current": 2109061
+    },
+    "requested_weights": {
+      "static_current": 0.1,
+      "dynamic_current": 0.9
+    },
+    "realized_weights": {
+      "static_current": 0.09999995732697904,
+      "dynamic_current": 0.9000000426730209
+    },
+    "rows_per_epoch": 2343401,
+    "mixture_seed": 0,
+    "epoch_seed": 20261071,
+    "selected_row_id_and_index_sha256": "6e0263fc5703ca19c9c07feaa5d12caedf79a155b593438e4f4a082bce9e0b79",
+    "global_batch_size": 256,
+    "world_size": 4,
+    "micro_batch_size": 4,
+    "optimizer_steps_per_epoch": 9154,
+    "padded_rows_per_epoch": 7,
+    "tail_policy": "pad_distributed_microbatch_from_epoch_start",
+    "old_course_subsets_reselected_each_epoch": false,
+    "task_types_resampled_uniformly": false,
+    "independent_test_used": false
+  },
+  "readback_services": {
+    "observer": {
+      "launch_verification_sha256": "d314fbb466867d6938116a1ca3316d2f14f474b2d5bb498760fa1bc4b39db669",
+      "original_live_service_identity_confirmed": true
+    },
+    "worker": {
+      "launch_verification_sha256": "4d119610190c637d9b45f6ac101833ddce136486a36e0f589b623d43b77d4191",
+      "original_live_service_identity_confirmed": true
+    }
+  },
+  "second_course_2000_cpu_readback_sha256": "a8d3bd13efe47827db639bb44c0086865cc6af03da2fd20043017fd0dddf563e",
+  "first_course_completion_readback_sha256": "48d9413e57ed853ee2b3402459a1f095d148eba25dbcfc7c79c20c67dc855f36",
+  "production_training_modified": false,
+  "large_input_proofs_reused": true,
+  "initial_explanation_sft_started": false,
+  "student_search_distillation_started": false,
+  "independent_test_used": false,
+  "full_goal_complete": false
+}
