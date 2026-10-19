@@ -1,0 +1,83 @@
+{
+  "status": "complete_actual_8000_four_rank_continuation",
+  "observed_at_utc": "2026-10-19T02:16:44.801408+00:00",
+  "resumed_from_step": 8000,
+  "first_observed_step": 8020,
+  "last_observed_step": 8024,
+  "observation_seconds": 45.013309,
+  "captured_through_step": 8033,
+  "all_eight_live_identities_checked_twice": true,
+  "exact_live_identities": [
+    {
+      "pid": 3136482,
+      "start_time": 568743694,
+      "ppid": 90914,
+      "command_sha256": "58d445980c4a87d93d806927779496ba69aad7748e5fe8f79cfcf05fc744c3db"
+    },
+    {
+      "pid": 3136487,
+      "start_time": 568743755,
+      "ppid": 3136482,
+      "command_sha256": "855bed86f5b9e4fe22a7afa4be116dd257092ebe102b0c16cea7d5ff494a2723"
+    },
+    {
+      "pid": 3137623,
+      "start_time": 568765447,
+      "ppid": 3136482,
+      "command_sha256": "10d1afd744c27e118b50126eb02b8e6431e0aa124c77e50269e3284b45adb595"
+    },
+    {
+      "pid": 329603,
+      "start_time": 602150210,
+      "ppid": 3137623,
+      "command_sha256": "957dadfc5576792664967faf4411e3ad06b728502a0488c70670543b74cf3c08"
+    },
+    {
+      "pid": 329684,
+      "start_time": 602150467,
+      "ppid": 329603,
+      "command_sha256": "a82e11df6b177a37fe10832a704f2f48531b2db9cecdfdd791cf05f762665a28"
+    },
+    {
+      "pid": 329685,
+      "start_time": 602150467,
+      "ppid": 329603,
+      "command_sha256": "a82e11df6b177a37fe10832a704f2f48531b2db9cecdfdd791cf05f762665a28"
+    },
+    {
+      "pid": 329686,
+      "start_time": 602150467,
+      "ppid": 329603,
+      "command_sha256": "a82e11df6b177a37fe10832a704f2f48531b2db9cecdfdd791cf05f762665a28"
+    },
+    {
+      "pid": 329687,
+      "start_time": 602150467,
+      "ppid": 329603,
+      "command_sha256": "a82e11df6b177a37fe10832a704f2f48531b2db9cecdfdd791cf05f762665a28"
+    }
+  ],
+  "actual_live_ddp_ranks": 4,
+  "source_modules_freshly_hashed": 89,
+  "same_source_inputs_and_training_configuration_as_actual_8000_checkpoint": true,
+  "actual_finite_epoch_contract_unchanged": true,
+  "all_observed_update_losses_and_gradient_norms_finite": true,
+  "all_observed_batch_geometry_verified": true,
+  "verified_resumed_trace_step_range": [
+    8001,
+    8033
+  ],
+  "completed_8000_readback_byte_prefix_preserved": true,
+  "predeclared_qa_log_prefix_preserved": true,
+  "completed_8000_training_prefix_sha256": "01cadd5e4621ed3d8281ec3df81e5414f3d35274fb0d29845dac5a0634ad4f77",
+  "captured_training_prefix_sha256": "dec1996c56dd155b1c58d58cf7f4248490591607a97fd6ab817353c3c82db417",
+  "actual_execution_sha256": "73fe7fa74a87bad683ecbb57e168702c1b69d39dc08311a69f8bf32e8c6e8181",
+  "actual_segment_binding_sha256": "0706a7c72752188172953637755e29b32c4616c5ad50895f53b84814b1f913af",
+  "selected_step": 8000,
+  "next_raw_validation_step": 10000,
+  "courses_completed": 1,
+  "production_training_modified": false,
+  "large_inputs_rehashed": false,
+  "source_script_sha256": "2ac0b62969cb0b52fd70148e54d2bcea07db94e41dd7506e99ccac9f2b33a85d",
+  "full_goal_complete": false
+}
