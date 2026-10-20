@@ -1,0 +1,375 @@
+{
+  "status": "complete_native_qualified_data_and_admission_readback",
+  "evidence_state": "reconstructed_baseline",
+  "observed_at_utc": "2026-10-20T05:41:03.821253+00:00",
+  "kind": "engine_qualified_reviewed_explanation_dataset",
+  "by_split": {
+    "train": 9823,
+    "validation": 384,
+    "test": 512
+  },
+  "original_by_split": {
+    "train": 10758,
+    "validation": 384,
+    "test": 512
+  },
+  "qualification_rule": {
+    "first_move_no_mistake_required": true,
+    "all_main_variation_plies_no_mistake_required": true,
+    "expected_score_loss_strictly_less_than": 0.1,
+    "original_structured_and_legal_contract_required": true
+  },
+  "qualification_counts": {
+    "examples": 10758,
+    "eligible": 9823,
+    "first_move_passed": 10644,
+    "full_main_variation_passed": 9823,
+    "first_pass_pv_pass": 9823,
+    "judged_main_variation_plies": 63746,
+    "rejected": 935,
+    "first_pass_pv_fail": 821,
+    "first_fail_pv_fail": 114
+  },
+  "source_coverage": {
+    "provenance": {
+      "seeded_random_legal_play;not_human_games;pikafish_grounded;gpt-6-astra_low_codex_subagent": {
+        "examples": 1091,
+        "eligible": 1019,
+        "first_move_passed": 1085,
+        "full_main_variation_passed": 1019
+      },
+      "seeded_random_legal_play;not_human_games;searched_engine_pv_context;pikafish_grounded;gpt-6-astra_low_codex_subagent": {
+        "examples": 2048,
+        "eligible": 1858,
+        "first_move_passed": 2025,
+        "full_main_variation_passed": 1858
+      },
+      "seeded_random_legal_play;not_human_games;pikafish_grounded;gpt-6-astra_low_codex_subagent;color_rank_symmetry": {
+        "examples": 1091,
+        "eligible": 1016,
+        "first_move_passed": 1083,
+        "full_main_variation_passed": 1016
+      },
+      "seeded_random_legal_play;not_human_games;searched_engine_pv_context;pikafish_grounded;gpt-6-astra_low_codex_subagent;color_rank_symmetry": {
+        "examples": 2048,
+        "eligible": 1854,
+        "first_move_passed": 2024,
+        "full_main_variation_passed": 1854
+      },
+      "pinned_Pikafish_selfplay;bounded_early_multipv_exploration;pikafish_grounded;gpt-6-astra_low_codex_subagent": {
+        "examples": 2432,
+        "eligible": 2285,
+        "first_move_passed": 2407,
+        "full_main_variation_passed": 2285
+      },
+      "recorded_human_match;native_full_history_verified;recorded_mainline_rule_grounding;pikafish_grounded;gpt-6-astra_low_codex_subagent": {
+        "examples": 2003,
+        "eligible": 1747,
+        "first_move_passed": 1975,
+        "full_main_variation_passed": 1747
+      },
+      "public_recorded_mainline;native_full_history_verified;recorded_mainline_rule_grounding;pikafish_grounded;gpt-6-astra_low_codex_subagent": {
+        "examples": 45,
+        "eligible": 44,
+        "first_move_passed": 45,
+        "full_main_variation_passed": 44
+      }
+    },
+    "side_to_move": {
+      "b": {
+        "examples": 5379,
+        "eligible": 4921,
+        "first_move_passed": 5325,
+        "full_main_variation_passed": 4921
+      },
+      "w": {
+        "examples": 5379,
+        "eligible": 4902,
+        "first_move_passed": 5319,
+        "full_main_variation_passed": 4902
+      }
+    },
+    "augmentation": {
+      "without_augmentation_parent": {
+        "examples": 7619,
+        "eligible": 6953,
+        "first_move_passed": 7537,
+        "full_main_variation_passed": 6953
+      },
+      "with_augmentation_parent": {
+        "examples": 3139,
+        "eligible": 2870,
+        "first_move_passed": 3107,
+        "full_main_variation_passed": 2870
+      }
+    },
+    "history_length": {
+      "0-19": {
+        "examples": 1706,
+        "eligible": 1526,
+        "first_move_passed": 1689,
+        "full_main_variation_passed": 1526
+      },
+      "20-39": {
+        "examples": 3356,
+        "eligible": 2982,
+        "first_move_passed": 3313,
+        "full_main_variation_passed": 2982
+      },
+      "40-59": {
+        "examples": 3148,
+        "eligible": 2877,
+        "first_move_passed": 3106,
+        "full_main_variation_passed": 2877
+      },
+      "60-79": {
+        "examples": 1186,
+        "eligible": 1111,
+        "first_move_passed": 1179,
+        "full_main_variation_passed": 1111
+      },
+      "140-159": {
+        "examples": 170,
+        "eligible": 169,
+        "first_move_passed": 170,
+        "full_main_variation_passed": 169
+      },
+      "80-99": {
+        "examples": 382,
+        "eligible": 371,
+        "first_move_passed": 381,
+        "full_main_variation_passed": 371
+      },
+      "120-139": {
+        "examples": 249,
+        "eligible": 244,
+        "first_move_passed": 249,
+        "full_main_variation_passed": 244
+      },
+      "100-119": {
+        "examples": 318,
+        "eligible": 305,
+        "first_move_passed": 315,
+        "full_main_variation_passed": 305
+      },
+      "160-179": {
+        "examples": 163,
+        "eligible": 161,
+        "first_move_passed": 162,
+        "full_main_variation_passed": 161
+      },
+      "180-199": {
+        "examples": 79,
+        "eligible": 76,
+        "first_move_passed": 79,
+        "full_main_variation_passed": 76
+      },
+      "280-299": {
+        "examples": 1,
+        "eligible": 1,
+        "first_move_passed": 1,
+        "full_main_variation_passed": 1
+      }
+    },
+    "teacher": {
+      "{\"backend\": \"codex_subagent\", \"reasoning_effort\": \"low\", \"teacher_model\": \"gpt-6-astra\"}": {
+        "examples": 10758,
+        "eligible": 9823,
+        "first_move_passed": 10644,
+        "full_main_variation_passed": 9823
+      }
+    }
+  },
+  "distinct_game_identifiers": {
+    "source": 2716,
+    "eligible": 2453
+  },
+  "distinct_game_identifiers_are_not_all_independent_human_games": true,
+  "original_dataset_manifest_sha256": "f11cc3cb0f9247ff18170d3fc7967baf64d4ad29c95e33b9ab51fb3ddec48c73",
+  "qualified_dataset_manifest_sha256": "8dcccd04bcff96f0039bc1456771708179b88cf6b5cf62838079e756f847d679",
+  "separate_profile_manifest_sha256": "72dcdbbff1ba512451e6af71e6cdda425ba4ff012065b91a95f95e3a6de6371a",
+  "native_generation_exit_sha256": "37cd0102374bf2bdba239a9228753e81cf2f42c29aa925584f1f2faa900891b1",
+  "independent_data_readback_sha256": "af0654703bc4f5755e4443d677c3dff979b972ff48fd9fe6ce4f768c6ef441d8",
+  "independent_native_index_readback": {
+    "status": "complete_actual_native_qualified_row_index_readback",
+    "observed_at_utc": "2026-10-20T05:40:47.834161+00:00",
+    "by_split": {
+      "train": {
+        "rows": 9823,
+        "manifest_path": "data/astra-explanations-engine-qualified-paper-index-v1/train/manifest.json",
+        "manifest_sha256": "cac1fb41433eab37271cbe263fddd0a918f0e9609d848530363e49baf35ef47d",
+        "all_actual_indexed_rows_equal_native_file_loader": true
+      },
+      "validation": {
+        "rows": 384,
+        "manifest_path": "data/astra-explanations-engine-qualified-paper-index-v1/validation/manifest.json",
+        "manifest_sha256": "fe23d292bed5eb039dd1356a01c90e635142a2e76b86fed63f235a52e648235d",
+        "all_actual_indexed_rows_equal_native_file_loader": true
+      }
+    },
+    "independent_test_rows_indexed_or_parsed": 0,
+    "expert_feature_arrays_loaded_or_rehashed": false,
+    "models_or_engine_search_started": false,
+    "full_goal_complete": false
+  },
+  "independent_token_readback_sha256": "bdad06530d059d1192e0f2dd555dccc9cf9cf2c4e038d8eed0f1e4b2b7fcc5e9",
+  "all_10758_decisions_equal_separate_previous_profile": true,
+  "all_retained_train_line_bytes_and_order_exact": true,
+  "heldout_files_byte_identical": true,
+  "all_actual_native_indexed_training_and_validation_rows_read_back": true,
+  "tokenized_rows_by_split": {
+    "train": 9823,
+    "validation": 384
+  },
+  "maximum_tokens_by_split": {
+    "train": 649,
+    "validation": 625
+  },
+  "supervised_token_counts_by_split": {
+    "train": 3964865,
+    "validation": 157342
+  },
+  "token_limit": 1024,
+  "token_lengths_sha256": "dacd796f5aa4487fe99b1ab714abc781ded9c6d99475ebc8d738fc06ac51e7db",
+  "tokenizer_assets": {
+    "config.json": "5beea1a4a34c62782bfb2f911c606741a3bab8f92d80a118fa053c28af12e8ba",
+    "tokenizer_config.json": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+    "merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+  },
+  "all_train_validation_supervision_encoded_without_truncation": true,
+  "latent_only_prompt_board_text_guard_passed": true,
+  "independent_test_records_parsed_or_tokenized": 0,
+  "parent_native_history_isolation_and_semantic_acceptance_reused": true,
+  "source_engine_reference_native_and_protocol_readback_reused": true,
+  "newly_generated_teacher_annotations": 0,
+  "teacher_label_text_rewritten": false,
+  "expert_feature_arrays_loaded_or_rehashed": false,
+  "language_model_weights_loaded": false,
+  "gpu_initialized": false,
+  "engine_search_started": false,
+  "waiting_sft_recipe_or_queue_modified": false,
+  "formal_sft_route_migration_pending": true,
+  "all_four_courses_and_actual_full_decoder_gpu_capacity_still_required": true,
+  "formal_sft_or_distillation_started": false,
+  "student_strength_or_coaching_benefit_proven": false,
+  "code_revision_is_pre_feature_base": true,
+  "actual_executed_code": {
+    "revision": "728098708e851fb1aff57b631c1ddd7e4e90c8cc",
+    "source_sha256": {
+      "src/xqgeneral/__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+      "src/xqgeneral/ask.py": "50334b5fdb7037a87a37266b9fb65c8985f5d38b1cd4e5fd41821fc2c429e8f4",
+      "src/xqgeneral/board_tokens.py": "f542ad740bf9fd56a17b0b8c8333ea2c1f5c8db8275897e282f6236f8d979ea7",
+      "src/xqgeneral/bridge.py": "cf112573feb560ddd7a656e2db1c887fff2e3c3a3951a1a04207492a1a3514fb",
+      "src/xqgeneral/bundled_games.py": "95be8b19ea876eeff61620bc5fb9e5142349bad43210beb69cd1b18336c74644",
+      "src/xqgeneral/cache_feature_store.py": "5d91f3031f4a547c0fd91fc0c3952bbabfd7b5fe358ec35fb992ecfc097a2d19",
+      "src/xqgeneral/cache_features.py": "1a610f8d5b0450fc2d607f8992dd6ab1a6ad4acbd6c2c938a28bf36f4000b5c5",
+      "src/xqgeneral/calibration.py": "5d6348f1794e4c19e7905cf555a12aa8c2fd50033860b67ea8fef010fb30a64e",
+      "src/xqgeneral/clean_sft_evaluation.py": "3fe896e7bc6d2a7f56cf9faae5aa11817528a1ff1b70a7a10f243f6233293582",
+      "src/xqgeneral/clean_sft_matches.py": "10b8cf14bdbe74dea8eff3b8dddddbcfc60847c44c62c78d75564c7cd102e0ab",
+      "src/xqgeneral/coach.py": "e363230c42ca4491ae955324157e956d4e15dde8dedbc11ce96b3052ee9fd285",
+      "src/xqgeneral/collect_recorded.py": "31753ae301b3a026e1fbce29041ad6f3b1f8ec2090cd6271b7820358e0e970aa",
+      "src/xqgeneral/collect_search.py": "f7c08a9acb151edd959c9d93a11c37d2fea55a0b7f5ade35c674de6924e215b6",
+      "src/xqgeneral/collect_teacher.py": "016b87788dc701c54c73e53aa3978e47e5648294f6c62a30f495e1b901155e37",
+      "src/xqgeneral/course_position_sampling.py": "dec6ea882e94fd779c5941546f7a860647dfd0dbc0327d0a4e72cf1c307f6c00",
+      "src/xqgeneral/course_render_spool.py": "0b6aeca4e01cc604d980c775c22c5bad28178ce6190211cb17b95e5f6f59fe34",
+      "src/xqgeneral/course_rendering.py": "167bb835e94e3bf04263f0175df88e38dfcf7eb8f15b2ab8ae3b3c40af1a3c1a",
+      "src/xqgeneral/course_sampling.py": "8161b1a8c0d8a584e71aaca436f675223f08a7ac7421f064291e303d1b6c9080",
+      "src/xqgeneral/course_source_semantics.py": "2d111bcedf246a3779a82a062eac924717b6887c705a149fafca2bceb46d6c1c",
+      "src/xqgeneral/course_tasks.py": "1609c922f3ce6f958bc32cb55f5343192e585a045bb3c03d48756aaa89687c38",
+      "src/xqgeneral/curriculum.py": "ab1a9967f7e7b0930e3f3c5ff0b6c3090c6869cb61e2db96f838f7ea4f603f7f",
+      "src/xqgeneral/curriculum_data.py": "318d192ea69c57de5cc803537728246a56cc3922498869189141b41d8ddece7f",
+      "src/xqgeneral/curriculum_selection.py": "4d2698b765172a7be3254af1e35c79a82286292de2c4af76438a742cc5d323a1",
+      "src/xqgeneral/data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+      "src/xqgeneral/diagnose_moves.py": "a2b24dc2c8b8fa4d3c8fb606669db60a57ece61b4e470b8b06465c9b3dc4fc8a",
+      "src/xqgeneral/distillation_preflight.py": "3ab92a99ecfddb8d96b08c18373afbb028b09204bb3d3767ef5f4aadfd297576",
+      "src/xqgeneral/distillation_training.py": "62a4fe738663744b271039cde896199d5ce8e26debfce9d4948fcdc6643894e6",
+      "src/xqgeneral/elephant_games.py": "64a67d2940324444909a897e4f8555f135b9270b4bc8d7eba13fc6ee9b5ff363",
+      "src/xqgeneral/engine_qualified_explanations.py": "1fefcbdd671312659b82904bc41c10c485948df0c0c0c348525e8d9fcf3304f2",
+      "src/xqgeneral/engine_selfplay.py": "867c51d5bfbb8fb4e8b67c914ad9d13e24a406f8fefbdac658a3eaf5180a829c",
+      "src/xqgeneral/evaluate_explanations.py": "bb73dea750d4c2e3004f7beebf3fce941c722714aa93a80f95d05817b57b221b",
+      "src/xqgeneral/evaluate_games.py": "b557a65c95cf407fdb40780c752e12349063d8cd3da7d8574e7e6cff86252a6b",
+      "src/xqgeneral/evaluate_moves.py": "617d4aa73530b91ab2de8f38bbede5f5ade5a9ddfaafb9b24641e6506a443faf",
+      "src/xqgeneral/evaluate_plans.py": "43b05b99cc769978ff77c8097977893bc7734a969f55b5da514b3a68ef650d63",
+      "src/xqgeneral/evaluate_qa.py": "ebd3f97dbc1c672bd7a654e67cf8877fcbba6db4a15032669a746044c37b2a80",
+      "src/xqgeneral/evidence.py": "891b9be3cd6cd3e69304d72e36499b293a46a6624c9c382937bed3f0f6516afc",
+      "src/xqgeneral/expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+      "src/xqgeneral/explanation_preflight.py": "26dee51b8386004ec5f286412b313e2ba355691b18414a54679647fb3b6bef6a",
+      "src/xqgeneral/explanations.py": "4fc973d12cb1364d2b77ed457e37bef5ade553d2733fcef8754bae12cf7ba2b2",
+      "src/xqgeneral/extend_features.py": "7f0a910bc2427020358b8a8c6fb8324800c55963c769bfacd59be453f45f6f8c",
+      "src/xqgeneral/feature_store.py": "5db3e7bc10b8da176a9b41b2dab01b753f1dd35b4461714f5c7792c941f6563f",
+      "src/xqgeneral/finite_training.py": "e4ff0cc2f215718a06a8af74440c99294bc0a962b9255f0c92c281a2853c8e1e",
+      "src/xqgeneral/foundation_handoff.py": "8940ffba84f829ff9cd8307d409c0f04b6a776e8b6e7a834669490abddc5c46e",
+      "src/xqgeneral/foundation_preflight.py": "30452d75da538b0383cefb92e1c90546828cb307ec37cea55b8a2044ceefdf03",
+      "src/xqgeneral/foundation_readback.py": "972d9d47727c42bfeb5b4a40164e5c0986021a4cd3339c99e3288f8c253cc5a8",
+      "src/xqgeneral/gated_curriculum.py": "4d09826d0fe6566c80f249a0d44f5ba6cdd5b666e5796a0c712909ee400e6e7d",
+      "src/xqgeneral/human_games.py": "2e6a7426817e9f0566e7843e2cf0a9eb02b001a012861bdb59311aabbdf70e30",
+      "src/xqgeneral/inference.py": "1970e043fd663fa5184823f7dd0e08a461bd7fa8c8da762b1a6708a43a223e35",
+      "src/xqgeneral/local_teacher.py": "1af2d5196e84ae09b91469e94149d364028c235bf879fde8153bc27baa708b83",
+      "src/xqgeneral/match_openings.py": "ba42589fee4bb10e2bccb729f430c9925cf28a1750dd0a043ff2e1d6bbb98330",
+      "src/xqgeneral/merge_teacher.py": "4d640c91e931cd5c91a80aef8d853a9d89912662e908db708ace555b573aa07b",
+      "src/xqgeneral/model_bundle.py": "4ac7afba555e1985b8cabd5aef0fc62401af03d4f5fff6b8c3a681deb800309c",
+      "src/xqgeneral/modeling.py": "dda63b993cf20638be7d8e6713611b116a77eb0ac6d9c85fc262a5ac2f2d879e",
+      "src/xqgeneral/move_decoding.py": "84507ab4a8a76142f37dc8e57a522130c52fed4404dfa0f5cca520873a6353e5",
+      "src/xqgeneral/native_catalog.py": "a4c10e707d24e539f11f742154c641d70b33980a54ef1909e4625678f1c59759",
+      "src/xqgeneral/net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+      "src/xqgeneral/oracle.py": "2bed40736e2d0e4fe05405783a60bb85073ee92876f79aadf6863ea1c53edb19",
+      "src/xqgeneral/paper_curriculum.py": "f6eb00a7c8dd02f327d3b0528e9c9bc61d30b8520c3570b3dc20c539ad73e697",
+      "src/xqgeneral/paper_readback_reuse.py": "705ac13fa508d0eb79193212253c76b97f79d5c58c71d2e718f43ea3cf389339",
+      "src/xqgeneral/planning_data.py": "f5a1a2234b5abdfb4de0bf9b8f08cfe2ad9b2a10b55f26916cd77805737afba8",
+      "src/xqgeneral/platform_games.py": "2656f0cee66739cb46e6ad8a3821058c859b1ee65b579b8a2b7dfa859e46ba17",
+      "src/xqgeneral/policy_data.py": "d2f9e0ccdc230c39fc2055575604cee6cee4d05e547f49e99c3d81c319a61fcf",
+      "src/xqgeneral/prepare_explanations.py": "3499af039e968a922e551cb023ab063dc664a95b7c147cbf4cd6c04616536230",
+      "src/xqgeneral/prose_moves.py": "e590f88819a9195df88832ea6efa42dab34b03d2c6efab84e3a8a3e047b5294b",
+      "src/xqgeneral/recorded_coach.py": "62dcb4972e7829d51032c6d4082838a9dbfe78dea01d6b5703ef58d86a7b8aa9",
+      "src/xqgeneral/recorded_coach_isolation_readback.py": "1cf1b56568cc01e1681c80f4114fc07fdaaa03519bb2f873fdc4843c8a30dae7",
+      "src/xqgeneral/recorded_coach_prose.py": "286b8563b9cb2b6b082e8b3db6a5bb5701605fa8219580a2b6efbc41ee343b5c",
+      "src/xqgeneral/recorded_coach_readback.py": "22b15e3b88051f2709a77bc5e37135c45a0fc2d9a5f9e6f7f486f718605cc5db",
+      "src/xqgeneral/recorded_course_pools.py": "9367d3408d3b2d63b282b331d6551d149e6c9c0999ae81f538c82b3ba050bb6f",
+      "src/xqgeneral/recorded_curriculum.py": "485166d8fd76a03e005e30e06297d5a75f72aef3bfc5d80cdd20cfa1cda1991e",
+      "src/xqgeneral/recorded_full_course_pools.py": "6c7a3c652ba3030d097fb3e44a5b8db22142c900ef0b97740971ee0694a3b3a9",
+      "src/xqgeneral/recorded_search_inputs.py": "89323909ee1d5ddb4a2a2e0102254c130015c0d2aaf17f2749bc09ddd2b0f0b7",
+      "src/xqgeneral/recorded_sources.py": "5cd0f21d1bc87dc0a364de3df96d5401615d99539e96975886bc0b7a35363207",
+      "src/xqgeneral/reference_prose.py": "188af55f9f872a8a2ddce17bba247de708d5b13b83eda68bf79a4d418f278955",
+      "src/xqgeneral/review_explanations.py": "74b5229e7159b26428992762c45c237c36cfb2e7ab67c0a528c4fc6b263941f8",
+      "src/xqgeneral/reviewed_explanations.py": "d589052a3f2e40cabbb9ff3ebbb1db8e35c8aa7346283cc043de879bca8f70bb",
+      "src/xqgeneral/revise_prose.py": "6d3f3ad54cf203888b4c9800e35804c008f16d0515d5cf47d79345607e2feb9b",
+      "src/xqgeneral/rules.py": "e4d5500b11270682ff76713541a5a956a567949ad06d6311716e966d61c591b9",
+      "src/xqgeneral/sampling.py": "b983e5018e07295d5967aa085ffdcde6877aa1af61d9198676abc0ada4a792c2",
+      "src/xqgeneral/search_critical.py": "36821915813dd2870d964dba274ef9e7169cf43e6e0785aae02fdbb5150064ac",
+      "src/xqgeneral/search_distillation.py": "fc0c0cdc3f919adb73ea57ba3b08220d06bc80c115b9a360ae55c2dc41d5b0ec",
+      "src/xqgeneral/search_inputs.py": "7cbe433c7a14219bf12abc66867e4680825e7130bc5d7162be4b8a155772d0a4",
+      "src/xqgeneral/search_pilot.py": "c9180c817a8b49fe8403088d605245ab4e2e6f8d71e0a0ae03a53251fedcf362",
+      "src/xqgeneral/select_checkpoint.py": "c2a00cf5abac474527c07867465388eec6935e212605edada5b0d654a9d1b86f",
+      "src/xqgeneral/selfplay_grounding.py": "0916f4a5336d9430d875367c5e36351f1f0d76670c6207aabecc6dc92141a46c",
+      "src/xqgeneral/sft.py": "f02170e1be34e025893cb0260bdf11757f83660949951849c88cd79373e56bca",
+      "src/xqgeneral/sft_pipeline.py": "8947393580fb33424e938b40c188691adfac460aacf886b86e3b125df6fb6c2e",
+      "src/xqgeneral/sft_preflight.py": "2443324047c0166bc8c4f9ceba75147431a9a423a998a95df93608b159070f80",
+      "src/xqgeneral/sft_probe_worker.py": "11d741a1d42c0efb2bf473b3be161779a550c2734e819037c6d863e601751dff",
+      "src/xqgeneral/symmetry.py": "017a0a72377d44141df1388177bcd3df0d6c1572c9daffab519d4be88619bda1",
+      "src/xqgeneral/tactical_course_pools.py": "0eee247da8873488def13976b656fbcf116f7a5c8e1b2dabdb9005e61afe4e30",
+      "src/xqgeneral/tactical_games.py": "d8498e43499ea6a3510e48d6ba7a9f9550510228a4f9d91390cad5042668da33",
+      "src/xqgeneral/tactical_positions.py": "3ad076f06d5afd5bbb88a8578e32c2a304db735e69561ce539e9c75967f95f62",
+      "src/xqgeneral/teacher_benchmark.py": "af46a553ee5cd7a9ba380727d271beda338289f96eaeec02d16cb2a2e76d7c39",
+      "src/xqgeneral/teacher_generation.py": "e6ee391840e2c553e2203293c554e70075a1d7a21b50b6ab3bbe2bc74784e8ce",
+      "src/xqgeneral/teacher_prefill.py": "72903a5ad174af626a2cbdfaa15018da6cffeec7ea149d9dfed9a1f5365084ab",
+      "src/xqgeneral/train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+      "src/xqgeneral/training.py": "eed6c135879fe673e8f0f86580c7ae5dce2e970d447d96460766e95275225a91",
+      "src/xqgeneral/training_index.py": "cc643484e7b3c4cbb7179dda904320c712acf3418bbf2d4d3a9ba06675e1850b",
+      "src/xqgeneral/validation_curriculum.py": "4af16e22a40fed548824dcbc8dde1d32c1aaa230876d17bf66e2ee49c528e49f",
+      "src/xqgeneral/verified_inputs.py": "f7243b1882b1192bbe58e62964650dc2cc9d7b7fd6fdcfac440b1c18a1537c13",
+      "src/xqgeneral/verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+      "src/xqgeneral/verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9",
+      "src/xqgeneral/vllm_teacher.py": "69885db90671e6ca19ebfd52a41af7b5ce2614b98a405ea956c61055426ac1b0"
+    }
+  },
+  "actual_native_source_modules": 104,
+  "existing_source_modules_preserved_except": [
+    "src/xqgeneral/explanation_preflight.py",
+    "src/xqgeneral/reviewed_explanations.py"
+  ],
+  "unit_test_fixtures_are_controlled_contract_checks_not_teacher_quality_measurements": true,
+  "training_data_and_exact_label_ids_omitted": true,
+  "full_goal_complete": false
+}

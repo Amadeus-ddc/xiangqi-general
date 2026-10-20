@@ -17,6 +17,7 @@ SOURCE_KINDS = {'fully_reviewed_selfplay_teacher_append',
                 'reviewed_recorded_coach_initial_teacher_labels',
                 'combined_reviewed_explanation_dataset'}
 REFERENCE_CORRECTION_KIND = 'heldout_reference_corrected_explanation_dataset'
+ENGINE_QUALIFIED_KIND = 'engine_qualified_reviewed_explanation_dataset'
 
 
 def checked_label(row):
@@ -55,11 +56,15 @@ def checked_label(row):
 def source_contract(proof, counts):
     """Reuse exact completed semantic acceptance; do not invent a fresh review."""
     kind, verification = proof.get('kind'), proof.get('verification', {})
-    if kind not in SOURCE_KINDS | {REFERENCE_CORRECTION_KIND}:
+    if kind not in SOURCE_KINDS | {REFERENCE_CORRECTION_KIND, ENGINE_QUALIFIED_KIND}:
         raise ValueError('A supported completed reviewed-label dataset is required')
     if ({s: verification.get('by_split', {}).get(s, 0) for s in SPLITS} != counts or
             set(verification.get('by_split', {})) - set(SPLITS)):
         raise ValueError('Actual reviewed label counts differ from their completed producer')
+    if kind == ENGINE_QUALIFIED_KIND:
+        from .engine_qualified_explanations import qualified_source_contract
+        qualified_source_contract(proof, counts)
+        return
     accepted = (
         kind == 'fully_reviewed_selfplay_teacher_append' and
         verification.get('all2048_exact_independent_neural_acceptance_chains_verified') is True and
