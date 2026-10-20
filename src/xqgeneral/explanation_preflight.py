@@ -16,6 +16,7 @@ from .foundation_preflight import bounded_results, clean_recipe
 from .recorded_coach import SPLITS, checked_manifest, check_artifacts
 from .reviewed_explanations import ENGINE_QUALIFIED_KIND, REFERENCE_CORRECTION_KIND, source_contract
 from .training import encode_record, messages
+from .verified_inputs import input_digest_execution, input_session_from_environment
 
 _TOKENIZER = None
 _TOKEN_LIMIT = None
@@ -123,6 +124,10 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
         if digest(path) != sha:raise ValueError('Local tokenizer assets changed during preflight')
     if hasattr(cache, 'check_unchanged'):
         cache.check_unchanged()
+    execution = input_digest_execution()
+    # A receipt session can reuse earlier byte checks. Only the ordinary fresh
+    # hashing route establishes a complete cache rehash in this invocation.
+    fresh_full_cache_hash = is_feature_store(cache_path) and not execution
     summary = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
         'reviewed_label_rows': len(rows), 'by_split': counts,
         'train_validation_rows_tokenized': len(eligible), 'tokenized_rows_by_split': dict(token_counts),
@@ -133,13 +138,14 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
         'existing_cache_contexts': len(cache['keys']), 'cache_depths': cache['depths'],
         'existing_cache_header_dimensions_and_precision_checked': True,
         'complete_cache_producer_and_full_foundation_preflight_reused': True,
-        'full_feature_cache_rehashed_again_by_this_preflight': is_feature_store(cache_path),
+        'full_feature_cache_rehashed_again_by_this_preflight': fresh_full_cache_hash,
+        'verified_input_digest_reuse_enabled': bool(execution),
         'feature_tensor_values_recomputed_or_verified_by_this_preflight': False,
         'local_tokenizer_assets_freshly_hash_bound': True, 'pinned_model_revision': recipe['model_revision'],
         'decoder_literal_board_text': None, 'model_weights_loaded_or_training_started': False,
         'new_neural_labels_generated': False, 'active_foundation_inputs_changed': False,
         'four_new_raw_course_gates_required_before_sft': True, 'ready_to_start_sft': False,
-        'student_benefit_proven': False}
+        'student_benefit_proven': False, **execution}
     atomic_json(root / 'verification.json', summary)
     proof = manifest('latent_only_reviewed_explanation_data_preflight',
         {'data': str(data), 'foundation_config': str(config_path), 'foundation_preflight': str(completed_path),
@@ -148,7 +154,7 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
          *(feature_paths(cache_path) if is_feature_store(cache_path) else []), *tokenizer_paths],
         [observations, root / 'verification.json'], summary)
     proof['cache_header_only_input'] = {'path': str(cache_path), **expected,
-                                       'fresh_full_bytes_hash_verified_by_this_preflight': is_feature_store(cache_path)}
+                                       'fresh_full_bytes_hash_verified_by_this_preflight': fresh_full_cache_hash}
     atomic_json(root / 'manifest.json', proof)
     return summary
 
@@ -163,8 +169,9 @@ def main():
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--public-evidence')
     args = parser.parse_args()
-    summary = preflight(args.data, args.foundation_config, args.foundation_preflight, args.output,
-                        max_tokens=args.max_tokens, workers=args.workers)
+    with input_session_from_environment():
+        summary = preflight(args.data, args.foundation_config, args.foundation_preflight, args.output,
+                            max_tokens=args.max_tokens, workers=args.workers)
     if args.public_evidence:
         atomic_json(args.public_evidence, dict(summary, manifest_sha256=digest(Path(args.output) / 'manifest.json')))
     print(json.dumps(summary, ensure_ascii=False), flush=True)

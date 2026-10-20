@@ -12,6 +12,7 @@ from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
 from .explanations import EXPLANATION_QUESTION, parse_explanation, validate_explanation
 from .oracle import Pikafish
 from .rules import adjudicate, legal_moves, play
+from .verified_inputs import input_session_from_environment
 
 
 def judge_move(oracle, record, move, nodes):
@@ -183,7 +184,8 @@ def main():
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--output', required=True)
-    run_evaluation(parser.parse_args())
+    with input_session_from_environment():
+        run_evaluation(parser.parse_args())
 
 
 if __name__ == '__main__':
