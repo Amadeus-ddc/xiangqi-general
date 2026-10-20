@@ -12,6 +12,8 @@ The [final independent protocol](FINAL_INDEPENDENT_EVALUATION.md) fixes 26,000 t
 
 ## Intended use and interface
 
+An opt-in [microbatch padding crop](MICROBATCH_PADDING.md) preserves the legacy default. On the same 2,048 sampled training rows, the actual helper preserved valid inputs and supervised targets while reducing padded token positions by 28.14%. Tiny randomly initialized Qwen3 models with real DenseBridge blocks passed CPU output, loss, gradient and exact continuation controls. These are CPU implementation checks and token counts: full 4B/BF16 GPU equivalence, throughput and model-quality improvements remain unmeasured. The running curriculum and queued SFT consumers retain their original frozen code and recipes.
+
 The intended use is studying positions, comparing candidate moves, explaining verifiable continuations and reviewing games. A completed training run or high curriculum accuracy alone does not establish useful playing strength or good coaching.
 
 Input is a Xiangqi FEN, the supplied move history and a Chinese question. Coordinates run from `a0` to `i9`, with Red at the bottom. Tactical fragments explicitly retain missing earlier-history boundaries. Explanation output includes a recommended move, principal variation, candidates, numerical evaluation and board facts; raw text, malformed answers and illegal moves remain available for evaluation.

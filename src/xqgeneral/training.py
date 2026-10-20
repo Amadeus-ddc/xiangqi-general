@@ -64,6 +64,49 @@ def training_memory_settings(config):
     return {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
 
 
+def microbatch_padding_policy(config):
+    policy = config.get('microbatch_padding', 'rank')
+    if not isinstance(policy, str) or policy not in ('rank', 'micro'):
+        raise ValueError('microbatch_padding must be rank or micro')
+    return policy
+
+
+def training_microbatches(inputs, rows, micro_size, padding='rank'):
+    """Keep row order and optionally drop only ignored, right-padded columns."""
+    padding = microbatch_padding_policy({'microbatch_padding': padding})
+    if type(rows) is not int or rows < 1 or type(micro_size) is not int or micro_size < 1:
+        raise ValueError('Training rows and micro batch size must be positive integers')
+    lengths = None
+    token_keys = ('input_ids', 'labels', 'attention_mask')
+    if padding == 'micro':
+        tensors = [inputs.get(key) for key in token_keys]
+        if (any(not torch.is_tensor(value) or value.ndim != 2 for value in tensors) or
+                tensors[0].shape[0] != rows or tensors[0].shape[1] < 1 or
+                any(value.shape != tensors[0].shape or value.device != tensors[0].device for value in tensors)):
+            raise ValueError('Micro padding requires matching two-dimensional token, label and attention tensors')
+        if any(torch.is_tensor(value) for key, value in inputs.items() if key not in token_keys):
+            raise ValueError('Micro padding supports the standard token tensors and scalar forward options')
+        host_mask = inputs['attention_mask'].detach().cpu()
+        if not torch.all((host_mask == 0) | (host_mask == 1)):
+            raise ValueError('Micro padding requires a binary right-padded attention mask')
+        lengths = host_mask.sum(dim=1).to(dtype=torch.int64).tolist()
+        expected = torch.arange(host_mask.shape[1])[None, :] < torch.tensor(lengths)[:, None]
+        if min(lengths) < 1 or not torch.equal(host_mask.bool(), expected):
+            raise ValueError('Micro padding requires nonempty, right-padded rows')
+        ignored = inputs['labels'].masked_select(inputs['attention_mask'] == 0)
+        if not torch.all(ignored == -100):
+            raise ValueError('Micro padding cannot remove supervised target tokens')
+    for offset in range(0, rows, micro_size):
+        end = min(offset + micro_size, rows)
+        batch = {key: value[offset:end] if torch.is_tensor(value) else value
+                 for key, value in inputs.items()}
+        if lengths is not None:
+            width = max(lengths[offset:end])
+            for key in token_keys:
+                batch[key] = batch[key][:, :width]
+        yield offset, batch
+
+
 def training_optimizer(model, config):
     settings = training_memory_settings(config)
     groups = defaultdict(list)
@@ -239,6 +282,8 @@ def compatible_resume(saved, requested):
     from .course_tasks import row_profile
     if training_memory_settings(saved) != training_memory_settings(requested):
         raise ValueError('Resume optimizer/DDP memory settings differ; initialize a new experiment instead')
+    if microbatch_padding_policy(saved) != microbatch_padding_policy(requested):
+        raise ValueError('Resume microbatch padding differs; initialize a new experiment instead')
     if saved.get('row_index_paths', {}) != requested.get('row_index_paths', {}):
         raise ValueError('Resume training row index paths differ; initialize a new experiment')
     if data_profile(saved) != data_profile(requested):
@@ -284,6 +329,7 @@ def _main():
     if normalization not in {'token', 'example'}:
         raise ValueError('Loss normalization must be token or example')
     memory_settings = training_memory_settings(config)
+    padding_policy = microbatch_padding_policy(config)
     compute_contract = {**configure_determinism(config.get('deterministic_training', False)), **memory_settings}
     world, rank = int(os.environ.get('WORLD_SIZE', 1)), int(os.environ.get('RANK', 0))
     if world > 1:
@@ -445,9 +491,8 @@ def _main():
         if micro_size <= 0:
             raise ValueError('Micro batch size must be positive')
         weighted = torch.zeros((), device=device)
-        for offset in range(0, len(records), micro_size):
+        for offset, micro_inputs in training_microbatches(inputs, len(records), micro_size, padding_policy):
             batch = records[offset:offset + micro_size]
-            micro_inputs = {k: v[offset:offset + micro_size] if torch.is_tensor(v) else v for k, v in inputs.items()}
             micro_tokens = (micro_inputs['labels'][:, 1:] != -100).sum()
             micro_units = len(batch) if normalization == 'example' else micro_tokens
             synchronize = offset + micro_size >= len(records)

@@ -22,6 +22,8 @@ CONTROL_KEYS = {'course_mixtures', 'course_budgets', 'raw_qa_gates', 'ddp_world_
 
 
 def validate_recipe(recipe):
+    from .training import microbatch_padding_policy
+    microbatch_padding_policy(recipe)
     recipe_profile(recipe)
     if 'validation_selection' in recipe:
         from .curriculum_selection import validate_policy
