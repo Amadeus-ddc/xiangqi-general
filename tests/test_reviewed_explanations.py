@@ -251,6 +251,131 @@ def test_token_preflight_covers_all_train_validation_and_features_but_never_enco
     assert str(cache) not in result['inputs'] and result['cache_header_only_input']['path'] == str(cache)
 
 
+def sharded_token_preflight_fixture(tmp_path, monkeypatch):
+    import torch
+    from xqgeneral.evidence import digest, file_signature
+    from xqgeneral.feature_store import FeatureStoreWriter, feature_paths
+    from xqgeneral.verified_inputs import write_verified_input_receipt
+    data, config, completed, legacy = preflight_fixture(tmp_path, monkeypatch)
+    cache = torch.load(legacy, map_location='cpu', weights_only=True)
+    writer = FeatureStoreWriter(tmp_path / 'shards', cache['depths'], 'a' * 64)
+    writer.append(cache);writer.finish()
+    store = writer.output / 'manifest.json'
+    recipe = json.loads(config.read_text());recipe['feature_path'] = str(store)
+    atomic_json(config, recipe)
+    paths = feature_paths(store)
+    atomic_json(completed, manifest('recorded_engine_clean_latent_foundation_preflight', {},
+        [config, *paths], [], {'cache_sha256': digest(store), 'source_recipe_sha256': digest(config)}))
+    bindings = {str(p.resolve()): {'sha256': digest(p), 'bytes': p.stat().st_size,
+                                  'signature': list(file_signature(p))} for p in paths}
+    receipt = tmp_path / 'verified-inputs.json'
+    write_verified_input_receipt(receipt, bindings, origin={'controlled_feature_store_fixture': True})
+    return data, config, completed, store, receipt, paths[2:]
+
+
+def test_sharded_token_preflight_without_reuse_reports_actual_fresh_byte_hashing(tmp_path, monkeypatch):
+    from xqgeneral.explanation_preflight import preflight
+    data, config, completed, store, _, shards = sharded_token_preflight_fixture(tmp_path, monkeypatch)
+    opened = set();original = Path.open
+    def observe(path, *args, **kwargs):
+        if path in shards and (args[0] if args else kwargs.get('mode', 'r')) == 'rb':
+            opened.add(path)
+        return original(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'open', observe)
+    output = tmp_path / 'preflight'
+    summary = preflight(data, config, completed, output, workers=1, max_tokens=4096)
+    proof = json.loads((output / 'manifest.json').read_text())
+    assert opened == set(shards)
+    assert summary['full_feature_cache_rehashed_again_by_this_preflight']
+    assert not summary['verified_input_digest_reuse_enabled']
+    assert proof['cache_header_only_input']['fresh_full_bytes_hash_verified_by_this_preflight']
+    assert str(store) in proof['inputs']
+
+
+@pytest.mark.parametrize('cli', [False, True])
+def test_sharded_token_preflight_reuses_verified_bytes_without_claiming_a_new_full_rehash(tmp_path, monkeypatch, cli):
+    from xqgeneral import explanation_preflight
+    from xqgeneral.verified_inputs import ENVIRONMENT, verified_input_session
+    data, config, completed, _, receipt, shards = sharded_token_preflight_fixture(tmp_path, monkeypatch)
+    original = Path.open
+    def reject_shard_read(path, *args, **kwargs):
+        if path in shards and (args[0] if args else kwargs.get('mode', 'r')) == 'rb':
+            raise AssertionError('The verified feature shard was read again')
+        return original(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'open', reject_shard_read)
+    output = tmp_path / 'preflight'
+    if cli:
+        monkeypatch.setenv(ENVIRONMENT, str(receipt))
+        monkeypatch.setattr(sys, 'argv', ['explanation_preflight', '--data', str(data),
+            '--foundation-config', str(config), '--foundation-preflight', str(completed),
+            '--output', str(output), '--workers', '1', '--max-tokens', '4096'])
+        explanation_preflight.main()
+    else:
+        with verified_input_session(receipt):
+            explanation_preflight.preflight(data, config, completed, output, workers=1, max_tokens=4096)
+    summary = json.loads((output / 'verification.json').read_text())
+    proof = json.loads((output / 'manifest.json').read_text())
+    assert summary['verified_input_digest_reuse_enabled']
+    assert not summary['full_feature_cache_rehashed_again_by_this_preflight']
+    assert not proof['cache_header_only_input']['fresh_full_bytes_hash_verified_by_this_preflight']
+    assert proof['runtime_execution']['input_digest_verification']['reused_digest_bytes'] > 0
+    assert summary['tokenized_rows_by_split'] == {'train': 1, 'validation': 1}
+    assert summary['independent_test_rows_tokenized'] == 0
+
+
+def test_token_preflight_cli_rejects_a_changed_receipt_shard_before_any_output(tmp_path, monkeypatch):
+    from xqgeneral import explanation_preflight
+    from xqgeneral.verified_inputs import ENVIRONMENT
+    data, config, completed, _, receipt, shards = sharded_token_preflight_fixture(tmp_path, monkeypatch)
+    content = bytearray(shards[0].read_bytes());content[-1] ^= 1
+    replacement = shards[0].with_suffix('.changed');replacement.write_bytes(content);replacement.replace(shards[0])
+    output = tmp_path / 'not-created'
+    monkeypatch.setenv(ENVIRONMENT, str(receipt))
+    monkeypatch.setattr(sys, 'argv', ['explanation_preflight', '--data', str(data),
+        '--foundation-config', str(config), '--foundation-preflight', str(completed),
+        '--output', str(output), '--workers', '1'])
+    with pytest.raises(ValueError, match='identity changed'):
+        explanation_preflight.main()
+    assert not output.exists()
+
+
+def test_raw_explanation_cli_reuses_the_feature_receipt_and_preserves_raw_errors(tmp_path, monkeypatch):
+    from xqgeneral import evaluate_explanations, inference
+    from xqgeneral.feature_store import FeatureStore
+    from xqgeneral.verified_inputs import ENVIRONMENT
+    data, _, _, store, receipt, shards = sharded_token_preflight_fixture(tmp_path, monkeypatch)
+    original = Path.open
+    def reject_shard_read(path, *args, **kwargs):
+        if path in shards and (args[0] if args else kwargs.get('mode', 'r')) == 'rb':
+            raise AssertionError('Evaluation read the already verified feature shard again')
+        return original(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'open', reject_shard_read)
+    raw = 'controlled invalid explanation; preserve this exact model error'
+    class ControlledPredictor:
+        def __init__(self, checkpoint, feature_cache):
+            self.cache = FeatureStore(feature_cache)
+        def generate_batch(self, rows, max_new_tokens, memory):
+            return [raw for _ in rows]
+    monkeypatch.setattr(inference, 'Predictor', ControlledPredictor)
+    monkeypatch.setattr(evaluate_explanations, 'judge_shard', lambda rows, args: [dict(row,
+        judgment=evaluate_explanations.judgment(None, row['record'], row['raw'], args.nodes)) for row in rows])
+    checkpoint = tmp_path / 'checkpoint.fixture';checkpoint.write_bytes(b'controlled checkpoint')
+    executable = tmp_path / 'engine.fixture';executable.write_bytes(b'controlled engine identity only')
+    weights = tmp_path / 'engine-weights.fixture';weights.write_bytes(b'controlled engine weight identity only')
+    output = tmp_path / 'raw-evaluation'
+    monkeypatch.setenv(ENVIRONMENT, str(receipt))
+    monkeypatch.setattr(sys, 'argv', ['evaluate_explanations', '--checkpoint', str(checkpoint),
+        '--data', str(data), '--features', str(store), '--split', 'validation', '--limit', '1',
+        '--workers', '1', '--executable', str(executable), '--weights', str(weights), '--output', str(output)])
+    evaluate_explanations.main()
+    rows = [json.loads(line) for line in (output / 'raw-predictions.jsonl').read_text().splitlines()]
+    assert len(rows) == 1 and rows[0]['raw'] == raw
+    proof = json.loads((output / 'manifest.json').read_text())
+    assert proof['runtime_execution']['input_digest_verification']['reused_digest_bytes'] > 0
+    assert proof['verification']['parse_valid_rate'] == 0
+    assert proof['verification']['oracle_repairs'] == 0
+
+
 @pytest.mark.parametrize('problem', ['incomplete_cache', 'incomplete_preflight', 'different_cache_identity'])
 def test_token_preflight_requires_the_exact_completed_foundation_and_cache_proofs(tmp_path, monkeypatch, problem):
     from xqgeneral.explanation_preflight import preflight
