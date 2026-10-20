@@ -38,7 +38,7 @@ python -m xqgeneral.engine_qualified_explanations \
 
 参考包须包含`plan.json`、带哈希身份的`readback.py`、`full/manifest.json`、`full/metrics.json`、`full/exit.json`、`full/independent-readback.json`、`full-readback-exit.json`和`full-pipeline-exit.json`。`full/rows/000000.json`等行文件按原训练顺序提供行号、ID、完整原记录、原答案和逐步评分；清单绑定每个文件的哈希与字节数。`full/manifest.json`的类型为`existing_training_teacher_labels_deep_engine_reference`，范围为`full`，索引覆盖原训练全集，损失规则为`expected_score_loss_strictly_less_than_0.10`。独立读回必须证明原历史、全部留存引擎评分和完整变化聚合已核对，标签与预测未改写，且未读取验证或独立测试答案。制品路径可为绝对路径或相对`--artifact-root`的精确路径。
 
-完整原始标签和参考包保存于服务器，不随代码提交。参考包独立生成工具的发布整理仍是开源准备待办；本入口消费已有合格参考包，原生协议和读取格式可由受控测试检查。
+完整原始标签和参考包保存于服务器，不随代码提交。[原生参考生成器](TRAINING_LABEL_REFERENCE_GENERATOR.md)现可生成该格式，并通过独立子进程读回、失败留存和原配置续跑。真实8条原训练标签的小范围执行已验证；新生成器尚未重跑原10758条全集，既有全量参考证明单独保留。
 
 ## 仍需完成
 
