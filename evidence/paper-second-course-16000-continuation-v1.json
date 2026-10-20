@@ -1,0 +1,147 @@
+{
+  "status": "complete_actual_training_and_reference_phase_transition_observation",
+  "observed_at_utc": "2026-10-20T04:01:38.100263+00:00",
+  "goal_turn_classification": "progress",
+  "hourly_sample_path": "runs/hourly-curriculum-inspection-v1/observations/000019.json",
+  "hourly_sample_sha256": "08f7180a71b6c3d4122a233038046f79732465a460a6e414ac1f00cbc3d595f9",
+  "hourly_observed_at_utc": "2026-10-20T03:49:28.742333+00:00",
+  "historical_hourly_sample_age_seconds": 729.35793,
+  "routine_hourly_freshness_window_claimed": false,
+  "observation_method": "one_current_appended_trace_read_after_observer_recovery",
+  "active_continuous_training_polling_performed": false,
+  "actual_current_step": 16178,
+  "hourly_sampled_step": 16118,
+  "stage": "dynamic_current",
+  "last_raw_qa_step": 16000,
+  "selected_step": 16000,
+  "next_raw_qa_step": 18000,
+  "actual_segment_binding_sha256": "0645119c379a41059180d145c0a702f49435533d13d16003147e695c6a22d038",
+  "actual_execution_sha256": "dac8283d7abd92f1c9336f64506d3932fa6cc30e7ce5eb4fbfff7ebadc462b11",
+  "completed_cpu_readback_sha256": "b9618dfc02a5f40a5adcdce16756b3e6a30a37b6b1be68daa79c7871bcbd2c17",
+  "completed_training_byte_prefix_preserved": true,
+  "finite_suffix_and_epoch_geometry_verified": true,
+  "new_update_range": [
+    16001,
+    16178
+  ],
+  "suffix_sha256": "ce6d209e1c532d01048916b0d27f462aaab417793f0589d43aadc00192bf685e",
+  "selected_validation_scores": {
+    "static_current": {
+      "examples": 700,
+      "correct": 649,
+      "accuracy": 0.9271428571428572,
+      "minimum_task_accuracy": 0.75,
+      "by_task": {
+        "static_current/counts": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "static_current/diagonal": {
+          "n": 100,
+          "accuracy": 0.75
+        },
+        "static_current/file": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "static_current/locate": {
+          "n": 100,
+          "accuracy": 0.98
+        },
+        "static_current/materials": {
+          "n": 100,
+          "accuracy": 0.8
+        },
+        "static_current/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 100,
+          "accuracy": 0.98
+        }
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": 569,
+      "accuracy": 0.9483333333333334,
+      "minimum_task_accuracy": 0.86,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "dynamic_current/checks": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "dynamic_current/controllers": {
+          "n": 100,
+          "accuracy": 0.86
+        },
+        "dynamic_current/mate": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "dynamic_current/moves": {
+          "n": 100,
+          "accuracy": 0.91
+        },
+        "dynamic_current/parries": {
+          "n": 100,
+          "accuracy": 0.94
+        }
+      }
+    }
+  },
+  "same_question_transition_analysis_status": "pending",
+  "observer_recovery_verification_path": "runs/paper-curriculum-continuous-observer-v2/launch-verification.json",
+  "observer_recovery_verification_sha256": "62fd2cb0f164de4ac820bdff159b3fe50577182d6f9810a455abcfac9dd69618",
+  "historical_16000_live_qa_process_binding_missing": true,
+  "historical_missing_process_observation_not_reconstructed": true,
+  "teacher_reference_producer_complete": true,
+  "teacher_reference_independent_readback_complete": true,
+  "teacher_reference_readback_sha256": "84fc8b32f172c6aea1318d41cd1c8356c823f5e2556f7205081dee92142d31c1",
+  "teacher_reference_pipeline_exit_sha256": "8b480fbbe7156a36e95e28c0a79236bb589e02442e834905834d119fb767ccb9",
+  "teacher_reference_actual_metric_counts": {
+    "parse_valid": 10758,
+    "structured_contract_valid": 10758,
+    "first_move_legal": 10758,
+    "first_move_no_mistake": 10644,
+    "pv_legal": 10758,
+    "full_pv_no_mistake": 9823
+  },
+  "teacher_labels_qualification_and_error_triage_status": "pending",
+  "teacher_labels_rewritten": false,
+  "training_recipe_or_data_modified": false,
+  "model_jobs_started_or_restarted": false,
+  "new_read_only_observer_started": true,
+  "original_source_optimizer_state_independently_verified": false,
+  "large_inputs_or_parameter_arrays_rehashed": false,
+  "next_scheduled_inspection_utc": "2026-10-20T04:49:28.745079+00:00",
+  "courses_completed": 1,
+  "script_sha256": "96c8cc1fd0d552cb2c3827a0233bfd3804555363805efe4537f140f9028a4cfb",
+  "full_goal_complete": false,
+  "source_runtime_continuation_sha256": "8e7afc0285cfee9bc878f051c0a159aeddde792e7d0e7296e2ea620985d29ca3",
+  "exact_linux_process_ids_omitted": true,
+  "source_modules_freshly_hashed": 89,
+  "current_eight_training_identities_checked_twice": true,
+  "observer_recovery": {
+    "actual_old_observer_terminal": true,
+    "failure": "Owned rank had exited while a training segment was ending; the persistent identity assertion terminated the observer.",
+    "original_failure_reproduced": true,
+    "isolated_regression_cases_passed": [
+      "exited-rank",
+      "live-ranks",
+      "reused-rank",
+      "dead-control"
+    ],
+    "persistent_control_and_pid_reuse_checks_preserved": true,
+    "observer_source_sha256": "1a4582f784eb1614783cc3e43a305ae92a9e97837228f2573a6882bbf58518b5",
+    "regression_proof_sha256": "7ca393537fca08457226e4f55253e4e843d0d4f879121831073f11d3425355fb",
+    "launch_verification_sha256": "62fd2cb0f164de4ac820bdff159b3fe50577182d6f9810a455abcfac9dd69618",
+    "actual_read_only_service_recovered": true,
+    "training_or_qa_restarted": false
+  }
+}
