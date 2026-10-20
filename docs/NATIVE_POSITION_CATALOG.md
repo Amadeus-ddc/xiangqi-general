@@ -35,10 +35,14 @@
 
 正式目录已完成全量复核：55110930432 字节目录、6301835 个根、52964340 个目标与 105352 盘来源棋局逐项匹配；训练／验证／独立测试根为 5099559／602056／600220。48 份约 126.27GB 输入绑定已核验，完成清单固定目录身份。六盘对照只证明接口；全量证明另见 [生产启动证据](../evidence/native-position-catalog-production-v1.json)。
 
-新的 `xqgeneral-paper-curriculum-preparation-v7` 使用该目录与 32 个有序原生问答进程，语料写入 `data/paper-courses-v5`，后续四课写入 `runs/curriculum-paper-v5`。CPU 准备固定 95 份模块，GPU 提取／课程固定原四卡控制的 88 份模块；讲解等待器 `xqgeneral-paper-followthrough-catalog-v1` 保留自己的 88 份 GPU 模块与 89 份参考预检模块。训练配方的非路径字段、题目预算及 10758 条讲解训练标签未改。
+## 目录生产时的执行与交接记录（历史）
+
+本节保留目录生产与旧讲解等待器的交接证据；现役讲解登记见[筛选后接续](QUALIFIED_SFT_ROUTE.md#本服务器运行定位与恢复)。
+
+当时的 `xqgeneral-paper-curriculum-preparation-v7` 使用该目录与 32 个有序原生问答进程，语料写入 `data/paper-courses-v5`，后续四课写入 `runs/curriculum-paper-v5`。CPU 准备固定 95 份模块，GPU 提取／课程固定原四卡控制的 88 份模块；讲解等待器 `xqgeneral-paper-followthrough-catalog-v1` 保留自己的 88 份 GPU 模块与 89 份参考预检模块。训练配方的非路径字段、题目预算及 10758 条讲解训练标签未改。
 
 入口、固定配置与源码分别保存在 `runs/paper-position-catalog-v1/worktree/runs/paper-curriculum-preparation-v7` 和同级 `paper-followthrough-catalog-v1`；检查 `state.json`、`plan.json` 与生成日志。交接记录在同级 `native-catalog-handoff-v1`，必须确认新工作进程及两次持续文件增长后，才停止仅属本项目的旧准备／讲解等待任务；旧部分语料、配置和日志保留。新队列的 GPU 阶段等待完成的交接证明，讲解任务另等实际四门课程完成。不要重复启动存活会话；中断后的不可续跑阶段使用新输出，检查各 `plan.json` 的恢复边界。
 
 交接已完成：32 个原生问答工作进程的两次输出观察从 2079245 增至 21909926 字节，旧准备与旧讲解等待会话及其六个进程确认终止；旧会话退役后再次确认产出增至 23998656 字节。旧部分语料、配置及日志均保留。独立入口再复验三个原分割各 128 条完整前缀的历史与原生金标，384 条一致；这只是启动检查，不能代替完整语料读回。见 [交接证据](../evidence/native-position-catalog-handoff-v1.json)。
 
-新的完整问答、正式四课、讲解、蒸馏及最终棋力／教学验收尚未完成。当前进度以 [STATUS.md](../STATUS.md) 为准。
+后续完整问答及基础预检已经完成，正式四课正在运行；本节的`paper-followthrough-catalog-v1`讲解等待器已退役，其原始证据保留。现役队列及恢复边界按[筛选后接续](QUALIFIED_SFT_ROUTE.md#本服务器运行定位与恢复)，训练与最终验收进度按[STATUS.md](../STATUS.md)。
