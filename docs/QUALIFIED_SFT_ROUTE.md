@@ -2,7 +2,7 @@
 
 2026-10-20，实际讲解等待队列已迁移到经过引擎筛选的数据和新索引。旧的讲解与搜索等待进程已按完整身份核对后退出，原源码、输入和日志保留。新的同一等待器负责四课之后的讲解、开发验证、完整对弈基线及512根真实搜索产量试验。见[实际证据](../evidence/qualified-sft-route-real-v1.json)。
 
-当前仍等待四课全部完成。全项目检查、实际四卡全解码器容量及4步连续／2+2续跑对照也都是模型阶段的必需条件。迁移没有加载语言权重、没有启动讲解训练或蒸馏，没有改变现有课程的89份冻结源码、配方或选模规则。
+当前仍等待四课全部完成。该104模块消费者绑定的1630项完整项目检查已经通过，实际只读门禁复查也返回就绪；真实四卡全解码器容量及4步连续／2+2续跑对照仍须在四课结束后执行。迁移没有加载语言权重、没有启动讲解训练或蒸馏，没有改变现有课程的89份冻结源码、配方或选模规则。
 
 ## 实际数据与批次
 
@@ -25,3 +25,33 @@
 512根搜索保持既有未用棋谱池、递归规则与完整教师设置，用于量测真实可用标签产量。后续正式搜索预算与蒸馏轮次须由实际产量、开发棋力和讲解结果决定。六项受控门禁检查覆盖真实隔离tmux拥有者、错误进程身份、未完成四课、缺失／失败检查及变化的检查日志；它们不等于真实四课或训练完成。
 
 四课、完整讲解、足量真实蒸馏、最终独立棋力／教学验收及训练模型交付仍待完成。原始数据、运行等待器与机器路径保留在服务器运行目录；公开发布的数据／权重范围和许可证仍按模型卡及第三方说明核定。
+
+## 本服务器运行定位与恢复
+
+2026-10-20的[实际只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)确认：拥有者、冻结包装器和实际工作进程都存活；104份消费者源码、12项入口／配置／证明绑定一致，完整项目检查门禁就绪，实际四课完成门禁为假。该核对没有加载模型或启动训练。
+
+| 项目 | 现役位置或合同 |
+| --- | --- |
+| 等待器目录 | `runs/qualified-sft-route-migration-v1` |
+| 入口与会话 | `postcourse-entry.py`；`xqgeneral-qualified-post-course-v1` |
+| 父课程 | `runs/curriculum-paper-v5`；拥有会话`xqgeneral-paper-curriculum-preparation-v7` |
+| 讲解输出与配置 | `runs/paper-sft-engine-qualified-v1`及其`inputs/` |
+| 训练／验证索引 | `data/astra-explanations-engine-qualified-paper-index-v1/train`及`validation` |
+| 原生词元预检 | `runs/paper-sft-engine-qualified-v1/token-preflight/manifest.json` |
+| 搜索试批配置 | `runs/qualified-sft-route-migration-v1/pilot-owned/pilot.json` |
+| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-qualified-v1` |
+
+`queue-plan.json`绑定不可变源码、配置、输入凭据及阶段合同；`queue-state.json`报告当前阶段；`queue-handoff.json`保存实际拥有权交接。诊断查看`queue-entry.log`和`queue-exit.json`。状态文件或日志不增长不能单独证明进程已经结束，应按保存的PID、启动时间、父进程及命令哈希核对实际进程与会话。
+
+```bash
+.venv/bin/python -c 'import json; print(json.load(open("runs/qualified-sft-route-migration-v1/queue-state.json")))'
+tmux capture-pane -p -t '=xqgeneral-qualified-post-course-v1'
+```
+
+外层拥有者没有可直接重复调用的`--resume`。原拥有者确已终止后，需要新的明确拥有权启动／交接，并只复用源码、输入和合同都不变的可续跑子阶段；不可续跑部分改用新输出。所有部分输出和旧交接证据保留。不得直接重跑旧`paper-followthrough-catalog-v1`入口，也不覆盖活任务的`queue-worker.json`。
+
+课程继续使用89份冻结源码，讲解消费者使用104份；当前公开包新增的参考生成模块没有替换它们。恢复时核对各自实际字节，不能只比较模块数或测试条数。阶段启动仍检查实际GPU资源：讲解四卡各92160MiB，正文验证GPU 0为81920MiB，对弈GPU 2为49152MiB，试批GPU 0为81920MiB；显存门槛不能代替真实容量／续跑预检。
+
+完整BF16教师的18个分片与1199个张量头已经核对，均为BF16且没有量化配置。本次只读取150872字节头信息，没有读取55562855904字节权重载荷或重新计算全部载荷哈希；这是一项资产就绪核对，不是新的教师推理或模型质量结果。
+
+等待器完成初始讲解、三组开发验证、384局基线和512根真实试批后，仍需依据实际产量安排正式搜索与蒸馏，再锁定交付模型完成[独立验收](FINAL_INDEPENDENT_EVALUATION.md)。`queue-completion.json`不代表整个项目或最终教练模型已经合格。
