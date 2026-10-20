@@ -14,7 +14,7 @@ from .extend_features import validate_cache
 from .feature_store import feature_paths, feature_proof_path, is_feature_store, open_feature_cache
 from .foundation_preflight import bounded_results, clean_recipe
 from .recorded_coach import SPLITS, checked_manifest, check_artifacts
-from .reviewed_explanations import REFERENCE_CORRECTION_KIND, source_contract
+from .reviewed_explanations import ENGINE_QUALIFIED_KIND, REFERENCE_CORRECTION_KIND, source_contract
 from .training import encode_record, messages
 
 _TOKENIZER = None
@@ -58,7 +58,7 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
     config_path, completed_path = Path(foundation_config), Path(foundation_preflight)
     recipe = json.loads(config_path.read_text());clean_recipe(recipe)
     data_manifest = data / 'manifest.json';data_proof = checked_manifest(data_manifest)
-    if data_proof.get('kind') not in {'combined_reviewed_explanation_dataset', REFERENCE_CORRECTION_KIND}:
+    if data_proof.get('kind') not in {'combined_reviewed_explanation_dataset', REFERENCE_CORRECTION_KIND, ENGINE_QUALIFIED_KIND}:
         raise ValueError('Explanation preflight requires a completed native-checked combined dataset')
     paths = [data / f'{s}.jsonl' for s in SPLITS];check_artifacts(data_proof, paths)
     rows, counts, ids, history_keys = [], dict.fromkeys(SPLITS, 0), set(), set()
