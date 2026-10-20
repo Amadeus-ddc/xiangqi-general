@@ -13,8 +13,9 @@ def prepare_config(saved, recipe, source_path, output):
     """Compile the same SFT budget and architecture used by the guarded launcher."""
     from .bridge import bridge_settings
     from .course_tasks import row_profile
-    from .training import training_memory_settings
+    from .training import microbatch_padding_policy, training_memory_settings
     training_memory_settings(recipe)
+    microbatch_padding_policy(recipe)
     if 'task_profile' in recipe and row_profile(recipe) != row_profile(saved):
         raise ValueError('SFT must preserve the selected foundation task profile')
     architecture = ['model_path', 'model_revision', 'mode', 'decoder_bridge_positions', 'bridge_width',

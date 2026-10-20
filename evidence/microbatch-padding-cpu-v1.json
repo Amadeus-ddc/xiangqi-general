@@ -1,0 +1,507 @@
+{
+  "kind": "opt_in_microbatch_padding_cpu_v1",
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_cpu_implementation_and_same_sample_training_tensor_readback",
+  "observed_at_utc": "2026-10-20T18:36:02.206041+00:00",
+  "default_padding_policy": "rank",
+  "optional_padding_policy": "micro",
+  "same_sample_reused_not_additional_independent_rows": true,
+  "sample": {
+    "sampled_training_rows": 2048,
+    "sampled_by_stage": {
+      "dynamic_current": 1831,
+      "static_current": 217
+    },
+    "reconstructed_mixture": {
+      "anchor_stage": "dynamic_current",
+      "source_rows_by_stage": {
+        "static_current": 3200005,
+        "dynamic_current": 2109061
+      },
+      "selected_rows_by_stage": {
+        "static_current": 234340,
+        "dynamic_current": 2109061
+      },
+      "requested_weights": {
+        "static_current": 0.1,
+        "dynamic_current": 0.9
+      },
+      "realized_weights": {
+        "static_current": 0.09999995732697904,
+        "dynamic_current": 0.9000000426730209
+      },
+      "rows_per_epoch": 2343401
+    },
+    "global_batches": 8,
+    "minimum_tokens": 94,
+    "maximum_tokens": 292,
+    "actual_tokens": 284704,
+    "rank_padded_token_positions": 484352,
+    "microbatch_padded_token_positions": 348044,
+    "token_position_reduction_fraction": 0.28142342758985206,
+    "maximum_rank_token_positions_per_batch_sum": 136320,
+    "clipped_maximum_rank_token_positions_per_batch_sum": 91104,
+    "maximum_rank_token_position_reduction_fraction": 0.3316901408450704,
+    "profiles": [
+      {
+        "sample_batch": 0,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "7487eb87c10d6c687da3fbad77812303369f81d5e02119125084b45ce32bd976",
+        "maximum_tokens": 228,
+        "minimum_tokens": 97,
+        "actual_tokens": 8834,
+        "rank_padded_token_positions": 14592,
+        "microbatch_padded_token_positions": 10808,
+        "supervised_tokens": 2276
+      },
+      {
+        "sample_batch": 0,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "883a3b9e1495057eba9a5ef22459fb596af88565f8db2a3c4afc9d9e879a8195",
+        "maximum_tokens": 270,
+        "minimum_tokens": 103,
+        "actual_tokens": 8930,
+        "rank_padded_token_positions": 17280,
+        "microbatch_padded_token_positions": 10964,
+        "supervised_tokens": 2301
+      },
+      {
+        "sample_batch": 0,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "ec8af716b34e9181b6f3a31e78b234fddf21406ac46c6d8483fc88c425a63af2",
+        "maximum_tokens": 243,
+        "minimum_tokens": 97,
+        "actual_tokens": 8884,
+        "rank_padded_token_positions": 15552,
+        "microbatch_padded_token_positions": 10592,
+        "supervised_tokens": 2184
+      },
+      {
+        "sample_batch": 0,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "fc005fd742adcf2551ab72a8635d25bb048f6dfdf8667dd23780cc189488ddf4",
+        "maximum_tokens": 223,
+        "minimum_tokens": 94,
+        "actual_tokens": 8547,
+        "rank_padded_token_positions": 14272,
+        "microbatch_padded_token_positions": 10208,
+        "supervised_tokens": 2018
+      },
+      {
+        "sample_batch": 1,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "c175c50465f4e467215bc4c340b1cb1cb337b35a0fefb74a54b4ec6c29d96b94",
+        "maximum_tokens": 201,
+        "minimum_tokens": 97,
+        "actual_tokens": 8533,
+        "rank_padded_token_positions": 12864,
+        "microbatch_padded_token_positions": 10116,
+        "supervised_tokens": 2036
+      },
+      {
+        "sample_batch": 1,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "fdbfb83c0518d885a63c649d434c2b1c590ecf65f6f071127dfb4428e017cda6",
+        "maximum_tokens": 212,
+        "minimum_tokens": 109,
+        "actual_tokens": 9086,
+        "rank_padded_token_positions": 13568,
+        "microbatch_padded_token_positions": 10576,
+        "supervised_tokens": 2308
+      },
+      {
+        "sample_batch": 1,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "c348149954c1f2d8f4c02de36cea6121dc863a3d901919e9e848b7049508663d",
+        "maximum_tokens": 249,
+        "minimum_tokens": 104,
+        "actual_tokens": 8900,
+        "rank_padded_token_positions": 15936,
+        "microbatch_padded_token_positions": 11236,
+        "supervised_tokens": 2420
+      },
+      {
+        "sample_batch": 1,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "e133093fd625b0f811c5ea66f38091b1f3f66b6e5ad0e2af03ee82fced84b2f4",
+        "maximum_tokens": 239,
+        "minimum_tokens": 104,
+        "actual_tokens": 9227,
+        "rank_padded_token_positions": 15296,
+        "microbatch_padded_token_positions": 11376,
+        "supervised_tokens": 2515
+      },
+      {
+        "sample_batch": 2,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "2a2c8cdee27d458eba773e3d7a561094438461d33a4a4fd9d88f1b8f58c73463",
+        "maximum_tokens": 210,
+        "minimum_tokens": 104,
+        "actual_tokens": 8874,
+        "rank_padded_token_positions": 13440,
+        "microbatch_padded_token_positions": 10516,
+        "supervised_tokens": 2088
+      },
+      {
+        "sample_batch": 2,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "e52da8fad8b24445a9b3830b031a39e42b799abf8b40d845022a195c7fcef1aa",
+        "maximum_tokens": 248,
+        "minimum_tokens": 104,
+        "actual_tokens": 8976,
+        "rank_padded_token_positions": 15872,
+        "microbatch_padded_token_positions": 10936,
+        "supervised_tokens": 2367
+      },
+      {
+        "sample_batch": 2,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "761b10b8e3adad2dbb92d93dc489943b080cbe79ba745673d2125bccb1f1d765",
+        "maximum_tokens": 226,
+        "minimum_tokens": 111,
+        "actual_tokens": 8833,
+        "rank_padded_token_positions": 14464,
+        "microbatch_padded_token_positions": 10728,
+        "supervised_tokens": 2155
+      },
+      {
+        "sample_batch": 2,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "3498cfea0369961133b47ee8fdd6542f1ff9a168245780c5f2cd7ef1d0dea778",
+        "maximum_tokens": 238,
+        "minimum_tokens": 97,
+        "actual_tokens": 9063,
+        "rank_padded_token_positions": 15232,
+        "microbatch_padded_token_positions": 10912,
+        "supervised_tokens": 2341
+      },
+      {
+        "sample_batch": 3,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "8da35b6a49d4fbca7871ad3abbe9f0b4b964ed0f8b436bed641b8d806e57cbc1",
+        "maximum_tokens": 238,
+        "minimum_tokens": 105,
+        "actual_tokens": 8938,
+        "rank_padded_token_positions": 15232,
+        "microbatch_padded_token_positions": 11000,
+        "supervised_tokens": 2308
+      },
+      {
+        "sample_batch": 3,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "0422e83a284aa3fd0217857f9e12eb0691afc1e684dd44c2d4a5ebb9e257e574",
+        "maximum_tokens": 205,
+        "minimum_tokens": 94,
+        "actual_tokens": 8521,
+        "rank_padded_token_positions": 13120,
+        "microbatch_padded_token_positions": 10260,
+        "supervised_tokens": 2010
+      },
+      {
+        "sample_batch": 3,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "8049fe5ed0a5a1b0b39a77eb9b4ace50512ff1a93fef86f192208e854d64029f",
+        "maximum_tokens": 178,
+        "minimum_tokens": 94,
+        "actual_tokens": 8470,
+        "rank_padded_token_positions": 11392,
+        "microbatch_padded_token_positions": 9836,
+        "supervised_tokens": 1929
+      },
+      {
+        "sample_batch": 3,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "90849255369a40da2e6125ac5d89766175c4a288040c94d9d8743f57b9b6cd25",
+        "maximum_tokens": 257,
+        "minimum_tokens": 94,
+        "actual_tokens": 8870,
+        "rank_padded_token_positions": 16448,
+        "microbatch_padded_token_positions": 11440,
+        "supervised_tokens": 2298
+      },
+      {
+        "sample_batch": 4,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "40e4ab803bebc4af27f973d1d9ce496a32ac023efaad969b83978564b8fb3226",
+        "maximum_tokens": 284,
+        "minimum_tokens": 103,
+        "actual_tokens": 9166,
+        "rank_padded_token_positions": 18176,
+        "microbatch_padded_token_positions": 11568,
+        "supervised_tokens": 2470
+      },
+      {
+        "sample_batch": 4,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "e465a04c4f69489cb0f68f064186dd033bd1eb9cde0386734ddafcc46c2855b4",
+        "maximum_tokens": 226,
+        "minimum_tokens": 101,
+        "actual_tokens": 8739,
+        "rank_padded_token_positions": 14464,
+        "microbatch_padded_token_positions": 10808,
+        "supervised_tokens": 2146
+      },
+      {
+        "sample_batch": 4,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "52e6ffee877f08fd79f45d2d922671be89376a9f4d9f9540476ee6e71ddd73c0",
+        "maximum_tokens": 224,
+        "minimum_tokens": 94,
+        "actual_tokens": 9113,
+        "rank_padded_token_positions": 14336,
+        "microbatch_padded_token_positions": 11160,
+        "supervised_tokens": 2427
+      },
+      {
+        "sample_batch": 4,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "5652a599cce5243768ccffd63b66144b683bba4c246d2a6bdbcfb16c96f74fcf",
+        "maximum_tokens": 284,
+        "minimum_tokens": 94,
+        "actual_tokens": 8993,
+        "rank_padded_token_positions": 18176,
+        "microbatch_padded_token_positions": 11968,
+        "supervised_tokens": 2449
+      },
+      {
+        "sample_batch": 5,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "35af6af12f7d4ab03076553df9bafa116790d5040ffa3cf592c4b74c5df95d84",
+        "maximum_tokens": 214,
+        "minimum_tokens": 97,
+        "actual_tokens": 8678,
+        "rank_padded_token_positions": 13696,
+        "microbatch_padded_token_positions": 10604,
+        "supervised_tokens": 2039
+      },
+      {
+        "sample_batch": 5,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "4643c076f23dbf2045b3443d8da36f1f9a5552a00b0e6d0f2a39b88052ee7762",
+        "maximum_tokens": 255,
+        "minimum_tokens": 97,
+        "actual_tokens": 9022,
+        "rank_padded_token_positions": 16320,
+        "microbatch_padded_token_positions": 10996,
+        "supervised_tokens": 2427
+      },
+      {
+        "sample_batch": 5,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "d2f028fa29a4effdaed6950c13a6d69c861ab1412bedbbf8889dbaaad13c1fbc",
+        "maximum_tokens": 275,
+        "minimum_tokens": 103,
+        "actual_tokens": 9528,
+        "rank_padded_token_positions": 17600,
+        "microbatch_padded_token_positions": 11972,
+        "supervised_tokens": 2833
+      },
+      {
+        "sample_batch": 5,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "f3cbe20313683245118f68266da924721885b4e30e78670e3d200f5b8472abf1",
+        "maximum_tokens": 248,
+        "minimum_tokens": 97,
+        "actual_tokens": 9123,
+        "rank_padded_token_positions": 15872,
+        "microbatch_padded_token_positions": 11264,
+        "supervised_tokens": 2477
+      },
+      {
+        "sample_batch": 6,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "66851613b11af7f268df7aadf85b7b64134239fce383c2b458df363f91fd9460",
+        "maximum_tokens": 267,
+        "minimum_tokens": 97,
+        "actual_tokens": 8795,
+        "rank_padded_token_positions": 17088,
+        "microbatch_padded_token_positions": 10772,
+        "supervised_tokens": 2161
+      },
+      {
+        "sample_batch": 6,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "d1176a51eff6310797ea62c618ca32134704726e3fc80d64e496e6e88627d41d",
+        "maximum_tokens": 229,
+        "minimum_tokens": 100,
+        "actual_tokens": 8744,
+        "rank_padded_token_positions": 14656,
+        "microbatch_padded_token_positions": 10660,
+        "supervised_tokens": 2156
+      },
+      {
+        "sample_batch": 6,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "a384cb704f33a6ad6c70898d5752b482dc59a003f76af071aecb241f0ffda5fb",
+        "maximum_tokens": 227,
+        "minimum_tokens": 97,
+        "actual_tokens": 8855,
+        "rank_padded_token_positions": 14528,
+        "microbatch_padded_token_positions": 11312,
+        "supervised_tokens": 2302
+      },
+      {
+        "sample_batch": 6,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "969e053d0277deb6844f01d5f07f139f1eeeaf414717d1f1a84819ccc990ab2a",
+        "maximum_tokens": 292,
+        "minimum_tokens": 98,
+        "actual_tokens": 9174,
+        "rank_padded_token_positions": 18688,
+        "microbatch_padded_token_positions": 11584,
+        "supervised_tokens": 2560
+      },
+      {
+        "sample_batch": 7,
+        "rank": 0,
+        "rows": 64,
+        "row_ids_sha256": "0ab8ba498143eef107c129c9f1fdcf68cf3b160715264c11259ae2fe261cbc73",
+        "maximum_tokens": 255,
+        "minimum_tokens": 100,
+        "actual_tokens": 8806,
+        "rank_padded_token_positions": 16320,
+        "microbatch_padded_token_positions": 10364,
+        "supervised_tokens": 2145
+      },
+      {
+        "sample_batch": 7,
+        "rank": 1,
+        "rows": 64,
+        "row_ids_sha256": "7d2e5f798cac13798f57497eb3285cd0d86cca959a3a7844e264e158d25ccada",
+        "maximum_tokens": 192,
+        "minimum_tokens": 97,
+        "actual_tokens": 8814,
+        "rank_padded_token_positions": 12288,
+        "microbatch_padded_token_positions": 10260,
+        "supervised_tokens": 2061
+      },
+      {
+        "sample_batch": 7,
+        "rank": 2,
+        "rows": 64,
+        "row_ids_sha256": "6e0284deba252933d8212438be3a3bc54551c2c9ae759dcb40e5fc67c54c190b",
+        "maximum_tokens": 238,
+        "minimum_tokens": 98,
+        "actual_tokens": 9008,
+        "rank_padded_token_positions": 15232,
+        "microbatch_padded_token_positions": 10864,
+        "supervised_tokens": 2280
+      },
+      {
+        "sample_batch": 7,
+        "rank": 3,
+        "rows": 64,
+        "row_ids_sha256": "bac67946336e10345f9362d52d9784a637693a4c7dfe1aba0edf6194086e2b70",
+        "maximum_tokens": 193,
+        "minimum_tokens": 104,
+        "actual_tokens": 8660,
+        "rank_padded_token_positions": 12352,
+        "microbatch_padded_token_positions": 10384,
+        "supervised_tokens": 2035
+      }
+    ],
+    "input_digest_verification": {
+      "profile": "verified_immutable_inputs_v1",
+      "receipt_sha256": "2835549a8513665a48dfde1eecef2cad9f983de0acd5e9c001e8f25f6208d8a3",
+      "receipt_bound_files": 4046,
+      "reused_unique_files": 5,
+      "reused_digest_calls": 5,
+      "reused_digest_bytes": 88393258700,
+      "fresh_digest_calls": 4,
+      "fresh_digest_bytes": 840650897,
+      "all_receipt_file_signatures_checked": true,
+      "minimum_verified_inode_age_ns": 2000000000,
+      "reused_bytes_were_freshly_hashed_in_this_process": false
+    }
+  },
+  "actual_candidate_helper_executed_on_all_sampled_rows": true,
+  "valid_inputs_masks_labels_and_supervised_target_counts_preserved": true,
+  "original_input_tensors_unchanged": true,
+  "full_epoch_order_or_actual_optimizer_batches_replayed": false,
+  "source_split": "train",
+  "validation_or_independent_test_rows_read": false,
+  "real_sample_model_outputs_or_gradients_compared": false,
+  "cpu_model_controls": {
+    "test_module": "tests/test_microbatch_padding.py",
+    "test_module_sha256": "341ce6e83f6bdbd83bee5ec9f25db2f1400d756890bf2751f80ef64b2dea4343",
+    "model": "two-layer randomly initialized Qwen3 with actual DenseBridge and nonzero gates",
+    "pretrained_weights_loaded": false,
+    "dtype": "float64",
+    "frozen_and_full_decoder": true,
+    "token_and_example_normalization": true,
+    "microbatch_sizes": [
+      1,
+      2,
+      8
+    ],
+    "valid_logits_loss_and_all_trainable_gradients_compared_with_independent_full_batch_reference": true,
+    "logits_and_loss_rtol_atol": [
+      1e-09,
+      1e-10
+    ],
+    "gradient_rtol_atol": [
+      1e-08,
+      1e-10
+    ],
+    "same_policy_four_vs_two_plus_two_model_and_adamw_states_bitwise_equal": true,
+    "transformers_model_cases_explicitly_skip_if_optional_dependency_is_absent": true
+  },
+  "integration": {
+    "course_and_sft_compilers_preserve_and_validate_flag": true,
+    "sft_capacity_probe_copies_full_compiled_recipe": true,
+    "capacity_contract_binds_recipe_hash_and_code": true,
+    "formal_sft_and_distillation_check_actual_config": true,
+    "resume_rejects_cross_policy_change": true,
+    "absent_policy_equals_explicit_rank": true
+  },
+  "proofs": {
+    "original_profile": {
+      "path": "runs/curriculum-padding-profile-v1/verification.json",
+      "sha256": "029c29e30a65a687371aeb48d32fe697c98b6680725add9df7b18b42f7276330"
+    },
+    "actual_candidate_readback": {
+      "path": "runs/curriculum-padding-candidate-readback-v1/verification.json",
+      "sha256": "ef8b34bfb3a87f507cf042d3f6de77f46e37c477bad7b5836da776313b9af454"
+    }
+  },
+  "implementation_sha256": {
+    "src/xqgeneral/training.py": "0ab45c550e73a11d44707b5a2ccced15f449c5ae363ac23dfb00ae3c79c602ce",
+    "src/xqgeneral/gated_curriculum.py": "d9d5fa3b00cbe913aa54b4bd30fe2dca5b39a576f3027f53e44f612be37ed338",
+    "src/xqgeneral/sft.py": "509cd7fa375cc0a30d531a42447cc1572e49163392e0ac8b06df7fdf1f20c3e7"
+  },
+  "full_4b_bf16_gpu_equivalence_measured": false,
+  "actual_gpu_speedup_measured": false,
+  "model_quality_improvement_measured": false,
+  "current_training_or_queued_consumers_modified": false,
+  "current_controller_has_per_segment_free_gpu_admission": false,
+  "new_model_or_gpu_job_started": false,
+  "full_goal_complete": false
+}
