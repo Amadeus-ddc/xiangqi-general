@@ -1,0 +1,552 @@
+{
+  "status": "complete_third_course_4000_raw_qa_same_prompt_comparison_and_resume",
+  "evidence_state": "reconstructed_baseline",
+  "observed_at_utc": "2026-10-22T21:50:54.961366+00:00",
+  "actual_stage": "static_future",
+  "actual_training_steps": 4000,
+  "baseline_training_steps": 2000,
+  "selected_step": 4000,
+  "parent_selected_second_course_step": 30000,
+  "actual_checkpoint_sha256": "00e81008395f0eb1f9659a97b5dacbe500a3ba55692d6482b9be2e7c8c5ed119",
+  "actual_snapshot_sha256": "daae6982c85fded663b71b06b658a447f1e20090543792df5d99f879db403fa2",
+  "current_course_scores": {
+    "examples": 700,
+    "correct": 630,
+    "accuracy": 0.9,
+    "minimum_task_accuracy": 0.75,
+    "by_task": {
+      "static_future/counts": {
+        "n": 100,
+        "accuracy": 0.94
+      },
+      "static_future/diagonal": {
+        "n": 100,
+        "accuracy": 0.75
+      },
+      "static_future/file": {
+        "n": 100,
+        "accuracy": 0.93
+      },
+      "static_future/locate": {
+        "n": 100,
+        "accuracy": 0.99
+      },
+      "static_future/materials": {
+        "n": 100,
+        "accuracy": 0.76
+      },
+      "static_future/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_future/rank": {
+        "n": 100,
+        "accuracy": 0.93
+      }
+    }
+  },
+  "earlier_course_scores": {
+    "static_current": {
+      "examples": 700,
+      "correct": 657,
+      "accuracy": 0.9385714285714286,
+      "minimum_task_accuracy": 0.77,
+      "by_task": {
+        "static_current/counts": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/diagonal": {
+          "n": 100,
+          "accuracy": 0.77
+        },
+        "static_current/file": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/locate": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/materials": {
+          "n": 100,
+          "accuracy": 0.8
+        },
+        "static_current/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 100,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": 557,
+      "accuracy": 0.9283333333333333,
+      "minimum_task_accuracy": 0.86,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 100,
+          "accuracy": 0.91
+        },
+        "dynamic_current/checks": {
+          "n": 100,
+          "accuracy": 0.95
+        },
+        "dynamic_current/controllers": {
+          "n": 100,
+          "accuracy": 0.86
+        },
+        "dynamic_current/mate": {
+          "n": 100,
+          "accuracy": 0.97
+        },
+        "dynamic_current/moves": {
+          "n": 100,
+          "accuracy": 0.95
+        },
+        "dynamic_current/parries": {
+          "n": 100,
+          "accuracy": 0.93
+        }
+      }
+    }
+  },
+  "previous_scores": {
+    "static_current": {
+      "examples": 700,
+      "correct": 660,
+      "accuracy": 0.9428571428571428,
+      "minimum_task_accuracy": 0.81,
+      "by_task": {
+        "static_current/counts": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "static_current/diagonal": {
+          "n": 100,
+          "accuracy": 0.84
+        },
+        "static_current/file": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "static_current/locate": {
+          "n": 100,
+          "accuracy": 0.98
+        },
+        "static_current/materials": {
+          "n": 100,
+          "accuracy": 0.81
+        },
+        "static_current/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_current/rank": {
+          "n": 100,
+          "accuracy": 0.99
+        }
+      }
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "correct": 563,
+      "accuracy": 0.9383333333333334,
+      "minimum_task_accuracy": 0.89,
+      "by_task": {
+        "dynamic_current/captures": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "dynamic_current/checks": {
+          "n": 100,
+          "accuracy": 0.95
+        },
+        "dynamic_current/controllers": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "dynamic_current/mate": {
+          "n": 100,
+          "accuracy": 0.99
+        },
+        "dynamic_current/moves": {
+          "n": 100,
+          "accuracy": 0.9
+        },
+        "dynamic_current/parries": {
+          "n": 100,
+          "accuracy": 0.91
+        }
+      }
+    },
+    "static_future": {
+      "examples": 700,
+      "correct": 625,
+      "accuracy": 0.8928571428571429,
+      "minimum_task_accuracy": 0.75,
+      "by_task": {
+        "static_future/counts": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "static_future/diagonal": {
+          "n": 100,
+          "accuracy": 0.75
+        },
+        "static_future/file": {
+          "n": 100,
+          "accuracy": 0.94
+        },
+        "static_future/locate": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "static_future/materials": {
+          "n": 100,
+          "accuracy": 0.8
+        },
+        "static_future/piece": {
+          "n": 100,
+          "accuracy": 1.0
+        },
+        "static_future/rank": {
+          "n": 100,
+          "accuracy": 0.91
+        }
+      }
+    }
+  },
+  "overall": {
+    "examples": 2000,
+    "accuracy": 0.922,
+    "by_task": {
+      "dynamic_current/captures": {
+        "n": 100,
+        "accuracy": 0.91
+      },
+      "dynamic_current/checks": {
+        "n": 100,
+        "accuracy": 0.95
+      },
+      "dynamic_current/controllers": {
+        "n": 100,
+        "accuracy": 0.86
+      },
+      "dynamic_current/mate": {
+        "n": 100,
+        "accuracy": 0.97
+      },
+      "dynamic_current/moves": {
+        "n": 100,
+        "accuracy": 0.95
+      },
+      "dynamic_current/parries": {
+        "n": 100,
+        "accuracy": 0.93
+      },
+      "static_current/counts": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/diagonal": {
+        "n": 100,
+        "accuracy": 0.77
+      },
+      "static_current/file": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/locate": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/materials": {
+        "n": 100,
+        "accuracy": 0.8
+      },
+      "static_current/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_current/rank": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_future/counts": {
+        "n": 100,
+        "accuracy": 0.94
+      },
+      "static_future/diagonal": {
+        "n": 100,
+        "accuracy": 0.75
+      },
+      "static_future/file": {
+        "n": 100,
+        "accuracy": 0.93
+      },
+      "static_future/locate": {
+        "n": 100,
+        "accuracy": 0.99
+      },
+      "static_future/materials": {
+        "n": 100,
+        "accuracy": 0.76
+      },
+      "static_future/piece": {
+        "n": 100,
+        "accuracy": 1.0
+      },
+      "static_future/rank": {
+        "n": 100,
+        "accuracy": 0.93
+      }
+    },
+    "task_profile": "paper_xiangqi_v1",
+    "prose_graded": false,
+    "answer_format_valid_rate": 1.0,
+    "canonical_tag_correct_rate": 0.9205,
+    "raw_exact_correct_rate": 0.6965
+  },
+  "all2000_ids_order_questions_variants_gold_and_profiles_identical": true,
+  "paired_comparison_by_course": {
+    "static_current": {
+      "examples": 700,
+      "before_correct": 660,
+      "after_correct": 657,
+      "wrong_to_right": 21,
+      "right_to_wrong": 24
+    },
+    "dynamic_current": {
+      "examples": 600,
+      "before_correct": 563,
+      "after_correct": 557,
+      "wrong_to_right": 20,
+      "right_to_wrong": 26
+    },
+    "static_future": {
+      "examples": 700,
+      "before_correct": 625,
+      "after_correct": 630,
+      "wrong_to_right": 41,
+      "right_to_wrong": 36
+    }
+  },
+  "paired_comparison_by_task": {
+    "dynamic_current/captures": {
+      "examples": 100,
+      "before_correct": 99,
+      "after_correct": 91,
+      "wrong_to_right": 0,
+      "right_to_wrong": 8
+    },
+    "dynamic_current/checks": {
+      "examples": 100,
+      "before_correct": 95,
+      "after_correct": 95,
+      "wrong_to_right": 0,
+      "right_to_wrong": 0
+    },
+    "dynamic_current/controllers": {
+      "examples": 100,
+      "before_correct": 89,
+      "after_correct": 86,
+      "wrong_to_right": 4,
+      "right_to_wrong": 7
+    },
+    "dynamic_current/mate": {
+      "examples": 100,
+      "before_correct": 99,
+      "after_correct": 97,
+      "wrong_to_right": 1,
+      "right_to_wrong": 3
+    },
+    "dynamic_current/moves": {
+      "examples": 100,
+      "before_correct": 90,
+      "after_correct": 95,
+      "wrong_to_right": 8,
+      "right_to_wrong": 3
+    },
+    "dynamic_current/parries": {
+      "examples": 100,
+      "before_correct": 91,
+      "after_correct": 93,
+      "wrong_to_right": 7,
+      "right_to_wrong": 5
+    },
+    "static_current/counts": {
+      "examples": 100,
+      "before_correct": 99,
+      "after_correct": 100,
+      "wrong_to_right": 1,
+      "right_to_wrong": 0
+    },
+    "static_current/diagonal": {
+      "examples": 100,
+      "before_correct": 84,
+      "after_correct": 77,
+      "wrong_to_right": 6,
+      "right_to_wrong": 13
+    },
+    "static_current/file": {
+      "examples": 100,
+      "before_correct": 99,
+      "after_correct": 100,
+      "wrong_to_right": 1,
+      "right_to_wrong": 0
+    },
+    "static_current/locate": {
+      "examples": 100,
+      "before_correct": 98,
+      "after_correct": 100,
+      "wrong_to_right": 2,
+      "right_to_wrong": 0
+    },
+    "static_current/materials": {
+      "examples": 100,
+      "before_correct": 81,
+      "after_correct": 80,
+      "wrong_to_right": 10,
+      "right_to_wrong": 11
+    },
+    "static_current/piece": {
+      "examples": 100,
+      "before_correct": 100,
+      "after_correct": 100,
+      "wrong_to_right": 0,
+      "right_to_wrong": 0
+    },
+    "static_current/rank": {
+      "examples": 100,
+      "before_correct": 99,
+      "after_correct": 100,
+      "wrong_to_right": 1,
+      "right_to_wrong": 0
+    },
+    "static_future/counts": {
+      "examples": 100,
+      "before_correct": 89,
+      "after_correct": 94,
+      "wrong_to_right": 8,
+      "right_to_wrong": 3
+    },
+    "static_future/diagonal": {
+      "examples": 100,
+      "before_correct": 75,
+      "after_correct": 75,
+      "wrong_to_right": 10,
+      "right_to_wrong": 10
+    },
+    "static_future/file": {
+      "examples": 100,
+      "before_correct": 94,
+      "after_correct": 93,
+      "wrong_to_right": 6,
+      "right_to_wrong": 7
+    },
+    "static_future/locate": {
+      "examples": 100,
+      "before_correct": 96,
+      "after_correct": 99,
+      "wrong_to_right": 3,
+      "right_to_wrong": 0
+    },
+    "static_future/materials": {
+      "examples": 100,
+      "before_correct": 80,
+      "after_correct": 76,
+      "wrong_to_right": 9,
+      "right_to_wrong": 13
+    },
+    "static_future/piece": {
+      "examples": 100,
+      "before_correct": 100,
+      "after_correct": 100,
+      "wrong_to_right": 0,
+      "right_to_wrong": 0
+    },
+    "static_future/rank": {
+      "examples": 100,
+      "before_correct": 91,
+      "after_correct": 93,
+      "wrong_to_right": 5,
+      "right_to_wrong": 3
+    }
+  },
+  "paired_comparison_replay": {
+    "examples": 1300,
+    "before_correct": 1223,
+    "after_correct": 1214,
+    "wrong_to_right": 41,
+    "right_to_wrong": 50
+  },
+  "paired_comparison_all": {
+    "examples": 2000,
+    "before_correct": 1848,
+    "after_correct": 1844,
+    "wrong_to_right": 82,
+    "right_to_wrong": 86
+  },
+  "native_raw_answers_regraded": 4000,
+  "raw_formats": {
+    "valid": 2000,
+    "total": 2000,
+    "predictions_repaired": false
+  },
+  "current_course_budget": {
+    "steps": 30000,
+    "minimum_steps": 22000,
+    "qa_every": 2000,
+    "learning_rate": 7.5e-05,
+    "selection_start_step": 2000
+  },
+  "selection_decision": {
+    "stop": false,
+    "selected_step": 4000,
+    "steps_completed": 4000,
+    "checks_without_improvement": 0,
+    "stopping_reason": null,
+    "selected_accuracy": 0.9,
+    "selected_minimum_task_accuracy": 0.75
+  },
+  "actual_presentations": {
+    "valid": 1024000,
+    "padding": 0,
+    "nominal": 1024000
+  },
+  "trainable_fp32_parameters": 671806496,
+  "all_actual_parameters_finite_and_equal_to_source_checkpoint": true,
+  "all2000_ordered_question_variants_and_raw_grades_independently_verified": true,
+  "raw_qa_completed_cpu_readback_at_utc": "2026-10-22T21:28:47.368153+00:00",
+  "live_qa_identity_and_checkpoint_inode_captured": true,
+  "actual_resumed_update_range": [
+    4001,
+    4008
+  ],
+  "actual_four_rank_resume_cli_checked": true,
+  "original_89_training_and_frozen_108_postcourse_sources_unchanged": true,
+  "gpu_model_or_engine_started_by_reader": false,
+  "original_optimizer_state_independently_read": false,
+  "large_input_hashes_reused_from_native_proofs": true,
+  "zero_step_third_course_accuracy_measured": false,
+  "independent_test_used": false,
+  "native_cpu_verification_sha256": {
+    "2000": "c96b97f70b9818dee490f709b64fc22c430deb9f9383dd2da84a40738f1a9150",
+    "4000": "9b5ec88f7ba5837a09794ab49af2517e884e1230961b05c5def85d451f751a6c"
+  },
+  "comparison_and_resume_verification_sha256": "3294918e3ee99e2a286c779653e08d5937451240f45dd685c77dca8b2a67c572",
+  "paired_rows_sha256": "119fa79217183cd414e9986d9803e3cc1a961b778f83a072ddeb3bb1c130ecc0",
+  "raw_format_errors_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "actual_resumed_updates_sha256": "fc5d7552cc73ae29725d2e8f51ffae4ba6eb90d0034fe90b2f3dcdc04a812b4e",
+  "courses_completed": 2,
+  "explanation_sft_completed": false,
+  "sufficient_real_search_distillation_completed": false,
+  "final_playing_strength_or_coaching_acceptance_completed": false,
+  "trained_inference_bundle_delivered": false,
+  "full_goal_complete": false
+}
