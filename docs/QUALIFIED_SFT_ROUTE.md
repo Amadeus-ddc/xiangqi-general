@@ -1,8 +1,8 @@
 # 筛选后讲解数据的训练接续
 
-2026-10-20，实际讲解等待队列已迁移到经过引擎筛选的数据和新索引。旧的讲解与搜索等待进程已按完整身份核对后退出，原源码、输入和日志保留。新的同一等待器负责四课之后的讲解、开发验证、完整对弈基线及512根真实搜索产量试验。见[实际证据](../evidence/qualified-sft-route-real-v1.json)。
+2026-10-22，现役等待器已迁移到[用户指定的两课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)：第一课24000步、第二课30000步，第三课和第四课继续原训练配方。原第二课最低32000步未满足的事实保留。新消费者冻结108份源码，1708项CPU检查通过；原104模块等待器的三个空闲进程按身份核对后退役，原文件保留。新等待器的四课门禁仍为假，没有启动讲解训练或蒸馏。见[实际证据](../evidence/user-boundary-foundation-handoff-v1.json)。
 
-当前仍等待四课全部完成。该104模块消费者绑定的1630项完整项目检查已经通过，实际只读门禁复查也返回就绪；真实四卡全解码器容量及4步连续／2+2续跑对照仍须在四课结束后执行。迁移没有加载语言权重、没有启动讲解训练或蒸馏，没有改变现有课程的89份冻结源码、配方或选模规则。
+2026-10-20的[首次筛选数据迁移](../evidence/qualified-sft-route-real-v1.json)保留为历史记录。筛选数据、原生词元预检、原索引及完整四轮遍历安排继续复用；当前仍须在第三、第四课实际完成、严格四课导出及新的四卡全解码器容量／恢复证明通过之后才训练讲解。课程GPU执行保持原89份冻结源码。
 
 ## 实际数据与批次
 
@@ -16,7 +16,7 @@
 
 讲解预检及原始讲解评测CLI显式读取`XQGENERAL_VERIFIED_INPUT_RECEIPT`。该变量应指向实际完成字节验证后形成的不可变输入凭据；缺省仍执行原有新哈希。文件身份改变时拒收，不能把当前签名直接附到未验证的预期哈希。评测入口在控制夹具中实际打开分片缓存，保留原始非法回答，未读取已验证分片的二进制字节。控制夹具不测棋力。
 
-原生预检使用的104模块快照保持原样；后续消费者相对它只增加原始讲解评测CLI的凭据作用域，预检及训练模块字节不变。两份执行源码分别冻结并按哈希绑定，受控入口检查及完整项目检查覆盖新消费者。
+原生数据预检使用的104模块历史快照保持原样。当前108模块消费者另增加显式前缀交接及讲解入口的绑定检查，已独立冻结并通过1708项CPU检查。当前GPU课程仍使用自己的89模块快照，不能以模块数代替实际字节核验；真实全解码器预检仍在四课完成后执行。
 
 ## 顺序与验收边界
 
@@ -28,29 +28,30 @@
 
 ## 本服务器运行定位与恢复
 
-2026-10-20的[实际只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)确认：拥有者、冻结包装器和实际工作进程都存活；104份消费者源码、12项入口／配置／证明绑定一致，完整项目检查门禁就绪，实际四课完成门禁为假。该核对没有加载模型或启动训练。
+2026-10-22的实际交接确认新单进程拥有者存活，108份消费者源码与11项入口／配置／证明绑定一致，1708项CPU检查通过，四课完成门禁为假。旧三个空闲等待进程已退役；2026-10-20的[只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)仅描述当时的104模块路线。
 
 | 项目 | 现役位置或合同 |
 | --- | --- |
-| 等待器目录 | `runs/qualified-sft-route-migration-v1` |
-| 入口与会话 | `postcourse-entry.py`；`xqgeneral-qualified-post-course-v1` |
-| 父课程 | `runs/curriculum-paper-v5`；拥有会话`xqgeneral-paper-curriculum-preparation-v7` |
-| 讲解输出与配置 | `runs/paper-sft-engine-qualified-v1`及其`inputs/` |
+| 等待器目录 | `runs/user-boundary-postcourse-v1` |
+| 入口与会话 | `postcourse-entry.py`；`xqgeneral-user-boundary-postcourse-v1` |
+| 父课程 | `runs/curriculum-paper-user-30000-v1`；会话`xqgeneral-course3-from-30000-v1` |
+| 显式前缀声明 | `runs/user-boundary-handoff-v1/authorized-prefix.json`及其锁定SHA256 |
+| 讲解输出与配置 | `runs/paper-sft-user-boundary-v1`及其`inputs/` |
 | 训练／验证索引 | `data/astra-explanations-engine-qualified-paper-index-v1/train`及`validation` |
-| 原生词元预检 | `runs/paper-sft-engine-qualified-v1/token-preflight/manifest.json` |
-| 搜索试批配置 | `runs/qualified-sft-route-migration-v1/pilot-owned/pilot.json` |
-| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-qualified-v1` |
+| 复用原生词元预检 | `runs/paper-sft-engine-qualified-v1/token-preflight/manifest.json` |
+| 搜索试批配置 | `runs/user-boundary-postcourse-v1/pilot-owned/pilot.json` |
+| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-user-boundary-v1` |
 
 `queue-plan.json`绑定不可变源码、配置、输入凭据及阶段合同；`queue-state.json`报告当前阶段；`queue-handoff.json`保存实际拥有权交接。诊断查看`queue-entry.log`和`queue-exit.json`。状态文件或日志不增长不能单独证明进程已经结束，应按保存的PID、启动时间、父进程及命令哈希核对实际进程与会话。
 
 ```bash
-.venv/bin/python -c 'import json; print(json.load(open("runs/qualified-sft-route-migration-v1/queue-state.json")))'
-tmux capture-pane -p -t '=xqgeneral-qualified-post-course-v1'
+.venv/bin/python -c 'import json; print(json.load(open("runs/user-boundary-postcourse-v1/queue-state.json")))'
+tmux capture-pane -p -t '=xqgeneral-user-boundary-postcourse-v1'
 ```
 
 外层拥有者没有可直接重复调用的`--resume`。原拥有者确已终止后，需要新的明确拥有权启动／交接，并只复用源码、输入和合同都不变的可续跑子阶段；不可续跑部分改用新输出。所有部分输出和旧交接证据保留。不得直接重跑旧`paper-followthrough-catalog-v1`入口，也不覆盖活任务的`queue-worker.json`。
 
-课程继续使用89份冻结源码，讲解消费者使用104份；当前公开包新增的参考生成模块没有替换它们。恢复时核对各自实际字节，不能只比较模块数或测试条数。阶段启动仍检查实际GPU资源：讲解四卡各92160MiB，正文验证GPU 0为81920MiB，对弈GPU 2为49152MiB，试批GPU 0为81920MiB；显存门槛不能代替真实容量／续跑预检。
+课程继续使用89份冻结源码，新讲解消费者使用108份；原104份消费者快照作为历史保留。恢复时核对各自实际字节，不能只比较模块数或测试条数。阶段启动仍检查实际GPU资源：讲解四卡各92160MiB，正文验证GPU 0为81920MiB，对弈GPU 2为49152MiB，试批GPU 0为81920MiB；显存门槛不能代替真实容量／续跑预检。
 
 完整BF16教师的18个分片与1199个张量头已经核对，均为BF16且没有量化配置。本次只读取150872字节头信息，没有读取55562855904字节权重载荷或重新计算全部载荷哈希；这是一项资产就绪核对，不是新的教师推理或模型质量结果。
 

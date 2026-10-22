@@ -9,14 +9,14 @@ import time
 import torch
 
 from .evidence import atomic_json, code_identity, digest, manifest
-from .curriculum_selection import CURRICULUM_KIND
+from .curriculum_selection import CURRICULUM_KIND, USER_CURRICULUM_KIND, USER_HANDOFF_KIND
 from .foundation_handoff import Artifacts, export_curriculum
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
 from .feature_store import feature_paths
 
 
-def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30):
+def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30, *, authorized_prefix=None):
     if not 0 < poll_seconds <= 60:raise ValueError('Use a positive polling interval of at most 60 seconds')
     path = Path(curriculum) / 'manifest.json'
     while not path.exists():
@@ -27,7 +27,10 @@ def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30):
             'curriculum': str(curriculum), 'producer_session': producer_session, 'gpu_model_loaded_or_sft_started': False})
         time.sleep(poll_seconds)
     proof = json.loads(path.read_text())
-    if proof.get('status') != 'complete' or proof.get('kind') not in ('four_course_raw_qa_gated_curriculum', CURRICULUM_KIND):
+    allowed = ('four_course_raw_qa_gated_curriculum', CURRICULUM_KIND)
+    if authorized_prefix is not None:
+        allowed += (USER_CURRICULUM_KIND,)
+    if proof.get('status') != 'complete' or proof.get('kind') not in allowed:
         raise ValueError('A completed four-course curriculum is required')
     return path
 
@@ -37,6 +40,8 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
     recipe = json.loads(recipe_path.read_text())
     if recipe.get('require_clean_foundation_handoff') is not True:
         raise ValueError('The sequential pipeline requires the clean four-course SFT recipe')
+    from .foundation_prefix import declared_prefix_reference
+    prefix = declared_prefix_reference(recipe)
     token = json.loads(token_manifest.read_text())
     checked_artifacts(token)
     if token.get('kind') != 'latent_only_reviewed_explanation_data_preflight' or token['config']['data'] != recipe['data_path']:
@@ -44,6 +49,8 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
     contract = {'curriculum': str(curriculum), 'producer_session': producer_session,
         'recipe': str(recipe_path), 'recipe_sha256': digest(recipe_path), 'token_preflight': str(token_manifest),
         'token_preflight_sha256': digest(token_manifest), 'code': code_identity()}
+    if prefix:
+        contract['authorized_foundation_prefix'] = prefix
     if root.exists():
         if not resume or json.loads((root / 'contract.json').read_text()) != contract:
             raise ValueError('Resume only this exact preserved pipeline contract; otherwise use a fresh output')
@@ -55,8 +62,11 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
         if (digest(recipe_path) != contract['recipe_sha256'] or
                 digest(token_manifest) != contract['token_preflight_sha256'] or code_identity() != contract['code']):
             raise ValueError('Pipeline recipe, prerequisite or preserved execution source changed')
+        if declared_prefix_reference(recipe) != prefix:
+            raise ValueError('The explicit foundation-prefix declaration changed')
     try:
-        curriculum_manifest = wait_for_curriculum(curriculum, producer_session, root, poll_seconds)
+        curriculum_manifest = (wait_for_curriculum(curriculum, producer_session, root, poll_seconds,
+            authorized_prefix=prefix['path']) if prefix else wait_for_curriculum(curriculum, producer_session, root, poll_seconds))
         unchanged();checked_artifacts(token)
         stage = 'foundation_handoff';atomic_json(root / 'state.json', {'status': stage})
         handoff = root / 'handoff';source = handoff / 'adapter.pt'
@@ -64,8 +74,17 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
             handoff_proof = json.loads((handoff / 'manifest.json').read_text());checked_artifacts(handoff_proof)
             if handoff_proof['inputs'].get(str(curriculum_manifest), {}).get('sha256') != digest(curriculum_manifest):
                 raise ValueError('Preserved handoff belongs to another curriculum')
-            checked_parent(source, True)
-        else:export_curriculum(curriculum, handoff)
+            checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {}))
+        elif prefix:
+            export_curriculum(curriculum, handoff, authorized_prefix=prefix['path'])
+        else:
+            export_curriculum(curriculum, handoff)
+        handoff_proof = json.loads((handoff / 'manifest.json').read_text())
+        actual_prefix = handoff_proof['verification'].get('authorized_prefix', {})
+        if ((prefix is not None) != (handoff_proof.get('kind') == USER_HANDOFF_KIND) or
+                (prefix and (actual_prefix.get('declaration') != prefix['path'] or
+                             actual_prefix.get('declaration_sha256') != prefix['sha256']))):
+            raise ValueError('The clean handoff must match the caller-authorized prefix declaration')
         cache_signatures = {str(p): Artifacts.signature(p) for p in feature_paths(recipe['feature_path'])}
         def unchanged_cache():
             if any(Artifacts.signature(path) != signature for path, signature in cache_signatures.items()):
@@ -85,7 +104,7 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
         unchanged();checked_artifacts(token);unchanged_cache()
         proof = json.loads((trained / 'manifest.json').read_text());checked_artifacts(proof)
         metrics = json.loads((trained / 'metrics.json').read_text())
-        expected = prepare_config(checked_parent(source, True), recipe, source, trained)
+        expected = prepare_config(checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {})), recipe, source, trained)
         if (proof.get('kind') != 'model_training' or proof['config'] != expected or
                 proof['verification'] != metrics or metrics.get('world_size') != 4 or
                 metrics.get('decoder_training') != 'full' or metrics.get('selected_step', 0) <= 0 or

@@ -9,6 +9,8 @@ from .evidence import load_jsonl
 COURSE_KIND = 'validation_selected_foundation_course'
 CURRICULUM_KIND = 'four_course_validation_selected_curriculum'
 HANDOFF_KIND = 'validation_selected_foundation_handoff'
+USER_CURRICULUM_KIND = 'user_boundary_four_course_curriculum'
+USER_HANDOFF_KIND = 'user_boundary_foundation_handoff'
 CURRENT_COURSE_METRIC = 'current_course_raw_qa_accuracy'
 
 

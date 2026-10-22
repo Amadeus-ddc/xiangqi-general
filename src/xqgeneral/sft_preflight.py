@@ -183,7 +183,9 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             raise ValueError('Distillation requires its completed full-decoder parent and exact token proof')
         saved, _ = completed_parent(source, token['config']['parent_completion'], guard)
     else:
-        saved = checked_parent(source, True)
+        from .foundation_prefix import declared_prefix_reference
+        prefix = declared_prefix_reference(recipe)
+        saved = checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {}))
     formal = prepare_config(saved, recipe, source, root / 'unused-formal-output')
     if (formal.get('decoder_training') != 'full' or formal.get('trainable_parameter_dtype') != 'float32' or
             formal.get('ddp_world_size') != 4 or formal['batch_size'] != (32 if distillation else 16) or formal.get('micro_batch_size') != 1 or
