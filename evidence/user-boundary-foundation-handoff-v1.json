@@ -1,0 +1,113 @@
+{
+  "status": "actual_third_course_started_and_explicit_prefix_successor_queued",
+  "recorded_at_utc": "2026-10-22T07:50:19.450154+00:00",
+  "selected_second_course": {
+    "step": 30000,
+    "current_correct": 584,
+    "current_examples": 600,
+    "current_minimum_task_accuracy": 0.93,
+    "replay_correct": 668,
+    "replay_examples": 700,
+    "replay_minimum_task_accuracy": 0.84,
+    "checkpoint_sha256": "c9c2a3ddc2397796e649b8dbcbfbdf1e7373b1831b22ccf80f42b157e8b03fc0",
+    "completion_basis": "explicit_latest_user_direct_course3_instruction",
+    "original_minimum_stopping_steps": 32000,
+    "original_stopping_minimum_met": false,
+    "raw_format_valid_answers": 1299,
+    "raw_answers": 1300,
+    "raw_error_repair_applied": false
+  },
+  "effective_prefix": {
+    "first_selected_step": 24000,
+    "second_selected_step": 30000,
+    "used_second_course_history_through_step": 30000,
+    "all_later_discarded_branch_records_preserved": true,
+    "cancelled_step31000_qa_generated": false
+  },
+  "actual_third_course": {
+    "stage": "static_future",
+    "first_verified_updates": 25,
+    "last_first_readback_step": 25,
+    "first_update_readback_sha256": "9c78839040612e919262fdc86b326265dfa679d7ff3c61741356746766765346",
+    "hourly_observation": {
+      "at_utc": "2026-10-22T07:49:28.740233+00:00",
+      "step": 405,
+      "review_sha256": "610ab54b7f166b10a17d70ce33fc4659ac6008e8528e2a52f82e31a0df320d9a"
+    },
+    "source_modules": 89,
+    "source_unchanged": true,
+    "actual_data_mixture": {
+      "static_current": 0.06,
+      "dynamic_current": 0.08,
+      "static_future": 0.86
+    },
+    "minimum_steps": 22000,
+    "maximum_steps": 30000,
+    "raw_qa_every": 2000,
+    "current_course_qa_completed": false
+  },
+  "real_prefix_preflight": {
+    "status": "complete_actual_two_course_authorized_prefix_native_preflight",
+    "courses": [
+      {
+        "stage": "static_current",
+        "completed_raw_qa_rounds": 15,
+        "selected_step": 24000,
+        "actual_steps": 30000,
+        "current_selected_accuracy": 0.9742857142857143
+      },
+      {
+        "stage": "dynamic_current",
+        "completed_raw_qa_rounds": 15,
+        "selected_step": 30000,
+        "actual_steps": 30000,
+        "current_selected_accuracy": 0.9733333333333334
+      }
+    ],
+    "source_modules": 108,
+    "verification_sha256": "c48849d9472eb9173744cb30e3b0f967eb59084009e74223ec69090a8124bfd2",
+    "native_question_variants_raw_grades_and_snapshot_metadata_checked": true,
+    "large_weight_or_cache_payloads_rehashed": false,
+    "parameter_array_values_read_by_this_preflight": false,
+    "prior_full_cpu_parameter_readbacks_retained": true,
+    "four_course_export_created": false
+  },
+  "actual_postcourse_handoff": {
+    "status": "complete_actual_owned_user_boundary_postcourse_queue_handoff",
+    "verification_sha256": "e17c81b68dc10ac5c3b5b0a4dce2c2d86ed4715dd148dbac9513be25ee765d05",
+    "source_modules": 108,
+    "old_three_idle_queue_processes_terminal": true,
+    "old_frozen104_sources_and_outputs_preserved": true,
+    "actual_four_course_gate": false,
+    "actual_queue_state": "waiting_for_actual_user_authorized_four_courses",
+    "model_or_gpu_sft_started": false,
+    "required_fresh_four_course_export": true,
+    "required_actual_four_gpu_full_decoder_capacity_and_resume_proof": true
+  },
+  "unchanged_qualified_sft_data": {
+    "train": 9823,
+    "validation": 384,
+    "independent_test": 512,
+    "finite_updates": 2456,
+    "effective_valid_presentations": 39292,
+    "padding_rows": 4,
+    "actual_global_rows": 39296,
+    "full_rank_traversal_sha256": "8257989fde4de3c8968c634780914023af1113b459234b9258e2bb7931b7904f",
+    "identical_to_prior_traversal": true,
+    "cache_files": 4041,
+    "large_cache_payloads_rehashed": false,
+    "preparation_sha256": "cb63b20551c0d2b5f2af558800891b4e788e0e1442297d1a3bd1d5faf4ba8fa4"
+  },
+  "cpu_validation": {
+    "tests_passed": 1708,
+    "source_modules": 108,
+    "full_pytest_verification_sha256": "fed9fa68c44f293731b3a609f9fff1071555e9a4ff1a93f4a9416be5f5d0b16e",
+    "native_qa_and_small_tensor_fixtures_do_not_establish_gpu_model_quality": true
+  },
+  "courses_completed": 2,
+  "formal_explanation_sft_completed": false,
+  "actual_sufficient_distillation_completed": false,
+  "independent_playing_and_coaching_accepted": false,
+  "trained_model_bundle_delivered": false,
+  "full_goal_complete": false
+}

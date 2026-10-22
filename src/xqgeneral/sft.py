@@ -88,7 +88,7 @@ def training_command(config, config_path, resume=None):
     return command
 
 
-def checked_parent(source_path, require_clean=False):
+def checked_parent(source_path, require_clean=False, *, authorized_prefix=None):
     """Read the selected parent through the same guard for CLI and preflight."""
     if type(require_clean) is not bool:
         raise ValueError('Clean foundation handoff requirement must be a boolean')
@@ -98,14 +98,23 @@ def checked_parent(source_path, require_clean=False):
     if proof['status'] != 'complete' or digest(source_path) != proof['outputs'][str(source_path)]['sha256']:
         raise ValueError('SFT must initialize from a completed, hash-verified selected checkpoint')
     saved = json.loads((parent / 'config.json').read_text())
-    from .curriculum_selection import HANDOFF_KIND
-    if proof.get('kind') in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND):
+    from .curriculum_selection import HANDOFF_KIND, USER_HANDOFF_KIND
+    if proof.get('kind') == USER_HANDOFF_KIND:
+        from .foundation_prefix import declared_prefix_reference
+        expected_prefix = declared_prefix_reference({'authorized_foundation_prefix': authorized_prefix})
+        actual_prefix = proof['verification'].get('authorized_prefix', {})
+        if (expected_prefix is None or actual_prefix.get('declaration') != expected_prefix['path'] or
+                actual_prefix.get('declaration_sha256') != expected_prefix['sha256']):
+            raise ValueError('SFT must explicitly opt in to this exact authorized foundation prefix')
+    elif authorized_prefix is not None:
+        raise ValueError('The authorized prefix does not belong to this foundation handoff')
+    if proof.get('kind') in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND, USER_HANDOFF_KIND):
         from .foundation_handoff import validate_sft_handoff
         if digest(parent / 'config.json') != proof['outputs'][str(parent / 'config.json')]['sha256']:
             raise ValueError('Completed foundation handoff configuration changed')
         validate_sft_handoff(proof, saved)
     if (require_clean and
-            proof.get('kind') not in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND)):
+            proof.get('kind') not in ('raw_qa_gated_foundation_handoff', HANDOFF_KIND, USER_HANDOFF_KIND)):
         raise ValueError('This SFT recipe requires the completed four-course clean foundation handoff')
     return saved
 
@@ -120,7 +129,10 @@ def main():
     args = parser.parse_args()
     recipe = json.loads(Path(args.recipe).read_text())
     source_path = Path(args.init)
-    saved = checked_parent(source_path, recipe.get('require_clean_foundation_handoff', False))
+    from .foundation_prefix import declared_prefix_reference
+    prefix = declared_prefix_reference(recipe)
+    saved = checked_parent(source_path, recipe.get('require_clean_foundation_handoff', False),
+                           **({'authorized_prefix': prefix} if prefix else {}))
     config = prepare_config(saved, recipe, source_path, args.output)
     root = Path(args.output)
     if (root / 'metrics.json').exists():

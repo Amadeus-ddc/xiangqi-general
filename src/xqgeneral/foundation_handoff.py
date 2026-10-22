@@ -9,7 +9,8 @@ import re
 import torch
 
 from .curriculum_data import STAGES
-from .curriculum_selection import (COURSE_KIND, CURRICULUM_KIND, HANDOFF_KIND, course_contract,
+from .curriculum_selection import (COURSE_KIND, CURRICULUM_KIND, HANDOFF_KIND, CURRENT_COURSE_METRIC,
+                                   USER_CURRICULUM_KIND, USER_HANDOFF_KIND, course_contract,
                                    read_history, validate_course_selection)
 from .evidence import atomic_json, digest, load_jsonl, manifest
 from .explanations import continuation_positions
@@ -72,7 +73,7 @@ class Artifacts:
                 raise ValueError('Handoff evidence changed during verification')
 
 
-def export_curriculum(curriculum, output):
+def export_curriculum(curriculum, output, *, authorized_prefix=None):
     """Prepare a selected checkpoint, never start training or consult independent test answers."""
     root, output = Path(curriculum), Path(output)
     if output.exists():
@@ -81,22 +82,33 @@ def export_curriculum(curriculum, output):
     if not source_manifest.exists():
         raise ValueError('Four completed raw QA courses are required before handoff')
     artifacts = Artifacts()
-    selected_policy = artifacts.json(source_manifest).get('kind') == CURRICULUM_KIND
-    whole = artifacts.proof(source_manifest, CURRICULUM_KIND if selected_policy else 'four_course_raw_qa_gated_curriculum')
+    kind = artifacts.json(source_manifest).get('kind')
+    user_boundary = kind == USER_CURRICULUM_KIND
+    if user_boundary != (authorized_prefix is not None):
+        raise ValueError('An explicit prefix declaration is required exactly for a user-boundary curriculum')
+    selected_policy = kind in (CURRICULUM_KIND, USER_CURRICULUM_KIND)
+    whole = artifacts.proof(source_manifest, kind if selected_policy else 'four_course_raw_qa_gated_curriculum')
     recipe, overall = whole['config'], whole['verification']
     clean_recipe(recipe)
     if (Path(recipe['output']).resolve() != root.resolve() or
-            (overall.get('all_courses_completed_by_declared_validation_policy') is not True if selected_policy
+            (overall.get('all_courses_completed_by_declared_or_user_authorized_policy') is not True if user_boundary else
+             overall.get('all_courses_completed_by_declared_validation_policy') is not True if selected_policy
              else overall.get('all_raw_qa_gates_passed') is not True) or
             overall.get('independent_test_used') is not False or
             len(overall.get('courses', [])) != len(STAGES)):
         raise ValueError('Handoff requires all four new courses without independent-test selection')
     if selected_policy and overall.get('reference_targets_required_for_progression') is not False:
         raise ValueError('Validation-selected curriculum must declare reference targets as diagnostics')
+    prefix = None
+    if user_boundary:
+        from .foundation_prefix import AuthorizedPrefix
+        if overall.get('all_courses_completed_by_declared_validation_policy') is not False:
+            raise ValueError('An explicit early boundary must not claim the original stopping rules were met')
+        prefix = AuthorizedPrefix(artifacts, authorized_prefix, root, recipe, whole)
     # Stored paths are relative to the producer workspace, even when the caller uses an absolute root.
     root = Path(recipe['output'])
     stage_paths = {str(root / stage / 'manifest.json') for stage in STAGES}
-    recipe_paths = set(whole['inputs']) - stage_paths
+    recipe_paths = set(whole['inputs']) - stage_paths - (prefix.extra_whole_inputs if prefix else set())
     if len(recipe_paths) != 1 or artifacts.json(next(iter(recipe_paths))) != recipe:
         raise ValueError('Completed curriculum does not bind its unchanged source recipe')
     recipe_path = next(iter(recipe_paths))
@@ -106,20 +118,32 @@ def export_curriculum(curriculum, output):
         stage_path = stage_root / 'manifest.json'
         if str(stage_path) not in whole['inputs']:
             raise ValueError('Completed curriculum is missing an ordered course proof')
-        proof = artifacts.proof(stage_path, COURSE_KIND if selected_policy else 'raw_qa_gated_foundation_course')
+        imported = prefix.course(index, parent) if prefix and index < 2 else None
+        course_recipe, course_recipe_path = (imported['recipe'], imported['recipe_path']) if imported else (recipe, recipe_path)
+        if imported:
+            stage_root = imported['stage_root']
+        proof = imported['proof'] if imported else artifacts.proof(stage_path, COURSE_KIND if selected_policy else 'raw_qa_gated_foundation_course')
         result = proof['verification']
         if selected_policy:
-            expected_config, candidate_root, training_code = course_contract(recipe, index, root, parent, artifacts, whole['code'])
+            expected_config, candidate_root, training_code = ((imported['expected'], imported['candidates'], imported['training_code'])
+                if imported else course_contract(recipe, index, root, parent, artifacts, whole['code']))
             history = read_history(candidate_root, result['actual_steps'], expected_config, training_code,
-                                   STAGES[:index + 1], recipe, artifacts)
-            validate_course_selection(result)
-            if (result['selection']['history'] != history or result['selection']['policy'] != recipe['validation_selection'] or
-                    result['selection']['budget'] != recipe['course_budgets'][index] or
+                                   STAGES[:index + 1], course_recipe, artifacts)
+            if imported and index == 1:
+                from .foundation_prefix import validate_direct_selection
+                validate_direct_selection(result, prefix.authorization)
+            else:
+                validate_course_selection(result)
+            if (result['selection']['history'] != history or result['selection']['policy'] != course_recipe['validation_selection'] or
+                    result['selection']['budget'] != course_recipe['course_budgets'][index] or
                     result['candidate_root'] != str(candidate_root) or result['training_code'] != training_code or
-                    result.get('imported_original_clean_first_course') != bool(index == 0 and recipe.get('initial_course_import')) or
-                    (index == 0 and recipe.get('initial_course_import') and
-                     result['actual_steps'] != recipe['initial_course_import']['through_step'])):
+                    (not (imported and index == 1) and
+                     result.get('imported_original_clean_first_course') != bool(index == 0 and course_recipe.get('initial_course_import'))) or
+                    (index == 0 and course_recipe.get('initial_course_import') and
+                     result['actual_steps'] != course_recipe['initial_course_import']['through_step'])):
                 raise ValueError('Completed course selection differs from its actual validation history and source')
+            if prefix and not imported and result.get('authorized_prefix_control') != prefix.control:
+                raise ValueError('Later courses must bind the same actual prefix controller')
         else:
             expected_config = training_config(recipe, index, root, parent)
             candidate_root, training_code = stage_root / 'candidates', whole['code']
@@ -130,13 +154,16 @@ def export_curriculum(curriculum, output):
                 result.get('independent_test_used') is not False or
                 (not selected_policy and not result['gate']['passed'])):
             raise ValueError('Course order, raw gate or clean initialization lineage differs')
-        step = result['actual_steps'];budget = recipe['course_budgets'][index]
-        if (type(step) is not int or not budget['minimum_steps'] <= step <= budget['steps'] or
+        step = result['actual_steps'];budget = course_recipe['course_budgets'][index]
+        explicit_early_stop = bool(imported and index == 1)
+        if (type(step) is not int or not (0 < step <= budget['steps'] if explicit_early_stop else budget['minimum_steps'] <= step <= budget['steps']) or
                 result['global_batch_size'] != recipe['batch_size'] or
                 result['sample_presentations'] != step * recipe['batch_size']):
             raise ValueError('Course actual update count differs from its declared budget')
         selected_step = result['selected_step'] if selected_policy else step
-        if type(selected_step) is not int or not budget['minimum_steps'] <= selected_step <= step:
+        selection_start = (budget.get('selection_start_step', budget['minimum_steps'])
+            if selected_policy and course_recipe['validation_selection']['metric'] == CURRENT_COURSE_METRIC else budget['minimum_steps'])
+        if type(selected_step) is not int or not selection_start <= selected_step <= step:
             raise ValueError('Selected course update is outside its actual training budget')
         candidate = candidate_root / f'step-{selected_step}'
         checkpoint = candidate / 'adapter.pt'
@@ -144,7 +171,7 @@ def export_curriculum(curriculum, output):
                 proof['outputs'].get(str(checkpoint), {}).get('sha256') != result['selected_checkpoint_sha256']):
             raise ValueError('Course selected weight differs from its actual gated candidate')
         config_path, snapshot_path, qa_path = stage_root / 'training.config.json', candidate / 'snapshot.json', candidate / 'qa' / 'manifest.json'
-        if any(str(p) not in proof['inputs'] for p in [recipe_path, config_path, snapshot_path, qa_path]):
+        if any(str(p) not in proof['inputs'] for p in [course_recipe_path, config_path, snapshot_path, qa_path]):
             raise ValueError('Course proof does not bind its configuration, snapshot and raw evaluation')
         if str(candidate / 'gate.json') not in {**proof['inputs'], **proof['outputs']}:
             raise ValueError('Course proof does not bind its actual raw gate')
@@ -235,7 +262,10 @@ def export_curriculum(curriculum, output):
     if selected_policy:
         verification.update(all_four_validation_selection_rules_recomputed=True,
             all_reference_targets_passed=overall['all_raw_qa_gates_passed'], reference_targets_required_for_progression=False)
-    proof = manifest(HANDOFF_KIND if selected_policy else 'raw_qa_gated_foundation_handoff', courses[-1][2]['config'],
+    if prefix:
+        verification.update(all_four_validation_selection_rules_recomputed=False,
+            all_four_declared_or_authorized_selection_rules_recomputed=True, authorized_prefix=prefix.summary())
+    proof = manifest(USER_HANDOFF_KIND if prefix else HANDOFF_KIND if selected_policy else 'raw_qa_gated_foundation_handoff', courses[-1][2]['config'],
         outputs=[destination, config_path], verification=verification)
     if proof['outputs'][str(destination)] != artifacts.expected[str(parent)]:
         raise ValueError('Exported foundation weight bytes changed')
@@ -248,14 +278,25 @@ def export_curriculum(curriculum, output):
 def validate_sft_handoff(proof, saved):
     """Require the export's ordered-course contract before SFT loads any model."""
     result = proof['verification']
-    selected_policy = proof.get('kind') == HANDOFF_KIND
+    user_boundary = proof.get('kind') == USER_HANDOFF_KIND
+    selected_policy = proof.get('kind') in (HANDOFF_KIND, USER_HANDOFF_KIND)
     if selected_policy:
-        if (result.get('all_four_validation_selection_rules_recomputed') is not True or
-                result.get('reference_targets_required_for_progression') is not False or
+        rules_verified = (result.get('all_four_declared_or_authorized_selection_rules_recomputed') is True and
+                          result.get('all_four_validation_selection_rules_recomputed') is False) if user_boundary else (
+                          result.get('all_four_validation_selection_rules_recomputed') is True)
+        if not rules_verified:
+            raise ValueError('SFT requires the actual declared or explicitly authorized four-course selection proof')
+        if (result.get('reference_targets_required_for_progression') is not False or
                 result.get('all_reference_targets_passed') != all(c['gate']['passed'] for c in result.get('courses', []))):
             raise ValueError('SFT requires the declared four-course validation-selection proof')
-        for course in result.get('courses', []):
-            validate_course_selection(course)
+        if user_boundary:
+            from .foundation_prefix import validate_direct_selection, validate_handoff_authorization
+            authorization = validate_handoff_authorization(proof)
+        for index, course in enumerate(result.get('courses', [])):
+            if user_boundary and index == 1:
+                validate_direct_selection(course, authorization)
+            else:
+                validate_course_selection(course)
     if (proof['config'] != saved or
             result.get('all_four_ordered_raw_qa_gates_recomputed') is not True or
             result.get('all_training_lineage_and_snapshot_contracts_checked') is not True or
@@ -274,8 +315,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--curriculum', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--authorized-prefix', help='Exact declaration for an explicitly authorized two-course prefix')
     args = parser.parse_args()
-    print(json.dumps(export_curriculum(args.curriculum, args.output)), flush=True)
+    print(json.dumps(export_curriculum(args.curriculum, args.output, authorized_prefix=args.authorized_prefix)), flush=True)
 
 
 if __name__ == '__main__':
