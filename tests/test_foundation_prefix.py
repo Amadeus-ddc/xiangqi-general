@@ -17,7 +17,8 @@ from xqgeneral.gated_curriculum import training_config
 from xqgeneral.sft import checked_parent
 
 
-def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=None, conditional_third=False):
+def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=None, conditional_third=False,
+                      direct_third_improvement=False):
     old = Path(original_root) if original_root is not None else completed_curriculum(tmp_path)[0]
     original_path = tmp_path / 'recipe.json'
     original = json.loads(original_path.read_text())
@@ -56,7 +57,8 @@ def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=N
         saved = dict(original_saved, config=config, code=code, input_hashes={str(p): digest(p) for p in inputs})
         actual_step = 16 if (early_future_selection or conditional_third) and index == 2 else 8
         for step in range(8, actual_step + 1, 8):
-            raw_candidate(stage_root / 'candidates' / f'step-{step}', saved, step, actual_recipe, STAGES[:index + 1])
+            wrong = 100000 if direct_third_improvement and index == 2 and step == 8 else 0
+            raw_candidate(stage_root / 'candidates' / f'step-{step}', saved, step, actual_recipe, STAGES[:index + 1], wrong=wrong)
         local = artifacts if index < 2 else Artifacts()
         local.json(original_path if index < 2 else recipe_path)
         local.json(stage_root / 'training.config.json')
@@ -214,9 +216,10 @@ def test_direct_boundary_rejects_an_ineligible_metric_or_boolean_authorization_s
     with pytest.raises(ValueError):validate_direct_selection(second,authorization)
 
 
-def controlled_third_boundary(tmp_path, *, original_root=None):
+def controlled_third_boundary(tmp_path, *, original_root=None, direct=False):
     from xqgeneral.foundation_prefix import CONDITIONAL_BOUNDARY
-    previous, prior_declaration, _ = controlled_prefix(tmp_path, original_root=original_root, conditional_third=True)
+    previous, prior_declaration, _ = controlled_prefix(tmp_path, original_root=original_root, conditional_third=True,
+                                                       direct_third_improvement=direct)
     old_whole = json.loads((previous / 'manifest.json').read_text())
     old_contract = json.loads((previous / 'contract.json').read_text())
     source_recipe_path = Path(old_contract['recipe'])
@@ -261,6 +264,32 @@ def controlled_third_boundary(tmp_path, *, original_root=None):
     third.update(completion_basis=CONDITIONAL_BOUNDARY, user_authorization=authorization,
         user_boundary_decision=decision, original_declared_minimum_stopping_policy_met=True,
         original_declared_validation_stopping_policy_met=False, original_policy_decision_preserved=True)
+    if direct:
+        authorization = dict(status='explicit_latest_user_authorization',
+            action='select_completed_course_checkpoint_and_continue', stage=STAGES[2],
+            selected_step=third['selected_step'], selected_checkpoint=third['selected_checkpoint'],
+            selected_checkpoint_sha256=third['selected_checkpoint_sha256'], original_stopping_policy_met=False,
+            independent_test_used=False)
+        atomic_json(authorization_path, authorization)
+        artifacts.expected.pop(str(authorization_path)); artifacts.json(authorization_path)
+        source_log = previous / STAGES[2] / 'training/training.jsonl'
+        source_log.parent.mkdir(parents=True)
+        source_log.write_text(''.join(json.dumps(dict(step=step, loss=.5, gradient_norm=1., lr=.0001,
+            data_batch=dict(controlled_cpu_contract=True))) + '\n' for step in range(1, 21)))
+        artifacts.add(source_log, dict(sha256=digest(source_log), bytes=source_log.stat().st_size))
+        stop_path = control_dir / 'discarded-source-stop.json'
+        atomic_json(stop_path, dict(all_six_owned_training_processes_terminal=True,
+            actual_last_completed_source_update=20, selected_step=third['selected_step'],
+            selected_checkpoint_sha256=third['selected_checkpoint_sha256'],
+            actual_source_training_log_sha256=digest(source_log),
+            discarded_unselected_continuation_updates=4, discarded_unselected_continuation_range=[17, 20],
+            controlled_cpu_contract_not_trained_model=True))
+        artifacts.json(stop_path)
+        third.pop('user_boundary_decision')
+        third.update(completion_basis=DIRECT_BOUNDARY, user_authorization=authorization,
+            retained_validated_branch_updates=16, total_source_run_completed_updates=20,
+            discarded_unselected_continuation_updates=4, discarded_unselected_continuation_range=[17, 20],
+            discarded_continuation_stop_verification=dict(path=str(stop_path), sha256=digest(stop_path)))
     courses = [*deepcopy(prior_admission['courses']), third]
     admission = dict(status='complete_explicit_user_boundary_three_course_prefix', original_root=str(previous),
         new_root=str(root), selected_checkpoint=third['selected_checkpoint'],
@@ -319,6 +348,77 @@ def controlled_third_boundary(tmp_path, *, original_root=None):
     for path in [previous / 'manifest.json', previous / STAGES[2] / 'manifest.json', previous / STAGES[3] / 'manifest.json']:
         path.unlink()
     return root, declaration_path, parent, previous
+
+
+def test_direct_improved_third_prefix_exports_selected_branch_and_accounts_for_discarded_source_work(tmp_path):
+    root, declaration, selected, _ = controlled_third_boundary(tmp_path, direct=True)
+    output = tmp_path / 'handoff'
+    result = export_curriculum(root, output, authorized_prefix=declaration)
+    third = result['courses'][2]
+    assert third['selected_step'] == third['actual_steps'] == 16
+    assert third['selection']['history'][0]['gate']['courses'][STAGES[2]]['accuracy'] == 0
+    assert third['selection']['history'][1]['gate']['courses'][STAGES[2]]['accuracy'] == 1
+    assert third['selection']['decision']['stop'] is False
+    assert third['total_source_run_completed_updates'] == 20
+    assert third['discarded_unselected_continuation_updates'] == 4
+    assert result['courses'][1]['user_authorization']['stage'] == STAGES[1]
+    assert third['user_authorization']['stage'] == STAGES[2]
+    assert (output / 'adapter.pt').samefile(selected)
+    reference = dict(path=str(declaration), sha256=digest(declaration))
+    assert checked_parent(output / 'adapter.pt', True, authorized_prefix=reference)
+
+
+@pytest.mark.parametrize('problem', ['missing_fourth', 'changed_stop', 'changed_prior_authorization'])
+def test_direct_third_prefix_rejects_missing_final_course_or_changed_source_stop_provenance(tmp_path, problem):
+    root, declaration, _, _ = controlled_third_boundary(tmp_path, direct=True)
+    d = json.loads(declaration.read_text())
+    admission = json.loads(Path(d['admission']['path']).read_text())
+    if problem == 'missing_fourth':
+        (root / STAGES[3] / 'manifest.json').unlink()
+    elif problem == 'changed_stop':
+        Path(admission['courses'][2]['discarded_continuation_stop_verification']['path']).write_text('{}')
+    else:
+        prior = json.loads(Path(d['prior_prefix']['path']).read_text())
+        Path(prior['authorization']['path']).write_text('{}')
+    output = tmp_path / 'not-created'
+    with pytest.raises((ValueError, FileNotFoundError)):
+        export_curriculum(root, output, authorized_prefix=declaration)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize('problem', ['wrong_stage', 'boolean_step', 'test_selection', 'claimed_stop',
+    'unaccounted_source_updates', 'wrong_discarded_range', 'boolean_source_total', 'wrong_weight', 'unmet_minimum'])
+def test_direct_third_selection_rejects_false_permission_or_discarded_work_accounting(tmp_path, problem):
+    from xqgeneral.foundation_prefix import validate_direct_third_selection
+    root, _, _, _ = controlled_third_boundary(tmp_path, direct=True)
+    third = deepcopy(json.loads((root / 'manifest.json').read_text())['verification']['courses'][2])
+    authorization = deepcopy(third['user_authorization'])
+    assert validate_direct_third_selection(third, authorization)['selected_step'] == 16
+    if problem == 'wrong_stage': authorization['stage'] = STAGES[1]
+    elif problem == 'boolean_step': authorization['selected_step'] = True
+    elif problem == 'test_selection': authorization['independent_test_used'] = True
+    elif problem == 'claimed_stop': third['original_declared_validation_stopping_policy_met'] = True
+    elif problem == 'unaccounted_source_updates': third['discarded_unselected_continuation_updates'] = 0
+    elif problem == 'wrong_discarded_range': third['discarded_unselected_continuation_range'] = [16, 20]
+    elif problem == 'boolean_source_total': third['total_source_run_completed_updates'] = True
+    elif problem == 'wrong_weight': authorization['selected_checkpoint_sha256'] = '0' * 64
+    elif problem == 'unmet_minimum': third['original_declared_minimum_stopping_policy_met'] = False
+    third['user_authorization'] = authorization
+    with pytest.raises(ValueError): validate_direct_third_selection(third, authorization)
+
+
+def test_direct_third_prefix_runs_sequential_sft_only_after_all_four_actual_course_proofs(tmp_path, monkeypatch):
+    from test_sft_pipeline import setup_data, install_runner
+    from xqgeneral.sft_pipeline import run_pipeline
+    old, sft_recipe, token = setup_data(tmp_path)
+    root, declaration, _, _ = controlled_third_boundary(tmp_path, original_root=old, direct=True)
+    recipe = json.loads(sft_recipe.read_text())
+    recipe['authorized_foundation_prefix'] = dict(path=str(declaration), sha256=digest(declaration))
+    atomic_json(sft_recipe, recipe)
+    runner = install_runner(monkeypatch)
+    result = run_pipeline(root, 'controlled-direct-third-session', sft_recipe, token, tmp_path / 'pipeline')
+    assert result['four_courses_completed_before_any_gpu_sft_work']
+    assert result['initial_explanation_sft_completed'] and len(runner.jobs) == 4
 
 
 def test_conditional_third_prefix_exports_all_four_native_courses_and_preserves_both_boundaries(tmp_path):
