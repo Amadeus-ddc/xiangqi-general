@@ -1,0 +1,13 @@
+{
+  "data": "data/paper-courses-v5",
+  "task_profile": "paper_xiangqi_v1",
+  "split": "validation",
+  "stages": ["static_current", "dynamic_current", "static_future", "dynamic_future"],
+  "memories": ["normal", "zero", "shuffled"],
+  "per_task": 100,
+  "question_formats": 3,
+  "batch_size": 8,
+  "max_new_tokens": 384,
+  "seed": 20261046,
+  "cuda_visible_devices": "0"
+}
