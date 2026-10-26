@@ -135,6 +135,86 @@ def validate_conditional_selection(result, authorization):
     return actual
 
 
+def validate_direct_third_selection(result, authorization):
+    """Honor a latest explicit third-course choice while accounting for discarded continuation."""
+    stage = STAGES[2]
+    selection = result['selection']
+    if result['stage'] != stage or selection['policy']['metric'] != CURRENT_COURSE_METRIC:
+        raise ValueError('A direct third-course boundary requires its current-course validation metric')
+    actual = selection_decision(selection['history'], selection['policy'], selection['budget'], stage=stage)
+    chosen = next((row for row in selection['history'] if row['step'] == actual['selected_step']), None)
+    retained = result.get('retained_validated_branch_updates')
+    total = result.get('total_source_run_completed_updates')
+    discarded = result.get('discarded_unselected_continuation_updates')
+    if (chosen is None or actual['stop'] or selection['decision'] != actual or
+            result.get('completion_basis') != DIRECT_BOUNDARY or
+            result.get('original_declared_minimum_stopping_policy_met') is not True or
+            result.get('original_declared_validation_stopping_policy_met') is not False or
+            result.get('original_policy_decision_preserved') is not True or
+            result['actual_steps'] != actual['steps_completed'] or
+            result['actual_steps'] < selection['budget']['minimum_steps'] or
+            result['selected_step'] != chosen['step'] or result['selected_checkpoint'] != chosen['checkpoint'] or
+            result['selected_checkpoint_sha256'] != chosen['checkpoint_sha256'] or result['gate'] != chosen['gate'] or
+            result.get('reference_targets_passed') != chosen['gate']['passed'] or
+            result.get('user_authorization') != authorization or
+            authorization.get('status') != 'explicit_latest_user_authorization' or
+            authorization.get('action') != 'select_completed_course_checkpoint_and_continue' or
+            authorization.get('stage') != stage or type(authorization.get('selected_step')) is not int or
+            authorization['selected_step'] != result['selected_step'] or
+            authorization.get('selected_checkpoint') != chosen['checkpoint'] or
+            authorization.get('selected_checkpoint_sha256') != chosen['checkpoint_sha256'] or
+            authorization.get('original_stopping_policy_met') is not False or
+            authorization.get('independent_test_used') is not False or result.get('independent_test_used') is not False or
+            any(type(value) is not int for value in [retained, total, discarded]) or
+            retained != result['actual_steps'] or total < retained or discarded != total - retained or
+            result.get('discarded_unselected_continuation_range') != ([retained + 1, total] if discarded else [])):
+        raise ValueError('The direct third-course choice must retain its actual best checkpoint and discarded work')
+    return actual
+
+
+def validate_third_selection(result, authorization):
+    if result.get('completion_basis') == DIRECT_BOUNDARY:
+        return validate_direct_third_selection(result, authorization)
+    return validate_conditional_selection(result, authorization)
+
+
+def bind_discarded_continuation(result, *, artifacts=None, proof=None):
+    """Bind the actual source-run stop separately from the retained validated model branch."""
+    binding = result.get('discarded_continuation_stop_verification', {})
+    if (not isinstance(binding, dict) or set(binding) != {'path', 'sha256'} or not isinstance(binding['path'], str) or
+            digest(binding['path']) != binding['sha256']):
+        raise ValueError('The discarded source continuation requires its unchanged stop evidence')
+    path = Path(binding['path']); stop = json.loads(path.read_text())
+    if (stop.get('all_six_owned_training_processes_terminal') is not True or
+            stop.get('actual_last_completed_source_update') != result['total_source_run_completed_updates'] or
+            stop.get('selected_checkpoint_sha256') != result['selected_checkpoint_sha256'] or
+            stop.get('selected_step') != result['selected_step'] or
+            stop.get('discarded_unselected_continuation_updates') != result['discarded_unselected_continuation_updates'] or
+            stop.get('discarded_unselected_continuation_range') != result['discarded_unselected_continuation_range']):
+        raise ValueError('The retained third-course model branch disagrees with the actual source-run termination')
+    log = Path(result['candidate_root']).parent / 'training/training.jsonl'
+    if digest(log) != stop.get('actual_source_training_log_sha256'):
+        raise ValueError('The discarded continuation needs its unchanged actual optimizer update log')
+    updates = 0
+    for line in log.read_text().splitlines():
+        row = json.loads(line)
+        if 'data_batch' not in row:
+            continue
+        updates += 1
+        if (type(row.get('step')) is not int or row['step'] != updates or
+                any(not math.isfinite(row[key]) for key in ['loss', 'gradient_norm', 'lr'])):
+            raise ValueError('The discarded source update log is noncontiguous or nonfinite')
+    if updates != result['total_source_run_completed_updates']:
+        raise ValueError('The actual completed source updates disagree with discarded-work accounting')
+    if artifacts is not None:
+        artifacts.add(path, {'sha256': binding['sha256'], 'bytes': path.stat().st_size})
+        artifacts.add(log, {'sha256': stop['actual_source_training_log_sha256'], 'bytes': log.stat().st_size})
+    if proof is not None and proof['inputs'].get(str(path), {}).get('sha256') != binding['sha256']:
+        raise ValueError('The handoff did not bind discarded source continuation evidence')
+    if proof is not None and proof['inputs'].get(str(log), {}).get('sha256') != stop['actual_source_training_log_sha256']:
+        raise ValueError('The handoff did not retain the actual source-run optimizer log')
+
+
 class AuthorizedPrefix:
     """Resolve original prefix artifacts; later courses still use their complete ordinary proofs."""
     def __init__(self, artifacts, declaration_path, root, recipe, whole):
@@ -228,7 +308,9 @@ class AuthorizedPrefix:
                     admission.get('prior_two_course_admission_sha256') != prior_declaration['admission']['sha256'] or
                     admission['courses'][:2] != self.prior.admission['courses'] or self.prior.code != self.code):
                 raise ValueError('The third-course boundary changed its actual earlier two-course prefix')
-            validate_conditional_selection(admission['courses'][2], self.authorization)
+            validate_third_selection(admission['courses'][2], self.authorization)
+            if admission['courses'][2].get('completion_basis') == DIRECT_BOUNDARY:
+                bind_discarded_continuation(admission['courses'][2], artifacts=artifacts)
         selected = admission['courses'][self.count - 1]
         if (admission['selected_checkpoint'] != selected['selected_checkpoint'] or
                 admission['selected_checkpoint_sha256'] != selected['selected_checkpoint_sha256']):
@@ -268,7 +350,7 @@ class AuthorizedPrefix:
             return self.prior.validate_selection(index, result)
         if index == self.count - 1:
             return (validate_direct_selection(result, self.authorization) if self.count == 2 else
-                    validate_conditional_selection(result, self.authorization))
+                    validate_third_selection(result, self.authorization))
         from .curriculum_selection import validate_course_selection
         return validate_course_selection(result)
 
@@ -317,5 +399,8 @@ def _validate_authorization_graph(proof, value, *, require_two=False):
                 value.get('prior_prefix', {}).get('declaration_sha256') != prior.get('sha256')):
             raise ValueError('The handoff lost its original two-course prefix or conditional third-course boundary')
         _validate_authorization_graph(proof, value['prior_prefix'], require_two=True)
-        validate_conditional_selection(proof['verification']['courses'][2], authorization)
+        third = proof['verification']['courses'][2]
+        validate_third_selection(third, authorization)
+        if third.get('completion_basis') == DIRECT_BOUNDARY:
+            bind_discarded_continuation(third, proof=proof)
     return authorization

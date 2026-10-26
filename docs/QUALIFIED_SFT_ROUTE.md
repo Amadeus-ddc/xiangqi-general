@@ -1,8 +1,8 @@
 # 筛选后讲解数据的训练接续
 
-2026-10-22，现役等待器已迁移到[用户指定的两课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)：第一课24000步、第二课30000步，第三课和第四课继续原训练配方。原第二课最低32000步未满足的事实保留。新消费者冻结108份源码，1708项CPU检查通过；原104模块等待器的三个空闲进程按身份核对后退役，原文件保留。新等待器的四课门禁仍为假，没有启动讲解训练或蒸馏。见[实际证据](../evidence/user-boundary-foundation-handoff-v1.json)。
+2026-10-26，接续目标已改为[用户直接指定的三课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)：第一课24000步、第二课30000步、第三课26000步；第四课已从选定权重实际开训。第二课原最低32000步和第三课原耐心停止规则未满足的事实保留，源第三课额外564次更新单列为弃用续训。新的108模块消费者通过1738项CPU检查，并绑定该三课声明；正式讲解仍须等待真实四课、原生导出及全解码器容量／恢复证明。见[实际交接](PAPER_FOURTH_COURSE_START_26000.md)和[核验记录](../evidence/direct-third-course-26000-handoff-v1.json)。
 
-2026-10-20的[首次筛选数据迁移](../evidence/qualified-sft-route-real-v1.json)保留为历史记录。筛选数据、原生词元预检、原索引及完整四轮遍历安排继续复用；当前仍须在第三、第四课实际完成、严格四课导出及新的四卡全解码器容量／恢复证明通过之后才训练讲解。课程GPU执行保持原89份冻结源码。
+2026-10-20的[首次筛选数据迁移](../evidence/qualified-sft-route-real-v1.json)保留为历史记录。筛选数据、原生词元预检、原索引及完整四轮遍历安排继续复用；当前仍须在第四课实际完成、严格四课导出及新的四卡全解码器容量／恢复证明通过之后才训练讲解。课程GPU执行保持原89份冻结源码。
 
 ## 实际数据与批次
 
@@ -16,7 +16,7 @@
 
 讲解预检及原始讲解评测CLI显式读取`XQGENERAL_VERIFIED_INPUT_RECEIPT`。该变量应指向实际完成字节验证后形成的不可变输入凭据；缺省仍执行原有新哈希。文件身份改变时拒收，不能把当前签名直接附到未验证的预期哈希。评测入口在控制夹具中实际打开分片缓存，保留原始非法回答，未读取已验证分片的二进制字节。控制夹具不测棋力。
 
-原生数据预检使用的104模块历史快照保持原样。当前108模块消费者另增加显式前缀交接及讲解入口的绑定检查，已独立冻结并通过1708项CPU检查。当前GPU课程仍使用自己的89模块快照，不能以模块数代替实际字节核验；真实全解码器预检仍在四课完成后执行。
+原生数据预检使用的104模块历史快照保持原样。当前108模块消费者另增加显式前缀交接及讲解入口的绑定检查，已独立冻结并通过1738项CPU检查。当前GPU课程仍使用自己的89模块快照，不能以模块数代替实际字节核验；真实全解码器预检仍在四课完成后执行。
 
 ## 顺序与验收边界
 
@@ -28,25 +28,25 @@
 
 ## 本服务器运行定位与恢复
 
-2026-10-22的实际交接确认新单进程拥有者存活，108份消费者源码与11项入口／配置／证明绑定一致，1708项CPU检查通过，四课完成门禁为假。旧三个空闲等待进程已退役；2026-10-20的[只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)仅描述当时的104模块路线。
+直接26000步路线使用新的单进程拥有者与108份冻结消费者源码，并绑定实际三课声明及1738项完整CPU检查。原两课等待器随父课程被最新指令退役而结束，其实际退出与历史输入保留；新拥有者须单独确认旧队列终止和四课门禁为假。2026-10-22的1708项检查及2026-10-20的[只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)均作为历史路线保留。
 
 | 项目 | 现役位置或合同 |
 | --- | --- |
-| 等待器目录 | `runs/user-boundary-postcourse-v1` |
-| 入口与会话 | `postcourse-entry.py`；`xqgeneral-user-boundary-postcourse-v1` |
-| 父课程 | `runs/curriculum-paper-user-30000-v1`；会话`xqgeneral-course3-from-30000-v1` |
-| 显式前缀声明 | `runs/user-boundary-handoff-v1/authorized-prefix.json`及其锁定SHA256 |
-| 讲解输出与配置 | `runs/paper-sft-user-boundary-v1`及其`inputs/` |
+| 等待器目录 | `runs/user-direct26000-postcourse-v1` |
+| 入口与会话 | `postcourse-entry.py`；`xqgeneral-user-direct26000-postcourse-v1` |
+| 父课程 | `runs/curriculum-paper-user-direct26000-v1`；会话`xqgeneral-course4-from-26000-v1` |
+| 显式前缀声明 | `runs/user-third-course-direct-prefix-v1/authorized-prefix.json`及其锁定SHA256 |
+| 讲解输出与配置 | `runs/paper-sft-user-direct26000-v1`及其`inputs/` |
 | 训练／验证索引 | `data/astra-explanations-engine-qualified-paper-index-v1/train`及`validation` |
 | 复用原生词元预检 | `runs/paper-sft-engine-qualified-v1/token-preflight/manifest.json` |
-| 搜索试批配置 | `runs/user-boundary-postcourse-v1/pilot-owned/pilot.json` |
-| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-user-boundary-v1` |
+| 搜索试批配置 | `runs/user-direct26000-postcourse-v1/pilot-owned/pilot.json` |
+| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-user-direct26000-v1` |
 
 `queue-plan.json`绑定不可变源码、配置、输入凭据及阶段合同；`queue-state.json`报告当前阶段；`queue-handoff.json`保存实际拥有权交接。诊断查看`queue-entry.log`和`queue-exit.json`。状态文件或日志不增长不能单独证明进程已经结束，应按保存的PID、启动时间、父进程及命令哈希核对实际进程与会话。
 
 ```bash
-.venv/bin/python -c 'import json; print(json.load(open("runs/user-boundary-postcourse-v1/queue-state.json")))'
-tmux capture-pane -p -t '=xqgeneral-user-boundary-postcourse-v1'
+.venv/bin/python -c 'import json; print(json.load(open("runs/user-direct26000-postcourse-v1/queue-state.json")))'
+tmux capture-pane -p -t '=xqgeneral-user-direct26000-postcourse-v1'
 ```
 
 外层拥有者没有可直接重复调用的`--resume`。原拥有者确已终止后，需要新的明确拥有权启动／交接，并只复用源码、输入和合同都不变的可续跑子阶段；不可续跑部分改用新输出。所有部分输出和旧交接证据保留。不得直接重跑旧`paper-followthrough-catalog-v1`入口，也不覆盖活任务的`queue-worker.json`。

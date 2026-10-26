@@ -290,7 +290,7 @@ def validate_sft_handoff(proof, saved):
                 result.get('all_reference_targets_passed') != all(c['gate']['passed'] for c in result.get('courses', []))):
             raise ValueError('SFT requires the declared four-course validation-selection proof')
         if user_boundary:
-            from .foundation_prefix import validate_conditional_selection, validate_direct_selection, validate_handoff_authorization
+            from .foundation_prefix import validate_third_selection, validate_direct_selection, validate_handoff_authorization
             authorization = validate_handoff_authorization(proof)
         for index, course in enumerate(result.get('courses', [])):
             if user_boundary and index == 1:
@@ -298,7 +298,7 @@ def validate_sft_handoff(proof, saved):
                 earlier_authorization = prefix['prior_prefix']['authorization'] if len(prefix['prefix_stages']) == 3 else authorization
                 validate_direct_selection(course, earlier_authorization)
             elif user_boundary and index == 2 and len(result['authorized_prefix']['prefix_stages']) == 3:
-                validate_conditional_selection(course, authorization)
+                validate_third_selection(course, authorization)
             else:
                 validate_course_selection(course)
     if (proof['config'] != saved or
