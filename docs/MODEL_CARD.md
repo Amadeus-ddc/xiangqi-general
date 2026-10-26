@@ -1,5 +1,7 @@
 # Xiangqi General model card
 
+The user added a conditional course-three boundary: if step 26000 does not exceed the actual step-24000 best of 690/700 current-course answers, retain the step-24000 weights and begin course four. Strict improvement continues the original course-three policy. The two conditional control processes are live and waiting; no step-26000 result or fourth-course start is claimed here. A three-course prefix preserves the earlier two-course authorization and the original unmet third-course stopping decision. Four actual ordered courses and the full native handoff remain required before explanation SFT. See the [protocol](USER_AUTHORIZED_COURSE_PREFIX.md) and [verification record](../evidence/conditional-third-course-handoff-v1.json).
+
 Xiangqi General is an independent Chinese-chess adaptation of the [Queen research pipeline](https://arxiv.org/abs/2610.03695v1). Its goal is a model that plays strong Xiangqi and explains moves in Chinese for personal study.
 
 **No trained checkpoint has passed final playing-strength and coaching acceptance.** The [step-24000 course-three QA](PAPER_THIRD_COURSE_24000.md), twelve-round same-prompt comparison, declared diagnostic SQL and original four-rank continuation were complete by 2026-10-26 08:42 UTC+8. Latest current-course accuracy is 690/700 (98.57%, minimum task 93%); replay is 1272/1300 (97.85%). Selection chooses step 24000, with 690/700 current-course answers (98.57%, minimum task 93%); the next QA is at 26000. Two of four courses are complete.
