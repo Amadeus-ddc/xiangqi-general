@@ -17,7 +17,7 @@ from xqgeneral.gated_curriculum import training_config
 from xqgeneral.sft import checked_parent
 
 
-def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=None):
+def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=None, conditional_third=False):
     old = Path(original_root) if original_root is not None else completed_curriculum(tmp_path)[0]
     original_path = tmp_path / 'recipe.json'
     original = json.loads(original_path.read_text())
@@ -25,6 +25,9 @@ def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=N
     for budget in original['course_budgets']:
         budget.update(steps=8, minimum_steps=8, qa_every=8, selection_start_step=8)
     original['course_budgets'][1].update(steps=32, minimum_steps=16)
+    if conditional_third:
+        original['validation_selection']['patience'] = 3
+        original['course_budgets'][2].update(steps=32, minimum_steps=8)
     if early_future_selection:
         original['course_budgets'][2].update(steps=16, minimum_steps=16)
     atomic_json(original_path, original)
@@ -51,7 +54,7 @@ def controlled_prefix(tmp_path, *, early_future_selection=False, original_root=N
         inputs = [Path(recipe['feature_path']), Path(recipe['data_path']) / 'train.jsonl', Path(recipe['data_path']) / 'validation.jsonl']
         if parent:inputs.append(parent)
         saved = dict(original_saved, config=config, code=code, input_hashes={str(p): digest(p) for p in inputs})
-        actual_step = 16 if early_future_selection and index == 2 else 8
+        actual_step = 16 if (early_future_selection or conditional_third) and index == 2 else 8
         for step in range(8, actual_step + 1, 8):
             raw_candidate(stage_root / 'candidates' / f'step-{step}', saved, step, actual_recipe, STAGES[:index + 1])
         local = artifacts if index < 2 else Artifacts()
@@ -209,3 +212,190 @@ def test_direct_boundary_rejects_an_ineligible_metric_or_boolean_authorization_s
     if problem=='wrong_metric':second['selection']['policy']['metric']='balanced_raw_qa_accuracy'
     else:authorization['selected_step']=True
     with pytest.raises(ValueError):validate_direct_selection(second,authorization)
+
+
+def controlled_third_boundary(tmp_path, *, original_root=None):
+    from xqgeneral.foundation_prefix import CONDITIONAL_BOUNDARY
+    previous, prior_declaration, _ = controlled_prefix(tmp_path, original_root=original_root, conditional_third=True)
+    old_whole = json.loads((previous / 'manifest.json').read_text())
+    old_contract = json.loads((previous / 'contract.json').read_text())
+    source_recipe_path = Path(old_contract['recipe'])
+    original = json.loads(source_recipe_path.read_text())
+    code = old_whole['code']
+    root = tmp_path / 'third-boundary-curriculum'
+    recipe = dict(original, output=str(root))
+    recipe_path = tmp_path / 'third-boundary-recipe.json'
+    atomic_json(recipe_path, recipe)
+    control_dir = tmp_path / 'third-control';control_dir.mkdir()
+    entry, loop = control_dir / 'entry.py', control_dir / 'loop.py'
+    entry.write_text('# controlled CPU three-course controller\n')
+    loop.write_text('# controlled skip-three loop\n')
+    admission_path = control_dir / 'admission.json'
+    authorization_path = control_dir / 'authorization.json'
+    decision_path = control_dir / 'decision.json'
+    declaration_path = control_dir / 'declared-prefix.json'
+    prior = json.loads(prior_declaration.read_text())
+    prior_admission = json.loads(Path(prior['admission']['path']).read_text())
+    artifacts = Artifacts();artifacts.json(source_recipe_path);artifacts.json(prior_declaration)
+    artifacts.json(prior['admission']['path'])
+    for name, binding in prior_admission['source_bound_files'].items():artifacts.add(name, binding)
+    third = deepcopy(old_whole['verification']['courses'][2])
+    third.pop('authorized_prefix_control')
+    third.pop('imported_original_clean_first_course')
+    config = artifacts.json(previous / STAGES[2] / 'training.config.json')
+    history = read_history(previous / STAGES[2] / 'candidates', 16, config, code, STAGES[:3], original, artifacts)
+    assert third['selection']['history'] == history and third['selection']['decision']['stop'] is False
+    base, current = [row['gate']['courses'][STAGES[2]] for row in history]
+    examples = base['examples'];baseline_correct = round(base['accuracy'] * examples)
+    correct = round(current['accuracy'] * current['examples'])
+    authorization = dict(status='explicit_latest_user_authorization', action='advance_after_no_current_course_improvement',
+        stage=STAGES[2], target_step=16, baseline_selected_step=8, baseline_correct=baseline_correct,
+        examples=examples, strict_improvement_required=True, no_improvement_selected_parent_step=8,
+        fourth_course_recipe_preserved=True, independent_test_may_select=False)
+    decision = dict(strict_improvement=False, baseline_correct=baseline_correct, baseline_step=8,
+        actual_step_16_scores=dict(examples=examples, correct=correct), all_ordered_questions_identical=True,
+        selected_checkpoint_if_no_improvement=third['selected_checkpoint'],
+        selected_checkpoint_sha256=third['selected_checkpoint_sha256'])
+    atomic_json(authorization_path, authorization);atomic_json(decision_path, decision)
+    artifacts.json(authorization_path);artifacts.json(decision_path)
+    third.update(completion_basis=CONDITIONAL_BOUNDARY, user_authorization=authorization,
+        user_boundary_decision=decision, original_declared_minimum_stopping_policy_met=True,
+        original_declared_validation_stopping_policy_met=False, original_policy_decision_preserved=True)
+    courses = [*deepcopy(prior_admission['courses']), third]
+    admission = dict(status='complete_explicit_user_boundary_three_course_prefix', original_root=str(previous),
+        new_root=str(root), selected_checkpoint=third['selected_checkpoint'],
+        selected_checkpoint_sha256=third['selected_checkpoint_sha256'], courses=courses,
+        prior_two_course_admission=prior['admission']['path'], prior_two_course_admission_sha256=prior['admission']['sha256'],
+        source_bound_files=dict(artifacts.expected), source_training_code=code,
+        authorization_sha256=digest(authorization_path), entry_sha256=digest(entry), derived_loop_sha256=digest(loop),
+        original_recipe_or_sources_hot_edited=False, original_patience_stopping_policy_claimed_met=False,
+        independent_test_used=False)
+    atomic_json(admission_path, admission)
+    control = dict(admission=str(admission_path), admission_sha256=digest(admission_path), entry=str(entry),
+        entry_sha256=digest(entry), derived_loop=str(loop), derived_loop_sha256=digest(loop),
+        original_frozen_training_source_modified=False)
+    for index, course in enumerate(courses):
+        atomic_json(root / STAGES[index] / 'manifest.json', dict(status='complete',
+            kind='verified_imported_foundation_course' if index == 0 else 'user_boundary_selected_foundation_course',
+            verification=course, source_admission=str(admission_path), source_admission_sha256=digest(admission_path),
+            original_course_directory=str(previous / STAGES[index]), training_source_code=course['training_code'],
+            independent_test_used=False))
+    parent = Path(third['selected_checkpoint'])
+    cfg = training_config(recipe, 3, root, parent)
+    fourth_root = root / STAGES[3];atomic_json(fourth_root / 'training.config.json', cfg)
+    saved = torch.load(previous / STAGES[3] / 'candidates/step-8/adapter.pt', weights_only=True)
+    inputs = [Path(recipe['feature_path']), Path(recipe['data_path']) / 'train.jsonl',
+              Path(recipe['data_path']) / 'validation.jsonl', parent]
+    saved.update(config=cfg, code=code, input_hashes={str(path): digest(path) for path in inputs})
+    raw_candidate(fourth_root / 'candidates/step-8', saved, 8, recipe, STAGES)
+    fourth_artifacts = Artifacts();fourth_artifacts.json(recipe_path);fourth_artifacts.json(fourth_root / 'training.config.json')
+    history = read_history(fourth_root / 'candidates', 8, cfg, code, STAGES, recipe, fourth_artifacts)
+    selection = selection_decision(history, recipe['validation_selection'], recipe['course_budgets'][3], stage=STAGES[3])
+    assert selection['stop']
+    chosen = history[0]
+    fourth = dict(stage=STAGES[3], actual_steps=8, selected_step=8, global_batch_size=4, sample_presentations=32,
+        gate=chosen['gate'], reference_targets_passed=chosen['gate']['passed'], selected_checkpoint=chosen['checkpoint'],
+        selected_checkpoint_sha256=chosen['checkpoint_sha256'],
+        selection=dict(policy=recipe['validation_selection'], budget=recipe['course_budgets'][3], decision=selection, history=history),
+        imported_original_clean_first_course=False, candidate_root=str(fourth_root / 'candidates'), training_code=code,
+        next_course_permitted=True, optimizer_reset_between_courses=True, independent_test_used=False, authorized_prefix_control=control)
+    proof = manifest(COURSE_KIND, cfg, outputs=[chosen['checkpoint']], verification=fourth, code=code)
+    proof['inputs'] = dict(fourth_artifacts.expected);atomic_json(fourth_root / 'manifest.json', proof)
+    courses.append(fourth);parent = Path(chosen['checkpoint'])
+    atomic_json(root / 'contract.json', dict(recipe=str(recipe_path), recipe_sha256=digest(recipe_path), code=code,
+                                           authorized_prefix_control=control))
+    overall = dict(courses=courses, all_courses_completed_by_declared_validation_policy=False,
+        all_courses_completed_by_declared_or_user_authorized_policy=True, authorized_prefix_control=control,
+        all_raw_qa_gates_passed=all(c['gate']['passed'] for c in courses), reference_targets_required_for_progression=False,
+        independent_test_used=False)
+    atomic_json(root / 'manifest.json', manifest(USER_CURRICULUM_KIND, recipe,
+        [recipe_path, admission_path, entry, loop, *[root / s / 'manifest.json' for s in STAGES]], [parent], overall, code=code))
+    atomic_json(declaration_path, dict(kind=DECLARATION_KIND, prefix_stages=list(STAGES[:3]),
+        admission=dict(path=str(admission_path), sha256=digest(admission_path)),
+        source_recipe=dict(path=str(source_recipe_path), sha256=digest(source_recipe_path)),
+        authorization=dict(path=str(authorization_path), sha256=digest(authorization_path)),
+        prior_prefix=dict(path=str(prior_declaration), sha256=digest(prior_declaration))))
+    # The earlier run has only its genuine two-course prefix and raw third-course candidates.
+    for path in [previous / 'manifest.json', previous / STAGES[2] / 'manifest.json', previous / STAGES[3] / 'manifest.json']:
+        path.unlink()
+    return root, declaration_path, parent, previous
+
+
+def test_conditional_third_prefix_exports_all_four_native_courses_and_preserves_both_boundaries(tmp_path):
+    root, declaration, selected, previous = controlled_third_boundary(tmp_path)
+    output = tmp_path / 'handoff'
+    result = export_curriculum(root, output, authorized_prefix=declaration)
+    assert not (previous / 'manifest.json').exists()
+    assert result['all_four_declared_or_authorized_selection_rules_recomputed']
+    assert [c['selection']['decision']['stop'] for c in result['courses']] == [True, False, False, True]
+    assert result['courses'][2]['actual_steps'] == 16 and result['courses'][2]['selected_step'] == 8
+    assert result['authorized_prefix']['prefix_stages'] == list(STAGES[:3])
+    assert result['authorized_prefix']['prior_prefix']['prefix_stages'] == list(STAGES[:2])
+    assert (output / 'adapter.pt').samefile(selected)
+    reference = dict(path=str(declaration), sha256=digest(declaration))
+    assert checked_parent(output / 'adapter.pt', True, authorized_prefix=reference) == json.loads((output / 'config.json').read_text())
+
+
+@pytest.mark.parametrize('problem', ['missing_fourth', 'changed_prior_authorization', 'missing_prior_prefix',
+                                     'wrong_prefix_order', 'changed_authorization', 'false_stopping_claim'])
+def test_conditional_third_prefix_rejects_missing_or_changed_provenance_before_export(tmp_path, problem):
+    root, declaration, _, previous = controlled_third_boundary(tmp_path)
+    value = json.loads(declaration.read_text())
+    if problem == 'missing_fourth':
+        (root / STAGES[3] / 'manifest.json').unlink()
+    elif problem == 'changed_prior_authorization':
+        prior = json.loads(Path(value['prior_prefix']['path']).read_text())
+        Path(prior['authorization']['path']).write_text('{}')
+    elif problem == 'missing_prior_prefix':
+        value.pop('prior_prefix');atomic_json(declaration, value)
+    elif problem == 'wrong_prefix_order':
+        value['prefix_stages'].reverse();atomic_json(declaration, value)
+    elif problem == 'changed_authorization':
+        Path(value['authorization']['path']).write_text('{}')
+    elif problem == 'false_stopping_claim':
+        whole = json.loads((root / 'manifest.json').read_text())
+        whole['verification']['all_courses_completed_by_declared_validation_policy'] = True
+        atomic_json(root / 'manifest.json', whole)
+    output = tmp_path / 'not-created'
+    with pytest.raises((ValueError, FileNotFoundError)):
+        export_curriculum(root, output, authorized_prefix=declaration)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize('problem', ['wrong_metric', 'test_selection', 'boolean_target', 'changed_threshold',
+                                     'wrong_checkpoint', 'claimed_original_stop', 'incomplete_history', 'wrong_stage'])
+def test_conditional_boundary_recomputes_threshold_and_rejects_false_permission(tmp_path, problem):
+    from xqgeneral.foundation_prefix import validate_conditional_selection
+    root, _, _, _ = controlled_third_boundary(tmp_path)
+    third = deepcopy(json.loads((root / 'manifest.json').read_text())['verification']['courses'][2])
+    authorization = deepcopy(third['user_authorization'])
+    assert validate_conditional_selection(third, authorization)['stop'] is False
+    if problem == 'wrong_metric':third['selection']['policy']['metric'] = 'balanced_raw_qa_accuracy'
+    elif problem == 'test_selection':authorization['independent_test_may_select'] = True
+    elif problem == 'boolean_target':authorization['target_step'] = True
+    elif problem == 'changed_threshold':authorization['baseline_correct'] -= 1
+    elif problem == 'wrong_checkpoint':third['selected_checkpoint'] += '.different'
+    elif problem == 'claimed_original_stop':third['original_declared_validation_stopping_policy_met'] = True
+    elif problem == 'incomplete_history':third['selection']['history'] = third['selection']['history'][1:]
+    elif problem == 'wrong_stage':third['stage'] = STAGES[1]
+    third['user_authorization'] = authorization
+    with pytest.raises(ValueError):validate_conditional_selection(third, authorization)
+
+
+def test_conditional_third_prefix_flows_through_sequential_sft_and_locks_prior_authorization(tmp_path, monkeypatch):
+    from test_sft_pipeline import setup_data, install_runner
+    from xqgeneral.sft_pipeline import run_pipeline
+    old, sft_recipe, token = setup_data(tmp_path)
+    root, declaration, _, _ = controlled_third_boundary(tmp_path, original_root=old)
+    recipe = json.loads(sft_recipe.read_text())
+    recipe['authorized_foundation_prefix'] = dict(path=str(declaration), sha256=digest(declaration))
+    atomic_json(sft_recipe, recipe)
+    runner = install_runner(monkeypatch)
+    result = run_pipeline(root, 'controlled-curriculum-session', sft_recipe, token, tmp_path / 'pipeline')
+    assert result['four_courses_completed_before_any_gpu_sft_work'] and len(runner.jobs) == 4
+    handoff = tmp_path / 'pipeline/handoff'
+    value = json.loads(declaration.read_text())
+    prior = json.loads(Path(value['prior_prefix']['path']).read_text())
+    Path(prior['authorization']['path']).write_text('{}')
+    with pytest.raises(ValueError):
+        checked_parent(handoff / 'adapter.pt', True, authorized_prefix=recipe['authorized_foundation_prefix'])

@@ -118,7 +118,7 @@ def export_curriculum(curriculum, output, *, authorized_prefix=None):
         stage_path = stage_root / 'manifest.json'
         if str(stage_path) not in whole['inputs']:
             raise ValueError('Completed curriculum is missing an ordered course proof')
-        imported = prefix.course(index, parent) if prefix and index < 2 else None
+        imported = prefix.course(index, parent) if prefix and index < prefix.count else None
         course_recipe, course_recipe_path = (imported['recipe'], imported['recipe_path']) if imported else (recipe, recipe_path)
         if imported:
             stage_root = imported['stage_root']
@@ -129,15 +129,15 @@ def export_curriculum(curriculum, output, *, authorized_prefix=None):
                 if imported else course_contract(recipe, index, root, parent, artifacts, whole['code']))
             history = read_history(candidate_root, result['actual_steps'], expected_config, training_code,
                                    STAGES[:index + 1], course_recipe, artifacts)
-            if imported and index == 1:
-                from .foundation_prefix import validate_direct_selection
-                validate_direct_selection(result, prefix.authorization)
+            explicit_boundary = bool(imported and prefix.is_authorized_boundary(index))
+            if imported:
+                prefix.validate_selection(index, result)
             else:
                 validate_course_selection(result)
             if (result['selection']['history'] != history or result['selection']['policy'] != course_recipe['validation_selection'] or
                     result['selection']['budget'] != course_recipe['course_budgets'][index] or
                     result['candidate_root'] != str(candidate_root) or result['training_code'] != training_code or
-                    (not (imported and index == 1) and
+                    (not explicit_boundary and
                      result.get('imported_original_clean_first_course') != bool(index == 0 and course_recipe.get('initial_course_import'))) or
                     (index == 0 and course_recipe.get('initial_course_import') and
                      result['actual_steps'] != course_recipe['initial_course_import']['through_step'])):
@@ -155,7 +155,7 @@ def export_curriculum(curriculum, output, *, authorized_prefix=None):
                 (not selected_policy and not result['gate']['passed'])):
             raise ValueError('Course order, raw gate or clean initialization lineage differs')
         step = result['actual_steps'];budget = course_recipe['course_budgets'][index]
-        explicit_early_stop = bool(imported and index == 1)
+        explicit_early_stop = bool(imported and prefix.is_authorized_boundary(index))
         if (type(step) is not int or not (0 < step <= budget['steps'] if explicit_early_stop else budget['minimum_steps'] <= step <= budget['steps']) or
                 result['global_batch_size'] != recipe['batch_size'] or
                 result['sample_presentations'] != step * recipe['batch_size']):
@@ -290,11 +290,15 @@ def validate_sft_handoff(proof, saved):
                 result.get('all_reference_targets_passed') != all(c['gate']['passed'] for c in result.get('courses', []))):
             raise ValueError('SFT requires the declared four-course validation-selection proof')
         if user_boundary:
-            from .foundation_prefix import validate_direct_selection, validate_handoff_authorization
+            from .foundation_prefix import validate_conditional_selection, validate_direct_selection, validate_handoff_authorization
             authorization = validate_handoff_authorization(proof)
         for index, course in enumerate(result.get('courses', [])):
             if user_boundary and index == 1:
-                validate_direct_selection(course, authorization)
+                prefix = result['authorized_prefix']
+                earlier_authorization = prefix['prior_prefix']['authorization'] if len(prefix['prefix_stages']) == 3 else authorization
+                validate_direct_selection(course, earlier_authorization)
+            elif user_boundary and index == 2 and len(result['authorized_prefix']['prefix_stages']) == 3:
+                validate_conditional_selection(course, authorization)
             else:
                 validate_course_selection(course)
     if (proof['config'] != saved or
@@ -315,7 +319,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--curriculum', required=True)
     parser.add_argument('--output', required=True)
-    parser.add_argument('--authorized-prefix', help='Exact declaration for an explicitly authorized two-course prefix')
+    parser.add_argument('--authorized-prefix', help='Exact declaration for an explicitly authorized ordered course prefix')
     args = parser.parse_args()
     print(json.dumps(export_curriculum(args.curriculum, args.output, authorized_prefix=args.authorized_prefix)), flush=True)
 
