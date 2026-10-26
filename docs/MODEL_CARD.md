@@ -1,5 +1,7 @@
 # Xiangqi General model card
 
+The [post-SFT curriculum-validation entrypoint](POST_SFT_CURRICULUM_VALIDATION.md) rechecks all four validation courses after completed initial or distilled SFT, alongside explanation and playing evaluations. Its controlled CPU and real-input checks establish software behavior and question compatibility. Actual post-SFT curriculum scores and strength or coaching gains remain unmeasured; see the [evidence scope](../evidence/post-sft-course-validation-v1.json).
+
 The latest explicit user instruction selects course-three step 26000 and starts only course four. The prior conditional route is superseded. The actual source run ended at 26564; its additional 564 updates are retained as discarded continuation and do not initialize course four. See the [actual transition](PAPER_FOURTH_COURSE_START_26000.md) and [prefix contract](USER_AUTHORIZED_COURSE_PREFIX.md).
 
 Xiangqi General is an independent Chinese-chess adaptation of the [Queen research pipeline](https://arxiv.org/abs/2610.03695v1). Its goal is a model that plays strong Xiangqi and explains moves in Chinese for personal study.

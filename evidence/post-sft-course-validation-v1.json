@@ -1,0 +1,41 @@
+{
+  "status": "complete_full_cpu_and_actual_input_validation_with_owned_follower_waiting",
+  "kind": "post_sft_four_course_validation_capability",
+  "baseline_public_commit": "e61237681b27941d6d938caba07eecdcde15bde2",
+  "expected_full_cpu_tests": 1761,
+  "full_cpu_check_complete": true,
+  "source_modules": 109,
+  "actual_validation_input_preparation": {
+    "status": "complete",
+    "selected_validation_questions": 2600,
+    "task_types": 26,
+    "seed": 20261046,
+    "question_and_controlled_grading_sha256": "a87aad0b4a8e14fcab6ac932167e5f834505dbced89d0b9c563badbb2ea406d1",
+    "validation_file_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+    "byte_identical_to_current89_module_gpu_question_and_grading_source": true,
+    "controlled_strings_are_not_model_predictions": true,
+    "model_loaded_or_gpu_started": false
+  },
+  "actual_completed_post_sft_course_validation": false,
+  "initial_explanation_sft_complete": false,
+  "formal_distillation_complete": false,
+  "independent_test_used": false,
+  "strength_or_coaching_gain_proven": false,
+  "full_goal_complete": false,
+  "full_cpu_tests_passed": 1761,
+  "new_controlled_cpu_cases": 23,
+  "full_pytest_verification_sha256": "84c8a2d0041c3d5a99a58e6dcaf9277ed1fe93cb9b56607b5a463d82f2d7fd07",
+  "full_pytest_log_sha256": "c48c7fe88ef57e5c77c05d8100a42927b80be5dbb5247ee33dbd2f2da0599197",
+  "frozen_pytest_source_plan_sha256": "0023a5bbe10a9ae7dce5e653900b48b05c36abdde3358dafae50f939ee7fd032",
+  "actual_cpu_waiter": {
+    "captured_at_utc": "2026-10-26T16:25:46.860881+00:00",
+    "session": "xqgeneral-post-sft-course-replay-v1",
+    "source_modules": 109,
+    "source_matches_completed_full_cpu_checks": true,
+    "model_assessment_invoked": false,
+    "gpu_capacity_query_started": false,
+    "queued_readback_sha256": "99187a457181be5dfb465bd602a938fc0667fa3db4cd338ef03c632136fa5600",
+    "required_full_checks_ready_at_capture": false,
+    "actual_completed_initial_sft_at_capture": false
+  }
+}
