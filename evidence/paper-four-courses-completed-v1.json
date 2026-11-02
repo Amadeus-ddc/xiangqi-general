@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "kind": "actual_four_course_completion_and_formal48000_readback",
+  "observed_at_utc": "2026-11-02T22:32:16.588172+00:00",
+  "terminal_readback_sha256": "20fc9a7971b0191692dfbce71292c92a4ff65b164b8ae2cd7ab70b27638b6307",
+  "original_native48000_sha256": "aab6886a53ece7b6599b69eaa0b4f49d85e63a3042322fa652284e3e38ffce15",
+  "actual_four_courses_complete": true,
+  "course_results": [
+    {
+      "stage": "static_current",
+      "admitted_actual_steps": 30000,
+      "selected_step": 24000,
+      "selected_stage_correct": 682,
+      "selected_stage_examples": 700,
+      "selected_checkpoint_sha256": "9f1aacb529342b6650b588db9e094897cb39f1d8f448964a969b623520779bf0"
+    },
+    {
+      "stage": "dynamic_current",
+      "admitted_actual_steps": 30000,
+      "selected_step": 30000,
+      "selected_stage_correct": 584,
+      "selected_stage_examples": 600,
+      "selected_checkpoint_sha256": "c9c2a3ddc2397796e649b8dbcbfbdf1e7373b1831b22ccf80f42b157e8b03fc0"
+    },
+    {
+      "stage": "static_future",
+      "admitted_actual_steps": 26000,
+      "selected_step": 26000,
+      "selected_stage_correct": 694,
+      "selected_stage_examples": 700,
+      "selected_checkpoint_sha256": "5527d16840fee31cd13be3b1b5dfad1bf5bd7826392e97e0cc6b9bf94ac0336d"
+    },
+    {
+      "stage": "dynamic_future",
+      "admitted_actual_steps": 48000,
+      "selected_step": 42000,
+      "selected_stage_correct": 535,
+      "selected_stage_examples": 600,
+      "selected_checkpoint_sha256": "dcb65eb90fbe66c71b33937aac84e34026952e5f78c2ab9f33f9a3c7bcda861e"
+    }
+  ],
+  "selection": {
+    "stop": true,
+    "selected_step": 42000,
+    "steps_completed": 48000,
+    "checks_without_improvement": 3,
+    "stopping_reason": "validation_plateau",
+    "selected_accuracy": 0.8916666666666667,
+    "selected_minimum_task_accuracy": 0.8
+  },
+  "formal_checkpoints": {
+    "24000": {
+      "fourth_correct": 492,
+      "fourth_examples": 600,
+      "earlier_correct": 1862,
+      "earlier_examples": 2000,
+      "total_correct": 2354,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "26000": {
+      "fourth_correct": 494,
+      "fourth_examples": 600,
+      "earlier_correct": 1927,
+      "earlier_examples": 2000,
+      "total_correct": 2421,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "28000": {
+      "fourth_correct": 505,
+      "fourth_examples": 600,
+      "earlier_correct": 1892,
+      "earlier_examples": 2000,
+      "total_correct": 2397,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "30000": {
+      "fourth_correct": 506,
+      "fourth_examples": 600,
+      "earlier_correct": 1869,
+      "earlier_examples": 2000,
+      "total_correct": 2375,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "32000": {
+      "fourth_correct": 510,
+      "fourth_examples": 600,
+      "earlier_correct": 1916,
+      "earlier_examples": 2000,
+      "total_correct": 2426,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "34000": {
+      "fourth_correct": 516,
+      "fourth_examples": 600,
+      "earlier_correct": 1909,
+      "earlier_examples": 2000,
+      "total_correct": 2425,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "36000": {
+      "fourth_correct": 528,
+      "fourth_examples": 600,
+      "earlier_correct": 1923,
+      "earlier_examples": 2000,
+      "total_correct": 2451,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "38000": {
+      "fourth_correct": 529,
+      "fourth_examples": 600,
+      "earlier_correct": 1890,
+      "earlier_examples": 2000,
+      "total_correct": 2419,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "40000": {
+      "fourth_correct": 515,
+      "fourth_examples": 600,
+      "earlier_correct": 1877,
+      "earlier_examples": 2000,
+      "total_correct": 2392,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "42000": {
+      "fourth_correct": 535,
+      "fourth_examples": 600,
+      "earlier_correct": 1924,
+      "earlier_examples": 2000,
+      "total_correct": 2459,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "44000": {
+      "fourth_correct": 530,
+      "fourth_examples": 600,
+      "earlier_correct": 1901,
+      "earlier_examples": 2000,
+      "total_correct": 2431,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "46000": {
+      "fourth_correct": 528,
+      "fourth_examples": 600,
+      "earlier_correct": 1889,
+      "earlier_examples": 2000,
+      "total_correct": 2417,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    },
+    "48000": {
+      "fourth_correct": 530,
+      "fourth_examples": 600,
+      "earlier_correct": 1920,
+      "earlier_examples": 2000,
+      "total_correct": 2450,
+      "total_examples": 2600,
+      "valid_answer_formats": 2600
+    }
+  },
+  "pairs_42000_to_48000": {
+    "fourth": {
+      "examples": 600,
+      "left_correct": 535,
+      "right_correct": 530,
+      "fixed": 24,
+      "new_errors": 29
+    },
+    "earlier": {
+      "examples": 2000,
+      "left_correct": 1924,
+      "right_correct": 1920,
+      "fixed": 58,
+      "new_errors": 62
+    },
+    "all": {
+      "examples": 2600,
+      "left_correct": 2459,
+      "right_correct": 2450,
+      "fixed": 82,
+      "new_errors": 91
+    }
+  },
+  "regraded_archived_development_answers": 33800,
+  "completed_checkpoints_regraded": 13,
+  "ordered_questions_variants_and_gold_equal": true,
+  "development_question_count": 2600,
+  "declared_game_ids": 66,
+  "fourth_course_declared_game_ids": 16,
+  "declared_ids_not_authenticated_physical_games": true,
+  "latest_answer_formats_valid": 2600,
+  "prose_graded": false,
+  "independent_test_used_for_training_or_selection": false,
+  "all_courses_completed_by_declared_validation_policy": false,
+  "all_courses_completed_by_declared_or_user_authorized_policy": true,
+  "second_course_user_selected_step": 30000,
+  "third_course_user_selected_step": 26000,
+  "third_source_discarded_continuation_updates": 564,
+  "selected_checkpoint_bytes_freshly_hashed": true,
+  "selected_checkpoint_sha256": "dcb65eb90fbe66c71b33937aac84e34026952e5f78c2ab9f33f9a3c7bcda861e",
+  "source_modules_freshly_hashed": 89,
+  "native_parameter_summary": {
+    "actual_training_updates": 48000,
+    "trainable_fp32_parameters": 671806496,
+    "valid_sample_presentations": 12287436,
+    "nominal_step_times_batch_presentations": 12288000,
+    "actual_distributed_padding_rows": 52
+  },
+  "finite_source_equal_FP32_and_contiguous_update_proofs_reused": true,
+  "original_Adam_arrays_independently_read": false,
+  "formal_generated_token_arrays_available": false,
+  "grading_implementation_shared": true,
+  "new_model_execution_by_publication": false,
+  "actual_full_decoder_capacity_resume_proven": false,
+  "formal_initial_explanation_training_complete": false,
+  "formal_search_distillation_complete": false,
+  "independent_strength_and_coaching_accepted": false,
+  "trained_portable_model_delivered": false,
+  "full_goal_complete": false,
+  "four_course_evidence_snapshot_utc": "2026-11-02T21:49:43.295347+00:00",
+  "native_CPU_handoff_completed": true,
+  "native_CPU_handoff_manifest_sha256": "bee59e554e82aea97863c9f03b3f89000aee4fad631f5ffce4ec745be665fcec",
+  "native_CPU_handoff_control_verification_sha256": "36126d0d450f3835d8f6ac78b66b2e87da03fd5f48a75a8735880c32fac7f572",
+  "native_CPU_handoff_exported_weights_unchanged": true,
+  "native_CPU_handoff_all_four_selected_state_arrays_checked": true,
+  "native_CPU_handoff_state_summary": [
+    {
+      "trainable_tensors": 226,
+      "trainable_parameters": 671806496,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    {
+      "trainable_tensors": 226,
+      "trainable_parameters": 671806496,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    {
+      "trainable_tensors": 226,
+      "trainable_parameters": 671806496,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    },
+    {
+      "trainable_tensors": 226,
+      "trainable_parameters": 671806496,
+      "all_bridge_and_board_shapes_checked": true,
+      "all_trainable_values_finite_fp32": true,
+      "base_model_weights_loaded": false
+    }
+  ],
+  "native_CPU_handoff_native_history_answer_checks": 2600,
+  "native_CPU_handoff_full_continuation_checks": 2028,
+  "native_CPU_handoff_digest_bindings": 4542,
+  "all_large_cache_payloads_freshly_rehashed": false,
+  "native_CPU_handoff_model_GPU_load_or_SFT_started": false
+}
