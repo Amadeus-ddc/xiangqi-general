@@ -6,10 +6,12 @@ from pathlib import Path
 import random
 import re
 import time
-from .evidence import atomic_json, load_jsonl, manifest, write_jsonl
+from .evidence import atomic_json, code_identity, load_jsonl, manifest, write_jsonl
 from .curriculum_data import STAGES
 from .course_tasks import PAPER_PROFILE, grade_answer, row_profile
 from .feature_store import feature_paths
+from .model_bundle import checkpoint_input_paths
+from .recorded_search_inputs import BoundInputs
 from .verified_inputs import input_session_from_environment
 
 
@@ -99,6 +101,12 @@ def _main():
             counts[key] += 1
             varied.append(dict(row, question=question_variant(row, variant), question_variant=variant))
         rows = varied
+    if Path(args.checkpoint).is_dir():
+        args.checkpoint = str(Path(args.checkpoint).resolve())
+    bound = BoundInputs()
+    for source in [*checkpoint_input_paths(args.checkpoint), path, *feature_paths(args.features)]:
+        bound.bind(source)
+    code = code_identity()
     model = Predictor(args.checkpoint, feature_cache=args.features)
     if profile != row_profile(model.config):
         raise ValueError('Evaluation data and checkpoint task profiles differ')
@@ -115,11 +123,17 @@ def _main():
         print(json.dumps({'evaluated': len(results), 'seconds': time.monotonic() - start}), flush=True)
     dest.mkdir(parents=True)
     write_jsonl(dest / 'predictions.jsonl', results)
+    bound.unchanged()
+    if code_identity() != code:
+        raise ValueError('QA execution source changed; preserve raw outputs')
     proof = {**qa_summary(results), 'raw_generation': True, 'oracle_used': False,
              'split': args.split, 'seconds': time.monotonic() - start}
     atomic_json(dest / 'metrics.json', proof)
-    atomic_json(dest / 'manifest.json', manifest('balanced_board_qa', vars(args),
-                [args.checkpoint, path, *feature_paths(args.features)], [dest / 'predictions.jsonl', dest / 'metrics.json'], proof))
+    completed = manifest('balanced_board_qa', vars(args), (),
+                         [dest / 'predictions.jsonl', dest / 'metrics.json'], proof, code=code)
+    completed['inputs'] = bound.artifacts
+    bound.unchanged()
+    atomic_json(dest / 'manifest.json', completed)
     print(json.dumps(proof), flush=True)
 
 

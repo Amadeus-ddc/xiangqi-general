@@ -21,6 +21,25 @@ xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 
 `runs/completed-model-training` 是待替换的实际选模目录，当前新四课和后续 SFT 尚未完成。原 `adapter.pt` 文件入口继续可用。模型和数据不提交到源码仓库；权重来源与用途仍依照 [模型说明](MODEL_CARD.md) 和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
 
+## 评测交付目录
+
+问答、讲解和对弈评测的 `--checkpoint` 均可使用交付目录，也继续接受原 `adapter.pt` 文件。评测输入清单绑定目录中的模型参数、底座、分词器、配置、专家权重和交付清单；损坏或缺失的目录资产在生成前拒收。运行中输入或源码发生改变时，不发布完成清单，保留已生成的原始回答。对弈续跑还会核对全部目录资产与原合同，即使重新绑定过的目录内部自洽，也不能替换已开始评测的模型。
+
+交付目录可以通过符号链接选择。入口先固定解析后的实际目录，再核验资产和加载模型；运行中切换该链接不会让实际模型与输入清单指向不同版本。
+
+对弈默认使用交付目录内的专家权重；显式指定 `--expert-weights` 时，仍须与训练专家的 SHA256 一致。数据集、特征缓存和对弈引擎由评测环境另行提供。
+
+以下开发验证命令中的目录须替换为实际导出目录；最终测试须先按[独立评测协议](FINAL_INDEPENDENT_EVALUATION.md)锁定模型和执行源码。
+
+```bash
+.venv/bin/python -m xqgeneral.evaluate_qa \
+  --checkpoint runs/xiangqi-general-inference-v1 \
+  --data data/paper-courses-v5 \
+  --features data/paper-courses-v5/feature-store/manifest.json \
+  --split validation --per-task 100 \
+  --output runs/inference-bundle-development-qa
+```
+
 验证使用现有两步、五个完整历史的容量控制检查点：搬动 14 个文件、约 10.90 GB 的目录后，真实 Qwen／Px0 的 624 个参数张量、4694274592 个运行时参数以及全部缓冲一致；其中只有 671806496 个连接桥／棋盘参数参与了那两步容量更新，底座仍冻结。35 道原生题的 token、16 份现场专家特征、首步全部概率对应的 logits 和最多 8 个新 token 的原始回答均逐值相同。GPU 0 设备使用量最高观测为 23299 MiB。
 
 独立 CPU 入口重新哈希 39 份约 21.80 GB 的产物，重建运行配置、对照全部 226 个 FP32 训练张量及 35 道金标，检查完整目录和 144 次显存记录。现场 GPU 等价结果继承自已经完成的真实控制，CPU 入口没有重新前向。全套 1473 项通过，188 份源码／测试／测试配置不变。小模型单测另覆盖完整解码器参数、缺失分片、损坏文件、未绑定权重、错误专家、搬动和遗失源目录。

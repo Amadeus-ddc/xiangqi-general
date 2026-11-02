@@ -154,8 +154,8 @@ def export_model(training, weights, output):
     return result
 
 
-def read_bundle(directory):
-    """Freshly check a relocatable bundle before loading its local model or expert."""
+def _checked_bundle(directory):
+    """Validate bound assets and runtime before any parameter or decoder loading."""
     root = Path(directory).resolve()
     proof = json.loads((root / 'manifest.json').read_text())
     if (proof.get('schema_version') != 1 or proof.get('kind') != KIND or
@@ -186,6 +186,28 @@ def read_bundle(directory):
     if any(hashes.get('src/xqgeneral/' + name) != digest(source / name) for name in RUNTIME_MODULES):
         raise ValueError('Installed inference and encoder source differs from the recorded bundle runtime')
     _decoder_assets(root / 'decoder')
+    return root, proof
+
+
+def checkpoint_input_paths(checkpoint):
+    """Return every bound inference input for a legacy file or portable directory."""
+    path = Path(checkpoint)
+    if not path.is_dir():
+        return [path]
+    root, proof = _checked_bundle(path)
+    return [root / 'manifest.json', *(root / name for name in sorted(proof['files']))]
+
+
+def checkpoint_expert_path(checkpoint):
+    """Resolve the default expert without requiring assets outside a portable model."""
+    path = Path(checkpoint)
+    return path.resolve() / 'expert/px0.pb.gz' if path.is_dir() else Path('models/px0-latest.pb.gz')
+
+
+def read_bundle(directory):
+    """Freshly check a relocatable bundle before loading its local model or expert."""
+    root, proof = _checked_bundle(directory)
+    files = proof['files']
     checkpoint = torch.load(root / 'adapter.pt', map_location='cpu', weights_only=True, mmap=True)
     config = json.loads((root / 'config.json').read_text())
     if (config != proof.get('config') or checkpoint['config'] != config or config.get('model_path') != 'decoder' or
