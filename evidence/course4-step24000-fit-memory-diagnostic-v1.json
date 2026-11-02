@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "kind": "actual_course4_fit_memory_and_game_balanced_parry_diagnostics",
+  "status": "complete_actual_generation_raw_regrade_token_decode_and_qa_restoration",
+  "implementation_base_commit": "4e9b533160be364aa74ae5e2c810c029d69cc861",
+  "diagnostic_checkpoint_step": 24000,
+  "diagnostic_checkpoint_sha256": "f6dcf15fa94134fbbfd988d8679997ec72711105293afdd9c253cb28447c25e4",
+  "actual_generation_examples": 2800,
+  "independently_decoded_original_token_sequences": 2800,
+  "raw_answers_regraded": 2800,
+  "cases": {
+    "train-normal": {
+      "examples": 600,
+      "correct": 526,
+      "accuracy": 0.8766666666666667,
+      "by_task": {
+        "dynamic_future/captures": {
+          "n": 100,
+          "accuracy": 0.79
+        },
+        "dynamic_future/checks": {
+          "n": 100,
+          "accuracy": 0.86
+        },
+        "dynamic_future/controllers": {
+          "n": 100,
+          "accuracy": 0.96
+        },
+        "dynamic_future/mate": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "dynamic_future/moves": {
+          "n": 100,
+          "accuracy": 0.93
+        },
+        "dynamic_future/parries": {
+          "n": 100,
+          "accuracy": 0.83
+        }
+      }
+    },
+    "validation-normal": {
+      "examples": 600,
+      "correct": 492,
+      "accuracy": 0.82,
+      "by_task": {
+        "dynamic_future/captures": {
+          "n": 100,
+          "accuracy": 0.78
+        },
+        "dynamic_future/checks": {
+          "n": 100,
+          "accuracy": 0.77
+        },
+        "dynamic_future/controllers": {
+          "n": 100,
+          "accuracy": 0.95
+        },
+        "dynamic_future/mate": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "dynamic_future/moves": {
+          "n": 100,
+          "accuracy": 0.9
+        },
+        "dynamic_future/parries": {
+          "n": 100,
+          "accuracy": 0.63
+        }
+      }
+    },
+    "validation-zero": {
+      "examples": 600,
+      "correct": 169,
+      "accuracy": 0.2816666666666667,
+      "by_task": {
+        "dynamic_future/captures": {
+          "n": 100,
+          "accuracy": 0.09
+        },
+        "dynamic_future/checks": {
+          "n": 100,
+          "accuracy": 0.19
+        },
+        "dynamic_future/controllers": {
+          "n": 100,
+          "accuracy": 0.41
+        },
+        "dynamic_future/mate": {
+          "n": 100,
+          "accuracy": 0.69
+        },
+        "dynamic_future/moves": {
+          "n": 100,
+          "accuracy": 0.25
+        },
+        "dynamic_future/parries": {
+          "n": 100,
+          "accuracy": 0.06
+        }
+      }
+    },
+    "validation-shuffled": {
+      "examples": 600,
+      "correct": 133,
+      "accuracy": 0.22166666666666668,
+      "by_task": {
+        "dynamic_future/captures": {
+          "n": 100,
+          "accuracy": 0.04
+        },
+        "dynamic_future/checks": {
+          "n": 100,
+          "accuracy": 0.09
+        },
+        "dynamic_future/controllers": {
+          "n": 100,
+          "accuracy": 0.28
+        },
+        "dynamic_future/mate": {
+          "n": 100,
+          "accuracy": 0.68
+        },
+        "dynamic_future/moves": {
+          "n": 100,
+          "accuracy": 0.22
+        },
+        "dynamic_future/parries": {
+          "n": 100,
+          "accuracy": 0.02
+        }
+      }
+    }
+  },
+  "paired_feature_ablations": {
+    "validation-zero": {
+      "normal_correct": 492,
+      "ablated_correct": 169,
+      "correct_to_wrong": 335,
+      "wrong_to_correct": 12
+    },
+    "validation-shuffled": {
+      "normal_correct": 492,
+      "ablated_correct": 133,
+      "correct_to_wrong": 369,
+      "wrong_to_correct": 10
+    }
+  },
+  "training_minus_validation_accuracy": 0.056666666666666754,
+  "training_sample_game_ids": 575,
+  "validation_sample_game_ids": 16,
+  "training_questions_unchanged_and_seen_in_at_least_two_anchor_epochs": true,
+  "task_depth_question_variant_strata_identical": true,
+  "native_to_regenerated_validation": {
+    "examples": 600,
+    "old_correct": 492,
+    "new_correct": 492,
+    "correct_to_wrong": 1,
+    "wrong_to_correct": 1,
+    "raw_text_changed": 4
+  },
+  "broad_parry": {
+    "examples": 400,
+    "correct": 254,
+    "accuracy": 0.635,
+    "declared_game_ids": 400,
+    "examples_per_game_id": 1,
+    "original_2600_question_game_overlap": 0,
+    "by_future_depth": {
+      "2": {
+        "examples": 50,
+        "correct": 36
+      },
+      "6": {
+        "examples": 50,
+        "correct": 32
+      },
+      "1": {
+        "examples": 50,
+        "correct": 39
+      },
+      "4": {
+        "examples": 50,
+        "correct": 27
+      },
+      "7": {
+        "examples": 50,
+        "correct": 30
+      },
+      "8": {
+        "examples": 50,
+        "correct": 26
+      },
+      "5": {
+        "examples": 50,
+        "correct": 30
+      },
+      "3": {
+        "examples": 50,
+        "correct": 34
+      }
+    },
+    "by_checker_kind": {
+      "c": {
+        "examples": 158,
+        "correct": 76
+      },
+      "r": {
+        "examples": 157,
+        "correct": 116
+      },
+      "h": {
+        "examples": 59,
+        "correct": 44
+      },
+      "c+r": {
+        "examples": 18,
+        "correct": 15
+      },
+      "p": {
+        "examples": 4,
+        "correct": 1
+      },
+      "c+p": {
+        "examples": 1,
+        "correct": 0
+      },
+      "h+p": {
+        "examples": 1,
+        "correct": 1
+      },
+      "c+h": {
+        "examples": 2,
+        "correct": 1
+      }
+    },
+    "source_history_cache_hits": 1,
+    "source_history_features_computed_online": 399,
+    "expert_context_is_original_presented_history": true,
+    "different_question_cohort_not_paired_contrast": true
+  },
+  "all_answer_formats_valid": true,
+  "all_eos_observed": true,
+  "no_generation_budget_exhaustions": true,
+  "actual_frozen_training_source_modules": 89,
+  "qa_pause_restore_complete": true,
+  "original_four_gpu_training_continued": true,
+  "latest_native_validation": {
+    "step": 26000,
+    "checkpoint_sha256": "69b6f0b67fb1e4a06bbd7f59898657b207b92a5533bc5fe3681c6f5d97897359",
+    "current_correct": 494,
+    "current_examples": 600,
+    "current_accuracy": 0.8233333333333334,
+    "current_minimum_task_accuracy": 0.64,
+    "earlier_correct": 1927,
+    "earlier_examples": 2000,
+    "total_correct": 2421,
+    "total_examples": 2600,
+    "current_corrected": 36,
+    "current_new_wrong": 34,
+    "all_ordered_questions_variants_gold_equal_to24000": true,
+    "raw_answers_regraded": 5200,
+    "parameter_count": 671806496,
+    "all_parameters_finite_and_bitwise_source_equal": true,
+    "contiguous_updates": 26000,
+    "valid_sample_presentations": 6655718,
+    "actual_padding_rows": 26,
+    "nominal_presentations": 6656000,
+    "optimizer_arrays_independently_verified": false,
+    "selected_step": 26000,
+    "next_check": 28000
+  },
+  "logits_or_legal_move_constraints_used": false,
+  "raw_outputs_repaired": false,
+  "parameter_training_performed_by_diagnostics": false,
+  "new_rationale_profiles_used_in_model_training": false,
+  "unique_causal_training_explanation_established": false,
+  "game_ids_not_proof_of_independent_physical_games": true,
+  "playing_or_coaching_acceptance_proven": false,
+  "independent_test_used": false,
+  "raw_games_answers_token_ids_weights_or_runtime_logs_redistributed": false,
+  "full_goal_complete": false,
+  "private_evidence_sha256": {
+    "runs/user-course4-step24000-fit-memory-diagnostic-v4/diagnostic-verification.json": "4b0fc8cd69b5a7bf6b06f87ab23878b89ea6d79d2a4a1d3cf040db7ad98987a6",
+    "runs/user-course4-step24000-game-balanced-parry-diagnostic-v2/diagnostic-verification.json": "ac51c520287c249a4a1a69f142715aa7f8017bab23bf7e6ec8ed77c4ffc8dec7",
+    "runs/user-course4-step24000-diagnostic-token-readback-v4/verification.json": "b8308eb6e4997112c4f9c1f2cb7a8688d3b3898151a0bd4ac33c3ac6a18b3ce1",
+    "runs/user-course4-step24000-diagnostic-token-readback-v3/verification.json": "114a65f5c9cfa52bef5ba7524bc35a2527636e252e46e4bfaa0fddd4d5ea1d14",
+    "runs/user-course4-step24000-fit-memory-diagnostic-v4/qa-restored.json": "f3229fe6ef281076f607f8d4d8ec9f13c0c0d101ebb61a447d91f0d982cd50fd",
+    "runs/user-course4-step24000-game-balanced-parry-diagnostic-v2/qa-restored.json": "a5d169f66515c2ad08d95dccfb48a6bbb2a9e6aa196244468654d74afa4032bd",
+    "runs/user-course4-fit-memory-publication-v1/step24000-to26000.json": "f25d5f8e4f3446c23981c1997a45cbb3c18ab232bad6a9936c9f555d2444c6af",
+    "runs/user-course4-fit-memory-publication-v1/native-to-regenerated-pairing.json": "d789da9b0fe131d24f6419431475795a60e5ba6bc41275803502477e457cfd27",
+    "runs/user-course4-fit-memory-publication-v1/actual-resume-after26000.json": "e65f3d2e0ffb2847a51dfd4bfa7a4f40eb4766a181f1f89b6c567c9b9e72980a"
+  }
+}

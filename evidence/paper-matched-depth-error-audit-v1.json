@@ -1,0 +1,444 @@
+{
+  "status": "complete_paired_depth_error_classification_and_separate_native_readback",
+  "evidence_snapshot_utc": "2026-11-01T02:14:00.072719+00:00",
+  "analysis_verification_sha256": "c08b765b33c4ff1ecaad799d1fcffd198049855a90d3acba57522178b570330a",
+  "separate_readback_sha256": "27d116df58bd7a20fbb5fbbc906c863997a9765d1365453a5e21e205b2567bd4",
+  "classification_sha256": "1f9dc74cf2422fbcb3b478c6ece8af09d6918ee427d938e346b49e5b115440c0",
+  "native_completed_neural_verification_sha256": "fc18696c0f64d9a3a08769368e3de09ae788e7eeecf989639d8531e41ec920a6",
+  "source_inference_modules": 111,
+  "original_answers_regraded": 1350,
+  "final_targets": 50,
+  "examples_per_checkpoint": 450,
+  "depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "overall": {
+    "checkpoint26000/all": {
+      "examples": 450,
+      "correct": 305,
+      "missing_move_occurrences": 147,
+      "extra_move_occurrences": 96,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 5,
+      "wrong_answers_with_discriminating_earlier_checked_position": 48,
+      "omissions_only": 72,
+      "omissions_and_extras": 38,
+      "extras_only": 35
+    },
+    "checkpoint32000/all": {
+      "examples": 450,
+      "correct": 315,
+      "missing_move_occurrences": 98,
+      "extra_move_occurrences": 114,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 2,
+      "wrong_answers_with_discriminating_earlier_checked_position": 45,
+      "omissions_only": 59,
+      "extras_only": 54,
+      "omissions_and_extras": 22
+    },
+    "checkpoint34000/all": {
+      "examples": 450,
+      "correct": 311,
+      "missing_move_occurrences": 104,
+      "extra_move_occurrences": 101,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 4,
+      "wrong_answers_with_discriminating_earlier_checked_position": 50,
+      "omissions_only": 69,
+      "extras_only": 53,
+      "omissions_and_extras": 17
+    }
+  },
+  "groups_at_depth0_and8": {
+    "checkpoint26000/depth0/single_r": {
+      "examples": 15,
+      "correct": 13,
+      "missing_move_occurrences": 2,
+      "extra_move_occurrences": 1,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "omissions_only": 1,
+      "omissions_and_extras": 1
+    },
+    "checkpoint32000/depth0/single_r": {
+      "examples": 15,
+      "correct": 14,
+      "missing_move_occurrences": 1,
+      "extra_move_occurrences": 1,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "omissions_and_extras": 1
+    },
+    "checkpoint34000/depth0/single_r": {
+      "examples": 15,
+      "correct": 14,
+      "missing_move_occurrences": 1,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "omissions_only": 1
+    },
+    "checkpoint26000/depth8/single_r": {
+      "examples": 15,
+      "omissions_only": 3,
+      "missing_move_occurrences": 8,
+      "extra_move_occurrences": 3,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 2,
+      "correct": 9,
+      "omissions_and_extras": 2,
+      "extras_only": 1
+    },
+    "checkpoint32000/depth8/single_r": {
+      "examples": 15,
+      "correct": 11,
+      "missing_move_occurrences": 6,
+      "extra_move_occurrences": 1,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 2,
+      "omissions_only": 3,
+      "omissions_and_extras": 1
+    },
+    "checkpoint34000/depth8/single_r": {
+      "examples": 15,
+      "correct": 10,
+      "missing_move_occurrences": 3,
+      "extra_move_occurrences": 2,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 3,
+      "omissions_only": 3,
+      "extras_only": 2
+    },
+    "checkpoint26000/depth0/single_h": {
+      "examples": 10,
+      "correct": 10,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint32000/depth0/single_h": {
+      "examples": 10,
+      "correct": 10,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint34000/depth0/single_h": {
+      "examples": 10,
+      "correct": 10,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint26000/depth8/single_h": {
+      "examples": 10,
+      "omissions_only": 1,
+      "missing_move_occurrences": 2,
+      "extra_move_occurrences": 3,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 2,
+      "omissions_and_extras": 1,
+      "extras_only": 2,
+      "correct": 6
+    },
+    "checkpoint32000/depth8/single_h": {
+      "examples": 10,
+      "extras_only": 4,
+      "missing_move_occurrences": 1,
+      "extra_move_occurrences": 6,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 3,
+      "omissions_and_extras": 1,
+      "correct": 5
+    },
+    "checkpoint34000/depth8/single_h": {
+      "examples": 10,
+      "correct": 7,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 3,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 1,
+      "extras_only": 3
+    },
+    "checkpoint26000/depth0/single_c": {
+      "examples": 21,
+      "correct": 15,
+      "missing_move_occurrences": 5,
+      "extra_move_occurrences": 4,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "omissions_only": 2,
+      "extras_only": 2,
+      "omissions_and_extras": 2
+    },
+    "checkpoint32000/depth0/single_c": {
+      "examples": 21,
+      "correct": 15,
+      "missing_move_occurrences": 3,
+      "extra_move_occurrences": 6,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "extras_only": 4,
+      "omissions_only": 1,
+      "omissions_and_extras": 1
+    },
+    "checkpoint34000/depth0/single_c": {
+      "examples": 21,
+      "correct": 15,
+      "missing_move_occurrences": 5,
+      "extra_move_occurrences": 4,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0,
+      "extras_only": 2,
+      "omissions_only": 4
+    },
+    "checkpoint26000/depth8/single_c": {
+      "examples": 21,
+      "correct": 12,
+      "missing_move_occurrences": 10,
+      "extra_move_occurrences": 11,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 1,
+      "wrong_answers_with_discriminating_earlier_checked_position": 6,
+      "omissions_and_extras": 4,
+      "omissions_only": 3,
+      "extras_only": 2
+    },
+    "checkpoint32000/depth8/single_c": {
+      "examples": 21,
+      "correct": 11,
+      "missing_move_occurrences": 8,
+      "extra_move_occurrences": 10,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 1,
+      "wrong_answers_with_discriminating_earlier_checked_position": 4,
+      "extras_only": 3,
+      "omissions_only": 4,
+      "omissions_and_extras": 3
+    },
+    "checkpoint34000/depth8/single_c": {
+      "examples": 21,
+      "omissions_only": 6,
+      "missing_move_occurrences": 9,
+      "extra_move_occurrences": 9,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 1,
+      "wrong_answers_with_discriminating_earlier_checked_position": 7,
+      "correct": 9,
+      "omissions_and_extras": 1,
+      "extras_only": 5
+    },
+    "checkpoint26000/depth0/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint32000/depth0/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint34000/depth0/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint26000/depth8/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint32000/depth8/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint34000/depth8/multiple_cr": {
+      "examples": 3,
+      "correct": 3,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint26000/depth0/single_p": {
+      "examples": 1,
+      "correct": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint32000/depth0/single_p": {
+      "examples": 1,
+      "correct": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint34000/depth0/single_p": {
+      "examples": 1,
+      "correct": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint26000/depth8/single_p": {
+      "examples": 1,
+      "correct": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    },
+    "checkpoint32000/depth8/single_p": {
+      "examples": 1,
+      "extras_only": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 1,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 1
+    },
+    "checkpoint34000/depth8/single_p": {
+      "examples": 1,
+      "correct": 1,
+      "missing_move_occurrences": 0,
+      "extra_move_occurrences": 0,
+      "answers_with_duplicate_moves": 0,
+      "wrong_answers_matching_earlier_checked_gold": 0,
+      "wrong_answers_with_discriminating_earlier_checked_position": 0
+    }
+  },
+  "endpoint_patterns": {
+    "checkpoint26000": {
+      "direct_correct_depth8_wrong": 13,
+      "direct_wrong_depth8_correct": 2,
+      "depth8_errors_on_direct_correct_targets": {
+        "omissions_only": 6,
+        "omissions_and_extras": 2,
+        "extras_only": 5
+      },
+      "checker_categories_on_direct_correct_depth8_wrong": {
+        "single_r": 4,
+        "single_h": 4,
+        "single_c": 5
+      },
+      "matching_earlier_checked_gold_on_direct_correct_depth8_wrong": 1,
+      "direct_errors_by_checker": {
+        "single_c": 6,
+        "single_r": 2
+      }
+    },
+    "checkpoint32000": {
+      "direct_correct_depth8_wrong": 15,
+      "direct_wrong_depth8_correct": 2,
+      "depth8_errors_on_direct_correct_targets": {
+        "extras_only": 8,
+        "omissions_and_extras": 3,
+        "omissions_only": 4
+      },
+      "checker_categories_on_direct_correct_depth8_wrong": {
+        "single_h": 5,
+        "single_c": 6,
+        "single_r": 3,
+        "single_p": 1
+      },
+      "matching_earlier_checked_gold_on_direct_correct_depth8_wrong": 1,
+      "direct_errors_by_checker": {
+        "single_c": 6,
+        "single_r": 1
+      }
+    },
+    "checkpoint34000": {
+      "direct_correct_depth8_wrong": 15,
+      "direct_wrong_depth8_correct": 2,
+      "depth8_errors_on_direct_correct_targets": {
+        "omissions_only": 5,
+        "extras_only": 9,
+        "omissions_and_extras": 1
+      },
+      "checker_categories_on_direct_correct_depth8_wrong": {
+        "single_c": 8,
+        "single_h": 3,
+        "single_r": 4
+      },
+      "matching_earlier_checked_gold_on_direct_correct_depth8_wrong": 1,
+      "direct_errors_by_checker": {
+        "single_c": 6,
+        "single_r": 1
+      }
+    }
+  },
+  "step34000_depth0_correct_depth8_wrong_eligible_earlier_checked_comparisons": 9,
+  "step34000_depth0_correct_depth8_wrong_exact_earlier_checked_matches": 1,
+  "omitted_mechanism_occurrences_not_distinct_moves": true,
+  "earlier_comparison_requires_same_side_in_check_and_different_gold": true,
+  "exact_match_is_not_internal_state_proof": true,
+  "no_exact_match_does_not_rule_out_state_tracking_error": true,
+  "native_rule_implementation_shared": true,
+  "newly_independent_engine_called": false,
+  "original_token_readback_inherited_not_repeated_by_this_analysis": true,
+  "first_reader_import_guard_failure_preserved": true,
+  "corrected_reader_imported_no_torch_or_model": true,
+  "training_data_or_recipe_changed": false,
+  "development_cases_copied_into_training": false,
+  "new_neural_generation_or_training": false,
+  "independent_test_used": false,
+  "playing_or_coaching_quality_proven": false,
+  "full_goal_complete": false
+}

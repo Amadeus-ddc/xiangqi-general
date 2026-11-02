@@ -1,0 +1,78 @@
+{
+  "status": "complete_actual_full_rationale_corpus_production_readback_pending_native_regeneration_and_pairing",
+  "evidence_snapshot_utc": "2026-10-31T22:27:47.972678+00:00",
+  "questions": 10833161,
+  "counts": {
+    "test": 26000,
+    "validation": 2600,
+    "train": 10804561
+  },
+  "rationale_profile": "paper_forward_parry_v1",
+  "source_declared_game_ids": 74311,
+  "source_declared_IDs_are_not_authenticated_physical_games": true,
+  "split_verification": {
+    "games": {
+      "train": 73654,
+      "validation": 66,
+      "test": 591
+    },
+    "roots": {
+      "train": 2069901,
+      "validation": 865,
+      "test": 8744
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0
+  },
+  "source_modules_freshly_hashed": 111,
+  "producer_manifest_sha256": "c0ec8aa631df663f9cf492e4c7420479e23cc1e6206dc43ce73671de01ee2e62",
+  "production_verification_sha256": "6018e74e6f3b5bc5f02873a745de212e25c37d96aaa614b4413b7188be9a4fd5",
+  "separate_production_readback_sha256": "157e1638c082611394facfe66200156930595708017b979f00b74e986a178ef8",
+  "actual_readback_receipt_sha256": "66d3b84b925b515b19783a637efbcfd6058733653fd4b11de7217d0530263014",
+  "receipt_files": 169,
+  "all_receipt_signatures_rechecked_unchanged": true,
+  "output_bindings": {
+    "train.jsonl": {
+      "sha256": "447b433c1fd6261fe676f0f3bfb28a47642fd8945152b7bb1938d7ce8896ec2f",
+      "bytes": 89064826178
+    },
+    "validation.jsonl": {
+      "sha256": "31d94b78e697bff30ec0af82e6ece30ba5dec7b7588933bcd549f3d7d9864ccb",
+      "bytes": 21702427
+    },
+    "test.jsonl": {
+      "sha256": "53088d062e8952fd61bb06534679461bc082dbb70b659ed6a54e5b3a66595a4f",
+      "bytes": 225024828
+    }
+  },
+  "output_bytes": 89311553433,
+  "actual_producer_digest_metadata": {
+    "profile": "verified_immutable_inputs_v1",
+    "receipt_sha256": "ec10f4e0deb0127099ed6ae69157c6944f25d963854f9c536527ed7025640dd4",
+    "receipt_bound_files": 54,
+    "reused_unique_files": 50,
+    "reused_digest_calls": 205,
+    "reused_digest_bytes": 570622341260,
+    "fresh_digest_calls": 115,
+    "fresh_digest_bytes": 89313013999,
+    "all_receipt_file_signatures_checked": true,
+    "minimum_verified_inode_age_ns": 2000000000,
+    "reused_bytes_were_freshly_hashed_in_this_process": false
+  },
+  "actual_separate_native_reader_live_verified": true,
+  "separate_native_source_regeneration_complete": false,
+  "complete_baseline_row_pairing": false,
+  "full_token_and_feature_preflight_complete": false,
+  "large_data_rehashed_by_this_reader_bytes": 0,
+  "original_training_recipe_changed": false,
+  "full_scale_new_target_training_adopted": false,
+  "neural_student_or_teacher_loaded": false,
+  "student_training_executed": false,
+  "test_gold_generated_during_data_construction": true,
+  "independent_test_model_generation_or_training_or_selection": false,
+  "full_cpu_tests": 1810,
+  "exact_test_source_files": 293,
+  "reused_only_after_fresh_source_bindings": true,
+  "playing_or_coaching_quality_proven": false,
+  "full_goal_complete": false
+}

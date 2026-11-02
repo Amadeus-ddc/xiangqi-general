@@ -1,0 +1,76 @@
+{
+  "status": "complete_current_model_card_claim_reconciliation",
+  "observed_at_utc": "2026-10-31T15:12:14.731624+00:00",
+  "source_base_commit": "61a2af662f52e79196c6e72db118a3c155be3143",
+  "authoritative_bindings": {
+    "runs/user-course4-from-26000-readback-v1/results/dynamic_future/step-32000/verification.json": "766c6e996382b9a88b550cd5b40ad18c0b16dcb7ef49b5e287bc3ed66dcf44cb",
+    "runs/paper-rationale-full-replay-v4/verification.json": "c687e60a2f981bda9ae2abeb653f3b4ef9b34ab42e6d39ca04f5e262845b2619",
+    "runs/paper-rationale-game-balanced-replay-v4/verification.json": "4029d093b1e814dd68d62eb1b62fe8ed1071f37b3cfe4fb4dfc74e5718803585",
+    "runs/paper-rationale-lr-study-readback-v2/verification.json": "3aca042e4c9babddd49e031368dc10704fbb17a4fcf83858cfe195ae8207a9e9"
+  },
+  "latest_formal_step": 32000,
+  "current_course": {
+    "correct": 510,
+    "examples": 600,
+    "accuracy": 0.85
+  },
+  "earlier_courses": {
+    "correct": 1916,
+    "examples": 2000,
+    "accuracy": 0.958
+  },
+  "combined": {
+    "correct": 2426,
+    "examples": 2600,
+    "accuracy": 0.933076923076923
+  },
+  "common_replay_results": {
+    "parent24000": {
+      "total": 2347,
+      "fourth_course": 492,
+      "earlier_courses": 1855
+    },
+    "previously_selected26000": {
+      "total": 2422,
+      "fourth_course": 494,
+      "earlier_courses": 1928
+    },
+    "old-low": {
+      "total": 2379,
+      "fourth_course": 504,
+      "earlier_courses": 1875
+    }
+  },
+  "expanded_evasion_scores": {
+    "parent24000": 254,
+    "previously_selected26000": 280,
+    "old-low": 279
+  },
+  "candidate_automatically_adopted": false,
+  "formal_and_common_replay_prompts_not_conflated": true,
+  "short_new_target_fourth_scores": {
+    "new-high": 462,
+    "new-low": 424
+  },
+  "complete_new_target_corpus_or_benefit_proven": false,
+  "previous_model_card_sha256": "0da7dffca2e79decc1b72398a3c0974736422b7f055e7ba72e8d0eee2b241eae",
+  "archived_front_matter_sha256": "cd4925fc9c975ac976b39e9fbfa8577a41efaa0c09fc41bcaf59a8d66236e0e7",
+  "archived_front_matter_preserved_exactly": true,
+  "full_cpu_suite_reused_for_documentation_only": true,
+  "full_cpu_tests": 1810,
+  "test_source_bindings_rechecked": 293,
+  "tests_proof_sha256": "a16ed275fa8976eeb2b8ea92061ab4e3b5c4d629eae0f9d5a9bcb8c536af7c78",
+  "source_plan_sha256": "30dfe215500becea2e63f2dfd848f651389ad945a3874ed5f235191a0aefc710",
+  "raw_model_scores_or_training_modified": false,
+  "independent_test_used_for_selection": false,
+  "final_playing_or_coaching_acceptance_proven": false,
+  "full_goal_complete": false,
+  "formal_validation_scope": {
+    "rows": 2600,
+    "declared_game_ids": 66,
+    "current_course_rows": 600,
+    "current_course_declared_game_ids": 16,
+    "source_validation_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe",
+    "physical_games_independently_certified": false
+  }
+}

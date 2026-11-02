@@ -1,0 +1,167 @@
+{
+  "status": "complete_actual_matched_target_depth_neural_results_and_original_token_readback",
+  "evidence_snapshot_utc": "2026-11-01T02:01:12.109684+00:00",
+  "native_verification_sha256": "fc18696c0f64d9a3a08769368e3de09ae788e7eeecf989639d8531e41ec920a6",
+  "publication_readback_sha256": "8dc2b8b55c7f0986dfe1d8c3481fa5f47bc2c40f63e8bae1029167c4b46c935e",
+  "contract_sha256": "05a124f144bcb7d99f8a711e2804de55aafa328927075d5bdb38fd311e699178",
+  "cohort_readback_sha256": "ea72a949a1ffa8b3a1ccae622d56eefcdaa97104af7ba5b4af718680189ed7f0",
+  "examples_per_model": 450,
+  "matched_final_targets": 50,
+  "depths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "examples_per_depth": 50,
+  "final_board_complete_final_history_question_variant_and_gold_matched": true,
+  "all_fifty_original_depth8_targets_used_without_score_filter": true,
+  "same450_cases_order_and_gold_for_every_model": true,
+  "actual_original_generated_arrays_decoded": 1350,
+  "fresh_publication_arrays_decoded": 1350,
+  "source_inference_modules": 111,
+  "results": {
+    "checkpoint26000": {
+      "correct": 305,
+      "examples": 450,
+      "correct_by_depth": [
+        42,
+        38,
+        36,
+        31,
+        35,
+        31,
+        33,
+        28,
+        31
+      ],
+      "examples_per_depth": 50,
+      "future_correct": 263,
+      "future_examples": 400,
+      "paired": {
+        "depth0_correct": 42,
+        "depth8_correct": 31,
+        "depth0_correct_depth8_wrong": 13,
+        "depth0_wrong_depth8_correct": 2,
+        "all_nine_depths_correct": 23
+      },
+      "answer_formats_valid": 450,
+      "raw_exact_correct": 305,
+      "eos_observed": 450,
+      "budget_exhausted": 0
+    },
+    "checkpoint32000": {
+      "correct": 315,
+      "examples": 450,
+      "correct_by_depth": [
+        43,
+        41,
+        39,
+        33,
+        33,
+        33,
+        32,
+        31,
+        30
+      ],
+      "examples_per_depth": 50,
+      "future_correct": 272,
+      "future_examples": 400,
+      "paired": {
+        "depth0_correct": 43,
+        "depth8_correct": 30,
+        "depth0_correct_depth8_wrong": 15,
+        "depth0_wrong_depth8_correct": 2,
+        "all_nine_depths_correct": 21
+      },
+      "answer_formats_valid": 450,
+      "raw_exact_correct": 314,
+      "eos_observed": 450,
+      "budget_exhausted": 0
+    },
+    "checkpoint34000": {
+      "correct": 311,
+      "examples": 450,
+      "correct_by_depth": [
+        43,
+        38,
+        38,
+        36,
+        30,
+        35,
+        31,
+        30,
+        30
+      ],
+      "examples_per_depth": 50,
+      "future_correct": 268,
+      "future_examples": 400,
+      "paired": {
+        "depth0_correct": 43,
+        "depth8_correct": 30,
+        "depth0_correct_depth8_wrong": 15,
+        "depth0_wrong_depth8_correct": 2,
+        "all_nine_depths_correct": 21
+      },
+      "answer_formats_valid": 450,
+      "raw_exact_correct": 310,
+      "eos_observed": 450,
+      "budget_exhausted": 0
+    }
+  },
+  "comparisons": {
+    "checkpoint26000 -> checkpoint32000": {
+      "examples": 450,
+      "left_correct": 305,
+      "right_correct": 315,
+      "fixed": 51,
+      "new_errors": 41
+    },
+    "checkpoint26000 -> checkpoint34000": {
+      "examples": 450,
+      "left_correct": 305,
+      "right_correct": 311,
+      "fixed": 38,
+      "new_errors": 32
+    },
+    "checkpoint32000 -> checkpoint34000": {
+      "examples": 450,
+      "left_correct": 315,
+      "right_correct": 311,
+      "fixed": 32,
+      "new_errors": 36
+    }
+  },
+  "original_qa_window": 36000,
+  "original_qa_physically_resumed_after_all_workers_terminal": true,
+  "greedy_free_generation": true,
+  "answer_or_token_constraints": false,
+  "model_answers_repaired": false,
+  "final_answer_graded": true,
+  "prose_graded": false,
+  "raw_exact_includes_generated_prose_and_is_reported_separately": true,
+  "all_three_actual_GPU_tail_batches_of_two_completed": true,
+  "root_expert_memory_and_prompt_length_still_change": true,
+  "overlapping_depth_variants_are_not_independent_games": true,
+  "physical_human_game_identity_certified": false,
+  "unique_training_cause_proven": false,
+  "original_training_recipe_or_optimizer_changed": false,
+  "automatic_checkpoint_replacement": false,
+  "independent_test_used": false,
+  "playing_or_coaching_quality_proven": false,
+  "full_goal_complete": false,
+  "runtime_artifacts_sha256": {
+    "contract.json": "05a124f144bcb7d99f8a711e2804de55aafa328927075d5bdb38fd311e699178",
+    "verification.json": "fc18696c0f64d9a3a08769368e3de09ae788e7eeecf989639d8531e41ec920a6",
+    "exit.json": "e174fba355f8ad62fc5b4341aff7e4d6e36669bb3c3ffc26f04380115e5cdae4",
+    "all-jobs-complete.json": "11df16cbb15d20d7fe78547d208548686b8add8497e92f2b721c53671a3dc84c",
+    "qa-restored.json": "5578eb59735cb7680e4f847fe789b7f449340c0b28b8941edafaeaaf23beb8e4",
+    "watchdog-verification.json": "e3cc5e21e3eff0fe11ba441b7a867257d5557874dd8ca199bcbb8f68f74f10e9",
+    "lease.json": "4fb072126490fb1e48e966637d91020aa1b27116d98d077ef462f116865d94a6"
+  }
+}

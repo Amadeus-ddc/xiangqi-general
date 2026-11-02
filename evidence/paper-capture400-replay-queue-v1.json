@@ -1,0 +1,111 @@
+{
+  "status": "complete_CPU_admission_and_live_waiting_inference_queues_no_model_results",
+  "recorded_at_utc": "2026-10-31T11:48:08.220323+00:00",
+  "fixed32000_parry_queue": {
+    "path": "runs/paper-course4-step32000-broad-replay-v2",
+    "state": "waiting_for_owned_raw_qa_at_or_after34000_and_three_idle_gpus",
+    "contract_sha256": "a49c4ae1d4d3945f939d9bd476d2f70731d37c924cb5d5c9abb96fc14958d759",
+    "launch_sha256": "0eab70dff7ebcbffb9f97e5ea08d7f11254215b8d48f16ee145cd515f0e2bf30",
+    "preparation_exit_sha256": "08937141324ec5f5eecfbf7a0a4a921cb4340aedcc70d284cabd1504ff1cb3b1",
+    "live_binding_sha256": "a1d94ec97f960f077938c8aa05be86b2c070db7032ccbdf4dc3d8c1b6611b66b",
+    "prerequisite_actual_arrays": 1200,
+    "candidate_new_arrays_planned": 400,
+    "reference_arrays_planned_to_redecode": 1200,
+    "all_arrays_planned_to_decode": 1600,
+    "candidate32000_generated_or_scored": false,
+    "minimum_actual_original_QA_step": 34000,
+    "reference_outputs_regenerated": false
+  },
+  "cardinality_repair": {
+    "old_path": "runs/paper-course4-step32000-broad-replay-v1",
+    "old_contract_sha256": "bccff256d4f60cfe31c942ebd35c5513ce61cf700209cd2a462904d09f8fe920",
+    "old_actual_prerequisite_sha256": "4029d093b1e814dd68d62eb1b62fe8ed1071f37b3cfe4fb4dfc74e5718803585",
+    "old_guard_required_arrays": 7800,
+    "actual_prerequisite_arrays": 1200,
+    "actual_old_guard_reproduction_exit": 1,
+    "new_four_case_guard_tests": {
+      "actual_valid_prerequisite": {
+        "expected_reaches_identity_boundary": true,
+        "reached_identity_boundary": true,
+        "rejection": null,
+        "passed": true
+      },
+      "wrong_prerequisite_count": {
+        "expected_reaches_identity_boundary": false,
+        "reached_identity_boundary": false,
+        "rejection": "AssertionError",
+        "passed": true
+      },
+      "wrong_admission_digest": {
+        "expected_reaches_identity_boundary": false,
+        "reached_identity_boundary": false,
+        "rejection": "AssertionError",
+        "passed": true
+      },
+      "missing_admission": {
+        "expected_reaches_identity_boundary": false,
+        "reached_identity_boundary": false,
+        "rejection": "FileNotFoundError",
+        "passed": true
+      }
+    },
+    "CPU_metadata_admission_reads_were_synthetic_in_memory_only": true,
+    "actual_GPU_admission_or_lease_exercised_by_tests": false,
+    "registration_tests_sha256": "76a19bf429ca62123921daaf2e6be4ceefa9f489f97462feb320abef0861fecd",
+    "reference_helper_unchanged_and1200_arrays_redecoded_sha256": "8fe325533874aeedabacf04cf14c287964109409e3bcbc6e2a578660f8370426",
+    "old_CPU_owner_confirmed_terminal_before_GPU_lease": true,
+    "retirement_sha256": "5a3f8424bf4c11bcf930f33b16eca4f66d42bd8cae8d24564571307e0eee67c3",
+    "original_controller_ranks_or_QA_signaled_by_retirement": false,
+    "generation_and_token_readback_and_GPU_source_admission_functions_AST_unchanged": true
+  },
+  "capture400_queue": {
+    "path": "runs/paper-course4-capture400-replay-v1",
+    "state": "waiting_for_fixed32000_parry400_success_and_all_prior_workers_terminal",
+    "contract_sha256": "e75d7a563cbb49d19eecce2438202579b6e98383891c4d7ac2bca0bde06fa3d8",
+    "launch_sha256": "3d54e31ed7d3c3e98b23df1faedf870beef17fd75cc4da9287e994f8ddcc347d",
+    "preparation_exit_sha256": "ba49724ebe168a6094748afefbd00982233ca125f6fd12a1ff4762cd0d8b54fe",
+    "live_binding_sha256": "f40356d70d9cbad379d3cc587b486c206439d22230786bc15a6800d0ec9a7f7a",
+    "cases_verification_sha256": "848ee7841a8f198b0bc6f7b7442f46b4d23c57450f918a5a522e68f6d302ba2d",
+    "cases_sha256": "7054c6f28376f050fb2305e7f00fb5832b1a14da94b5c9172671742ce9920674",
+    "CPU_old89_new111_parity_rows": 400,
+    "CPU_old_new_complete_output_sha256": "afafb24ab5a66b9170a62111cda32d962c4a0f90b371826d502b3ad34988a760",
+    "CPU_old_new_complete_outputs_bitwise_equal": true,
+    "max_total_tokens": 211,
+    "max_target_tokens": 97,
+    "max_new_tokens": 512,
+    "batch_size": 4,
+    "feature_cache_hits": 1,
+    "native_online_original_root_history_features_required_each": 399,
+    "fresh_actual30000_checkpoint_byte_hash_bytes": 2688028531,
+    "inherited_large_feature_bindings_rehashed_bytes": 0,
+    "models": {
+      "checkpoint26000": {
+        "checkpoint_sha256": "69b6f0b67fb1e4a06bbd7f59898657b207b92a5533bc5fe3681c6f5d97897359",
+        "native_verification_sha256": "99ecdd2cd2141e02675a588dea2f6225fac008203e683b486b8baa5dc755808f"
+      },
+      "checkpoint30000": {
+        "checkpoint_sha256": "cadf3d8fb1555781a91cbdfb49cd837f17665c41bee88c5cf5b95ed95971de2c",
+        "native_verification_sha256": "d8d31ecad46ad0402acbcd81edebcfefba14708548411c7a905756ddee9d99dd"
+      },
+      "checkpoint32000": {
+        "checkpoint_sha256": "06ecfb8d4f122a94ddcd6dc0c525ab6184afe74ddb8b55187f3e55937d7fa36a",
+        "native_verification_sha256": "766c6e996382b9a88b550cd5b40ad18c0b16dcb7ef49b5e287bc3ed66dcf44cb"
+      }
+    },
+    "new_original_arrays_planned": 1200,
+    "prerequisite_expected_new_arrays": 400,
+    "prerequisite_expected_reference_arrays": 1200,
+    "prerequisite_expected_all_arrays": 1600,
+    "prerequisite_shape_checked_against_frozen_source_not_actual_completion": true,
+    "model_generation_started_or_scored": false,
+    "foundation_automatically_replaced": false
+  },
+  "source_revision_for_both_queued_inference_runs": "d206311a4cb425d9e43a3f4f3a7acde8dac5701e",
+  "original_training_recipe_or_optimizer_changed": false,
+  "new_student_or_teacher_training": false,
+  "independent_test_used": false,
+  "playing_or_coaching_gain_proven": false,
+  "four_courses_complete": 3,
+  "total_courses": 4,
+  "full_goal_complete": false
+}

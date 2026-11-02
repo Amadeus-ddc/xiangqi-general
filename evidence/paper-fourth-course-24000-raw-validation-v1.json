@@ -1,0 +1,458 @@
+{
+  "status": "complete_existing_course4_step24000_readback",
+  "evidence_state": "reconstructed_baseline",
+  "observed_at_utc": "2026-10-30T02:39:24.296993+00:00",
+  "stage": "dynamic_future",
+  "split": "validation",
+  "curve": [
+    {
+      "step": 18000,
+      "correct": 2331,
+      "examples": 2600,
+      "accuracy": 0.8965384615384615,
+      "by_course": {
+        "static_current": {
+          "correct": 649,
+          "examples": 700,
+          "accuracy": 0.9271428571428572,
+          "minimum_task_accuracy": 0.81
+        },
+        "dynamic_current": {
+          "correct": 557,
+          "examples": 600,
+          "accuracy": 0.9283333333333333,
+          "minimum_task_accuracy": 0.89
+        },
+        "static_future": {
+          "correct": 637,
+          "examples": 700,
+          "accuracy": 0.91,
+          "minimum_task_accuracy": 0.82
+        },
+        "dynamic_future": {
+          "correct": 488,
+          "examples": 600,
+          "accuracy": 0.8133333333333334,
+          "minimum_task_accuracy": 0.64
+        }
+      },
+      "old_course_replay": {
+        "correct": 1843,
+        "examples": 2000,
+        "accuracy": 0.9215
+      },
+      "course4_tasks": {
+        "captures": {
+          "n": 100,
+          "accuracy": 0.78
+        },
+        "checks": {
+          "n": 100,
+          "accuracy": 0.82
+        },
+        "controllers": {
+          "n": 100,
+          "accuracy": 0.92
+        },
+        "mate": {
+          "n": 100,
+          "accuracy": 0.87
+        },
+        "moves": {
+          "n": 100,
+          "accuracy": 0.85
+        },
+        "parries": {
+          "n": 100,
+          "accuracy": 0.64
+        }
+      },
+      "answer_format_errors": 0,
+      "adjacent_transitions": null,
+      "checkpoint_sha256": "3e96cd41edb18fc6ce5c59be7d3814e7031819d8a035fadaa07742e3b82c5fd3"
+    },
+    {
+      "step": 20000,
+      "correct": 2358,
+      "examples": 2600,
+      "accuracy": 0.9069230769230769,
+      "by_course": {
+        "static_current": {
+          "correct": 662,
+          "examples": 700,
+          "accuracy": 0.9457142857142857,
+          "minimum_task_accuracy": 0.77
+        },
+        "dynamic_current": {
+          "correct": 554,
+          "examples": 600,
+          "accuracy": 0.9233333333333333,
+          "minimum_task_accuracy": 0.89
+        },
+        "static_future": {
+          "correct": 661,
+          "examples": 700,
+          "accuracy": 0.9442857142857143,
+          "minimum_task_accuracy": 0.8
+        },
+        "dynamic_future": {
+          "correct": 481,
+          "examples": 600,
+          "accuracy": 0.8016666666666666,
+          "minimum_task_accuracy": 0.54
+        }
+      },
+      "old_course_replay": {
+        "correct": 1877,
+        "examples": 2000,
+        "accuracy": 0.9385
+      },
+      "course4_tasks": {
+        "captures": {
+          "n": 100,
+          "accuracy": 0.85
+        },
+        "checks": {
+          "n": 100,
+          "accuracy": 0.79
+        },
+        "controllers": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "mate": {
+          "n": 100,
+          "accuracy": 0.85
+        },
+        "moves": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "parries": {
+          "n": 100,
+          "accuracy": 0.54
+        }
+      },
+      "answer_format_errors": 0,
+      "adjacent_transitions": {
+        "examples": 2600,
+        "before_correct": 2331,
+        "after_correct": 2358,
+        "fixed": 145,
+        "new_errors": 118
+      },
+      "checkpoint_sha256": "0f85868f3352559033ba8840d7a1c2bcdeba913175a835173573d353ba059daf"
+    },
+    {
+      "step": 22000,
+      "correct": 2378,
+      "examples": 2600,
+      "accuracy": 0.9146153846153846,
+      "by_course": {
+        "static_current": {
+          "correct": 688,
+          "examples": 700,
+          "accuracy": 0.9828571428571429,
+          "minimum_task_accuracy": 0.95
+        },
+        "dynamic_current": {
+          "correct": 556,
+          "examples": 600,
+          "accuracy": 0.9266666666666666,
+          "minimum_task_accuracy": 0.88
+        },
+        "static_future": {
+          "correct": 671,
+          "examples": 700,
+          "accuracy": 0.9585714285714285,
+          "minimum_task_accuracy": 0.83
+        },
+        "dynamic_future": {
+          "correct": 463,
+          "examples": 600,
+          "accuracy": 0.7716666666666666,
+          "minimum_task_accuracy": 0.56
+        }
+      },
+      "old_course_replay": {
+        "correct": 1915,
+        "examples": 2000,
+        "accuracy": 0.9575
+      },
+      "course4_tasks": {
+        "captures": {
+          "n": 100,
+          "accuracy": 0.72
+        },
+        "checks": {
+          "n": 100,
+          "accuracy": 0.74
+        },
+        "controllers": {
+          "n": 100,
+          "accuracy": 0.9
+        },
+        "mate": {
+          "n": 100,
+          "accuracy": 0.82
+        },
+        "moves": {
+          "n": 100,
+          "accuracy": 0.89
+        },
+        "parries": {
+          "n": 100,
+          "accuracy": 0.56
+        }
+      },
+      "answer_format_errors": 0,
+      "adjacent_transitions": {
+        "examples": 2600,
+        "before_correct": 2358,
+        "after_correct": 2378,
+        "fixed": 134,
+        "new_errors": 114
+      },
+      "checkpoint_sha256": "27c13f2d14c4c81184333cfdb480a1b83128e500347c9bd13fdee6412d4dd761"
+    },
+    {
+      "step": 24000,
+      "correct": 2354,
+      "examples": 2600,
+      "accuracy": 0.9053846153846153,
+      "by_course": {
+        "static_current": {
+          "correct": 654,
+          "examples": 700,
+          "accuracy": 0.9342857142857143,
+          "minimum_task_accuracy": 0.79
+        },
+        "dynamic_current": {
+          "correct": 569,
+          "examples": 600,
+          "accuracy": 0.9483333333333334,
+          "minimum_task_accuracy": 0.9
+        },
+        "static_future": {
+          "correct": 639,
+          "examples": 700,
+          "accuracy": 0.9128571428571428,
+          "minimum_task_accuracy": 0.76
+        },
+        "dynamic_future": {
+          "correct": 492,
+          "examples": 600,
+          "accuracy": 0.82,
+          "minimum_task_accuracy": 0.62
+        }
+      },
+      "old_course_replay": {
+        "correct": 1862,
+        "examples": 2000,
+        "accuracy": 0.931
+      },
+      "course4_tasks": {
+        "captures": {
+          "n": 100,
+          "accuracy": 0.78
+        },
+        "checks": {
+          "n": 100,
+          "accuracy": 0.77
+        },
+        "controllers": {
+          "n": 100,
+          "accuracy": 0.95
+        },
+        "mate": {
+          "n": 100,
+          "accuracy": 0.9
+        },
+        "moves": {
+          "n": 100,
+          "accuracy": 0.9
+        },
+        "parries": {
+          "n": 100,
+          "accuracy": 0.62
+        }
+      },
+      "answer_format_errors": 0,
+      "adjacent_transitions": {
+        "examples": 2600,
+        "before_correct": 2378,
+        "after_correct": 2354,
+        "fixed": 106,
+        "new_errors": 130
+      },
+      "checkpoint_sha256": "f6dcf15fa94134fbbfd988d8679997ec72711105293afdd9c253cb28447c25e4"
+    }
+  ],
+  "identical_ordered_questions": true,
+  "raw_answers_freshly_regraded": 10400,
+  "distinct_game_ids": 66,
+  "questions_are_not_independent_games": true,
+  "selected_step": 24000,
+  "next_validation_step": 26000,
+  "selection_metric": "current_course_raw_QA_accuracy_earliest_on_ties",
+  "selection_event": {
+    "event": "raw_validation_selection",
+    "stage": "dynamic_future",
+    "stop": false,
+    "selected_step": 24000,
+    "steps_completed": 24000,
+    "checks_without_improvement": 0,
+    "stopping_reason": null,
+    "selected_accuracy": 0.82,
+    "selected_minimum_task_accuracy": 0.62
+  },
+  "current_course_net_correct_vs18000": 4,
+  "source_modules_freshly_hashed": 89,
+  "source_sha256": {
+    "src/xqgeneral/__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+    "src/xqgeneral/ask.py": "93b49e2119a06c200e7e4f31c23c10595c8efccc8c8480a220025b9e92bebeee",
+    "src/xqgeneral/board_tokens.py": "f542ad740bf9fd56a17b0b8c8333ea2c1f5c8db8275897e282f6236f8d979ea7",
+    "src/xqgeneral/bridge.py": "cf112573feb560ddd7a656e2db1c887fff2e3c3a3951a1a04207492a1a3514fb",
+    "src/xqgeneral/bundled_games.py": "95be8b19ea876eeff61620bc5fb9e5142349bad43210beb69cd1b18336c74644",
+    "src/xqgeneral/cache_feature_store.py": "5d91f3031f4a547c0fd91fc0c3952bbabfd7b5fe358ec35fb992ecfc097a2d19",
+    "src/xqgeneral/cache_features.py": "1a610f8d5b0450fc2d607f8992dd6ab1a6ad4acbd6c2c938a28bf36f4000b5c5",
+    "src/xqgeneral/calibration.py": "5d6348f1794e4c19e7905cf555a12aa8c2fd50033860b67ea8fef010fb30a64e",
+    "src/xqgeneral/clean_sft_evaluation.py": "84fcacf5bf8ebf1c9acc3c46a5f30ea2aae8b759cd92cf2024552c5a9f7b92c5",
+    "src/xqgeneral/clean_sft_matches.py": "da1d2f722a899c7c5517688db2fadd5c771559224f4bf458cd3cbe398c9c17ba",
+    "src/xqgeneral/coach.py": "a6e87e6591656a30da46364a9bcb0775facb099bef13dab8f6fc70468e4c41c4",
+    "src/xqgeneral/collect_recorded.py": "31753ae301b3a026e1fbce29041ad6f3b1f8ec2090cd6271b7820358e0e970aa",
+    "src/xqgeneral/collect_search.py": "b729c5f66d083961caeeb909fb0afef35540319f06b030818b9478d9d4515d24",
+    "src/xqgeneral/collect_teacher.py": "016b87788dc701c54c73e53aa3978e47e5648294f6c62a30f495e1b901155e37",
+    "src/xqgeneral/course_position_sampling.py": "dec6ea882e94fd779c5941546f7a860647dfd0dbc0327d0a4e72cf1c307f6c00",
+    "src/xqgeneral/course_sampling.py": "8161b1a8c0d8a584e71aaca436f675223f08a7ac7421f064291e303d1b6c9080",
+    "src/xqgeneral/course_source_semantics.py": "2d111bcedf246a3779a82a062eac924717b6887c705a149fafca2bceb46d6c1c",
+    "src/xqgeneral/course_tasks.py": "a9037592cd897d2470deb6bc592e64da6f0f642dec14d649c147802139bcce24",
+    "src/xqgeneral/curriculum.py": "ab1a9967f7e7b0930e3f3c5ff0b6c3090c6869cb61e2db96f838f7ea4f603f7f",
+    "src/xqgeneral/curriculum_data.py": "318d192ea69c57de5cc803537728246a56cc3922498869189141b41d8ddece7f",
+    "src/xqgeneral/curriculum_selection.py": "4d2698b765172a7be3254af1e35c79a82286292de2c4af76438a742cc5d323a1",
+    "src/xqgeneral/data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+    "src/xqgeneral/diagnose_moves.py": "a2b24dc2c8b8fa4d3c8fb606669db60a57ece61b4e470b8b06465c9b3dc4fc8a",
+    "src/xqgeneral/engine_selfplay.py": "867c51d5bfbb8fb4e8b67c914ad9d13e24a406f8fefbdac658a3eaf5180a829c",
+    "src/xqgeneral/evaluate_explanations.py": "bb73dea750d4c2e3004f7beebf3fce941c722714aa93a80f95d05817b57b221b",
+    "src/xqgeneral/evaluate_games.py": "b557a65c95cf407fdb40780c752e12349063d8cd3da7d8574e7e6cff86252a6b",
+    "src/xqgeneral/evaluate_moves.py": "617d4aa73530b91ab2de8f38bbede5f5ade5a9ddfaafb9b24641e6506a443faf",
+    "src/xqgeneral/evaluate_plans.py": "43b05b99cc769978ff77c8097977893bc7734a969f55b5da514b3a68ef650d63",
+    "src/xqgeneral/evaluate_qa.py": "ebd3f97dbc1c672bd7a654e67cf8877fcbba6db4a15032669a746044c37b2a80",
+    "src/xqgeneral/evidence.py": "891b9be3cd6cd3e69304d72e36499b293a46a6624c9c382937bed3f0f6516afc",
+    "src/xqgeneral/expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+    "src/xqgeneral/explanation_preflight.py": "7828325c21a5abfa06f0a648b3fcf0eb8c8f3aaac9c1413f473b37417e6de7ec",
+    "src/xqgeneral/explanations.py": "4fc973d12cb1364d2b77ed457e37bef5ade553d2733fcef8754bae12cf7ba2b2",
+    "src/xqgeneral/extend_features.py": "7f0a910bc2427020358b8a8c6fb8324800c55963c769bfacd59be453f45f6f8c",
+    "src/xqgeneral/feature_store.py": "850f4a11634fad488100ccd4e8e078c8d300206b44526757ac3ebe641d42d052",
+    "src/xqgeneral/finite_training.py": "e4ff0cc2f215718a06a8af74440c99294bc0a962b9255f0c92c281a2853c8e1e",
+    "src/xqgeneral/foundation_handoff.py": "8940ffba84f829ff9cd8307d409c0f04b6a776e8b6e7a834669490abddc5c46e",
+    "src/xqgeneral/foundation_preflight.py": "3bb529e36c2ac3f34fac18160b0fc19d96fa4e1e53c4190802c48d3f53b02bcc",
+    "src/xqgeneral/foundation_readback.py": "f1b155d0db417634c05ab507c105a33054ab56cde41146f7f57cc986573fbe62",
+    "src/xqgeneral/gated_curriculum.py": "4d09826d0fe6566c80f249a0d44f5ba6cdd5b666e5796a0c712909ee400e6e7d",
+    "src/xqgeneral/human_games.py": "2e6a7426817e9f0566e7843e2cf0a9eb02b001a012861bdb59311aabbdf70e30",
+    "src/xqgeneral/inference.py": "2d113dba524375d3576504d33331baa30b17cf43c083d4b284c201a6eaae44f8",
+    "src/xqgeneral/local_teacher.py": "5ca6d570db4821b0d0b659a7a187b13cce52f10873858ba9618d4283aa8b06df",
+    "src/xqgeneral/match_openings.py": "391979d63b073afd087188dcd0fb5e6e6b679c416e9316a0979acdd22970f27c",
+    "src/xqgeneral/merge_teacher.py": "4d640c91e931cd5c91a80aef8d853a9d89912662e908db708ace555b573aa07b",
+    "src/xqgeneral/modeling.py": "65b453dd3ffcf4922c195b0db387e4b6452e19a6a9c20d350317e77960dd4331",
+    "src/xqgeneral/move_decoding.py": "84507ab4a8a76142f37dc8e57a522130c52fed4404dfa0f5cca520873a6353e5",
+    "src/xqgeneral/net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+    "src/xqgeneral/oracle.py": "8d699e7d859aa9b76e65d38d7ece729abba6e2c2b6f9a4e174278d82fcc1582b",
+    "src/xqgeneral/paper_curriculum.py": "473d2a9ebbc7eefa833209c8833b4561f6aeaeafa86dfdaceb0b61cf2e277441",
+    "src/xqgeneral/planning_data.py": "f5a1a2234b5abdfb4de0bf9b8f08cfe2ad9b2a10b55f26916cd77805737afba8",
+    "src/xqgeneral/platform_games.py": "2656f0cee66739cb46e6ad8a3821058c859b1ee65b579b8a2b7dfa859e46ba17",
+    "src/xqgeneral/policy_data.py": "d2f9e0ccdc230c39fc2055575604cee6cee4d05e547f49e99c3d81c319a61fcf",
+    "src/xqgeneral/prepare_explanations.py": "3499af039e968a922e551cb023ab063dc664a95b7c147cbf4cd6c04616536230",
+    "src/xqgeneral/prose_moves.py": "e590f88819a9195df88832ea6efa42dab34b03d2c6efab84e3a8a3e047b5294b",
+    "src/xqgeneral/recorded_coach.py": "62dcb4972e7829d51032c6d4082838a9dbfe78dea01d6b5703ef58d86a7b8aa9",
+    "src/xqgeneral/recorded_coach_isolation_readback.py": "1cf1b56568cc01e1681c80f4114fc07fdaaa03519bb2f873fdc4843c8a30dae7",
+    "src/xqgeneral/recorded_coach_prose.py": "286b8563b9cb2b6b082e8b3db6a5bb5701605fa8219580a2b6efbc41ee343b5c",
+    "src/xqgeneral/recorded_coach_readback.py": "22b15e3b88051f2709a77bc5e37135c45a0fc2d9a5f9e6f7f486f718605cc5db",
+    "src/xqgeneral/recorded_course_pools.py": "9367d3408d3b2d63b282b331d6551d149e6c9c0999ae81f538c82b3ba050bb6f",
+    "src/xqgeneral/recorded_curriculum.py": "485166d8fd76a03e005e30e06297d5a75f72aef3bfc5d80cdd20cfa1cda1991e",
+    "src/xqgeneral/recorded_full_course_pools.py": "6c7a3c652ba3030d097fb3e44a5b8db22142c900ef0b97740971ee0694a3b3a9",
+    "src/xqgeneral/recorded_search_inputs.py": "af923a838b9e9f77eaf3ff5432bfac8d7180aead08856f6c1aa9edb59c3efbb9",
+    "src/xqgeneral/recorded_sources.py": "5cd0f21d1bc87dc0a364de3df96d5401615d99539e96975886bc0b7a35363207",
+    "src/xqgeneral/review_explanations.py": "74b5229e7159b26428992762c45c237c36cfb2e7ab67c0a528c4fc6b263941f8",
+    "src/xqgeneral/reviewed_explanations.py": "3e453c127fdb616197e75654d8ac55454ff0837acbaf0df0a0e887d0294bec0c",
+    "src/xqgeneral/revise_prose.py": "6d3f3ad54cf203888b4c9800e35804c008f16d0515d5cf47d79345607e2feb9b",
+    "src/xqgeneral/rules.py": "e4d5500b11270682ff76713541a5a956a567949ad06d6311716e966d61c591b9",
+    "src/xqgeneral/search_distillation.py": "11db90b80b0c43fc7d381c1115a724974331b3803b3441d35cfc65a40a7fed40",
+    "src/xqgeneral/search_inputs.py": "7cbe433c7a14219bf12abc66867e4680825e7130bc5d7162be4b8a155772d0a4",
+    "src/xqgeneral/search_pilot.py": "2cd4d59bed55001dfacf959312bce24fc44623323612fed00da65b75c1bb1c6c",
+    "src/xqgeneral/select_checkpoint.py": "c2a00cf5abac474527c07867465388eec6935e212605edada5b0d654a9d1b86f",
+    "src/xqgeneral/selfplay_grounding.py": "0916f4a5336d9430d875367c5e36351f1f0d76670c6207aabecc6dc92141a46c",
+    "src/xqgeneral/sft.py": "f02170e1be34e025893cb0260bdf11757f83660949951849c88cd79373e56bca",
+    "src/xqgeneral/sft_pipeline.py": "8947393580fb33424e938b40c188691adfac460aacf886b86e3b125df6fb6c2e",
+    "src/xqgeneral/sft_preflight.py": "c7c62c9b1fd309a6c2c6a6a9ca916f83a4b5e177038e2bfe84a053b4eb48dc3b",
+    "src/xqgeneral/sft_probe_worker.py": "11d741a1d42c0efb2bf473b3be161779a550c2734e819037c6d863e601751dff",
+    "src/xqgeneral/symmetry.py": "017a0a72377d44141df1388177bcd3df0d6c1572c9daffab519d4be88619bda1",
+    "src/xqgeneral/tactical_course_pools.py": "0eee247da8873488def13976b656fbcf116f7a5c8e1b2dabdb9005e61afe4e30",
+    "src/xqgeneral/tactical_games.py": "d8498e43499ea6a3510e48d6ba7a9f9550510228a4f9d91390cad5042668da33",
+    "src/xqgeneral/tactical_positions.py": "3ad076f06d5afd5bbb88a8578e32c2a304db735e69561ce539e9c75967f95f62",
+    "src/xqgeneral/teacher_benchmark.py": "99a603fda1592ae6f9bd0443bdfa4ea148f82ac87691ea9ec0c315a39bcb78d2",
+    "src/xqgeneral/train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+    "src/xqgeneral/training.py": "eed6c135879fe673e8f0f86580c7ae5dce2e970d447d96460766e95275225a91",
+    "src/xqgeneral/training_index.py": "cc643484e7b3c4cbb7179dda904320c712acf3418bbf2d4d3a9ba06675e1850b",
+    "src/xqgeneral/validation_curriculum.py": "4af16e22a40fed548824dcbc8dde1d32c1aaa230876d17bf66e2ee49c528e49f",
+    "src/xqgeneral/verified_inputs.py": "f7243b1882b1192bbe58e62964650dc2cc9d7b7fd6fdcfac440b1c18a1537c13",
+    "src/xqgeneral/verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+    "src/xqgeneral/verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9"
+  },
+  "native_parameter_and_contiguous_training_proofs_reused": true,
+  "checkpoint_arrays_reloaded_by_publication": false,
+  "original_optimizer_arrays_independently_verified": false,
+  "large_input_proofs_reused": true,
+  "grading_algorithm": "existing_frozen_project_contract",
+  "independent_rule_implementation": false,
+  "diagnostic_preparation": {
+    "training_rows": 600,
+    "validation_rows": 600,
+    "per_task": 100,
+    "task_depth_question_variant_strata_identical": true,
+    "training_complete_anchor_epochs_before_checkpoint": 2,
+    "native_gold_checks": 1200,
+    "native_gold_mismatches": 0,
+    "shared_native_rules": true,
+    "training_game_ids": 575,
+    "validation_game_ids": 16,
+    "no_truncation_in_prepared_inputs": true,
+    "maximum_prompt_tokens": 154,
+    "max_new_tokens": 384,
+    "actual_gpu_generation_completed": false,
+    "queued_for_existing_original_qa_boundary_at_or_after26000": true,
+    "student_training_started_by_diagnostic": false
+  },
+  "diagnostic_gpu_results_available_at_publication": false,
+  "input_sha256": {
+    "runs/user-course4-from-26000-readback-v1/results/dynamic_future/step-18000/verification.json": "49588c6ab90fe283d381810e4f58eeaebcc8db34c0dbf6723ce40edb879afbfd",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-18000/qa/manifest.json": "6f74cf40f44c1e46c86b2c0773901eba6962eeef21650d81525ca0010fe059cf",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-18000/qa/metrics.json": "e2ad61fd0824af2c99c2bb3c0527a90e73ccc2586f277e3fb95d29c221b52777",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-18000/qa/predictions.jsonl": "1e7d5a046926e5efa570dbcd5a313155f03cf8da4315323de371c5a925f29b67",
+    "runs/user-course4-from-26000-readback-v1/results/dynamic_future/step-20000/verification.json": "a4750d7392abf07bb12c8c9adad068280eb967b14865446b637875c6b8ea7ed2",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-20000/qa/manifest.json": "86045fa93ba6d008b8b4f01eb1e322efd8346c27b8024c15bf54842ccec66991",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-20000/qa/metrics.json": "d785e22d5edd21938538d49128d5184828405caedb9a0aa0e603e6aaadea37c0",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-20000/qa/predictions.jsonl": "944133b2ca51db42cf2764aa03c1bff88c422618dc92238b54d7cecc3543f1fe",
+    "runs/user-course4-from-26000-readback-v1/results/dynamic_future/step-22000/verification.json": "01d46c21a35bca7c993d3fe78abf80ec2d74220ecb3b97b79be4491933772e40",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-22000/qa/manifest.json": "879c13319c0d0abeb33261299b9f2c9aa4f01e430e248f50b49e1a59680e4a65",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-22000/qa/metrics.json": "2d31295694944d9d1e4e52d648699d4b93366ddb99c07be2d99f2a42248547d0",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-22000/qa/predictions.jsonl": "2c56640e23e97a318b8fa2defb2ddcde5de2d8d9d323a84e3459d13a20ec9c57",
+    "runs/user-course4-from-26000-readback-v1/results/dynamic_future/step-24000/verification.json": "8c06397b90e0ddabdba575c1cd9bc360d48e4c11901770b9564bb8721ea4f48d",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-24000/qa/manifest.json": "a2bc462b1ba09c1e35b14e7a4d64055f71c68348a89bad4703d9d0d9dabf76a7",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-24000/qa/metrics.json": "24243ee6d9d712fe6455246f7e935c998d78f2d973453fa3138176ea04667eb3",
+    "runs/curriculum-paper-user-direct26000-v1/dynamic_future/candidates/step-24000/qa/predictions.jsonl": "2db3786ea8ffff4f69f12af27f01363895ffe5dfb591917a0958447c8aa500c1",
+    "runs/user-course4-step24000-fit-memory-diagnostic-v1/prepared-v2/prepared-inputs.json": "38048c39c0f90a7d30496212695c46a8ecee4d598b1b5b50f43da6c8b665cde5",
+    "runs/user-course4-step24000-fit-memory-diagnostic-v3/broker-preflight-verification.json": "f8e77cbeff41a774b664ed52703435142f3f996d3212e6fff729ff8b406188b7",
+    "runs/user-course4-step24000-fit-memory-diagnostic-v3/single-device-uuid-preflight.json": "720875832915d60b7f80819792512d32e14b68db4d6a68c540433fe4b1318fbf",
+    "runs/user-course4-step24000-fit-memory-diagnostic-v3/control-test-v2/verification.json": "9f2965df04ab62d8beececab61381ed9109a0cb1ceb9d5ac79c517c264733382"
+  },
+  "raw_generation": true,
+  "oracle_used": false,
+  "prose_graded": false,
+  "courses_completed": 3,
+  "actual_formal_initial_explanation_sft_completed": false,
+  "actual_formal_distillation_completed": false,
+  "independent_test_used": false,
+  "final_strength_or_coaching_accepted": false,
+  "full_goal_complete": false
+}

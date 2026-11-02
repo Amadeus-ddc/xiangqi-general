@@ -1,5 +1,6 @@
 """Pinned Fairy-Stockfish xiangqi rules with full-history AXF adjudication."""
 from functools import lru_cache
+from dataclasses import dataclass
 import re
 import pyffish
 
@@ -179,6 +180,105 @@ def square_controllers(fen, square):
             destination = defenders if occupant and occupant.isupper() == piece.isupper() else attackers
             destination.append((source, piece))
     return tuple(attackers), tuple(defenders)
+
+
+@lru_cache(maxsize=16384)
+def king_checkers(fen, color=None):
+    """Capture-geometry checkers for one general under the native board profile.
+
+    Facing-general restrictions remain enforced by native legal_moves; they do
+    not add a synthetic checker to the pinned engine's standing-check labels.
+    """
+    validate_position(fen)
+    color = fen.split()[1] if color is None else color
+    if color not in ('w', 'b'):
+        raise ValueError('General color must be w or b')
+    symbol = 'K' if color == 'w' else 'k'
+    square = next(s for s,p in piece_map(fen).items() if p == symbol)
+    return square_controllers(fen, square)[0]
+
+
+def _between_squares(source, target):
+    x,y,tx,ty = ord(source[0])-97,int(source[1]),ord(target[0])-97,int(target[1])
+    if x != tx and y != ty or source == target:
+        raise ValueError('A checking line must be orthogonal')
+    dx,dy = (tx>x)-(tx<x),(ty>y)-(ty<y)
+    return tuple(f'{chr(97+x+n*dx)}{y+n*dy}' for n in range(1,max(abs(tx-x),abs(ty-y))))
+
+
+def _horse_leg(source, target):
+    x,y,tx,ty = ord(source[0])-97,int(source[1]),ord(target[0])-97,int(target[1])
+    dx,dy = tx-x,ty-y
+    if (abs(dx),abs(dy)) not in ((1,2),(2,1)):
+        raise ValueError('A checking horse must attack the general by a horse step')
+    lx,ly = (x+((dx>0)-(dx<0)),y) if abs(dx)==2 else (x,y+((dy>0)-(dy<0)))
+    return f'{chr(97+lx)}{ly}'
+
+
+@dataclass(frozen=True)
+class CheckEvasionFact:
+    move: str
+    piece: str
+    captured: str | None
+    checker_mechanisms: tuple[tuple[str, str], ...]
+    check: bool
+    checkmate: bool
+
+
+@lru_cache(maxsize=16384)
+def check_evasion_facts(fen):
+    """Explain every native legal parry, including cannon and horse mechanisms."""
+    validate_position(fen)
+    if not in_check(fen):
+        raise ValueError('Check-evasion facts require a native in-check position')
+    before = piece_map(fen)
+    color = fen.split()[1]
+    king = 'K' if color == 'w' else 'k'
+    king_square = next(s for s,p in before.items() if p==king)
+    checkers = king_checkers(fen)
+    if not checkers:
+        raise ValueError('Native check has no supported capture-geometry checker')
+    facts = []
+    for move in sorted(legal_moves(fen)):
+        following = validate_position(play(fen,move))
+        after = piece_map(following)
+        if king_checkers(following,color):
+            raise ValueError('Native legal parry still leaves a geometric checker')
+        mechanisms = []
+        for square,piece in checkers:
+            if move[2:]==square:
+                mechanism = 'capture_checker'
+            elif before[move[:2]]==king:
+                mechanism = 'king_move'
+            elif piece.lower()=='r':
+                line = _between_squares(square,king_square)
+                if move[2:] not in line or not any(s in after for s in line):
+                    raise ValueError('Rook-check evasion does not block its checking line')
+                mechanism = 'block_rook_line'
+            elif piece.lower()=='c':
+                line = _between_squares(square,king_square)
+                old_screens = [s for s in line if s in before]
+                new_screens = [s for s in line if s in after]
+                if len(old_screens)!=1:
+                    raise ValueError('A checking cannon must have exactly one screen')
+                if not new_screens and move[:2]==old_screens[0]:
+                    mechanism = 'remove_cannon_screen'
+                elif len(new_screens)==2 and move[2:] in line and move[:2] not in line:
+                    mechanism = 'add_cannon_screen'
+                else:
+                    raise ValueError('Cannon-check evasion has no supported screen transition')
+            elif piece.lower()=='h':
+                leg = _horse_leg(square,king_square)
+                if leg in before or move[2:]!=leg or leg not in after:
+                    raise ValueError('Horse-check evasion does not block its leg')
+                mechanism = 'block_horse_leg'
+            else:
+                raise ValueError('Unsupported remaining checker after a non-general parry')
+            mechanisms.append((square,mechanism))
+        checked = gives_check(fen,move)
+        facts.append(CheckEvasionFact(move,before[move[:2]],before.get(move[2:]),
+            tuple(mechanisms),checked,checked and not legal_moves(following)))
+    return tuple(facts)
 
 
 def adjudicate(initial_fen, moves):

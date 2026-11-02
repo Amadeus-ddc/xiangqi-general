@@ -7,7 +7,8 @@ import multiprocessing
 import random
 
 from .course_tasks import (_complete_paper_answers, _paper_record_queries,
-                           paper_records, validate_context)
+                           paper_records, validate_context, with_rationale_profile)
+from .forward_rationale import checked_rationale_profile
 
 
 def checked_question_rendering(workers, batch_size, position_profile, color_mirror):
@@ -19,22 +20,31 @@ def checked_question_rendering(workers, batch_size, position_profile, color_mirr
                          'question batching requires multiple workers')
 
 
-def _native_record_batch(groups):
+def _native_record_batch(groups, rationale_profile=None):
+    checked_rationale_profile(rationale_profile)
     for root, rows in groups:
         validate_context(root, check_future=True)
         _complete_paper_answers(rows)
+        if rationale_profile is not None:
+            # Native board facts were just computed here. Finish each answer
+            # before returning it, while those worker-local caches are warm.
+            for index, row in enumerate(rows):
+                rows[index] = with_rationale_profile(row, rationale_profile)
     return groups
 
 
-def render_positions(selections, seed, sampler, workers=1, batch_size=1):
+def render_positions(selections, seed, sampler, workers=1, batch_size=1, rationale_profile=None):
     """Emit complete groups in source order; never emit a draft answer."""
     checked_question_rendering(workers, batch_size, True, False)
+    checked_rationale_profile(rationale_profile)
     if workers == 1:
         for root, stage, task in selections:
             rng = random.Random(int(hashlib.sha256(
                 f'{seed}/{stage}/{task}/{root["feature_key"]}'.encode()).hexdigest(), 16))
             rows = paper_records(root, rng, sampler, only_stage=stage, only_task=task)
             sampler.observe(rows)
+            if rationale_profile is not None:
+                rows = [with_rationale_profile(row, rationale_profile) for row in rows]
             yield root, rows
         return
 
@@ -52,7 +62,7 @@ def render_positions(selections, seed, sampler, workers=1, batch_size=1):
     with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn')) as pool:
         pending = deque()
         while batch := list(islice(source, batch_size)):
-            pending.append(pool.submit(_native_record_batch, batch))
+            pending.append(pool.submit(_native_record_batch, batch, rationale_profile))
             if len(pending) >= workers * 2:
                 yield from pending.popleft().result()
         for job in pending:
