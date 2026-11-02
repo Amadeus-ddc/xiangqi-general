@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "status": "complete_cpu_verified_coach_resume_and_readme_reorganization",
+  "utc": "2026-11-02T01:38:08.178726+00:00",
+  "base_local_commit": "83dfae64e18edd4a2f5743e529602c145c3bdee1",
+  "changes": {
+    "resume_default": "persist_full_history_and_raw_analysis_back_to_the_original_session_file",
+    "explicit_output": "write_a_separate_session_branch_without_modifying_the_input_file",
+    "undo_and_new_moves_persist": true,
+    "oracle_repairs_added": false
+  },
+  "verification": {
+    "controlled_predictor_cli_regressions_added": 3,
+    "coach_tests_passed": 6,
+    "full_cpu_tests_passed": 1813,
+    "bound_source_files": 293,
+    "source_bindings_unchanged_during_full_tests": true,
+    "full_suite_proof_sha256": "7f1aadc62b8d5f4d3515b36e18c535f8766c9750bc696c368a0bbb5ea6245a59",
+    "pytest_log_sha256": "22fe8283da5b1d76a2c0f2f6f46514482e3d2a24847e4411874c05949239dd28",
+    "pytest_junit_sha256": "6961646bc5caed463758c92dd8a401db0f55f6beeef93469c2ad7394d5c956f9",
+    "pytest_source_plan_sha256": "c815a5e51f1ce39c35c4e7707791a961aa0901c846b42158de83f5c138e3db7a",
+    "controlled_predictor_not_a_trained_model": true,
+    "real_native_rules_used": true
+  },
+  "documentation": {
+    "original_readme_lines": 879,
+    "new_readme_lines": 83,
+    "old_text_and_commands_roundtrip_exact": true,
+    "old_readme_sha256": "2bede055219b01a58dc4033e2e5631d54fa3edb025c4bc323cc523384abe98b0",
+    "relocated_relative_links": 90,
+    "preserved_in": "docs/DEVELOPMENT_GUIDE.md"
+  },
+  "changed_code_sha256": {
+    "src/xqgeneral/coach.py": "79b524d07d4d82e9cbb69597b32eeb02f9b7d50d0cf8ae379acd5ab5b4082ee7",
+    "tests/test_coach.py": "5681cf2a661fc3d8260f46f742d4a9e8379e9496382e1c5c6396a25caa2faf08"
+  },
+  "training_or_corpus_jobs_modified": false,
+  "independent_test_used": false,
+  "trained_model_or_coaching_quality_measured": false,
+  "full_goal_complete": false
+}

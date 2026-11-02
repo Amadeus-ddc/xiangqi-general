@@ -55,10 +55,11 @@ def main():
     parser.add_argument('--weights', help='Px0 weights; exported model directories include their own weights')
     parser.add_argument('--initial-fen', default=START_FEN)
     parser.add_argument('--moves', nargs='*', default=[])
-    parser.add_argument('--resume', help='之前保存的学习记录 JSON')
+    parser.add_argument('--resume', help='恢复学习记录，并默认续写原 JSON 文件')
     parser.add_argument('--interactive', action='store_true')
-    parser.add_argument('--output', help='保存本次分析或交互学习记录')
+    parser.add_argument('--output', help='保存分析或交互记录；恢复时可另存为新文件')
     args = parser.parse_args()
+    output = args.output if args.output is not None else args.resume
     initial, moves, analyses = args.initial_fen, list(args.moves), []
     if args.resume:
         saved = json.loads(Path(args.resume).read_text())
@@ -69,9 +70,9 @@ def main():
     predictor = Predictor(args.checkpoint, args.weights)
 
     def save():
-        if args.output:
-            atomic_json(args.output, {'initial_fen': initial, 'moves': moves, 'analyses': analyses,
-                                      'checkpoint': args.checkpoint})
+        if output:
+            atomic_json(output, {'initial_fen': initial, 'moves': moves, 'analyses': analyses,
+                                 'checkpoint': args.checkpoint})
 
     def hint():
         outcome = adjudicate(initial, moves)
