@@ -9,8 +9,11 @@ import re
 import time
 
 from .evaluate_explanations import judge_move
-from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
+from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, write_jsonl
+from .feature_store import feature_paths
+from .model_bundle import checkpoint_input_paths
 from .oracle import Pikafish
+from .recorded_search_inputs import BoundInputs
 from .rules import adjudicate, play
 
 
@@ -101,6 +104,13 @@ def main():
     if min(args.limit, args.batch_size, args.max_new_tokens, args.nodes, args.workers) < 1:
         raise ValueError('Planning evaluation budgets must be positive')
     path = Path(args.data) / f'{args.split}.jsonl'
+    if Path(args.checkpoint).is_dir():
+        args.checkpoint = str(Path(args.checkpoint).resolve())
+    bound = BoundInputs()
+    for item in [*checkpoint_input_paths(args.checkpoint), path, *feature_paths(args.features),
+                 args.executable, args.weights]:
+        bound.bind(item)
+    code = code_identity()
     rows = [r for r in load_jsonl(path) if r['stage'] == 'move_planning']
     if not rows or any(r['split'] != args.split for r in rows):
         raise ValueError('Planning evaluation split differs')
@@ -113,7 +123,14 @@ def main():
     for offset in range(0, len(rows), args.batch_size):
         batch = rows[offset:offset + args.batch_size]
         answers = predictor.generate_batch(batch, args.max_new_tokens)
-        raw.extend({'id': r['id'], 'record': r, 'raw': a} for r, a in zip(batch, answers))
+        if len(answers) != len(batch):
+            write_jsonl(dest / 'raw-predictions.jsonl', raw)
+            atomic_json(dest / 'generation-failure.json', dict(
+                error='batch_coverage_mismatch', requested_ids=[r['id'] for r in batch],
+                requested_count=len(batch), generated_count=len(answers), raw_answers=answers,
+                complete_examples_before_batch=len(raw), unpaired_outputs_not_scored=True))
+            raise ValueError('Raw planning generation coverage differs from the requested batch')
+        raw.extend({'id': r['id'], 'record': r, 'raw': a} for r, a in zip(batch, answers, strict=True))
         print(json.dumps({'generated': len(raw), 'requested': len(rows)}), flush=True)
     write_jsonl(dest / 'raw-predictions.jsonl', raw)
     del predictor
@@ -124,13 +141,19 @@ def main():
         judged = [r for job in jobs for r in job.result()]
     judged.sort(key=lambda r: r['id'])
     write_jsonl(dest / 'judged-predictions.jsonl', judged)
+    bound.unchanged()
+    if code_identity() != code:
+        raise ValueError('Planning evaluation source changed; preserve raw outputs')
     proof = {**plan_summary(judged), 'split': args.split, 'judge_nodes_per_position': args.nodes,
              'engine_sha256': digest(args.executable), 'engine_weights_sha256': digest(args.weights),
              'seconds': time.monotonic() - started}
     atomic_json(dest / 'metrics.json', proof)
-    atomic_json(dest / 'manifest.json', manifest('independent_raw_planning_evaluation', vars(args),
-                [args.checkpoint, path, args.features, args.executable, args.weights],
-                [dest / 'raw-predictions.jsonl', dest / 'judged-predictions.jsonl', dest / 'metrics.json'], proof))
+    completed = manifest('independent_raw_planning_evaluation', vars(args), (),
+                         [dest / 'raw-predictions.jsonl', dest / 'judged-predictions.jsonl', dest / 'metrics.json'],
+                         proof, code=code)
+    completed['inputs'] = bound.artifacts
+    bound.unchanged()
+    atomic_json(dest / 'manifest.json', completed)
     print(json.dumps(proof), flush=True)
 
 
