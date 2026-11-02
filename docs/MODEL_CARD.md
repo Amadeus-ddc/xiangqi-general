@@ -2,24 +2,24 @@
 
 Xiangqi General is an independent Chinese-chess adaptation of the [Queen research pipeline](https://arxiv.org/abs/2610.03695v1), intended to play strong Xiangqi and explain moves in Chinese for personal study.
 
-**No trained checkpoint has passed final playing-strength and coaching acceptance.** At the 2026-11-02 07:31 UTC evidence snapshot, three of four courses are complete. Latest completed formal validation is step 44000; the actual current-course selection is step 42000. Full explanation SFT, sufficient real search distillation, independent acceptance and trained portable delivery remain outstanding.
+**No trained checkpoint has passed final playing-strength and coaching acceptance.** At the 2026-11-02 14:41 UTC evidence snapshot, three of four courses are complete. Latest completed formal validation is step 46000; the actual current-course selection is step 42000. Full explanation SFT, sufficient real search distillation, independent acceptance and trained portable delivery remain outstanding.
 
 
 The [portable inference directory](MODEL_INFERENCE_BUNDLE.md) is accepted by QA, explanation, match, single-move and planning evaluation. Each run binds every bundle asset and pins the resolved model directory before loading. Controlled CPU fixtures cover corruption, changes during generation, switched directory aliases, raw errors, completed-match resume and incomplete generation batches. Unpaired batch responses are preserved and receive no score. These checks do not evaluate the trained model or its playing strength.
 
 ## Current foundation evidence
 
-| Scope | Latest step 44000 | Selected step 42000 |
+| Scope | Latest step 46000 | Selected step 42000 |
 | --- | ---: | ---: |
-| Fourth course | 530 / 600 (88.33%) | 535 / 600 (89.17%) |
-| Earlier three courses | 1901 / 2000 (95.05%) | 1924 / 2000 (96.20%) |
-| Combined | 2431 / 2600 (93.50%) | 2459 / 2600 (94.58%) |
+| Fourth course | 528 / 600 (88.00%) | 535 / 600 (89.17%) |
+| Earlier three courses | 1889 / 2000 (94.45%) | 1924 / 2000 (96.20%) |
+| Combined | 2417 / 2600 (92.96%) | 2459 / 2600 (94.58%) |
 
-The [formal44k readback](PAPER_FOURTH_COURSE_44000.md) regraded 28600 archived answers across eleven checkpoints with identical ordered questions, variants and gold. These are repeated answers to 2600 development questions, separate from the untouched 26000-item independent test. There are 66 declared game IDs, including 16 for fourth-course questions; IDs do not authenticate independent physical games. Valid latest formats are 2600/2600; prose is ungraded.
+The [formal46k readback](PAPER_FOURTH_COURSE_46000.md) regraded 31200 archived answers across twelve checkpoints with identical ordered questions, variants and gold. These are repeated answers to 2600 development questions, separate from the untouched 26000-item independent test. There are 66 declared game IDs, including 16 for fourth-course questions; IDs do not authenticate independent physical games. Valid latest formats are 2600/2600; prose is ungraded.
 
-Relative to 42k, the fourth-course, earlier-course and combined net changes are -5, -23 and -28 answers. Evasions score 78/100. The unchanged current-course rule selects step 42000, with a no-improvement count of 1. Latest and selected results are reported separately. Fixed-development results do not establish broad tactical strength or coaching quality.
+Relative to 42k, the fourth-course, earlier-course and combined net changes are -7, -35 and -42 answers. Evasions score 77/100. The unchanged current-course rule selects step 42000, with a no-improvement count of 2. Latest and selected results are reported separately. Fixed-development results do not establish broad tactical strength or coaching quality.
 
-The native proof of 44000 contiguous finite updates and all 671,806,496 finite source-equal FP32 trainables is reused. Original Adam arrays were not independently read back, and formal generated-token arrays were unavailable for this audit. The CPU wrapper reuses the unchanged admitted archive library with separate hashes and all completion, source, question/order, grading and selection checks intact. No model inference or training was started by this publication readback.
+The native proof of 46000 contiguous finite updates and all 671,806,496 finite source-equal FP32 trainables is reused. Original Adam arrays were not independently read back, and formal generated-token arrays were unavailable for this audit. The CPU wrapper reuses the unchanged admitted archive library with separate hashes and all completion, source, question/order, grading and selection checks intact. No model inference or training was started by this publication readback.
 
 Fixed step 36000 has now completed 400 evasion, 400 capture and 450 matched-depth answers, scoring 296/400 (74%), 283/400 (70.75%) and 312/450 (69.33%). Relative to step 26000, evasions improve by 16 answers while captures lose six. For the same 50 final positions, step 36000 scores 42/50 directly and 29/50 after eight halfmoves; 13 targets are correct directly but wrong at depth 8, with zero in the reverse direction. All nine depths are correct for 24/50 targets, versus 23/21/21 at steps 26000/32000/34000. This mixed result preserves a deep reasoning gap without identifying a unique training cause.
 
@@ -45,7 +45,7 @@ After all four actual courses, the native handoff and real four-GPU full-decoder
 
 The [post-SFT curriculum check](POST_SFT_CURRICULUM_VALIDATION.md), raw explanation validation and development matches still require the actually trained model. Sufficient real student-search yield and distillation rounds follow measured results; the 512-root yield pilot does not satisfy formal distillation or final acceptance.
 
-The [final independent protocol](FINAL_INDEPENDENT_EVALUATION.md) prepares 26000 QA items, 512 explanations and 384 matches from 64 protected test games. No final checkpoint or settings have been locked and scored. Those inputs do not establish playing strength or a useful coach. [Current foundation evidence](../evidence/paper-fourth-course-44000-raw-validation-v1.json), [matched-depth result evidence](../evidence/paper-matched-target-depth-results-v1.json), [new-corpus production evidence](../evidence/paper-rationale-corpus-production-v1.json), [STATUS.md](../STATUS.md) and [historical snapshots](MODEL_CARD_HISTORY.md) distinguish current claims, prepared inputs and preserved earlier milestones.
+The [final independent protocol](FINAL_INDEPENDENT_EVALUATION.md) prepares 26000 QA items, 512 explanations and 384 matches from 64 protected test games. No final checkpoint or settings have been locked and scored. Those inputs do not establish playing strength or a useful coach. [Current foundation evidence](../evidence/paper-fourth-course-46000-raw-validation-v1.json), [matched-depth result evidence](../evidence/paper-matched-target-depth-results-v1.json), [new-corpus production evidence](../evidence/paper-rationale-corpus-production-v1.json), [STATUS.md](../STATUS.md) and [historical snapshots](MODEL_CARD_HISTORY.md) distinguish current claims, prepared inputs and preserved earlier milestones.
 
 ## Intended use and interface
 
