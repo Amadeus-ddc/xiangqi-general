@@ -51,6 +51,8 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 ## 数据与训练
 
+[新监督语料的来源重建与整库配对](docs/PAPER_RATIONALE_CORPUS_PRODUCTION.md)已完成，后续CPU训练／验证索引已完成，词元／特征预检正在进行；当前四课继续使用原配方。[原始源码历史](docs/SOURCE_HISTORY.md)可按实验引用的提交编号恢复。
+
 训练按连接桥、四门课程、讲解训练和实际搜索蒸馏推进。四门课程按棋局划分训练／验证／独立测试，并混合已学课程。验证集用于选模，独立测试保留到最终模型与配置锁定之后。
 
 | 阶段 | 执行说明 |
