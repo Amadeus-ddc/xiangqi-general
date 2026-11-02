@@ -18,7 +18,7 @@ RAW_EVALUATION_ERROR = 'preserved malformed model output'
 
 def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
     """Drive the real evaluation entry with local assets and a controlled predictor."""
-    from xqgeneral import evaluate_qa, evaluate_explanations, evaluate_games
+    from xqgeneral import evaluate_qa, evaluate_explanations, evaluate_games, evaluate_moves, evaluate_plans
     from xqgeneral.rules import START_FEN, legal_moves, replay
     run, expert, _, _, _ = training
     bundle = tmp_path / 'evaluation-bundle'
@@ -29,6 +29,8 @@ def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
     row = dict(id='fixture-evaluation', game_id='fixture-game', split='test',
                initial_fen=START_FEN, fen=START_FEN, moves=[], history=[START_FEN],
                stage='static_current', task_type='piece', question='fixture question', answer='fixture expected')
+    if entry in {'moves', 'plans'}:
+        row.update(stage='move_quality' if entry == 'moves' else 'move_planning', teacher={'source': 'fixture'})
     (data / 'test.jsonl').write_text(json.dumps(row) + '\n')
     features = tmp_path / 'features.pt'
     features.write_bytes(b'fixture features')
@@ -60,6 +62,8 @@ def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
 
     monkeypatch.setattr(inference, 'Predictor', ControlledPredictor)
     monkeypatch.setattr(evaluate_games, 'Pikafish', ControlledEngine)
+    monkeypatch.setattr(evaluate_moves, 'Pikafish', ControlledEngine)
+    monkeypatch.setattr(evaluate_plans, 'Pikafish', ControlledEngine)
     monkeypatch.setattr(evaluate_games, 'OPENINGS', [('fixture-opening', [])])
     monkeypatch.setattr(evaluate_explanations, 'judge_shard', lambda rows, args:
         [dict(r, judgment=evaluate_explanations.judgment(None, r['record'], r['raw'], args.nodes)) for r in rows])
@@ -74,6 +78,11 @@ def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
                 '--split', 'test', '--limit', '1', '--batch-size', '1', '--workers', '1',
                 '--executable', str(engine), '--weights', str(engine_weights), '--output', str(dest)]
         invoke = evaluate_explanations.main
+    elif entry in {'moves', 'plans'}:
+        argv = [entry, '--checkpoint', str(bundle), '--data', str(data), '--features', str(features),
+                '--split', 'test', '--limit', '1', '--batch-size', '1', '--workers', '1',
+                '--executable', str(engine), '--weights', str(engine_weights), '--output', str(dest)]
+        invoke = evaluate_moves.main if entry == 'moves' else evaluate_plans.main
     else:
         argv = ['games', '--checkpoint', str(bundle), '--nodes', '1', '--max-plies', '1',
                 '--executable', str(engine), '--weights', str(engine_weights), '--output', str(dest)]
@@ -82,7 +91,7 @@ def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
     return bundle, dest, seen, invoke
 
 
-@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games', 'moves', 'plans'])
 def test_bundle_directory_evaluation_binds_every_asset_and_preserves_raw_errors(training, tmp_path, monkeypatch, entry):
     bundle, dest, seen, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
     invoke()
@@ -94,9 +103,14 @@ def test_bundle_directory_evaluation_binds_every_asset_and_preserves_raw_errors(
     if entry == 'qa':
         raw = json.loads((dest / 'predictions.jsonl').read_text())
         assert raw['generated'] == RAW_EVALUATION_ERROR and raw['correct'] is False
-    elif entry == 'explanations':
+    elif entry in {'explanations', 'moves', 'plans'}:
         raw = json.loads((dest / 'raw-predictions.jsonl').read_text())
-        assert raw['raw'] == RAW_EVALUATION_ERROR and proof['verification']['parse_valid_rate'] == 0
+        assert raw['raw'] == RAW_EVALUATION_ERROR
+        if entry == 'explanations':
+            assert proof['verification']['parse_valid_rate'] == 0
+        else:
+            assert proof['verification']['format_valid_rate'] == 0
+            assert proof['verification']['oracle_repairs'] == 0
     else:
         rows = [json.loads(s) for s in (dest / 'games.jsonl').read_text().splitlines()]
         assert rows[0]['turns'][0]['raw'] == RAW_EVALUATION_ERROR
@@ -104,7 +118,7 @@ def test_bundle_directory_evaluation_binds_every_asset_and_preserves_raw_errors(
         assert Path(seen['experts'][0]) == bundle / 'expert/px0.pb.gz'
 
 
-@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games', 'moves', 'plans'])
 def test_bundle_evaluation_rejects_corrupt_assets_before_loading_predictor(training, tmp_path, monkeypatch, entry):
     bundle, dest, seen, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
     (bundle / 'decoder/model.safetensors').write_bytes(b'corrupt decoder')
@@ -114,7 +128,7 @@ def test_bundle_evaluation_rejects_corrupt_assets_before_loading_predictor(train
     assert not (dest / 'manifest.json').exists()
 
 
-@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games', 'moves', 'plans'])
 def test_bundle_evaluation_rejects_assets_changed_during_generation(training, tmp_path, monkeypatch, entry):
     def mutate(bundle):
         (bundle / 'decoder/model.safetensors').write_bytes(b'changed during generation')
@@ -147,7 +161,7 @@ def test_bundle_match_resume_reuses_completed_games_and_rejects_rebound_asset(tr
     assert all(p.read_bytes() == value for p, value in saved.items())
 
 
-@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games', 'moves', 'plans'])
 def test_evaluation_pins_the_model_behind_a_switched_directory_alias(training, tmp_path, monkeypatch, entry):
     bundle, dest, _, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
     run, expert, _, _, original = training
@@ -195,6 +209,45 @@ def test_evaluation_pins_the_model_behind_a_switched_directory_alias(training, t
     proof = json.loads((dest / 'manifest.json').read_text())
     assert str(bundle / 'adapter.pt') in proof['inputs']
     assert str(alternate / 'adapter.pt') not in proof['inputs']
+
+
+@pytest.mark.parametrize(('entry', 'decoding'), [('moves', 'raw'), ('moves', 'legal'), ('plans', 'raw')])
+def test_auxiliary_evaluation_rejects_missing_batch_answers(training, tmp_path, monkeypatch, entry, decoding):
+    _, dest, _, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
+    run, _, _, _, _ = training
+    argv = list(sys.argv)
+    argv[argv.index('--checkpoint') + 1] = str(run / 'adapter.pt')
+    argv[argv.index('--limit') + 1] = '2'
+    argv[argv.index('--batch-size') + 1] = '2'
+    if entry == 'moves':argv.extend(['--decoding', decoding])
+    path = Path(argv[argv.index('--data') + 1]) / 'test.jsonl'
+    row = json.loads(path.read_text())
+    path.write_text(json.dumps(row) + '\n' + json.dumps(dict(row, id='fixture-second')) + '\n')
+    requested = []
+
+    class ShortPredictor:
+        def __init__(self, checkpoint, **kwargs):
+            assert Path(checkpoint).is_file()
+
+        def generate_batch(self, rows, *args, **kwargs):
+            assert len(rows) == 2
+            requested[:] = [r['id'] for r in rows]
+            return [RAW_EVALUATION_ERROR]
+
+        def generate_moves(self, rows, *args, **kwargs):
+            return self.generate_batch(rows)
+
+    monkeypatch.setattr(sys, 'argv', argv)
+    monkeypatch.setattr(inference, 'Predictor', ShortPredictor)
+    with pytest.raises(ValueError, match='coverage'):
+        invoke()
+    assert not (dest / 'manifest.json').exists()
+    failure = json.loads((dest / 'generation-failure.json').read_text())
+    assert failure['requested_ids'] == requested
+    assert set(requested) == {row['id'], 'fixture-second'}
+    assert failure['raw_answers'] == [RAW_EVALUATION_ERROR]
+    assert failure['unpaired_outputs_not_scored'] is True
+    assert not (dest / 'metrics.json').exists()
 
 
 @pytest.fixture
