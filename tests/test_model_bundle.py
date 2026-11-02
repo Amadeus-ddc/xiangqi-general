@@ -1,15 +1,200 @@
 """Inference delivery must survive relocation and reject inconsistent trained artifacts."""
 import json
 from pathlib import Path
+import sys
 
 import pytest
 import torch
 from torch import nn
 
-from xqgeneral import inference, modeling
+from xqgeneral import inference, model_bundle, modeling
 from xqgeneral.evidence import atomic_json, digest
 from xqgeneral.feature_store import KIND as FEATURE_KIND
 from xqgeneral.model_bundle import export_model, read_bundle
+
+
+RAW_EVALUATION_ERROR = 'preserved malformed model output'
+
+
+def bundle_evaluation(entry, training, tmp_path, monkeypatch, *, mutate=None):
+    """Drive the real evaluation entry with local assets and a controlled predictor."""
+    from xqgeneral import evaluate_qa, evaluate_explanations, evaluate_games
+    from xqgeneral.rules import START_FEN, legal_moves, replay
+    run, expert, _, _, _ = training
+    bundle = tmp_path / 'evaluation-bundle'
+    export_model(run, expert, bundle)
+    read_bundle(bundle)
+    data = tmp_path / 'evaluation-data'
+    data.mkdir()
+    row = dict(id='fixture-evaluation', game_id='fixture-game', split='test',
+               initial_fen=START_FEN, fen=START_FEN, moves=[], history=[START_FEN],
+               stage='static_current', task_type='piece', question='fixture question', answer='fixture expected')
+    (data / 'test.jsonl').write_text(json.dumps(row) + '\n')
+    features = tmp_path / 'features.pt'
+    features.write_bytes(b'fixture features')
+    engine, engine_weights = tmp_path / 'engine', tmp_path / 'engine.nnue'
+    engine.write_bytes(b'fixture engine'); engine_weights.write_bytes(b'fixture engine weights')
+    seen = {'predictors': 0, 'generations': 0, 'experts': []}
+
+    class ControlledPredictor:
+        def __init__(self, checkpoint, weights=None, **kwargs):
+            assert Path(checkpoint) == bundle
+            seen['predictors'] += 1
+            seen['experts'].append(weights)
+            self.config = json.loads((run / 'manifest.json').read_text())['config']
+
+        def generate_batch(self, records, *args, **kwargs):
+            seen['generations'] += len(records)
+            if mutate is not None:mutate(bundle)
+            return [RAW_EVALUATION_ERROR] * len(records)
+
+        def generate(self, record, **kwargs):
+            return self.generate_batch([record])[0]
+
+    class ControlledEngine:
+        def __init__(self, *args, **kwargs):pass
+        def choose_move(self, fen, nodes, initial_fen, moves):
+            assert replay(initial_fen, moves)[-1] == fen
+            return dict(best_move=legal_moves(fen)[0], requested_nodes=nodes)
+        def close(self):pass
+
+    monkeypatch.setattr(inference, 'Predictor', ControlledPredictor)
+    monkeypatch.setattr(evaluate_games, 'Pikafish', ControlledEngine)
+    monkeypatch.setattr(evaluate_games, 'OPENINGS', [('fixture-opening', [])])
+    monkeypatch.setattr(evaluate_explanations, 'judge_shard', lambda rows, args:
+        [dict(r, judgment=evaluate_explanations.judgment(None, r['record'], r['raw'], args.nodes)) for r in rows])
+    monkeypatch.chdir(tmp_path)
+    dest = tmp_path / ('evaluated-' + entry)
+    if entry == 'qa':
+        argv = ['qa', '--checkpoint', str(bundle), '--data', str(data), '--features', str(features),
+                '--split', 'test', '--per-task', '1', '--batch-size', '1', '--output', str(dest)]
+        invoke = evaluate_qa.main
+    elif entry == 'explanations':
+        argv = ['explanations', '--checkpoint', str(bundle), '--data', str(data), '--features', str(features),
+                '--split', 'test', '--limit', '1', '--batch-size', '1', '--workers', '1',
+                '--executable', str(engine), '--weights', str(engine_weights), '--output', str(dest)]
+        invoke = evaluate_explanations.main
+    else:
+        argv = ['games', '--checkpoint', str(bundle), '--nodes', '1', '--max-plies', '1',
+                '--executable', str(engine), '--weights', str(engine_weights), '--output', str(dest)]
+        invoke = evaluate_games.main
+    monkeypatch.setattr(sys, 'argv', argv)
+    return bundle, dest, seen, invoke
+
+
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+def test_bundle_directory_evaluation_binds_every_asset_and_preserves_raw_errors(training, tmp_path, monkeypatch, entry):
+    bundle, dest, seen, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
+    invoke()
+    proof = json.loads((dest / 'manifest.json').read_text())
+    assets = {str(p) for p in bundle.rglob('*') if p.is_file()}
+    assert assets.issubset(proof['inputs']) and str(bundle) not in proof['inputs']
+    assert all(proof['inputs'][str(p)]['sha256'] == digest(p) for p in bundle.rglob('*') if p.is_file())
+    assert seen['predictors'] == 1 and seen['generations'] == 1
+    if entry == 'qa':
+        raw = json.loads((dest / 'predictions.jsonl').read_text())
+        assert raw['generated'] == RAW_EVALUATION_ERROR and raw['correct'] is False
+    elif entry == 'explanations':
+        raw = json.loads((dest / 'raw-predictions.jsonl').read_text())
+        assert raw['raw'] == RAW_EVALUATION_ERROR and proof['verification']['parse_valid_rate'] == 0
+    else:
+        rows = [json.loads(s) for s in (dest / 'games.jsonl').read_text().splitlines()]
+        assert rows[0]['turns'][0]['raw'] == RAW_EVALUATION_ERROR
+        assert proof['verification']['model_oracle_repairs'] == 0
+        assert Path(seen['experts'][0]) == bundle / 'expert/px0.pb.gz'
+
+
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+def test_bundle_evaluation_rejects_corrupt_assets_before_loading_predictor(training, tmp_path, monkeypatch, entry):
+    bundle, dest, seen, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
+    (bundle / 'decoder/model.safetensors').write_bytes(b'corrupt decoder')
+    with pytest.raises(ValueError, match='differs'):
+        invoke()
+    assert seen['predictors'] == seen['generations'] == 0
+    assert not (dest / 'manifest.json').exists()
+
+
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+def test_bundle_evaluation_rejects_assets_changed_during_generation(training, tmp_path, monkeypatch, entry):
+    def mutate(bundle):
+        (bundle / 'decoder/model.safetensors').write_bytes(b'changed during generation')
+    _, dest, seen, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch, mutate=mutate)
+    with pytest.raises(ValueError, match='changed|differs'):
+        invoke()
+    assert seen['predictors'] == seen['generations'] == 1
+    assert not (dest / 'manifest.json').exists()
+
+
+def test_bundle_match_resume_reuses_completed_games_and_rejects_rebound_asset(training, tmp_path, monkeypatch):
+    from xqgeneral import evaluate_games
+    bundle, dest, _, invoke = bundle_evaluation('games', training, tmp_path, monkeypatch)
+    invoke()
+    saved = {p: p.read_bytes() for p in dest.rglob('*') if p.is_file()}
+    def forbidden(*args, **kwargs):raise AssertionError('Completed games must not load either player')
+    monkeypatch.setattr(inference, 'Predictor', forbidden)
+    monkeypatch.setattr(evaluate_games, 'Pikafish', forbidden)
+    monkeypatch.setattr(sys, 'argv', [*sys.argv, '--resume'])
+    invoke()
+    assert all(p.read_bytes() == value for p, value in saved.items())
+    license_path = bundle / 'decoder/LICENSE'
+    license_path.write_text('changed but internally rebound license')
+    path = bundle / 'manifest.json'
+    proof = json.loads(path.read_text())
+    proof['files']['decoder/LICENSE'] = {'sha256': digest(license_path), 'bytes': license_path.stat().st_size}
+    atomic_json(path, proof)
+    with pytest.raises(ValueError, match='Match resume requires'):
+        invoke()
+    assert all(p.read_bytes() == value for p, value in saved.items())
+
+
+@pytest.mark.parametrize('entry', ['qa', 'explanations', 'games'])
+def test_evaluation_pins_the_model_behind_a_switched_directory_alias(training, tmp_path, monkeypatch, entry):
+    bundle, dest, _, invoke = bundle_evaluation(entry, training, tmp_path, monkeypatch)
+    run, expert, _, _, original = training
+    selected = run / 'adapter.pt'
+    changed = torch.load(selected, weights_only=True)
+    changed['trainable'] = {name: value + 1 for name, value in changed['trainable'].items()}
+    torch.save(changed, selected)
+    manifest = json.loads((run / 'manifest.json').read_text())
+    manifest['outputs'][str(selected)] = {'sha256': digest(selected), 'bytes': selected.stat().st_size}
+    atomic_json(run / 'manifest.json', manifest)
+    alternate = tmp_path / 'alternate-model'
+    export_model(run, expert, alternate)
+    alias = tmp_path / 'current-model'
+    alias.symlink_to(bundle, target_is_directory=True)
+    argv = list(sys.argv)
+    argv[argv.index('--checkpoint') + 1] = str(alias)
+    monkeypatch.setattr(sys, 'argv', argv)
+    original_check = model_bundle._checked_bundle
+    switched = []
+
+    def switch_alias_after_check(path):
+        result = original_check(path)
+        if not switched and result[0] == bundle:
+            alias.unlink()
+            alias.symlink_to(alternate, target_is_directory=True)
+            switched.append(True)
+        return result
+
+    class BoundPredictor:
+        def __init__(self, checkpoint, weights=None, **kwargs):
+            loaded, _ = read_bundle(checkpoint)
+            assert torch.equal(loaded['trainable']['weight'], original['weight']), 'A different model was loaded after binding'
+            self.config = loaded['config']
+
+        def generate_batch(self, records, *args, **kwargs):
+            return [RAW_EVALUATION_ERROR] * len(records)
+
+        def generate(self, record, **kwargs):
+            return RAW_EVALUATION_ERROR
+
+    monkeypatch.setattr(model_bundle, '_checked_bundle', switch_alias_after_check)
+    monkeypatch.setattr(inference, 'Predictor', BoundPredictor)
+    invoke()
+    assert switched and alias.resolve() == alternate
+    proof = json.loads((dest / 'manifest.json').read_text())
+    assert str(bundle / 'adapter.pt') in proof['inputs']
+    assert str(alternate / 'adapter.pt') not in proof['inputs']
 
 
 @pytest.fixture

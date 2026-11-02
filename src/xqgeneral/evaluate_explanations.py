@@ -8,7 +8,10 @@ import random
 import time
 
 from .calibration import candidate_probability, evaluation_probability
-from .evidence import atomic_json, digest, load_jsonl, manifest, write_jsonl
+from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, write_jsonl
+from .feature_store import feature_paths
+from .model_bundle import checkpoint_input_paths
+from .recorded_search_inputs import BoundInputs
 from .explanations import EXPLANATION_QUESTION, parse_explanation, validate_explanation
 from .oracle import Pikafish
 from .rules import adjudicate, legal_moves, play
@@ -136,6 +139,13 @@ def run_evaluation(args):
         raise ValueError('Evaluation IDs must be unique')
     if args.memory == 'shuffled' and (args.batch_size < 2 or len(rows) < 2 or len(rows) % args.batch_size == 1):
         raise ValueError('Every shuffled batch needs at least two histories')
+    if Path(args.checkpoint).is_dir():
+        args.checkpoint = str(Path(args.checkpoint).resolve())
+    bound = BoundInputs()
+    for source in [*checkpoint_input_paths(args.checkpoint), Path(args.data)/f'{args.split}.jsonl',
+                   *feature_paths(args.features), args.executable, args.weights]:
+        bound.bind(source)
+    code = code_identity()
     started = time.monotonic()
     predictor = Predictor(args.checkpoint, feature_cache=args.features)
     raw = []
@@ -156,14 +166,20 @@ def run_evaluation(args):
         judged = [r for job in jobs for r in job.result()]
     judged.sort(key=lambda r: r['id'])
     write_jsonl(dest / 'judged-predictions.jsonl', judged)
+    bound.unchanged()
+    if code_identity() != code:
+        raise ValueError('Explanation execution source changed; preserve raw outputs')
     proof = {**explanation_summary(judged), 'split': args.split, 'memory': args.memory,
              'judge_nodes_per_position': args.nodes,
              'engine_sha256': digest(args.executable), 'engine_weights_sha256': digest(args.weights),
              'seconds': time.monotonic() - started}
     atomic_json(dest / 'metrics.json', proof)
-    atomic_json(dest / 'manifest.json', manifest('independent_explanation_evaluation', vars(args),
-                [args.checkpoint, Path(args.data)/f'{args.split}.jsonl', args.features, args.executable, args.weights],
-                [dest/'raw-predictions.jsonl', dest/'judged-predictions.jsonl', dest/'metrics.json'], proof))
+    completed = manifest('independent_explanation_evaluation', vars(args), (),
+                         [dest/'raw-predictions.jsonl', dest/'judged-predictions.jsonl', dest/'metrics.json'],
+                         proof, code=code)
+    completed['inputs'] = bound.artifacts
+    bound.unchanged()
+    atomic_json(dest / 'manifest.json', completed)
     print(json.dumps(proof), flush=True)
     return proof
 

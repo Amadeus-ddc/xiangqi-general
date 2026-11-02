@@ -12,6 +12,7 @@ from .explanations import EXPLANATION_QUESTION, continuation_positions, parse_ex
 from .match_openings import checked_opening, load_openings
 from .oracle import Pikafish
 from .recorded_search_inputs import BoundInputs
+from .model_bundle import checkpoint_expert_path, checkpoint_input_paths
 from .rules import START_FEN, adjudicate, legal_moves, play, replay
 
 OPENINGS = [('central_cannon', ['b2e2', 'h9g7', 'h0g2', 'b9c7']),
@@ -239,7 +240,7 @@ def main():
     parser.add_argument('--action-mode', choices=['explanation', 'legal_move'], default='explanation')
     parser.add_argument('--move-beams', type=int, default=4)
     parser.add_argument('--opening-suite', help='Completed heldout recorded opening suite directory')
-    parser.add_argument('--expert-weights', default='models/px0-latest.pb.gz')
+    parser.add_argument('--expert-weights', help='Defaults to the bound bundle expert or models/px0-latest.pb.gz')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--output', required=True)
@@ -254,8 +255,13 @@ def main():
             len(set(args.nodes)) != len(args.nodes)):
         raise ValueError('Match budgets must be positive and opponent node budgets distinct')
     openings, opening_proof = load_openings(args.opening_suite) if args.opening_suite else (OPENINGS, None)
+    if Path(args.checkpoint).is_dir():
+        args.checkpoint = str(Path(args.checkpoint).resolve())
+    checkpoint_paths = checkpoint_input_paths(args.checkpoint)
+    if args.expert_weights is None:
+        args.expert_weights = str(checkpoint_expert_path(args.checkpoint))
     core = BoundInputs()
-    for path in [args.checkpoint, args.executable, args.weights, args.expert_weights]:core.bind(path)
+    for path in [*checkpoint_paths, args.executable, args.weights, args.expert_weights]:core.bind(path)
     if args.opening_suite:
         if core.json(Path(args.opening_suite) / 'manifest.json') != opening_proof:
             raise ValueError('Opening suite changed after admission')
