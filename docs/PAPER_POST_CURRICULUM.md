@@ -1,6 +1,6 @@
 # 新四课之后的讲解与评测
 
-现役路线使用筛选后的9823条训练标签、384条验证和512条独立测试，执行位置、所有权和恢复边界统一见[筛选后讲解接续](QUALIFIED_SFT_ROUTE.md#本服务器运行定位与恢复)。它接在`curriculum-paper-user-direct26000-v1`实际完成的四课之后，并显式核验[用户指定的三课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)。当前第四课正在训练，完整初始讲解、真实搜索蒸馏与最终验收尚待执行。
+现役路线使用筛选后的9823条训练标签、384条验证和512条独立测试，执行位置、所有权和恢复边界统一见[筛选后讲解接续](QUALIFIED_SFT_ROUTE.md#本服务器运行定位与恢复)。它接在`curriculum-paper-user-direct26000-v1`实际完成的四课之后，并显式核验[用户指定的三课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)。当前[四课已完成](PAPER_FOUR_COURSES_COMPLETED.md)，第四课在48000步结束并选择42000步；实际完整参数容量／续跑预检、完整初始讲解、真实搜索蒸馏与最终验收尚待执行。
 
 ## 初始讲解训练
 
