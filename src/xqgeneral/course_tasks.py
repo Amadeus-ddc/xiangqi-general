@@ -7,6 +7,9 @@ import re
 
 from .curriculum_data import MATERIAL, SQUARES, STAGES, SYMBOLS
 from .evidence import history_key
+from .forward_rationale import (checked_rationale_profile, forward_move_narration,
+                                rationale_applies, rationale_features)
+from .parry_rationale import parry_rationale
 from .rules import (
     adjudicate, gives_check, in_check, legal_moves, piece_map, piece_name, replay,
     square_controllers, validate_position,
@@ -195,7 +198,13 @@ def native_tag(row):
 
 
 def paper_answer(row):
-    """Native short rationale plus a separately graded structured answer tag."""
+    """Native task rationale plus a separately graded structured answer tag."""
+    rationale_profile = checked_rationale_profile(row.get('rationale_profile'))
+    forward, parry = rationale_features(rationale_profile)
+    if rationale_profile is not None and not rationale_applies(row, rationale_profile):
+        if forward and not parry:
+            raise ValueError('Forward rationale requires a future-stage question')
+        raise ValueError('Selected rationale profile does not apply to this question')
     tag = native_tag(row)
     task, query, fen = row['task_type'], row['query'], target_fen(row)
     board = piece_map(fen)
@@ -237,7 +246,31 @@ def paper_answer(row):
                     text += '并将军'
                 details.append(text)
             rationale = '合法着法为：' + '；'.join(details) + '。'
+    if parry and task == 'parries':
+        rationale = parry_rationale(fen, tag)
+    if forward and row['stage'].endswith('_future'):
+        rationale = forward_move_narration(row) + rationale
     return rationale + '\n\n答案：' + tag
+
+
+def with_rationale_profile(row, profile=None):
+    """Opt in after normal question sampling; retain source identity and tag."""
+    checked_rationale_profile(profile)
+    declared = row.get('rationale_profile')
+    if declared is not None and declared != profile:
+        raise ValueError('Question and requested rationale profiles differ')
+    if declared is not None and not rationale_applies(row, profile):
+        raise ValueError('Selected rationale profile does not apply to this question')
+    if profile is None or not rationale_applies(row, profile):
+        return row
+    source_id = row.get('rationale_source_question_id', row.get('id'))
+    if not isinstance(source_id, str) or not source_id:
+        raise ValueError('A rationale profile requires the native source question identity')
+    result = dict(row, rationale_profile=profile, rationale_source_question_id=source_id)
+    identity = dict(source_question_id=source_id, rationale_profile=profile)
+    result['id'] = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:24]
+    result['answer'] = paper_answer(result)
+    return result
 
 
 def paper_question(row, variant=0):

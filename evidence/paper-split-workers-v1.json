@@ -1,0 +1,123 @@
+{
+  "status": "complete_source_bound_parallel_paper_split_verification",
+  "observed_at_utc": "2026-10-31T14:53:59.133952+00:00",
+  "benchmark": {
+    "rows": 20000,
+    "unique_split_contexts": 19935,
+    "data_sha256": "9d6e2d2307ef80932f646bff78d1fd5442e51f2d9004ea4c0ef7ccec94b90736",
+    "data_bytes": 160991862,
+    "declared_game_ids": 12699,
+    "certified_independent_human_games": false,
+    "source_modules_verified": 111,
+    "source_revision": "e8744cf80386d66928174aff823ce0b65a3735fe",
+    "unchanged_native_primitive_sha256": "318d192ea69c57de5cc803537728246a56cc3922498869189141b41d8ddece7f",
+    "passes": [
+      {
+        "workers": 1,
+        "rows": 20000,
+        "unique_contexts": 19935,
+        "load_seconds": 2.1103089712560177,
+        "verification_seconds": 297.8575006015599,
+        "result": {
+          "games": {
+            "train": 12699
+          },
+          "roots": {
+            "train": 19892
+          },
+          "game_overlap": 0,
+          "root_and_future_overlap": 0
+        }
+      },
+      {
+        "workers": 8,
+        "rows": 20000,
+        "unique_contexts": 19935,
+        "load_seconds": 1.9985114075243473,
+        "verification_seconds": 38.910153151489794,
+        "result": {
+          "games": {
+            "train": 12699
+          },
+          "roots": {
+            "train": 19892
+          },
+          "game_overlap": 0,
+          "root_and_future_overlap": 0
+        }
+      },
+      {
+        "workers": 1,
+        "rows": 20000,
+        "unique_contexts": 19935,
+        "load_seconds": 1.980089365504682,
+        "verification_seconds": 297.5232494901866,
+        "result": {
+          "games": {
+            "train": 12699
+          },
+          "roots": {
+            "train": 19892
+          },
+          "game_overlap": 0,
+          "root_and_future_overlap": 0
+        }
+      },
+      {
+        "workers": 8,
+        "rows": 20000,
+        "unique_contexts": 19935,
+        "load_seconds": 1.9642603946849704,
+        "verification_seconds": 40.63856181502342,
+        "result": {
+          "games": {
+            "train": 12699
+          },
+          "roots": {
+            "train": 19892
+          },
+          "game_overlap": 0,
+          "root_and_future_overlap": 0
+        }
+      }
+    ],
+    "median_verification_seconds": {
+      "1": 297.6903750458732,
+      "8": 39.77435748325661
+    },
+    "measured_speedup": 7.484479797597958,
+    "all_returned_proofs_equal": true,
+    "file_loading_excluded_from_verification_timing": true,
+    "proof_sha256": "4f144de156267dcab85a607f61d1bdbd2fa1b6f6b87e0af287c3516214cca221",
+    "script_sha256": "09d660ce20d273096d448a403bfed857312ddfe8e65eeae72095c44355912454",
+    "full_corpus_speedup_measured": false,
+    "GPU_training_speedup_measured": false
+  },
+  "native_integration": {
+    "controlled_fixture_questions": 300,
+    "serial_and_parallel_corpus_bytes_equal_all_three_splits": true,
+    "real_native_single_and_multi_process_verifiers_executed": true,
+    "saved_and_overridden_counts_observed_at_real_callsite": true,
+    "default_and_legacy_manifest_compatibility_verified": true,
+    "invalid_explicit_workers_rejected_before_input_IO": true,
+    "invalid_saved_workers_rejected_even_with_override": true,
+    "CLI_generation_and_readback_executed": true
+  },
+  "full_cpu_suite": {
+    "passed": 1810,
+    "bound_files": 293,
+    "test_proof_sha256": "a16ed275fa8976eeb2b8ea92061ab4e3b5c4d629eae0f9d5a9bcb8c536af7c78",
+    "source_plan_sha256": "30dfe215500becea2e63f2dfd848f651389ad945a3874ed5f235191a0aefc710",
+    "log_sha256": "9e2836f3566b9f6d68414e78d6b5124fe6e165198d04800244217acde0aa065e",
+    "source_bytes_unchanged_during_tests": true,
+    "OMP_NUM_THREADS": 1,
+    "MKL_NUM_THREADS": 1,
+    "OPENBLAS_NUM_THREADS": 1
+  },
+  "modified_native_entrypoint_sha256": "d3f874a5298fc77fcf55e5cbcf595a5bbfeb43ba36622254bd5ddad528c89810",
+  "original_training_or_corpus_reconfigured": false,
+  "model_or_teacher_training_started": false,
+  "independent_test_used": false,
+  "playing_or_coaching_improvement_proven": false,
+  "full_goal_complete": false
+}

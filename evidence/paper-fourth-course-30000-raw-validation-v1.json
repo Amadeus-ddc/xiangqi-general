@@ -1,0 +1,274 @@
+{
+  "status": "complete_formal30000_and_original7800_text_paired_regrading",
+  "recorded_at_utc": "2026-10-31T02:36:48.674687+00:00",
+  "steps": [
+    26000,
+    28000,
+    30000
+  ],
+  "validation_questions": 2600,
+  "by_checkpoint": {
+    "26000": {
+      "new_correct": 494,
+      "new_examples": 600,
+      "old_correct": 1927,
+      "old_examples": 2000,
+      "parries_correct": 64,
+      "checkpoint_sha256": "69b6f0b67fb1e4a06bbd7f59898657b207b92a5533bc5fe3681c6f5d97897359",
+      "formal_verification_sha256": "99ecdd2cd2141e02675a588dea2f6225fac008203e683b486b8baa5dc755808f"
+    },
+    "28000": {
+      "new_correct": 505,
+      "new_examples": 600,
+      "old_correct": 1892,
+      "old_examples": 2000,
+      "parries_correct": 71,
+      "checkpoint_sha256": "3a1e30846b24aad3d95413c5fba2dc7d39d06e9f9ba2788f9df3e3c152293361",
+      "formal_verification_sha256": "6434112fe3c030067823c27b21bef48e2e120df467175468eb35ccdcb50e250b"
+    },
+    "30000": {
+      "new_correct": 506,
+      "new_examples": 600,
+      "old_correct": 1869,
+      "old_examples": 2000,
+      "parries_correct": 65,
+      "checkpoint_sha256": "cadf3d8fb1555781a91cbdfb49cd837f17665c41bee88c5cf5b95ed95971de2c",
+      "formal_verification_sha256": "d8d31ecad46ad0402acbcd81edebcfefba14708548411c7a905756ddee9d99dd"
+    }
+  },
+  "paired_28000_30000": {
+    "all": {
+      "examples": 2600,
+      "correct_before": 2397,
+      "correct_after": 2375,
+      "fixed": 102,
+      "new_errors": 124
+    },
+    "old": {
+      "examples": 2000,
+      "correct_before": 1892,
+      "correct_after": 1869,
+      "fixed": 68,
+      "new_errors": 91
+    },
+    "dynamic_future": {
+      "examples": 600,
+      "correct_before": 505,
+      "correct_after": 506,
+      "fixed": 34,
+      "new_errors": 33
+    },
+    "dynamic_current/captures": {
+      "examples": 100,
+      "correct_before": 92,
+      "correct_after": 93,
+      "fixed": 5,
+      "new_errors": 4
+    },
+    "dynamic_current/checks": {
+      "examples": 100,
+      "correct_before": 94,
+      "correct_after": 97,
+      "fixed": 5,
+      "new_errors": 2
+    },
+    "dynamic_current/controllers": {
+      "examples": 100,
+      "correct_before": 94,
+      "correct_after": 95,
+      "fixed": 3,
+      "new_errors": 2
+    },
+    "dynamic_current/mate": {
+      "examples": 100,
+      "correct_before": 97,
+      "correct_after": 99,
+      "fixed": 3,
+      "new_errors": 1
+    },
+    "dynamic_current/moves": {
+      "examples": 100,
+      "correct_before": 95,
+      "correct_after": 95,
+      "fixed": 3,
+      "new_errors": 3
+    },
+    "dynamic_current/parries": {
+      "examples": 100,
+      "correct_before": 90,
+      "correct_after": 91,
+      "fixed": 5,
+      "new_errors": 4
+    },
+    "dynamic_future/captures": {
+      "examples": 100,
+      "correct_before": 77,
+      "correct_after": 85,
+      "fixed": 9,
+      "new_errors": 1
+    },
+    "dynamic_future/checks": {
+      "examples": 100,
+      "correct_before": 82,
+      "correct_after": 84,
+      "fixed": 9,
+      "new_errors": 7
+    },
+    "dynamic_future/controllers": {
+      "examples": 100,
+      "correct_before": 94,
+      "correct_after": 95,
+      "fixed": 3,
+      "new_errors": 2
+    },
+    "dynamic_future/mate": {
+      "examples": 100,
+      "correct_before": 90,
+      "correct_after": 86,
+      "fixed": 2,
+      "new_errors": 6
+    },
+    "dynamic_future/moves": {
+      "examples": 100,
+      "correct_before": 91,
+      "correct_after": 91,
+      "fixed": 3,
+      "new_errors": 3
+    },
+    "dynamic_future/parries": {
+      "examples": 100,
+      "correct_before": 71,
+      "correct_after": 65,
+      "fixed": 8,
+      "new_errors": 14
+    },
+    "static_current/counts": {
+      "examples": 100,
+      "correct_before": 100,
+      "correct_after": 100,
+      "fixed": 0,
+      "new_errors": 0
+    },
+    "static_current/diagonal": {
+      "examples": 100,
+      "correct_before": 96,
+      "correct_after": 92,
+      "fixed": 4,
+      "new_errors": 8
+    },
+    "static_current/file": {
+      "examples": 100,
+      "correct_before": 99,
+      "correct_after": 100,
+      "fixed": 1,
+      "new_errors": 0
+    },
+    "static_current/locate": {
+      "examples": 100,
+      "correct_before": 100,
+      "correct_after": 100,
+      "fixed": 0,
+      "new_errors": 0
+    },
+    "static_current/materials": {
+      "examples": 100,
+      "correct_before": 86,
+      "correct_after": 67,
+      "fixed": 4,
+      "new_errors": 23
+    },
+    "static_current/piece": {
+      "examples": 100,
+      "correct_before": 100,
+      "correct_after": 100,
+      "fixed": 0,
+      "new_errors": 0
+    },
+    "static_current/rank": {
+      "examples": 100,
+      "correct_before": 92,
+      "correct_after": 94,
+      "fixed": 8,
+      "new_errors": 6
+    },
+    "static_future/counts": {
+      "examples": 100,
+      "correct_before": 96,
+      "correct_after": 97,
+      "fixed": 4,
+      "new_errors": 3
+    },
+    "static_future/diagonal": {
+      "examples": 100,
+      "correct_before": 85,
+      "correct_after": 90,
+      "fixed": 11,
+      "new_errors": 6
+    },
+    "static_future/file": {
+      "examples": 100,
+      "correct_before": 99,
+      "correct_after": 98,
+      "fixed": 1,
+      "new_errors": 2
+    },
+    "static_future/locate": {
+      "examples": 100,
+      "correct_before": 99,
+      "correct_after": 100,
+      "fixed": 1,
+      "new_errors": 0
+    },
+    "static_future/materials": {
+      "examples": 100,
+      "correct_before": 86,
+      "correct_after": 73,
+      "fixed": 2,
+      "new_errors": 15
+    },
+    "static_future/piece": {
+      "examples": 100,
+      "correct_before": 100,
+      "correct_after": 100,
+      "fixed": 0,
+      "new_errors": 0
+    },
+    "static_future/rank": {
+      "examples": 100,
+      "correct_before": 92,
+      "correct_after": 88,
+      "fixed": 8,
+      "new_errors": 12
+    }
+  },
+  "all7800_preserved_answers_freshly_regraded": true,
+  "all_ordered_questions_and_gold_equal": true,
+  "all_answer_formats_valid": true,
+  "raw_token_arrays_available_for_this_formal_audit": false,
+  "original_optimizer_arrays_independently_verified": false,
+  "same_native_grading_implementation_used": true,
+  "paired_audit_sha256": "8d8069cc7d93830156bc866dfcf30d9c6f3e39a7515a76d5b69d6b52826c9cee",
+  "paired_audit_script_sha256": "3b3785e8fd61a43061acaa31d92440103b35ed6c5532cc73cb471ab1d8a12769",
+  "original30000_valid_sample_presentations": 7679718,
+  "original30000_actual_padding_rows": 26,
+  "candidate_comparison_repair": {
+    "full2600_queue": "paper-rationale-full-replay-v4",
+    "broad400_queue": "paper-rationale-game-balanced-replay-v4",
+    "static_future_cpu_reader": "paper-static-future-candidate-replay-reader-v3",
+    "guard_regression_tests": 12,
+    "real_cpu_correct_and_wrong_import_path_checks_passed": true,
+    "comparison_models_started": false,
+    "actual_comparison_scores_available": false,
+    "failed_or_retired_predecessor_artifacts_preserved": true,
+    "original_training_or_qa_signaled_by_repair": false,
+    "cases_model_signatures_and_free_memory_threshold_unchanged": true,
+    "repair_closeout_sha256": "f4d684ee0dd8911b4d667dc1ab6693a50465e97e27c8ad916056eac43dd94930"
+  },
+  "four_courses_completed": 3,
+  "formal_explanation_sft_completed": false,
+  "sufficient_distillation_completed": false,
+  "independent_playing_and_coaching_acceptance_completed": false,
+  "portable_trained_model_delivered": false,
+  "independent_test_used": false,
+  "full_goal_complete": false
+}

@@ -1,0 +1,602 @@
+{
+  "status": "complete_original400_capture_answer_error_partition_and_independent100_engine_gold_readback",
+  "recorded_at_utc": "2026-10-31T11:20:13.706239+00:00",
+  "cases": 100,
+  "distinct_declared_game_ids": 5,
+  "steps": [
+    26000,
+    28000,
+    30000,
+    32000
+  ],
+  "raw_answers_regraded": 400,
+  "same_ordered_questions_and_gold_all_steps": true,
+  "by_checkpoint": {
+    "26000": {
+      "examples": 100,
+      "correct": 75,
+      "classifications": {
+        "correct": 75,
+        "extra_only": 7,
+        "omission_and_extra": 2,
+        "omission_only": 16
+      },
+      "by_horizon": {
+        "1": {
+          "examples": 20,
+          "correct": 18,
+          "classifications": {
+            "correct": 18,
+            "omission_and_extra": 1,
+            "omission_only": 1
+          }
+        },
+        "2": {
+          "examples": 17,
+          "correct": 15,
+          "classifications": {
+            "correct": 15,
+            "extra_only": 2
+          }
+        },
+        "3": {
+          "examples": 15,
+          "correct": 12,
+          "classifications": {
+            "correct": 12,
+            "omission_only": 3
+          }
+        },
+        "4": {
+          "examples": 12,
+          "correct": 4,
+          "classifications": {
+            "correct": 4,
+            "extra_only": 2,
+            "omission_only": 6
+          }
+        },
+        "5": {
+          "examples": 10,
+          "correct": 7,
+          "classifications": {
+            "correct": 7,
+            "extra_only": 2,
+            "omission_only": 1
+          }
+        },
+        "6": {
+          "examples": 5,
+          "correct": 3,
+          "classifications": {
+            "correct": 3,
+            "extra_only": 1,
+            "omission_only": 1
+          }
+        },
+        "7": {
+          "examples": 9,
+          "correct": 6,
+          "classifications": {
+            "correct": 6,
+            "omission_and_extra": 1,
+            "omission_only": 2
+          }
+        },
+        "8": {
+          "examples": 12,
+          "correct": 10,
+          "classifications": {
+            "correct": 10,
+            "omission_only": 2
+          }
+        }
+      },
+      "all_formats_valid": true,
+      "wrong_with_any_duplicate": 0,
+      "wrong_with_literal_body_same_final_counter": 25,
+      "wrong_with_root_capture_set_match": 5,
+      "wrong_with_distinct_earlier_prefix_capture_set_match": 6,
+      "extra_unique_move_classifications": {
+        "enemy_destination_geometry_or_blocking_disagrees": 7,
+        "legal_quiet_move": 2
+      }
+    },
+    "28000": {
+      "examples": 100,
+      "correct": 77,
+      "classifications": {
+        "correct": 77,
+        "extra_only": 7,
+        "omission_and_extra": 1,
+        "omission_only": 15
+      },
+      "by_horizon": {
+        "1": {
+          "examples": 20,
+          "correct": 19,
+          "classifications": {
+            "correct": 19,
+            "omission_only": 1
+          }
+        },
+        "2": {
+          "examples": 17,
+          "correct": 16,
+          "classifications": {
+            "correct": 16,
+            "extra_only": 1
+          }
+        },
+        "3": {
+          "examples": 15,
+          "correct": 10,
+          "classifications": {
+            "correct": 10,
+            "extra_only": 1,
+            "omission_only": 4
+          }
+        },
+        "4": {
+          "examples": 12,
+          "correct": 8,
+          "classifications": {
+            "correct": 8,
+            "omission_only": 4
+          }
+        },
+        "5": {
+          "examples": 10,
+          "correct": 7,
+          "classifications": {
+            "correct": 7,
+            "extra_only": 2,
+            "omission_only": 1
+          }
+        },
+        "6": {
+          "examples": 5,
+          "correct": 2,
+          "classifications": {
+            "correct": 2,
+            "extra_only": 1,
+            "omission_only": 2
+          }
+        },
+        "7": {
+          "examples": 9,
+          "correct": 6,
+          "classifications": {
+            "correct": 6,
+            "extra_only": 1,
+            "omission_and_extra": 1,
+            "omission_only": 1
+          }
+        },
+        "8": {
+          "examples": 12,
+          "correct": 9,
+          "classifications": {
+            "correct": 9,
+            "extra_only": 1,
+            "omission_only": 2
+          }
+        }
+      },
+      "all_formats_valid": true,
+      "wrong_with_any_duplicate": 0,
+      "wrong_with_literal_body_same_final_counter": 23,
+      "wrong_with_root_capture_set_match": 5,
+      "wrong_with_distinct_earlier_prefix_capture_set_match": 5,
+      "extra_unique_move_classifications": {
+        "enemy_destination_geometry_or_blocking_disagrees": 5,
+        "illegal_move_to_empty_destination": 1,
+        "legal_quiet_move": 3
+      }
+    },
+    "30000": {
+      "examples": 100,
+      "correct": 85,
+      "classifications": {
+        "correct": 85,
+        "extra_only": 3,
+        "omission_only": 12
+      },
+      "by_horizon": {
+        "1": {
+          "examples": 20,
+          "correct": 19,
+          "classifications": {
+            "correct": 19,
+            "omission_only": 1
+          }
+        },
+        "2": {
+          "examples": 17,
+          "correct": 16,
+          "classifications": {
+            "correct": 16,
+            "omission_only": 1
+          }
+        },
+        "3": {
+          "examples": 15,
+          "correct": 14,
+          "classifications": {
+            "correct": 14,
+            "omission_only": 1
+          }
+        },
+        "4": {
+          "examples": 12,
+          "correct": 10,
+          "classifications": {
+            "correct": 10,
+            "omission_only": 2
+          }
+        },
+        "5": {
+          "examples": 10,
+          "correct": 8,
+          "classifications": {
+            "correct": 8,
+            "extra_only": 1,
+            "omission_only": 1
+          }
+        },
+        "6": {
+          "examples": 5,
+          "correct": 2,
+          "classifications": {
+            "correct": 2,
+            "extra_only": 1,
+            "omission_only": 2
+          }
+        },
+        "7": {
+          "examples": 9,
+          "correct": 6,
+          "classifications": {
+            "correct": 6,
+            "extra_only": 1,
+            "omission_only": 2
+          }
+        },
+        "8": {
+          "examples": 12,
+          "correct": 10,
+          "classifications": {
+            "correct": 10,
+            "omission_only": 2
+          }
+        }
+      },
+      "all_formats_valid": true,
+      "wrong_with_any_duplicate": 0,
+      "wrong_with_literal_body_same_final_counter": 15,
+      "wrong_with_root_capture_set_match": 3,
+      "wrong_with_distinct_earlier_prefix_capture_set_match": 3,
+      "extra_unique_move_classifications": {
+        "enemy_destination_geometry_or_blocking_disagrees": 1,
+        "legal_quiet_move": 2
+      }
+    },
+    "32000": {
+      "examples": 100,
+      "correct": 76,
+      "classifications": {
+        "correct": 76,
+        "duplicate_only": 1,
+        "extra_only": 4,
+        "omission_and_extra": 2,
+        "omission_only": 17
+      },
+      "by_horizon": {
+        "1": {
+          "examples": 20,
+          "correct": 18,
+          "classifications": {
+            "correct": 18,
+            "omission_only": 2
+          }
+        },
+        "2": {
+          "examples": 17,
+          "correct": 17,
+          "classifications": {
+            "correct": 17
+          }
+        },
+        "3": {
+          "examples": 15,
+          "correct": 13,
+          "classifications": {
+            "correct": 13,
+            "omission_only": 2
+          }
+        },
+        "4": {
+          "examples": 12,
+          "correct": 5,
+          "classifications": {
+            "correct": 5,
+            "extra_only": 1,
+            "omission_and_extra": 1,
+            "omission_only": 5
+          }
+        },
+        "5": {
+          "examples": 10,
+          "correct": 7,
+          "classifications": {
+            "correct": 7,
+            "duplicate_only": 1,
+            "extra_only": 1,
+            "omission_only": 1
+          }
+        },
+        "6": {
+          "examples": 5,
+          "correct": 2,
+          "classifications": {
+            "correct": 2,
+            "omission_and_extra": 1,
+            "omission_only": 2
+          }
+        },
+        "7": {
+          "examples": 9,
+          "correct": 5,
+          "classifications": {
+            "correct": 5,
+            "extra_only": 1,
+            "omission_only": 3
+          }
+        },
+        "8": {
+          "examples": 12,
+          "correct": 9,
+          "classifications": {
+            "correct": 9,
+            "extra_only": 1,
+            "omission_only": 2
+          }
+        }
+      },
+      "all_formats_valid": true,
+      "wrong_with_any_duplicate": 1,
+      "wrong_with_literal_body_same_final_counter": 24,
+      "wrong_with_root_capture_set_match": 5,
+      "wrong_with_distinct_earlier_prefix_capture_set_match": 5,
+      "extra_unique_move_classifications": {
+        "enemy_destination_geometry_or_blocking_disagrees": 3,
+        "illegal_move_to_empty_destination": 1,
+        "legal_quiet_move": 2
+      }
+    }
+  },
+  "paired_30000_to_32000": {
+    "transitions": [
+      {
+        "id": "d4a1c578996b8120aa518e72",
+        "change": "new_error",
+        "before": "correct",
+        "after": "duplicate_only",
+        "horizon": 5
+      },
+      {
+        "id": "f414b6ff4402bbafb4ce7eaf",
+        "change": "fixed",
+        "before": "omission_only",
+        "after": "correct",
+        "horizon": 1
+      },
+      {
+        "id": "7738d1a4b871fef8ef0c1972",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 1
+      },
+      {
+        "id": "0ab504a50d32430625203309",
+        "change": "fixed",
+        "before": "omission_only",
+        "after": "correct",
+        "horizon": 7
+      },
+      {
+        "id": "c5f34a94009ebe0b7af5ea27",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_and_extra",
+        "horizon": 4
+      },
+      {
+        "id": "ffa06e4f79fe8e87b1bb48e6",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 7
+      },
+      {
+        "id": "80d90f09f623566074f572b3",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 1
+      },
+      {
+        "id": "067715c2e58469c2125d78c7",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 3
+      },
+      {
+        "id": "04f1bcd228e315a5f250046b",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 4
+      },
+      {
+        "id": "208e199252145f9571ed48ce",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 4
+      },
+      {
+        "id": "e8c4148dbdb956b48cee106a",
+        "change": "new_error",
+        "before": "correct",
+        "after": "extra_only",
+        "horizon": 4
+      },
+      {
+        "id": "3055e07efed97c3aef5726ce",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 7
+      },
+      {
+        "id": "1782956f5517151e13a05d62",
+        "change": "new_error",
+        "before": "correct",
+        "after": "extra_only",
+        "horizon": 8
+      },
+      {
+        "id": "1817b3026dfa6199870673e9",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 4
+      },
+      {
+        "id": "71971935cc4b3cd850a5e145",
+        "change": "fixed",
+        "before": "omission_only",
+        "after": "correct",
+        "horizon": 2
+      },
+      {
+        "id": "42aec662d505c50ab7e5b517",
+        "change": "new_error",
+        "before": "correct",
+        "after": "omission_only",
+        "horizon": 8
+      },
+      {
+        "id": "4028ae04cc0cd8b9811a0914",
+        "change": "fixed",
+        "before": "omission_only",
+        "after": "correct",
+        "horizon": 8
+      }
+    ],
+    "new_errors": 13,
+    "fixed": 4,
+    "new_error_classifications": {
+      "duplicate_only": 1,
+      "extra_only": 2,
+      "omission_and_extra": 1,
+      "omission_only": 9
+    },
+    "fixed_prior_classifications": {
+      "omission_only": 4
+    }
+  },
+  "analysis": {
+    "path": "runs/paper-future-capture-errors-v1/verification.json",
+    "sha256": "0b54793c95622a4c4d4021d9ec5b4fe23f099c913f48b1efad3c66bcb1c8fc79",
+    "exit_sha256": "05ae944210d0b06c252df260c681ba7c5c5b26b53dde1110d868920bb20b7e72",
+    "native_facts_sha256": "c8ca74e95fd7414d43cf4e5c2c21f5b76fe497da4f9a30e0f371db0b94d0971a",
+    "classified_answers_sha256": "8939d398148a1b60ef98f89837f325db8182e5655d0ad70d0948aa173444165c",
+    "formal_bindings": {
+      "26000": {
+        "formal_sha256": "99ecdd2cd2141e02675a588dea2f6225fac008203e683b486b8baa5dc755808f",
+        "raw_sha256": "59d95e7fd2f29c0a775e08c4b6985c3fee1a504199563628d2c3f18ba7285978",
+        "checkpoint_sha256": "69b6f0b67fb1e4a06bbd7f59898657b207b92a5533bc5fe3681c6f5d97897359"
+      },
+      "28000": {
+        "formal_sha256": "6434112fe3c030067823c27b21bef48e2e120df467175468eb35ccdcb50e250b",
+        "raw_sha256": "d0f23166ba168b0489eae6bc315465fe87ae9ecae9b6f5974cd746a6c196ee1e",
+        "checkpoint_sha256": "3a1e30846b24aad3d95413c5fba2dc7d39d06e9f9ba2788f9df3e3c152293361"
+      },
+      "30000": {
+        "formal_sha256": "d8d31ecad46ad0402acbcd81edebcfefba14708548411c7a905756ddee9d99dd",
+        "raw_sha256": "37f804fcbb1b5f070201f0782a1b16ab86577b0e9910b91ed3adaa4e0f0d64c1",
+        "checkpoint_sha256": "cadf3d8fb1555781a91cbdfb49cd837f17665c41bee88c5cf5b95ed95971de2c"
+      },
+      "32000": {
+        "formal_sha256": "766c6e996382b9a88b550cd5b40ad18c0b16dcb7ef49b5e287bc3ed66dcf44cb",
+        "raw_sha256": "b8535c42e85837c154a660d6066623ec8f5218faddec0f0f9dcdede6989fd20b",
+        "checkpoint_sha256": "06ecfb8d4f122a94ddcd6dc0c525ab6184afe74ddb8b55187f3e55937d7fa36a"
+      }
+    },
+    "validation_sha256": "c84b94cbd7b0c84d1612c9ac92212a13dd1a124bdaeabf5f328c7da5d0e73cbe"
+  },
+  "independent_readback": {
+    "path": "runs/paper-future-capture-errors-readback-v1/verification.json",
+    "sha256": "6c85deb6b381f5d65f288e0e6ce07b877c5bf2671527db7afa051e34c85cc9cc",
+    "exit_sha256": "f1f7aa1fe5ff800662798d7f1431a3ef5ec2520c6c21164a05c430ca33eac8ef",
+    "native_original_raw_grading_reused": true,
+    "all400_error_partitions_recomputed": true,
+    "separate_existing_engine": "Pikafish",
+    "full_history_positions_all_legal_moves_and_capture_answers_checked": 100,
+    "engine_counter_profile_differences": [],
+    "engine_checks_sha256": "8f68cd5e94b6420ee332cee8bf0ab7acd7f93279ea0c71bb2b07ee18f24b1896",
+    "engine_executable_sha256": "58d628e703c268e25a11f1ea1cfd8262c9ddcfcfcc4dec829a813ce649f1a837",
+    "engine_weights_sha256": "6b74ac7bbd299dc26a17803135b616eda9248bef0cbfc7b811bfcf981832ba29"
+  },
+  "new_broad_capture_development_preparation": {
+    "path": "runs/paper-game-balanced-capture-validation-v1",
+    "status": "complete_native_CPU_preparation_and_independent400_engine_artifact_readback",
+    "seed": 20261090,
+    "cases": 400,
+    "distinct_declared_game_ids": 400,
+    "examples_per_declared_game_id": 1,
+    "future_depths": {
+      "1": 50,
+      "2": 50,
+      "3": 50,
+      "4": 50,
+      "5": 50,
+      "6": 50,
+      "7": 50,
+      "8": 50
+    },
+    "source_class": "generic",
+    "launch_request_sha256": "58a9d5699d91cd7d61ae477d7f89d90b0e09e76368fbe549d754267e1192446e",
+    "manifest_sha256": "b243b437f41c1e5755df557bc519b0be2fb890a3b79354fe7c2c00151448b3fb",
+    "readback_verification_sha256": "9ab56071d52c2ee4c662760bc0aa926490ccec959955e3d7fb8b1c2fbcfc2716",
+    "exit_sha256": "739942dd57a360343c10cc5b3a1802e96cd6219f10c16089d9754f3c3439ad23",
+    "validation_rows_sha256": "7054c6f28376f050fb2305e7f00fb5832b1a14da94b5c9172671742ce9920674",
+    "source_selections_sha256": "ff7a7b84bec912215d847accefd1cb9f44b67a6ea11cc11bdcf3e59ac5ffb47b",
+    "engine_checks_sha256": "f4d242a54e8e78a57bf6a6527da7a87e371313715f0b961d6d37e185e29d2a9a",
+    "original_history_and_feature_keys_verified": 400,
+    "independent_engine_positions_all_legal_moves_and_captures_verified": 400,
+    "explained_counter_profile_differences": [],
+    "canonical_root_future_color_positions_with_validation_ownership_checked": 4390,
+    "previous_original_and_broad_parry_game_overlap": 0,
+    "source_catalog_actual_prior_byte_hash_reused_with_unchanged_signature": true,
+    "source_catalog_rehashed_by_this_attempt": false,
+    "native_and_independent_engine_admission_complete": true,
+    "expert_features_prepared": false,
+    "model_comparison_queued_or_scored": false,
+    "distinct_game_ids_not_certified_independent_physical_human_games": true
+  },
+  "original_raw_scores_unchanged": true,
+  "prediction_moves_not_deduplicated_repaired_or_filtered": true,
+  "original_generated_token_arrays_available": false,
+  "new_model_generation_or_training": false,
+  "internal_reasoning_or_training_cause_proven": false,
+  "independent_test_used": false,
+  "original_training_recipe_or_selection_changed": false,
+  "four_courses_complete": 3,
+  "total_courses": 4,
+  "full_goal_complete": false
+}

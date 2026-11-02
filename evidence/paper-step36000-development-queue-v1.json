@@ -1,0 +1,114 @@
+{
+  "status": "complete_three_cohort_CPU_admission_reference_readback_and_actual_waiting_queue",
+  "evidence_snapshot_utc": "2026-11-01T03:02:08.700943+00:00",
+  "queue_readback_sha256": "c98c520b7cbab059c2a713c951779e4d6bbde8ed3d09abeac310870ded3f0fc9",
+  "contract_sha256": "f7d2db6ebe6a0838ca7e28dfd646c0c3954bfb2f295b53aa5650c7f031bee489",
+  "reference_readback_sha256": "321282275e55440a2127bde80f980afc839a9f073a2b6158083356176b4d3f6d",
+  "admission_verification_sha256": "89b4cfd1db79665d07cc1ab6228cd6aa0eb53b743d1389c559fd11b2e80cc6fa",
+  "cohort_sizes": {
+    "parries": 400,
+    "captures": 400,
+    "matched": 450
+  },
+  "planned_new_checkpoint36000_arrays": 1250,
+  "unique_question_ids": 1200,
+  "cross_cohort_shared_question_ids": 50,
+  "preserved_reference_arrays_freshly_decoded": 2950,
+  "reference_summaries": {
+    "parries": {
+      "checkpoint26000": {
+        "correct": 280,
+        "examples": 400,
+        "valid_formats": 400,
+        "eos_observed": 400,
+        "budget_exhausted": 0
+      },
+      "checkpoint32000": {
+        "correct": 290,
+        "examples": 400,
+        "valid_formats": 400,
+        "eos_observed": 400,
+        "budget_exhausted": 0
+      }
+    },
+    "captures": {
+      "checkpoint26000": {
+        "correct": 289,
+        "examples": 400,
+        "valid_formats": 400,
+        "eos_observed": 400,
+        "budget_exhausted": 0
+      },
+      "checkpoint32000": {
+        "correct": 279,
+        "examples": 400,
+        "valid_formats": 399,
+        "eos_observed": 400,
+        "budget_exhausted": 0
+      }
+    },
+    "matched": {
+      "checkpoint26000": {
+        "correct": 305,
+        "examples": 450,
+        "valid_formats": 450,
+        "eos_observed": 450,
+        "budget_exhausted": 0
+      },
+      "checkpoint32000": {
+        "correct": 315,
+        "examples": 450,
+        "valid_formats": 450,
+        "eos_observed": 450,
+        "budget_exhausted": 0
+      },
+      "checkpoint34000": {
+        "correct": 311,
+        "examples": 450,
+        "valid_formats": 450,
+        "eos_observed": 450,
+        "budget_exhausted": 0
+      }
+    }
+  },
+  "source_old_modules": 89,
+  "source_inference_modules": 111,
+  "all1250_contexts_histories_gold_prompts_and_tokens_equal": true,
+  "max_total_tokens": 243,
+  "max_target_tokens": 121,
+  "actual_fresh_checkpoint36000_hash_bytes": 2688028531,
+  "large_payloads_rehashed_by_successor": 0,
+  "actual_queue_identity_verified_twice": true,
+  "minimum_original_QA_step": 38000,
+  "fixed_checkpoint_step": 36000,
+  "model_or_GPU_started_by_queue": false,
+  "new_model_results_available": false,
+  "per_cohort_reference_question_order_and_gold_unchanged": true,
+  "cohorts_not_pooled_as_independent_games": true,
+  "planned_new_generation_is_greedy_unconstrained": true,
+  "planned_max_new_tokens": 512,
+  "missing_admission_actually_rejected_before_device_or_model": true,
+  "invalid_cohort_count_and_hash_actually_rejected": true,
+  "invalid_matched_pairing_hash_actually_rejected": true,
+  "registration_AST_identical_to_completed_GPU_path": true,
+  "owned_device_admission_AST_identical": true,
+  "watchdog_and_lease_exact_completed_bytes": true,
+  "future_mixed_cohort_GPU_execution_not_yet_proven": true,
+  "original_training_recipe_or_optimizer_changed": false,
+  "original_training_ranks_signaled": false,
+  "automatic_checkpoint_replacement": false,
+  "reference_model_outputs_regenerated": false,
+  "independent_test_used": false,
+  "playing_or_coaching_quality_proven": false,
+  "full_goal_complete": false,
+  "runtime_artifacts_sha256": {
+    "contract.json": "f7d2db6ebe6a0838ca7e28dfd646c0c3954bfb2f295b53aa5650c7f031bee489",
+    "launch-plan.json": "b93cbf1284b214d779490da403d25dac0de9afad4239fe77f7ea381c0c1bab1f",
+    "admission-verification.json": "89b4cfd1db79665d07cc1ab6228cd6aa0eb53b743d1389c559fd11b2e80cc6fa",
+    "reference-admission-readback.json": "321282275e55440a2127bde80f980afc839a9f073a2b6158083356176b4d3f6d",
+    "worker-guard-verification.json": "02abcb62dee62eec4aef57598cd878b89ba61280fa9016b7125fd474458d217d",
+    "preparation-exit.json": "442b393cb81a380d5ce8991f85c907119d8054cd757bfcc1271ba59904130f66",
+    "queue-launch.json": "3e6450a32982b7b583a39f1538a1c66030b48c793d3bd263898143ea33933ef4",
+    "owner.json": "013fb92b09dd73e7d248b5a5ac916edf03ec3c6ef0d6335e0b7218d8204c63eb"
+  }
+}

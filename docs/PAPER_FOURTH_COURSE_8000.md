@@ -26,3 +26,5 @@
 公开[机器可读证据](../evidence/paper-fourth-course-8000-raw-validation-v1.json)绑定原始问答、原生证明、材料复核与接续证明的 SHA256。原始回答和标准答案保持原样；本次仅使用验证集，未使用独立测试集。
 
 本次公开统计与哈希，不携带权重、棋谱或原始回答。实际 GPU 使用的 89 份冻结源码与当前开发树 109 份模块分开记录；软件检查不能替代模型验收。[6000 步结果](PAPER_FOURTH_COURSE_6000.md)、[讲解与蒸馏计划](PAPER_POST_CURRICULUM.md)和[最终独立验收](FINAL_INDEPENDENT_EVALUATION.md)继续保留。
+
+后续[8000—18000步六轮同题验证](PAPER_FOURTH_COURSE_18000.md)已完成，新课428→488/600，旧三课1848→1843/2000；中途回放波动和原始错误保留。

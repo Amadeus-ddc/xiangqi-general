@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "status": "complete_cpu_parry_residual_and_token_mass_analysis_broad_model_comparison_pending",
+  "exported_at_utc": "2026-10-30T20:24:13.359050+00:00",
+  "model_generations_repeated": false,
+  "new_student_or_teacher_training": false,
+  "independent_test_used": false,
+  "existing_model_comparison": {
+    "baseline": {
+      "exact_list_correct": 63,
+      "examples": 100,
+      "expected_move_occurrences": 331,
+      "proposed_move_occurrences": 329,
+      "correct_move_occurrences": 296,
+      "invalid_format": 0,
+      "move_precision": 0.8996960486322189,
+      "move_recall": 0.8942598187311178,
+      "categories": {
+        "omission_only": 18,
+        "correct": 63,
+        "extra_only": 11,
+        "omission_and_extra": 8
+      },
+      "playing_strength_or_single_best_move_quality_measured": false
+    },
+    "old-high": {
+      "exact_list_correct": 66,
+      "examples": 100,
+      "expected_move_occurrences": 331,
+      "proposed_move_occurrences": 337,
+      "correct_move_occurrences": 312,
+      "invalid_format": 0,
+      "move_precision": 0.9258160237388724,
+      "move_recall": 0.9425981873111783,
+      "categories": {
+        "omission_only": 12,
+        "correct": 66,
+        "extra_only": 17,
+        "omission_and_extra": 5
+      },
+      "playing_strength_or_single_best_move_quality_measured": false
+    },
+    "old-low": {
+      "exact_list_correct": 67,
+      "examples": 100,
+      "expected_move_occurrences": 331,
+      "proposed_move_occurrences": 327,
+      "correct_move_occurrences": 307,
+      "invalid_format": 0,
+      "move_precision": 0.9388379204892966,
+      "move_recall": 0.9274924471299094,
+      "categories": {
+        "omission_only": 13,
+        "correct": 67,
+        "extra_only": 17,
+        "omission_and_extra": 3
+      },
+      "playing_strength_or_single_best_move_quality_measured": false
+    },
+    "new-high": {
+      "exact_list_correct": 42,
+      "examples": 100,
+      "expected_move_occurrences": 331,
+      "proposed_move_occurrences": 313,
+      "correct_move_occurrences": 267,
+      "invalid_format": 0,
+      "move_precision": 0.853035143769968,
+      "move_recall": 0.8066465256797583,
+      "categories": {
+        "omission_only": 24,
+        "omission_and_extra": 11,
+        "extra_only": 23,
+        "correct": 42
+      },
+      "playing_strength_or_single_best_move_quality_measured": false
+    },
+    "new-low": {
+      "exact_list_correct": 36,
+      "examples": 100,
+      "expected_move_occurrences": 331,
+      "proposed_move_occurrences": 339,
+      "correct_move_occurrences": 246,
+      "invalid_format": 3,
+      "move_precision": 0.7256637168141593,
+      "move_recall": 0.743202416918429,
+      "categories": {
+        "omission_only": 17,
+        "omission_and_extra": 21,
+        "extra_only": 23,
+        "correct": 36,
+        "invalid_format": 3
+      },
+      "playing_strength_or_single_best_move_quality_measured": false
+    }
+  },
+  "diagnostic_questions": 100,
+  "distinct_declared_game_ids": 4,
+  "expected_move_occurrences": 331,
+  "new_high_error_analysis": {
+    "correct": 42,
+    "categories": {
+      "omission_only": 24,
+      "omission_and_extra": 11,
+      "extra_only": 23,
+      "correct": 42
+    },
+    "erroneous_move_occurrences_missing": 64,
+    "erroneous_move_occurrences_extra": 46,
+    "wrong_answers_matching_an_earlier_checked_position": 0,
+    "literal_header_parseable": 100,
+    "wrong_with_literal_king_checker_and_future_sequence_correct": 51,
+    "wrong_with_literal_body_correct_but_final_tag_wrong": 0,
+    "wrong_with_literal_body_and_final_tag_same": 54,
+    "omitted_mechanisms": {
+      "king_move": 11,
+      "add_cannon_screen": 31,
+      "remove_cannon_screen": 20,
+      "block_rook_line": 2
+    }
+  },
+  "new_high_paired_parent_fixed": 7,
+  "new_high_paired_parent_new_errors": 28,
+  "literal_factual_check_scope": "Given future coordinate sequence plus checked general and checker name-square text fields; not complete prose semantics or internal board-state validation",
+  "paired_train_target_mass": {
+    "rows": 20000,
+    "fresh_bytes_hashed": 326866406,
+    "all_target_tokens": {
+      "old": 716201,
+      "new": 1549627
+    },
+    "all_final_value_and_eos_tokens": {
+      "old": 175374,
+      "new": 175374
+    },
+    "all_final_value_and_eos_token_sequences_equal": true,
+    "shares": {
+      "old": {
+        "all_examples_final_value_and_eos_share": 0.24486701358976043,
+        "parries_final_value_and_eos_share": 0.2597022860180755
+      },
+      "new": {
+        "all_examples_final_value_and_eos_share": 0.11317175036315191,
+        "parries_final_value_and_eos_share": 0.08635187482284959
+      }
+    },
+    "parry_train_examples": 3148,
+    "fourth_course_train_examples": 16000,
+    "parry_future_depths": {
+      "horizon:7": 394,
+      "horizon:5": 385,
+      "horizon:4": 413,
+      "horizon:6": 387,
+      "horizon:2": 379,
+      "horizon:1": 391,
+      "horizon:3": 399,
+      "horizon:8": 400
+    },
+    "native_config_loss_normalization": "token",
+    "actual_gradient_share_or_causal_effect_measured": false
+  },
+  "broader_probe": {
+    "existing_source_and_two_engine_readback_complete": true,
+    "examples": 400,
+    "distinct_declared_game_ids": 400,
+    "examples_per_id": 1,
+    "future_depths": {
+      "1": 50,
+      "2": 50,
+      "3": 50,
+      "4": 50,
+      "5": 50,
+      "6": 50,
+      "7": 50,
+      "8": 50
+    },
+    "original66_validation_game_id_overlap": 0,
+    "cohort_sha256": "74a4635b582291bbd227ddd163d1f612b566b521f31c4533e4691382086e79a7",
+    "independent_source_readback_sha256": "9513411360afb39c625b3d1cea33e45d7e64fdef97846b6e1cc7102cb7072fe7",
+    "historical_parent24000_correct": 254,
+    "historical_parent24000_examples": 400,
+    "matched_parent_control_and_candidate_comparison_complete": false,
+    "model_comparison_changes_formal_training_automatically": false
+  },
+  "reproducible_captured_output_failure": {
+    "expected_red_exit_code": 1,
+    "minimal_case_count": 1,
+    "full_case_count": 100,
+    "regression_fixed": false,
+    "seconds": [
+      3.475116635672748,
+      2.7265203204005957
+    ]
+  },
+  "proofs": {
+    "plan.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/plan.json",
+      "sha256": "7185b9af66d6abd58435ec2d93bccdce06de564ca8737c91db4b3575e04c1e2c"
+    },
+    "verification.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/verification.json",
+      "sha256": "3d05fc76dbfeaf9d0f0b56dcd0e91978fc024127397ef24aa85395320cf9047f"
+    },
+    "readback-verification.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/readback-verification.json",
+      "sha256": "565d0cb6c8aa1c6b800ef8962d1ff3d7e2c0b568083b599261f57d52bd4ddfaf"
+    },
+    "taxonomy-summary.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/taxonomy-summary.json",
+      "sha256": "c73de0f5a5fdb13b42266a7c6a1828340326360de802054d20208bbd41be4d63"
+    },
+    "paired-target-token-mass.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/paired-target-token-mass.json",
+      "sha256": "a807c1213e32d4f28b199e70b5f76b8beb969e8bf62e35ce508205a0ea150d75"
+    },
+    "red-loop-verification.json": {
+      "artifact": "runs/paper-parry-residual-study-v1/red-loop-verification.json",
+      "sha256": "caf5e352745f8786e5bd325ed9d7532afddb860b0a9b6a457103fb31f5356602"
+    }
+  },
+  "source_bound_software_tests": {
+    "passed": 1799,
+    "all292_code_tests_config_build_files_unchanged": true,
+    "proof_sha256": "6a6963823900e63ebd95cf71cfaf67342a3bae395eae9ae049c429abb24ceddf",
+    "suite_repeated_for_doc_only_update": false
+  },
+  "limitations": [
+    "Four declared game IDs do not give100 independent-game observations.",
+    "Different declared game IDs do not authenticate independent physical human games.",
+    "Literal text-field agreement does not prove internal board updates or semantic explanations.",
+    "Token-count share is not a measured gradient share or a causal training diagnosis.",
+    "The400-example historical parent score and the100-example short-study scores are different cohorts.",
+    "Precision and recall over legal-move lists are not playing strength or best-move quality."
+  ],
+  "four_courses_completed": 3,
+  "full_explanation_sft_complete": false,
+  "sufficient_formal_distillation_complete": false,
+  "independent_playing_and_coaching_acceptance_complete": false,
+  "portable_trained_model_delivered": false,
+  "full_goal_complete": false
+}

@@ -1,5 +1,7 @@
 # 原论文训练复刻对照
 
+2026-10-30补充：作者未来题的外层封装还在答案前加入逐着过程叙述，应将叶子模板明确将军方及解将分类。现役中文监督此前简化了这两项内容。新增[逐着叙述选项](PAPER_FORWARD_RATIONALE.md)和可独立或组合使用的[应将机制说明](PAPER_PARRY_RATIONALE.md)，供新数据和同条件对照使用。后者已核对600道开发题、1744个合法响应，适配炮架、马腿及同着多机制。尚未应用于现役模型，模型收益仍待验证。
+
 这份文档保留2026-10-10对论文与当时本地旧路线的差异审计，供追溯修正依据。后文的本地规模、桥接、抽样、验证与排队状态均属于该日期的历史快照；其中的旧容量控制也不能作为现役全宽SFT的启动证明。现役四课的[全宽桥接](PAPER_DENSE_BRIDGE.md)、[有限遍历与配方](PAPER_FOUNDATION_EXPERIMENT.md)及[筛选后讲解接续](QUALIFIED_SFT_ROUTE.md)已另行实施，最新执行状态见[STATUS.md](../STATUS.md)。原论文事实和引用保持原审计范围。
 
 核对日期：2026-10-10。目标论文是 [Language Models that Play Chess and Explain Their Moves，v1](https://arxiv.org/html/2610.03695v1)，作者代码固定于 [c372da2](https://github.com/queen-project/queen/tree/c372da22ca75e95c3c79bee8a83c220fc54d0dcb)。已从作者仓库重新读取并逐字节核对 32 份配置和源码；身份与结论见 [审计证据](../evidence/paper-training-audit-v1.json)。

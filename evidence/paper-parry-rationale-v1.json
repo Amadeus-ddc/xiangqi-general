@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "kind": "optional_native_parry_rationale",
+  "status": "cpu_software_and_real_input_validation_complete_model_gain_unmeasured",
+  "implementation_base_commit": "78fc5266f32bcf32a4bd75e24210d87767657b07",
+  "profiles": [
+    "paper_parry_reasons_v1",
+    "paper_forward_parry_v1"
+  ],
+  "author_revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+  "implementation_sha256": {
+    "src/xqgeneral/rules.py": "9381eb6560758511d77859d7bdb42a64e689617526bbc1b5634f3ca332e178c3",
+    "src/xqgeneral/parry_rationale.py": "7103c205370637adcd1cc42d90546df3fe40a065c8a246f998690b91436532b3",
+    "src/xqgeneral/forward_rationale.py": "7bc5c17a925d59e7046880ccea4c6dfdb8928acaacf04bf07124c62147ca6907",
+    "src/xqgeneral/course_tasks.py": "c9aaf819dfcbaedc67046a5647f632cfd97cbdb11edc5f050574027d45560de0",
+    "src/xqgeneral/paper_curriculum.py": "0a37e9d4fa37652a59ac75d68fe7bdfffaec1fe46136c6fc4f6bab109e34b289"
+  },
+  "default_legacy_data_contract_preserved": true,
+  "previous_forward_only_profile_preserved": true,
+  "explicit_profile_bound_in_producer_and_complete_source_readback": true,
+  "canonical_tags_questions_and_original_expert_histories_preserved": true,
+  "distinct_profile_identity_retains_native_source_question_id": true,
+  "supported_mechanisms": [
+    "capture_checker",
+    "king_move",
+    "block_rook_line",
+    "remove_cannon_screen",
+    "add_cannon_screen",
+    "block_horse_leg"
+  ],
+  "simultaneous_checker_mechanisms_retained": true,
+  "native_standing_check_and_legal_move_semantics_unchanged": true,
+  "focused_related_tests_passed": 105,
+  "real_development_question_samples": 600,
+  "independently_verified_legal_responses": 1744,
+  "cohorts": {
+    "train": {
+      "questions": 100,
+      "source_game_ids": 100,
+      "max_original_answer_tokens": 108,
+      "profiles": {
+        "paper_parry_reasons_v1": {
+          "max_answer_tokens": 132,
+          "max_prompt_plus_answer_tokens": 252,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "a106df147fb8d823a8f61c1a2d1214d4c3a187dd0e19a5c5501323d4896d03a4"
+        },
+        "paper_forward_parry_v1": {
+          "max_answer_tokens": 199,
+          "max_prompt_plus_answer_tokens": 319,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "247fdeb8390761e38213a5e7f66a4c0d9561cb30ad8f97136f5938603ecf3a10"
+        }
+      }
+    },
+    "validation": {
+      "questions": 100,
+      "source_game_ids": 4,
+      "max_original_answer_tokens": 88,
+      "profiles": {
+        "paper_parry_reasons_v1": {
+          "max_answer_tokens": 111,
+          "max_prompt_plus_answer_tokens": 235,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "5936c3be21f4797194d4477569bf6910cae0d9666a2fdbb3b0c9ec7185d4ba03"
+        },
+        "paper_forward_parry_v1": {
+          "max_answer_tokens": 186,
+          "max_prompt_plus_answer_tokens": 318,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "fd86b995812de3057f1e2c6c67993a8bd36b89998693f98816691eef200e164e"
+        }
+      }
+    },
+    "validation-broad": {
+      "questions": 400,
+      "source_game_ids": 400,
+      "max_original_answer_tokens": 121,
+      "profiles": {
+        "paper_parry_reasons_v1": {
+          "max_answer_tokens": 155,
+          "max_prompt_plus_answer_tokens": 277,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "914b5425f17014d03068d72fc1a9067f580d025d7644cf5f1b090f63b51e338e"
+        },
+        "paper_forward_parry_v1": {
+          "max_answer_tokens": 230,
+          "max_prompt_plus_answer_tokens": 359,
+          "answers_over_384": 0,
+          "examples_over_2048": 0,
+          "output_sha256": "b1bba5a37bd58cd2dd42180d9c518bee9c276fcb9eadb88fc06d8b1248c94b10"
+        }
+      }
+    }
+  },
+  "checker_mechanisms": {
+    "king_move": 516,
+    "remove_cannon_screen": 442,
+    "capture_checker": 113,
+    "add_cannon_screen": 438,
+    "block_rook_line": 266,
+    "block_horse_leg": 28
+  },
+  "reference_scope": "Presented board plus supplied future and each legal reply; not upstream game adjudication",
+  "reference_raw_output_reparsed_by_separate_reader": true,
+  "reference_fen_comparisons": 2344,
+  "reference_counter_differences": 0,
+  "counter_used_in_supervision": false,
+  "probe_sha256": "975da6743a1b1a684ff088ab272b217a0036794747c8a69b63c4560649ef5094",
+  "readback_sha256": "7e88ed5388382a983f32c0c627194d718fcb87d5deab5880e371839b27380e5d",
+  "raw_reference_sha256": "9bb24286576bad86cd2b802c0f8843f1cbd9a6780786e2abac5abfcaa4f93e20",
+  "reference_engine_used_on_cpu": true,
+  "student_weights_or_gpu_loaded": false,
+  "actual_curriculum_data_weights_recipe_or_queue_changed": false,
+  "student_training_or_accuracy_gain_measured": false,
+  "independent_test_used": false,
+  "game_ids_are_not_proof_of_independent_physical_games": true,
+  "raw_games_answers_weights_and_runtime_logs_redistributed": false,
+  "full_goal_complete": false
+}

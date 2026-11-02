@@ -1,0 +1,475 @@
+{
+  "status": "complete_three_candidate_common2600_and_game_balanced400_comparisons_and_static_future_subgroups",
+  "recorded_at_utc": "2026-10-31T10:09:56.101070+00:00",
+  "proof_bindings": {
+    "full": {
+      "run": "paper-rationale-full-replay-v4",
+      "verification_sha256": "c687e60a2f981bda9ae2abeb653f3b4ef9b34ab42e6d39ca04f5e262845b2619",
+      "status": "complete_actual_full_validation_replay_and_independent_original_token_readback"
+    },
+    "broad": {
+      "run": "paper-rationale-game-balanced-replay-v4",
+      "verification_sha256": "4029d093b1e814dd68d62eb1b62fe8ed1071f37b3cfe4fb4dfc74e5718803585",
+      "status": "complete_actual_game_balanced_parry_comparison_and_independent_original_token_readback"
+    },
+    "subgroup": {
+      "run": "paper-static-future-candidate-replay-reader-v3",
+      "verification_sha256": "0416b78550d749c4c630fae1c8631e9e0828fcb4047653b2beff33a58e9c2f8a",
+      "status": "complete_cpu_candidate_static_future_subgroup_readback"
+    }
+  },
+  "completion_readback_sha256": "09bd5f7daf5b47933f661d6a7de25097917e9690db10e31d8bc744021efea0d2",
+  "models": {
+    "parent24000": {
+      "checkpoint_sha256": "f6dcf15fa94134fbbfd988d8679997ec72711105293afdd9c253cb28447c25e4"
+    },
+    "previously_selected26000": {
+      "checkpoint_sha256": "69b6f0b67fb1e4a06bbd7f59898657b207b92a5533bc5fe3681c6f5d97897359"
+    },
+    "old-low": {
+      "checkpoint_sha256": "f60e0711472ca2fb7abd523123e18bb791150874ac25fdb676967b5f46c91722"
+    }
+  },
+  "results": {
+    "parent24000": {
+      "full": {
+        "total": {
+          "examples": 2600,
+          "correct": 2347,
+          "accuracy": 0.9026923076923077
+        },
+        "fourth_course": {
+          "examples": 600,
+          "correct": 492,
+          "accuracy": 0.82
+        },
+        "earlier_courses": {
+          "examples": 2000,
+          "correct": 1855,
+          "accuracy": 0.9275
+        }
+      },
+      "broad400": {
+        "examples": 400,
+        "correct": 254,
+        "accuracy": 0.635
+      },
+      "static_future": {
+        "all700": {
+          "examples": 700,
+          "correct": 637,
+          "accuracy": 0.91
+        },
+        "answer_changes322": {
+          "examples": 322,
+          "correct": 283,
+          "accuracy": 0.8788819875776398
+        },
+        "answer_unchanged378": {
+          "examples": 378,
+          "correct": 354,
+          "accuracy": 0.9365079365079365
+        }
+      }
+    },
+    "previously_selected26000": {
+      "full": {
+        "total": {
+          "examples": 2600,
+          "correct": 2422,
+          "accuracy": 0.9315384615384615
+        },
+        "fourth_course": {
+          "examples": 600,
+          "correct": 494,
+          "accuracy": 0.8233333333333334
+        },
+        "earlier_courses": {
+          "examples": 2000,
+          "correct": 1928,
+          "accuracy": 0.964
+        }
+      },
+      "broad400": {
+        "examples": 400,
+        "correct": 280,
+        "accuracy": 0.7
+      },
+      "static_future": {
+        "all700": {
+          "examples": 700,
+          "correct": 684,
+          "accuracy": 0.9771428571428571
+        },
+        "answer_changes322": {
+          "examples": 322,
+          "correct": 313,
+          "accuracy": 0.9720496894409938
+        },
+        "answer_unchanged378": {
+          "examples": 378,
+          "correct": 371,
+          "accuracy": 0.9814814814814815
+        }
+      }
+    },
+    "old-low": {
+      "full": {
+        "total": {
+          "examples": 2600,
+          "correct": 2379,
+          "accuracy": 0.915
+        },
+        "fourth_course": {
+          "examples": 600,
+          "correct": 504,
+          "accuracy": 0.84
+        },
+        "earlier_courses": {
+          "examples": 2000,
+          "correct": 1875,
+          "accuracy": 0.9375
+        }
+      },
+      "broad400": {
+        "examples": 400,
+        "correct": 279,
+        "accuracy": 0.6975
+      },
+      "static_future": {
+        "all700": {
+          "examples": 700,
+          "correct": 641,
+          "accuracy": 0.9157142857142857
+        },
+        "answer_changes322": {
+          "examples": 322,
+          "correct": 287,
+          "accuracy": 0.8913043478260869
+        },
+        "answer_unchanged378": {
+          "examples": 378,
+          "correct": 354,
+          "accuracy": 0.9365079365079365
+        }
+      }
+    }
+  },
+  "full2600_paired_comparisons": {
+    "parent24000 -> old-low": {
+      "fourth_course": {
+        "examples": 600,
+        "left_correct": 492,
+        "right_correct": 504,
+        "fixed": 23,
+        "new_errors": 11
+      },
+      "old_replay": {
+        "examples": 2000,
+        "left_correct": 1855,
+        "right_correct": 1875,
+        "fixed": 53,
+        "new_errors": 33
+      },
+      "all": {
+        "examples": 2600,
+        "left_correct": 2347,
+        "right_correct": 2379,
+        "fixed": 76,
+        "new_errors": 44
+      }
+    },
+    "previously_selected26000 -> old-low": {
+      "fourth_course": {
+        "examples": 600,
+        "left_correct": 494,
+        "right_correct": 504,
+        "fixed": 38,
+        "new_errors": 28
+      },
+      "old_replay": {
+        "examples": 2000,
+        "left_correct": 1928,
+        "right_correct": 1875,
+        "fixed": 50,
+        "new_errors": 103
+      },
+      "all": {
+        "examples": 2600,
+        "left_correct": 2422,
+        "right_correct": 2379,
+        "fixed": 88,
+        "new_errors": 131
+      }
+    },
+    "parent24000 -> previously_selected26000": {
+      "fourth_course": {
+        "examples": 600,
+        "left_correct": 492,
+        "right_correct": 494,
+        "fixed": 37,
+        "new_errors": 35
+      },
+      "old_replay": {
+        "examples": 2000,
+        "left_correct": 1855,
+        "right_correct": 1928,
+        "fixed": 118,
+        "new_errors": 45
+      },
+      "all": {
+        "examples": 2600,
+        "left_correct": 2347,
+        "right_correct": 2422,
+        "fixed": 155,
+        "new_errors": 80
+      }
+    }
+  },
+  "broad400_paired_comparisons": {
+    "parent24000 -> old-low": {
+      "all": {
+        "examples": 400,
+        "left_correct": 254,
+        "right_correct": 279,
+        "fixed": 32,
+        "new_errors": 7
+      }
+    },
+    "previously_selected26000 -> old-low": {
+      "all": {
+        "examples": 400,
+        "left_correct": 280,
+        "right_correct": 279,
+        "fixed": 31,
+        "new_errors": 32
+      }
+    },
+    "parent24000 -> previously_selected26000": {
+      "all": {
+        "examples": 400,
+        "left_correct": 254,
+        "right_correct": 280,
+        "fixed": 48,
+        "new_errors": 22
+      }
+    }
+  },
+  "broad400_by_future_depth": {
+    "parent24000": {
+      "1": {
+        "examples": 50,
+        "correct": 39,
+        "accuracy": 0.78
+      },
+      "2": {
+        "examples": 50,
+        "correct": 36,
+        "accuracy": 0.72
+      },
+      "3": {
+        "examples": 50,
+        "correct": 34,
+        "accuracy": 0.68
+      },
+      "4": {
+        "examples": 50,
+        "correct": 27,
+        "accuracy": 0.54
+      },
+      "5": {
+        "examples": 50,
+        "correct": 30,
+        "accuracy": 0.6
+      },
+      "6": {
+        "examples": 50,
+        "correct": 32,
+        "accuracy": 0.64
+      },
+      "7": {
+        "examples": 50,
+        "correct": 30,
+        "accuracy": 0.6
+      },
+      "8": {
+        "examples": 50,
+        "correct": 26,
+        "accuracy": 0.52
+      }
+    },
+    "previously_selected26000": {
+      "1": {
+        "examples": 50,
+        "correct": 44,
+        "accuracy": 0.88
+      },
+      "2": {
+        "examples": 50,
+        "correct": 42,
+        "accuracy": 0.84
+      },
+      "3": {
+        "examples": 50,
+        "correct": 36,
+        "accuracy": 0.72
+      },
+      "4": {
+        "examples": 50,
+        "correct": 31,
+        "accuracy": 0.62
+      },
+      "5": {
+        "examples": 50,
+        "correct": 37,
+        "accuracy": 0.74
+      },
+      "6": {
+        "examples": 50,
+        "correct": 33,
+        "accuracy": 0.66
+      },
+      "7": {
+        "examples": 50,
+        "correct": 26,
+        "accuracy": 0.52
+      },
+      "8": {
+        "examples": 50,
+        "correct": 31,
+        "accuracy": 0.62
+      }
+    },
+    "old-low": {
+      "1": {
+        "examples": 50,
+        "correct": 43,
+        "accuracy": 0.86
+      },
+      "2": {
+        "examples": 50,
+        "correct": 40,
+        "accuracy": 0.8
+      },
+      "3": {
+        "examples": 50,
+        "correct": 36,
+        "accuracy": 0.72
+      },
+      "4": {
+        "examples": 50,
+        "correct": 34,
+        "accuracy": 0.68
+      },
+      "5": {
+        "examples": 50,
+        "correct": 33,
+        "accuracy": 0.66
+      },
+      "6": {
+        "examples": 50,
+        "correct": 33,
+        "accuracy": 0.66
+      },
+      "7": {
+        "examples": 50,
+        "correct": 32,
+        "accuracy": 0.64
+      },
+      "8": {
+        "examples": 50,
+        "correct": 28,
+        "accuracy": 0.56
+      }
+    }
+  },
+  "static_future_paired_same_question_results": {
+    "parent24000 -> old-low": {
+      "all": {
+        "examples": 700,
+        "fixed": 22,
+        "new_errors": 18
+      },
+      "changes": {
+        "examples": 322,
+        "fixed": 13,
+        "new_errors": 9
+      },
+      "unchanged": {
+        "examples": 378,
+        "fixed": 9,
+        "new_errors": 9
+      }
+    },
+    "previously_selected26000 -> old-low": {
+      "all": {
+        "examples": 700,
+        "fixed": 13,
+        "new_errors": 56
+      },
+      "changes": {
+        "examples": 322,
+        "fixed": 7,
+        "new_errors": 33
+      },
+      "unchanged": {
+        "examples": 378,
+        "fixed": 6,
+        "new_errors": 23
+      }
+    },
+    "parent24000 -> previously_selected26000": {
+      "all": {
+        "examples": 700,
+        "fixed": 59,
+        "new_errors": 12
+      },
+      "changes": {
+        "examples": 322,
+        "fixed": 36,
+        "new_errors": 6
+      },
+      "unchanged": {
+        "examples": 378,
+        "fixed": 23,
+        "new_errors": 6
+      }
+    }
+  },
+  "original_generated_token_arrays_independently_decoded": {
+    "full2600": 7800,
+    "broad400": 1200,
+    "total": 9000
+  },
+  "subgroup_fresh_text_regrading_reuses_complete_parent_token_proof": true,
+  "all_raw_answers_freshly_regraded": true,
+  "all_answer_formats_valid": true,
+  "full_same2600_questions_order_and_gold_for_all_models": true,
+  "broad_same400_questions_order_and_gold_for_all_models": true,
+  "broad_distinct_declared_game_ids": 400,
+  "broad_original_history_feature_calls_each": 400,
+  "broad_cached_history_features_each": 1,
+  "broad_native_online_original_history_features_each": 399,
+  "future_expert_features_used": false,
+  "broad_excludes_original66_validation_game_ids_and_controlled_study_train_game_ids": true,
+  "declared_ids_are_not_certified_independent_physical_human_games": true,
+  "greedy_free_generation": true,
+  "generation_batch_size": 4,
+  "max_new_tokens": 512,
+  "oracle_or_token_constraints": false,
+  "grading": "Existing paper_xiangqi_v1 semantic accuracy; prose and playing strength not graded",
+  "learning_rate_causal_scope": "Short study arms share24000 parent/fresh AdamW/fixed158 updates;26000 control has a different training trajectory and is a practical checkpoint reference, not a matched long-run learning-rate causal control",
+  "decision": "Do not adopt old-low over26000:10 more fourth-course correct but53 fewer old-course and43 fewer total; broad279 versus280. Preserve26000 reference and await resumed original32000 validation before next recipe decision.",
+  "both_QA_leases_released_after_all_owned_GPU_workers_terminal": true,
+  "original_QA_restored_after_both_comparisons": true,
+  "original_training_ranks_signaled": false,
+  "original_recipe_or_optimizer_changed": false,
+  "new_foundation_automatically_selected": false,
+  "original32000_formal_QA_result_included": false,
+  "four_courses_completed": 3,
+  "formal_explanation_SFT_complete": false,
+  "sufficient_distillation_complete": false,
+  "independent_playing_or_coaching_acceptance_proven": false,
+  "independent_test_used": false,
+  "full_goal_complete": false
+}

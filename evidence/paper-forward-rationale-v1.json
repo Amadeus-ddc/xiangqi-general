@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "kind": "optional_paper_forward_move_rationale",
+  "status": "cpu_software_and_real_input_validation_complete_model_gain_unmeasured",
+  "implementation_base_commit": "c54bdbcc5935b599504e7e444a5fb8e1a4445638",
+  "profile": "paper_forward_moves_v1",
+  "author_revision": "c372da22ca75e95c3c79bee8a83c220fc54d0dcb",
+  "author_source_sha256": {
+    "vendor/queen/datagen/prose.py": "b09e9e594eb697e3e61ad2d12d879d21164eb841cbaeb39f32341bbb52c7abb3",
+    "vendor/queen/datagen/tasks/__init__.py": "d0142f4cab3d7f41db6aec8dd04e868a7069b4e22093d171d3a2828913c6a0e5",
+    "vendor/queen/datagen/tasks/check_parries.py": "002f960e5afc7e9f51625b6ff9f488974d822acf770a1debbb3c0c37e2c732b5",
+    "vendor/queen/datagen/build_qa_dataset.py": "d76c7e5dc193ae0c685d6aee98ac2f3a0882e80e6ba351486a57932d503b574c"
+  },
+  "implementation_sha256": {
+    "src/xqgeneral/forward_rationale.py": "54d77086e0184eb5c6aeeeab3d90cd64322d5f50a6078fe55f944c0adbba595d",
+    "src/xqgeneral/course_tasks.py": "6c800f92a95ee79f69d40a0bbd87223bdd9df053a6f670cdb2915d5fe0ebdefe",
+    "src/xqgeneral/paper_curriculum.py": "52501e3361c9838f74b97f68837efba39b4e47675f91a6719d1a4e96f906b87d"
+  },
+  "default_legacy_data_contract_preserved": true,
+  "explicit_new_profile_bound_in_producer_and_readback": true,
+  "question_source_id_retained_with_distinct_profile_identity": true,
+  "canonical_tags_questions_and_expert_histories_preserved": true,
+  "native_fact_classes": [
+    "moving_piece",
+    "from_square",
+    "to_square",
+    "captured_piece",
+    "check",
+    "checkmate",
+    "xiangqi_stalemate"
+  ],
+  "real_question_samples": 1600,
+  "supplied_move_facts_independently_checked": 6928,
+  "cohorts": {
+    "train": {
+      "examples": 600,
+      "supplied_moves_verified": 2564,
+      "source_game_ids": 575,
+      "facts": {
+        "captures": 571,
+        "checks": 235,
+        "checkmates": 31,
+        "stalemates": 2
+      },
+      "max_prompt_tokens": 154,
+      "max_original_answer_tokens": 144,
+      "max_forward_answer_tokens": 175,
+      "max_prompt_plus_forward_tokens": 300,
+      "forward_answers_over_original_384_generation_budget": 0,
+      "all_canonical_tags_and_presented_questions_and_history_feature_keys_unchanged": true,
+      "output_sha256": "cf02ab0f60a8be5a5c442a0089d3213bac7c6096dbe08b17e8a01d9dbf089f60"
+    },
+    "validation": {
+      "examples": 600,
+      "supplied_moves_verified": 2564,
+      "source_game_ids": 16,
+      "facts": {
+        "captures": 604,
+        "checks": 301,
+        "checkmates": 30,
+        "stalemates": 5
+      },
+      "max_prompt_tokens": 154,
+      "max_original_answer_tokens": 148,
+      "max_forward_answer_tokens": 187,
+      "max_prompt_plus_forward_tokens": 309,
+      "forward_answers_over_original_384_generation_budget": 0,
+      "all_canonical_tags_and_presented_questions_and_history_feature_keys_unchanged": true,
+      "output_sha256": "86a02f1fd9f53d18a7fbe401aaf4280770fd25c1fd36d3bc589504eaf8aded46"
+    },
+    "validation-broad": {
+      "examples": 400,
+      "supplied_moves_verified": 1800,
+      "source_game_ids": 400,
+      "facts": {
+        "captures": 358,
+        "checks": 568,
+        "checkmates": 12,
+        "stalemates": 0
+      },
+      "max_prompt_tokens": 132,
+      "max_original_answer_tokens": 121,
+      "max_forward_answer_tokens": 196,
+      "max_prompt_plus_forward_tokens": 325,
+      "forward_answers_over_original_384_generation_budget": 0,
+      "all_canonical_tags_and_presented_questions_and_history_feature_keys_unchanged": true,
+      "output_sha256": "67913f887985f146e080f0ab2862427df31ffec52e3ed45b4cc4deb3e0550f26"
+    }
+  },
+  "reference_scope": "Presented source board followed by each supplied future prefix; no upstream game-adjudication claim",
+  "independent_reader_reparsed_raw_reference_and_token_lengths": true,
+  "probe_sha256": "2a5083c21b712b815c3c3200da4dfba8f98b9aac981cbd9b6191e3af5834c168",
+  "readback_sha256": "6a459231711b0e6c93542a7358a2e07a0293524c70c919e3f8aca1a9c7dec84f",
+  "raw_reference_sha256": "c23a5b9ddf537ce8acecac843b29734a42f88b4a3abfaa031864d4113b6a8bac",
+  "reference_engine_used_on_cpu": true,
+  "student_weights_or_gpu_loaded": false,
+  "independent_test_used": false,
+  "actual_curriculum_data_weights_recipe_or_queue_changed": false,
+  "student_training_or_accuracy_gain_measured": false,
+  "king_safety_mechanism_prose_alignment_implemented": false,
+  "source_games_are_not_proven_independent_physical_games": true,
+  "raw_games_answers_weights_and_runtime_logs_redistributed": false,
+  "full_goal_complete": false
+}

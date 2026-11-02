@@ -35,6 +35,52 @@ def test_parallel_native_render_keeps_adaptive_queries_bytes_order_and_readback(
     assert saved['config']['question_batch_size']==1
 
 
+@pytest.mark.parametrize('profile', [
+    'paper_forward_moves_v1', 'paper_parry_reasons_v1', 'paper_forward_parry_v1'])
+def test_profiled_parallel_render_finishes_rationale_in_worker_and_keeps_bytes(tmp_path, monkeypatch, profile):
+    import xqgeneral.paper_curriculum as module
+    roots, proof, _ = source_fixture(tmp_path)
+    serial, parallel = tmp_path / 'serial', tmp_path / 'parallel'
+    selected = options()
+    # Two source roots per split: reserve one checked root for the parry task
+    # instead of allowing the earlier mate task to consume both distinct roots.
+    for stages in selected['task_position_budgets'].values():
+        stages['dynamic_current']['mate'] = stages['dynamic_future']['mate'] = 1
+    settings = dict(reference_data=[roots.parent / 'reference'], rationale_profile=profile, **selected)
+    expected = build([roots], [proof], serial, **settings)
+
+    def parent_render_forbidden(*args, **kwargs):
+        raise AssertionError('Parallel native workers must finish rationale before returning rows')
+
+    # Spawned workers use their native renderer; the producer and independent
+    # reader must not repeat the expensive native facts in the parent process.
+    monkeypatch.setattr(module, 'with_rationale_profile', parent_render_forbidden)
+    actual = build([roots], [proof], parallel, question_workers=2, question_batch_size=2, **settings)
+    assert actual == expected
+    profiled = 0
+    for split in ('train', 'validation', 'test'):
+        assert (serial / f'{split}.jsonl').read_bytes() == (parallel / f'{split}.jsonl').read_bytes()
+        profiled += sum('rationale_profile' in json.loads(line)
+                        for line in (parallel / f'{split}.jsonl').read_text().splitlines())
+    assert profiled > 0
+    checked = readback(parallel, tmp_path / 'readback')
+    assert checked['questions_regenerated_and_compared'] == actual['questions']
+    assert checked['rationale_profile'] == profile
+
+
+def test_renderer_rejects_unknown_rationale_before_consuming_source():
+    from xqgeneral.course_rendering import render_positions
+    from xqgeneral.course_sampling import make_sampler
+
+    def source():
+        raise AssertionError('Invalid profile must be rejected before native source selection')
+        yield
+
+    with pytest.raises(ValueError, match='rationale profile'):
+        list(render_positions(source(), 37, make_sampler(SAMPLING_PROFILE),
+                              workers=2, rationale_profile='unknown'))
+
+
 @pytest.mark.parametrize('field,value',[('question_workers',True),('question_workers',0),
     ('question_workers',2.5),('question_batch_size',False),('question_batch_size',0)])
 def test_invalid_renderer_settings_rejected_before_creating_corpus(tmp_path,field,value):

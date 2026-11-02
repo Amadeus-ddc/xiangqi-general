@@ -8,7 +8,8 @@ from pathlib import Path
 import random
 from tempfile import TemporaryDirectory
 
-from .course_tasks import PAPER_PROFILE, PAPER_TASKS, paper_records, validate_context
+from .course_tasks import PAPER_PROFILE, PAPER_TASKS, paper_records, validate_context, with_rationale_profile
+from .forward_rationale import RATIONALE_PROFILES, checked_rationale_profile
 from .course_sampling import SAMPLING_PROFILE, make_sampler
 from .course_rendering import checked_question_rendering, render_positions
 from .course_position_sampling import (POSITION_PROFILE, SCARCE_FIRST_PROFILE, PositionCatalog, catalog_inputs,
@@ -21,6 +22,12 @@ from .symmetry import mirror_fen, mirrored_qa
 
 DATA_KIND = 'paper_xiangqi_four_course_questions'
 SPLITS = ('train', 'validation', 'test')
+
+
+def _checked_split_workers(workers):
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Split verification workers must be a positive integer')
+    return workers
 
 
 def checked_sources(roots, proofs):
@@ -105,7 +112,7 @@ def question_groups(roots, seed, color_mirror=True, prior_games=None, prior_posi
 
 def position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
                              budgets, report, scratch, workers, task_order_profile=None, batch_size=1,
-                             question_workers=1, question_batch_size=1, catalog=None):
+                             question_workers=1, question_batch_size=1, catalog=None, worker_rationale_profile=None):
     """Select one task and one locked horizon, then render only those questions."""
     checked_question_rendering(question_workers, question_batch_size, POSITION_PROFILE, color_mirror)
     reused = catalog is not None
@@ -119,8 +126,10 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
                     catalog.add(root, targets)
                 catalog.finish()
             if question_workers != 1:
+                rendering = ({'rationale_profile': worker_rationale_profile}
+                             if worker_rationale_profile is not None else {})
                 yield from render_positions(catalog.selections(budgets, seed, report, task_order_profile),
-                                            seed, sampler, question_workers, question_batch_size)
+                                            seed, sampler, question_workers, question_batch_size, **rendering)
                 return
             for root, stage, task in catalog.selections(budgets, seed, report, task_order_profile):
                 rng = random.Random(int(hashlib.sha256(f'{seed}/{stage}/{task}/{root["feature_key"]}'.encode()).hexdigest(), 16))
@@ -136,8 +145,11 @@ def position_question_groups(roots, seed, color_mirror, prior_games, prior_posit
 def build(roots, source_manifests, output, seed=20261071, color_mirror=True, public_evidence=None,
           reference_data=(), sampling_profile=None, position_sampling_profile=None,
           task_position_budgets=None, position_workers=1, task_order_profile=None, position_batch_size=1,
-          question_workers=1, question_batch_size=1, catalog_proof=None):
+          question_workers=1, question_batch_size=1, catalog_proof=None, rationale_profile=None,
+          split_workers=1):
+    _checked_split_workers(split_workers)
     output = Path(output)
+    checked_rationale_profile(rationale_profile)
     if output.exists() or type(color_mirror) is not bool:
         raise ValueError('Preserve previous corpora; use a fresh output and explicit mirror setting')
     checked_question_rendering(question_workers, question_batch_size, position_sampling_profile, color_mirror)
@@ -174,15 +186,18 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     counts, task_counts, root_counts, horizons = Counter(), Counter(), Counter(), Counter()
     ids, games = set(), set()
     position_report = {}
+    worker_rationale_profile = rationale_profile if budgets is not None and question_workers > 1 else None
     groups = (position_question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler,
                                       budgets, position_report, output, position_workers, task_order_profile,
-                                      position_batch_size, question_workers, question_batch_size, catalog) if budgets is not None else
+                                      position_batch_size, question_workers, question_batch_size, catalog,
+                                      worker_rationale_profile) if budgets is not None else
               question_groups(roots, seed, color_mirror, prior_games, prior_positions, sampler))
     try:
         for root, records in groups:
             root_counts[root['split']] += 1
             games.add(root['game_id'])
-            for row in records:
+            for original in records:
+                row = original if worker_rationale_profile is not None else with_rationale_profile(original, rationale_profile)
                 if row['id'] in ids:
                     raise ValueError('Paper curriculum produced a duplicate question identity')
                 ids.add(row['id'])
@@ -203,7 +218,8 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
         raise ValueError('Paper curriculum requires nonempty preassigned train, validation and test sources')
     if any(digest(path) != source_hashes[str(path)] for path in inputs):
         raise ValueError('A root pool or completed producer manifest changed during generation')
-    split_proof = verify_splits(row for path in paths.values() for row in iter_jsonl(path))
+    split_proof = verify_splits((row for path in paths.values() for row in iter_jsonl(path)),
+                                workers=split_workers)
     coverage = {split: all(task_counts[f'{split}/{stage}/{task}'] > 0
                            for stage, tasks in PAPER_TASKS.items() for task in tasks) for split in SPLITS}
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
@@ -223,6 +239,10 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     config = {'roots': list(map(str, roots)), 'source_manifests': list(map(str, source_manifests)),
               'output': str(output), 'seed': seed, 'color_mirror': color_mirror, 'task_profile': PAPER_PROFILE,
               'reference_data': list(map(str, reference_data))}
+    if split_workers != 1:
+        config['split_workers'] = split_workers
+    if rationale_profile is not None:
+        config['rationale_profile'] = result['rationale_profile'] = rationale_profile
     if catalog_proof is not None:
         config['catalog_proof'] = str(catalog_proof)
         result['verified_native_source_catalog_reused'] = True
@@ -249,8 +269,10 @@ def build(roots, source_manifests, output, seed=20261071, color_mirror=True, pub
     return result
 
 
-def readback(data, output):
+def readback(data, output, *, split_workers=None):
     """Re-read source bytes, regenerate every native label and check exact output order."""
+    if split_workers is not None:
+        _checked_split_workers(split_workers)
     data, output = Path(data), Path(output)
     if output.exists():
         raise ValueError('Use a fresh complete-source readback output')
@@ -260,10 +282,15 @@ def readback(data, output):
             proof['config']['task_profile'] != PAPER_PROFILE or
             Path(proof['config']['output']).resolve() != data.resolve()):
         raise ValueError('Readback requires a completed declared paper question corpus')
+    config = proof['config']
+    saved_split_workers = _checked_split_workers(config.get('split_workers', 1))
+    actual_split_workers = saved_split_workers if split_workers is None else split_workers
     for name, item in {**proof['inputs'], **proof['outputs']}.items():
         if digest(name) != item['sha256'] or Path(name).stat().st_size != item['bytes']:
             raise ValueError('Completed paper source or question bytes changed')
-    config = proof['config']
+    rationale_profile = checked_rationale_profile(config.get('rationale_profile'))
+    if proof['verification'].get('rationale_profile') != rationale_profile:
+        raise ValueError('Stored rationale profile differs from its declared producer')
     sampler = make_sampler(config.get('sampling_profile'))
     profile = config.get('position_sampling_profile')
     catalog_proof = config.get('catalog_proof')
@@ -298,13 +325,15 @@ def readback(data, output):
     checked, counts = 0, Counter()
     position_report = {}
     output.mkdir(parents=True)
+    worker_rationale_profile = rationale_profile if profile and question_workers > 1 else None
     groups = (position_question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games,
         prior_positions, sampler, budgets, position_report, output, config['position_workers'], order_profile,
-        batch_size, question_workers, question_batch_size, catalog) if profile else
+        batch_size, question_workers, question_batch_size, catalog, worker_rationale_profile) if profile else
         question_groups(config['roots'], config['seed'], config['color_mirror'], prior_games, prior_positions, sampler))
     try:
         for _, records in groups:
-            for row in records:
+            for original in records:
+                row = original if worker_rationale_profile is not None else with_rationale_profile(original, rationale_profile)
                 if handles[row['split']].readline() != json.dumps(row, ensure_ascii=False) + '\n':
                     raise ValueError('Question bytes differ from their complete native source root')
                 checked += 1
@@ -316,7 +345,8 @@ def readback(data, output):
             handle.close()
         if catalog is not None:
             catalog.close()
-    split_proof = verify_splits(row for path in paths.values() for row in iter_jsonl(path))
+    split_proof = verify_splits((row for path in paths.values() for row in iter_jsonl(path)),
+                                workers=actual_split_workers)
     if counts != proof['verification']['counts'] or split_proof != proof['verification']['split_verification']:
         raise ValueError('Source readback counts or complete future isolation changed')
     adaptive = sampler is not None
@@ -331,6 +361,8 @@ def readback(data, output):
     result = {'status': 'complete', 'task_profile': PAPER_PROFILE, 'questions_regenerated_and_compared': checked,
               'counts': dict(counts), 'split_verification': split_proof, 'all_source_and_question_bytes_checked': True,
               'student_model_loaded': False, 'student_training_executed': False, 'student_strength_measured': False}
+    if rationale_profile is not None:
+        result['rationale_profile'] = rationale_profile
     if catalog is not None:
         result['verified_native_source_catalog_reused'] = True
         check_catalog_unchanged(catalog)
@@ -339,8 +371,11 @@ def readback(data, output):
     if budgets is not None:
         result.update(position_verification(budgets, position_report, order_profile))
     atomic_json(output / 'verification.json', result)
+    readback_config = {'data': str(data), 'output': str(output)}
+    if split_workers is not None or saved_split_workers != 1:
+        readback_config['split_workers'] = actual_split_workers
     completed = manifest('paper_curriculum_complete_source_readback',
-        {'data': str(data), 'output': str(output)}, [proof_path, *proof['inputs'], *proof['outputs']],
+        readback_config, [proof_path, *proof['inputs'], *proof['outputs']],
         [output / 'verification.json'], result)
     if catalog is not None:
         check_catalog_unchanged(catalog)
@@ -369,18 +404,24 @@ def main():
     parser.add_argument('--question-workers', type=int, default=1,
                         help='Ordered native question workers; requires position sampling without color mirrors')
     parser.add_argument('--question-batch-size', type=int, default=1)
+    parser.add_argument('--split-workers', type=int,
+                        help='CPU split-verification workers; readback defaults to the saved producer count')
     parser.add_argument('--catalog-proof', help='Completed full recorded-source catalog readback for read-only reuse')
+    parser.add_argument('--rationale-profile', choices=tuple(RATIONALE_PROFILES),
+                        help='Opt-in supplied-move narration and/or factual check-evasion reasoning; requires new data')
     args = parser.parse_args()
     if args.readback and any((args.sampling_profile, args.position_sampling_profile, args.task_position_budgets,
                               args.position_workers != 1, args.task_order_profile, args.position_batch_size != 1,
-                              args.question_workers != 1, args.question_batch_size != 1, args.catalog_proof)):
+                              args.question_workers != 1, args.question_batch_size != 1, args.catalog_proof,
+                              args.rationale_profile)):
         parser.error('Readback uses its saved sampling and worker profiles; do not override them')
-    result = (readback(args.readback, args.output) if args.readback else
+    result = (readback(args.readback, args.output, split_workers=args.split_workers) if args.readback else
               build(args.roots, args.source_manifests or [], args.output, args.seed,
                     not args.no_color_mirror, args.public_evidence, args.reference_data, args.sampling_profile,
                     args.position_sampling_profile, json.loads(Path(args.task_position_budgets).read_text())
                     if args.task_position_budgets else None, args.position_workers, args.task_order_profile,
-                    args.position_batch_size, args.question_workers, args.question_batch_size, args.catalog_proof))
+                    args.position_batch_size, args.question_workers, args.question_batch_size, args.catalog_proof,
+                    args.rationale_profile, 1 if args.split_workers is None else args.split_workers))
     print(json.dumps(result), flush=True)
 
 

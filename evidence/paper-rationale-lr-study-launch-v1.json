@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "status": "verified_launch_and_parent_baseline_no_completed_arm_quality_result",
+  "snapshot_at_utc": "2026-10-30T16:46:31.692358+00:00",
+  "exported_at_utc": "2026-10-30T16:49:47.876963+00:00",
+  "source_revision": "d206311a4cb425d9e43a3f4f3a7acde8dac5701e",
+  "study_contract_sha256": "50ed27978c41ffc0c278f240b671d73aadc1ecfda0e74344d5fe5d533dd4ef6c",
+  "parent": {
+    "checkpoint_step": 24000,
+    "checkpoint_sha256": "f6dcf15fa94134fbbfd988d8679997ec72711105293afdd9c253cb28447c25e4"
+  },
+  "study": {
+    "arms": {
+      "old-high": {
+        "profile": "original",
+        "learning_rate": 0.0002
+      },
+      "old-low": {
+        "profile": "original",
+        "learning_rate": 5e-05
+      },
+      "new-high": {
+        "profile": "paper_forward_parry_v1",
+        "learning_rate": 0.0002
+      },
+      "new-low": {
+        "profile": "paper_forward_parry_v1",
+        "learning_rate": 5e-05
+      }
+    },
+    "native_source_modules": 111,
+    "train_rows_per_version": 20000,
+    "train_stage_counts": [
+      1200,
+      1200,
+      1600,
+      16000
+    ],
+    "validation_rows": 680,
+    "training_fit_queries": 120,
+    "epochs": 2,
+    "updates_each": 158,
+    "valid_presentations_each": 40000,
+    "global_batch_size": 256,
+    "micro_batch_size": 4,
+    "world_size": 1,
+    "padding": "rank",
+    "fresh_adamw": true,
+    "common_short_cosine_schedule": true,
+    "warmup_ratio": 0.05,
+    "compare_checkpoint": "fixed_final_latest.pt",
+    "trainable_fp32_parameters": 671806496,
+    "trainable_tensors": 226,
+    "generation": {
+      "max_new_tokens": 512,
+      "batch_size": 4,
+      "greedy": true,
+      "oracle_repair": false,
+      "constrained_decoding": false
+    },
+    "expected_total_raw_outputs": 4000,
+    "complete_arm_quality_comparison": false,
+    "common_source_id_and_feature_order_sha256": "57cfbdca7cf811223b01c2d649f738c331414e2b7b8774c810d8fab3089c0b96",
+    "original_continuation_is_matched_control": false,
+    "old_train_target_tokens_per_epoch": 716201,
+    "new_train_target_tokens_per_epoch": 1549627
+  },
+  "completed_checks": {
+    "all20680_pairs_native_cpu_readback": true,
+    "all_four_indexes_fully_read": true,
+    "all_prompt_tokens_equal": true,
+    "strict2048_no_truncation": true,
+    "source_parity": {
+      "questions_each": 104,
+      "arms": [
+        "old-a",
+        "new",
+        "old-b"
+      ],
+      "raw_tokens_decoded": 312,
+      "raw_answers_and_tokens_and_prompts_equal": true,
+      "first_token_fp32_logits_bitwise_equal": true,
+      "max_absolute_logit_difference": 0.0,
+      "optimizer_equivalence_proven": false
+    },
+    "capacity": {
+      "native_kernel_updates": 6,
+      "formal_study_updates": 0,
+      "all_trainable_tensors_and_adam_arrays_readback": true,
+      "weights_selected": false
+    },
+    "actual_native_training_startups": {
+      "old-high": {
+        "artifact": "runs/paper-rationale-lr-controlled-study-v1/arms/old-high/startup-verification.json",
+        "sha256": "e6d03c1fad1023b2cf6933a2ce3d9135d5f76b3d9d2c5336a712c10fc06b6b97",
+        "observed_at_utc": "2026-10-30T15:58:32.734233+00:00",
+        "fresh_empty_optimizer": true,
+        "parent_parameters_bitwise_equal": true,
+        "frozen_decoder_bf16_excluded": true
+      },
+      "new-high": {
+        "artifact": "runs/paper-rationale-lr-controlled-study-v1/arms/new-high/startup-verification.json",
+        "sha256": "dfd1d58d40ceaf41433e41cb5d7489d8f16f2712a407d6797c80ba50b47bad08",
+        "observed_at_utc": "2026-10-30T15:58:34.246387+00:00",
+        "fresh_empty_optimizer": true,
+        "parent_parameters_bitwise_equal": true,
+        "frozen_decoder_bf16_excluded": true
+      },
+      "old-low": {
+        "artifact": "runs/paper-rationale-lr-controlled-study-v1/arms/old-low/startup-verification.json",
+        "sha256": "d176560d0695c3a89981ca8a80de509bacd310b4d6f7fea8d287332e07ef059e",
+        "observed_at_utc": "2026-10-30T16:09:46.721021+00:00",
+        "fresh_empty_optimizer": true,
+        "parent_parameters_bitwise_equal": true,
+        "frozen_decoder_bf16_excluded": true
+      }
+    }
+  },
+  "baseline": {
+    "decoded_original_token_arrays": 800,
+    "all_raw_answers_freshly_regraded": true,
+    "validation": {
+      "fourth_course": {
+        "correct": 492,
+        "examples": 600
+      },
+      "earlier_courses": {
+        "correct": 73,
+        "examples": 80
+      },
+      "total": {
+        "correct": 565,
+        "examples": 680
+      }
+    },
+    "training_fit": {
+      "correct": 109,
+      "examples": 120,
+      "same_sample_as_historical600_fit": false
+    },
+    "answer_format_valid_rate": 1.0,
+    "eos_observed": 800,
+    "generation_budget_exhausted": 0,
+    "same600_questions_and_order_as_historical_diagnostic": true,
+    "historical384_vs_current512_raw_answers_changed": 0,
+    "newly_fixed_answers": 0,
+    "new_errors": 0,
+    "prose_semantics_graded": false,
+    "formal_historical_task_scores_overwritten": false
+  },
+  "operations": {
+    "original_updates_completed": 28000,
+    "original28000_raw_qa_complete": false,
+    "latest_completed_formal_qa_step": 26000,
+    "temporary_original_qa_child_lease": true,
+    "restore_after_owned_workers_terminal": true,
+    "hourly_step_observation": true,
+    "resource_lease_seconds": 38844,
+    "lease_is_completion_eta": false,
+    "lease_is_whole_goal_cutoff": false
+  },
+  "full_corpus": {
+    "status_at_snapshot": "native_production_full_admission_pending",
+    "profile": "paper_forward_parry_v1",
+    "train_questions": 10804561,
+    "validation_questions": 2600,
+    "test_questions": 26000,
+    "question_workers_old": 8,
+    "question_workers_new": 32,
+    "inherited_actual_hash_file_bindings": 54,
+    "fresh_source_hashes_required": 0,
+    "native_modules_byte_identical": 111,
+    "changed_native_config_fields": [
+      "output",
+      "question_workers"
+    ],
+    "all_old_owned_cpu_actors_terminal": true,
+    "partial_outputs_preserved": true,
+    "gpu_training_or_study_processes_signaled": false,
+    "full_native_readback_pairing_and_training_preflight_complete": false
+  },
+  "rendering_benchmark": {
+    "questions": 2048,
+    "workers8_seconds": 459.16446285229176,
+    "workers32_seconds": 57.18571252562106,
+    "ordered_output_sha256": "071eea723bb29d673c2a8b34e35374c3a4cf23c66a63ac65ca1106f27cbbf2aa",
+    "outputs_equal": true,
+    "scope": "native_record_batch_rendering_kernel_only",
+    "execution_order": [
+      8,
+      32
+    ],
+    "cache_and_host_load_effects_controlled": false,
+    "whole_pipeline_speedup_proven": false
+  },
+  "proofs": {
+    "baseline": {
+      "artifact": "runs/paper-rationale-lr-baseline-readback-v1/verification.json",
+      "sha256": "77495dc49bbe5fa5a569b97bf2dee838500ea5cb0d2894eea0c9daf8e49ad410",
+      "status": "complete_actual_parent_baseline800_raw_token_and_grade_readback"
+    },
+    "data": {
+      "artifact": "runs/paper-rationale-lr-study-data-v1/verification.json",
+      "sha256": "70183ae9417bf49419e7abe48d638c56d780348001884b545679116d44ba1c3f",
+      "status": "complete_paired_study_data_cpu_admission_no_training"
+    },
+    "parity": {
+      "artifact": "runs/user-course4-source-parity-v2/verification.json",
+      "sha256": "e94b12be19b8576c8167e24c0d7edcf51b4d0e3621262bce7a9e1b0e403d1c6a",
+      "status": "complete_actual_source_parity_equal_on_fixed_probe"
+    },
+    "capacity": {
+      "artifact": "runs/paper-rationale-lr-study-gpu-preflight-v1/verification.json",
+      "sha256": "3cacce2b9b5f28dfabcd5a8bfd409fa2a72d12059cf506e98babbc2ff6567fe7",
+      "status": "complete_actual_training_capacity_and_cpu_state_readback"
+    },
+    "benchmark": {
+      "artifact": "runs/paper-full-rationale-worker-benchmark-v1/verification.json",
+      "sha256": "419ee4193058afdc5935a89d24e131c4c5089af3d4bb655946dd38938ee5354a",
+      "status": "complete_actual_native8_vs32_worker_equivalence_and_throughput"
+    },
+    "cutover": {
+      "artifact": "runs/paper-full-rationale-corpus-v2/cutover-verification.json",
+      "sha256": "ba8d0efd353ee2145042d41b90b2dfc8c4074f47a984989e8d3de7c62edd31de",
+      "status": "complete_actual_cpu_parallel_upgrade_and_successor_queue_cutover"
+    }
+  },
+  "evidence_limits": [
+    "Native corpus reader and grader share production rules; not an independent second rules implementation.",
+    "The matched small study does not replace full curriculum or full earlier-course replay.",
+    "Different target lengths mean different token budgets; raw old/new NLL is not a quality comparison.",
+    "Frozen-decoder training capacity is not full-decoder SFT capacity.",
+    "No completed arm outcome, prose quality, playing strength, coaching effectiveness or final delivery is established.",
+    "The 80 earlier-course answers are only a small replay sample.",
+    "Game IDs do not independently authenticate players or unique physical games.",
+    "Independent test answers do not train or select any study model.",
+    "Raw private inputs, weights, process identities and server configuration are excluded from this source-release record."
+  ],
+  "completed_courses": 3,
+  "planned_courses": 4,
+  "independent_test_used_for_model_evaluation_or_selection": false,
+  "full_explanation_sft_complete": false,
+  "sufficient_formal_distillation_complete": false,
+  "independent_playing_and_coaching_acceptance_complete": false,
+  "portable_trained_model_delivered": false,
+  "full_goal_complete": false
+}
