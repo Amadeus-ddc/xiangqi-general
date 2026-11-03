@@ -14,6 +14,7 @@ from .foundation_handoff import Artifacts, export_curriculum
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
 from .feature_store import feature_paths
+from .recorded_search_inputs import BoundInputs
 
 
 def wait_for_curriculum(curriculum, producer_session, output, poll_seconds=30, *, authorized_prefix=None):
@@ -94,6 +95,15 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
         result = run_preflight(source, recipe_path, token_manifest, preflight, resume=preflight.exists())
         if result.get('status') != 'complete' or result.get('actual_continuous_four_and_two_plus_two_updates_compared') is not True:
             raise ValueError('Actual full-decoder GPU preflight must pass before formal SFT')
+        decoder_guard = BoundInputs()
+        for path, binding in result.get('pinned_base_model_assets', {}).items():
+            decoder_guard.bind(path, binding)
+        reference = result.get('pinned_base_model_manifest')
+        if reference != recipe.get('pinned_base_model_manifest'):
+            raise ValueError('GPU preflight must preserve the caller-pinned decoder manifest')
+        if reference is not None:
+            decoder_guard.bind(reference['path'], {'sha256': reference['sha256'],
+                'bytes': Path(reference['path']).stat().st_size})
         unchanged();checked_artifacts(token);unchanged_cache()
         stage = 'initial_explanation_sft';atomic_json(root / 'state.json', {'status': stage})
         trained = root / 'sft'
@@ -101,7 +111,7 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
                    '--init', str(source), '--output', str(trained)]
         with (root / 'sft-controller.log').open('a') as handle:
             subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT, check=True)
-        unchanged();checked_artifacts(token);unchanged_cache()
+        unchanged();checked_artifacts(token);unchanged_cache();decoder_guard.unchanged()
         proof = json.loads((trained / 'manifest.json').read_text());checked_artifacts(proof)
         metrics = json.loads((trained / 'metrics.json').read_text())
         expected = prepare_config(checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {})), recipe, source, trained)

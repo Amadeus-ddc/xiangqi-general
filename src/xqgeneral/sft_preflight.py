@@ -56,6 +56,39 @@ def checked_artifacts(proof):
             raise ValueError('Completed preflight evidence changed: ' + path)
 
 
+def pinned_decoder_assets(formal, recipe, foundation, guard):
+    """Bind decoder assets separately from a data-only foundation preflight."""
+    model = Path(formal['model_path'])
+    inherited = {p: item for p, item in foundation['inputs'].items()
+                 if Path(p).resolve().parent == model.resolve()}
+    reference = recipe.get('pinned_base_model_manifest')
+    if reference is None:
+        assets = inherited
+        if not any(p.endswith('.safetensors') for p in assets):
+            raise ValueError('Pinned base weights are not hash-bound; declare pinned_base_model_manifest')
+    else:
+        if (not isinstance(reference, dict) or set(reference) != {'path', 'sha256'} or
+                not isinstance(reference['path'], str) or not isinstance(reference['sha256'], str)):
+            raise ValueError('Pinned decoder manifest requires an explicit path and SHA256')
+        proof = guard.json(reference['path'])
+        if guard.artifacts[reference['path']]['sha256'] != reference['sha256']:
+            raise ValueError('Pinned decoder manifest differs from its declared SHA256')
+        if (proof.get('status') != 'complete' or proof.get('kind') != 'pinned_local_decoder_assets' or
+                proof.get('config') != {'model_path': str(model),
+                                        'model_revision': formal.get('model_revision')}):
+            raise ValueError('Pinned assets must belong to the exact selected decoder and revision')
+        from .model_bundle import _decoder_assets
+        files = _decoder_assets(model)
+        assets = proof.get('inputs', {})
+        if not isinstance(assets, dict) or set(assets) != {str(p) for p in files.values()}:
+            raise ValueError('Pinned assets must cover the complete local decoder config, tokenizer and shards')
+        if any(p not in assets or assets[p] != item for p, item in inherited.items()):
+            raise ValueError('Explicit assets conflict with an existing foundation decoder binding')
+    for path, binding in assets.items():
+        guard.bind(path, binding)
+    return assets, reference
+
+
 def full_parameter_summary(state, initial):
     if set(state) != set(initial):raise ValueError('Full-decoder parameter set differs from its initial reference')
     for name, tensor in state.items():
@@ -202,14 +235,12 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     foundation_path = Path(token['config']['foundation_preflight'])
     foundation = guard.json(foundation_path)
     if foundation.get('status') != 'complete':raise ValueError('Completed pinned-base foundation preflight is required')
-    base_assets = {p: item for p, item in foundation['inputs'].items()
-                   if Path(p).resolve().parent == Path(formal['model_path']).resolve()}
-    if not any(p.endswith('.safetensors') for p in base_assets):raise ValueError('Pinned base weights are not hash-bound')
-    for path, binding in base_assets.items():
-        guard.bind(path, binding)
+    base_assets, base_reference = pinned_decoder_assets(formal, recipe, foundation, guard)
     contract = {'recipe_sha256': digest(recipe_path), 'source_sha256': digest(source),
         'source_config_sha256': digest(Path(source).parent / 'config.json'),
         'token_preflight_sha256': digest(token_manifest), 'base_assets': base_assets, 'code': code_identity()}
+    if base_reference is not None:
+        contract['pinned_base_model_manifest'] = base_reference
     guard.bind(formal['feature_path'], {key: cache_item[key] for key in ['sha256', 'bytes']})
     for path in feature_paths(formal['feature_path'])[1:]:
         name = str(path)
@@ -284,6 +315,8 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         'longest_actual_train_validation_probe': selected,
         'independent_test_used_for_training_or_selection': False,
         'formal_sft_started_by_this_preflight': False, 'strong_play_or_coaching_gain_proven': False}
+    result['pinned_base_model_assets'] = base_assets
+    result['pinned_base_model_manifest'] = base_reference
     atomic_json(root / 'verification.json', result)
     outputs = [initial, initial_manifest, root / 'verification.json', root / 'data/train.jsonl', root / 'data/validation.jsonl',
                root / 'continuous.config.json', root / 'resumed.config.json']
@@ -294,6 +327,8 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     inputs = [recipe_path, token_manifest, foundation_path, Path(source), Path(source).parent / 'manifest.json',
               Path(source).parent / 'config.json', *[Path(p) for p in token['inputs']], *[Path(p) for p in token['outputs']],
               *[Path(p) for p in base_assets]]
+    if base_reference is not None:
+        inputs.append(Path(base_reference['path']))
     proof = manifest('four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight',
         {'recipe': str(recipe_path), 'source': str(source), 'token_preflight': str(token_manifest)},
         list(dict.fromkeys(inputs)), outputs, result)
