@@ -14,7 +14,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 from torch.nn import functional as F
 from .evidence import atomic_json, code_identity, digest, manifest
-from .modeling import initialize_trainable, load_model, load_trainable, trainable_state
+from .modeling import decoder_checkpointing, initialize_trainable, load_model, load_trainable, trainable_state
 from .rules import piece_map, piece_name, prompt
 from .board_tokens import decode_board_text, encode_board_text
 from .finite_training import data_profile, prepare_finite_epochs
@@ -25,8 +25,16 @@ from .verified_inputs import input_digest_execution, input_session_from_environm
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
 
-def model_autocast(device):
-    return torch.autocast('cuda', dtype=torch.bfloat16, enabled=str(device).startswith('cuda'))
+def model_autocast(device, cache_enabled=True):
+    return torch.autocast('cuda', dtype=torch.bfloat16, enabled=str(device).startswith('cuda'),
+                          cache_enabled=cache_enabled)
+
+
+def autocast_cache_setting(config):
+    enabled = config.get('autocast_cache_enabled', True)
+    if type(enabled) is not bool:
+        raise ValueError('autocast_cache_enabled must be a boolean')
+    return enabled
 
 
 def example_normalized_loss(logits, labels):
@@ -61,7 +69,12 @@ def training_memory_settings(config):
         raise ValueError('optimizer_foreach must be a boolean or null')
     if type(bucket_view) is not bool:
         raise ValueError('ddp_gradient_as_bucket_view must be a boolean')
-    return {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
+    settings = {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
+    if decoder_checkpointing(config):
+        settings['decoder_gradient_checkpointing'] = True
+    if not autocast_cache_setting(config):
+        settings['autocast_cache_enabled'] = False
+    return settings
 
 
 def microbatch_padding_policy(config):
@@ -247,7 +260,7 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
         inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'),
                               config.get('board_tokens', False), config.get('board_text'))
         tokens = int((inputs['labels'][:, 1:] != -100).sum())
-        with model.board_context(select_features(cache, indices, batch, device, zero, rotate)), model_autocast(device):
+        with model.board_context(select_features(cache, indices, batch, device, zero, rotate)), model_autocast(device, autocast_cache_setting(config)):
             loss = model(**inputs).loss
         weighted += float(loss) * tokens
         count += tokens
@@ -257,7 +270,7 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
 
 
 @torch.no_grad()
-def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None):
+def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None, autocast_cache_enabled=True):
     model.eval()
     results = []
     for record in rows:
@@ -265,7 +278,7 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
         if board_tokens:
             text = encode_board_text(text)
         inputs = tokenizer(text, return_tensors='pt', add_special_tokens=False).to(device)
-        with model.board_context(select_features(cache, indices, [record], device)), model_autocast(device):
+        with model.board_context(select_features(cache, indices, [record], device)), model_autocast(device, autocast_cache_enabled):
             tokens = model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
                                          pad_token_id=tokenizer.pad_token_id)
         answer = tokenizer.decode(tokens[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
@@ -497,7 +510,7 @@ def _main():
             micro_units = len(batch) if normalization == 'example' else micro_tokens
             synchronize = offset + micro_size >= len(records)
             context = wrapped.no_sync() if world > 1 and not synchronize else nullcontext()
-            with context, model.board_context(select_features(cache, indices, batch, device)), model_autocast(device):
+            with context, model.board_context(select_features(cache, indices, batch, device)), model_autocast(device, autocast_cache_setting(config)):
                 if normalization == 'example':
                     forward_inputs = {k: v for k, v in micro_inputs.items() if k != 'labels'}
                     raw_loss = example_normalized_loss(wrapped(**forward_inputs).logits, micro_inputs['labels'])
@@ -587,7 +600,8 @@ def _main():
         shuffled = evaluate(model, tokenizer, validation, cache, indices, config, device, rotate=True)
         examples = generate_examples(model, tokenizer, validation[:config.get('generation_examples', 12)], cache,
                                      indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64),
-                                     config.get('board_tokens', False), config.get('board_text'))
+                                     config.get('board_tokens', False), config.get('board_text'),
+                                     autocast_cache_enabled=autocast_cache_setting(config))
         atomic_json(dest / 'examples.json', examples)
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
                   'steps_completed': completed, 'selected_step': best_step, 'world_size': world,

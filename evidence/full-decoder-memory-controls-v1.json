@@ -1,0 +1,72 @@
+{
+  "kind": "full_decoder_opt_in_memory_controls_software_verification",
+  "status": "complete",
+  "utc": "2026-11-03T01:57:34.239746+00:00",
+  "configuration": {
+    "decoder_gradient_checkpointing_default": false,
+    "autocast_cache_enabled_default": true,
+    "next_probe_decoder_gradient_checkpointing": true,
+    "next_probe_autocast_cache_enabled": false,
+    "full_trainable_parameters": 4694274592,
+    "trainable_parameter_dtype": "float32",
+    "computation_dtype": "bfloat16",
+    "global_batch": 16,
+    "micro_batch": 1,
+    "world_size": 4,
+    "max_tokens": 1024,
+    "formal_sft_updates": 2456
+  },
+  "current_source": {
+    "source_modules": 111,
+    "tests_passed": 1866,
+    "verification_sha256": "a317203a2f867c527f6c668dbaf19d548c522a8a22070d62eaeee595f38a760b",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "2f67757b447d265a5288ec72b3acaf4ec39cb62745e809f8fe7e7e95a7183dca",
+      "build": "f7979676f21bd3ac044556709f8329eaf7b764149c9076066a06450fa22ec5ae",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 108,
+    "tests_passed": 1767,
+    "verification_sha256": "ca4bcf31aadc7f99c7f1505dde296326970fcfe4de359d84d7c77887b2496ecf",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "b7a4e3c7904bbffd650e5f28378826b7c032a95c3eb166c7f064078ec2ca6e85",
+      "build": "c2918d9709bcf676a55f5ca5999f8b535b863ce7736a178aa1e9f5069edfe9df",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "changed_model_source_sha256": {
+    "modeling.py": "abd2a8901d36a188d7f18881f4155ccc4cf4fbe95e5007fccb171146820ec4a4",
+    "training.py": "72aaf062d1569499504febbd707bf1480b6699ab21a6ba016a036873e5f69131"
+  },
+  "focused_checks": {
+    "passed": 35,
+    "log_sha256": "c3732e68901bef69db7ded342c069ec11577f507c9d05678b6bca1746cda5830"
+  },
+  "dev_only_import_control": {
+    "passed": 11,
+    "skipped_requires_optional_transformers": 8,
+    "full_server_environment_runs_all_model_checks": true,
+    "log_sha256": "fe35667123049b2e31f3ea5260bd539e7fe109787c1c15e5aa695d44d614338b"
+  },
+  "actual_gpu_trials": {
+    "uncheckpointed_completed_updates": 1,
+    "checkpointed_completed_updates": 1,
+    "both_failed_in_subsequent_forward_with_all_four_ranks_oom": true,
+    "actual_checkpointing_stack_confirmed": true,
+    "previous_missing_checkpoint_zero_update_inference_was_wrong": true,
+    "corrected_diagnostic_verification_sha256": "bfd538d79eb2e6a1424e10ef6cdb8de7abc22d604a5dd1eb8977e3daed6d3f06",
+    "uncheckpointed_log_sha256": "4df2710afaef1301f683a17db7af8e7734baa7f63174b48c8c5d8d2bf2597cf5",
+    "checkpointed_log_sha256": "81f6c350310efed16f18adb7679593e073403b79ca73486bbb8dc93e9f832a01",
+    "checkpointed_training_log_sha256": "28eb8fbd26e4967058c6aa8eb0f82f746ae9967a7fc3ae5d28fc92ee2934ef3c"
+  },
+  "new_capacity_and_exact_resume_proof_completed": false,
+  "formal_sft_started": false,
+  "four_courses_and_selected_42000_checkpoint_preserved": true,
+  "unknown_gpu_processes_signaled": false,
+  "model_strength_or_teaching_quality_not_measured": true,
+  "full_goal_complete": false
+}
