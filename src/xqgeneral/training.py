@@ -69,11 +69,16 @@ def training_memory_settings(config):
         raise ValueError('optimizer_foreach must be a boolean or null')
     if type(bucket_view) is not bool:
         raise ValueError('ddp_gradient_as_bucket_view must be a boolean')
+    sharding = config.get('optimizer_state_sharding', 'none')
+    if not isinstance(sharding, str) or sharding not in {'none', 'zero1'}:
+        raise ValueError('optimizer_state_sharding must be none or zero1')
     settings = {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
     if decoder_checkpointing(config):
         settings['decoder_gradient_checkpointing'] = True
     if not autocast_cache_setting(config):
         settings['autocast_cache_enabled'] = False
+    if sharding != 'none':
+        settings['optimizer_state_sharding'] = sharding
     return settings
 
 
@@ -129,9 +134,31 @@ def training_optimizer(model, config):
             groups[group].append(parameter)
     rates = {'bridge': config['learning_rate'], 'decoder': config.get('decoder_learning_rate', config['learning_rate']),
              'board': config.get('token_learning_rate', config['learning_rate'])}
-    return torch.optim.AdamW([{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
-                             for name, values in groups.items()], weight_decay=config.get('weight_decay', 0.01),
-                            foreach=settings['optimizer_foreach'])
+    parameters = [{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
+                  for name, values in groups.items()]
+    options = dict(weight_decay=config.get('weight_decay', 0.01), foreach=settings['optimizer_foreach'])
+    if settings.get('optimizer_state_sharding') == 'zero1':
+        if not dist.is_initialized() or dist.get_world_size() < 2:
+            raise ValueError('zero1 requires an initialized multi-rank process group')
+        from torch.distributed.optim import ZeroRedundancyOptimizer
+        return ZeroRedundancyOptimizer(parameters, optimizer_class=torch.optim.AdamW,
+                                       overlap_with_ddp=False, parameters_as_bucket_view=False, **options)
+    return torch.optim.AdamW(parameters, **options)
+
+
+def consolidate_optimizer_state(optimizer, config):
+    """Every rank participates before rank zero saves the complete Adam state."""
+    if training_memory_settings(config).get('optimizer_state_sharding') == 'zero1':
+        optimizer.consolidate_state_dict(to=0)
+
+
+def restore_optimizer_state(optimizer, saved, config, device):
+    optimizer.load_state_dict(saved)
+    local = optimizer.optim if training_memory_settings(config).get('optimizer_state_sharding') == 'zero1' else optimizer
+    for state in local.state.values():
+        for name, value in state.items():
+            if torch.is_tensor(value) and name != 'step':
+                state[name] = value.to(device)
 
 
 def atomic_checkpoint(path, value):
@@ -423,13 +450,9 @@ def _main():
         if finite_epochs is not None:
             finite_epochs.check_resume(resume.get('data_state'), resume['step'])
         load_trainable(model, resume)
-        optimizer.load_state_dict(resume['optimizer'])
+        restore_optimizer_state(optimizer, resume['optimizer'], config, device)
         if any(group.get('foreach') is not memory_settings['optimizer_foreach'] for group in optimizer.param_groups):
             raise ValueError('Resume optimizer state differs from its foreach configuration')
-        for state in optimizer.state.values():
-            for name, value in state.items():
-                if torch.is_tensor(value) and name != 'step':
-                    state[name] = value.to(device)
         begin, best_loss, best_step, tokens_seen = (resume[k] for k in ['step', 'best_loss', 'best_step', 'tokens_seen'])
         rng.setstate(resume['random_state'])
         torch.set_rng_state(resume['torch_rng_state'])
@@ -562,6 +585,7 @@ def _main():
                 state = [best_loss, best_step, stop]
                 dist.broadcast_object_list(state, src=0)
                 best_loss, best_step, stop = state
+            consolidate_optimizer_state(optimizer, config)
             cuda_states = [None] * world
             if world > 1:
                 dist.all_gather_object(cuda_states, torch.cuda.get_rng_state(device))
