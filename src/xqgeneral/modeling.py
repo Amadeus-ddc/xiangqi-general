@@ -28,7 +28,17 @@ def configure_trainable_precision(model, precision):
                 parameter.data = parameter.data.float()
 
 
+def decoder_checkpointing(config):
+    enabled = config.get('decoder_gradient_checkpointing', False)
+    if type(enabled) is not bool:
+        raise ValueError('decoder_gradient_checkpointing must be a boolean')
+    if enabled and config.get('decoder_training', 'frozen') != 'full':
+        raise ValueError('Decoder gradient checkpointing requires an explicit full decoder')
+    return enabled
+
+
 def load_model(config, expert_dim=512, device="cuda"):
+    checkpointing = decoder_checkpointing(config)
     mode = config.get('mode', 'bridge')
     settings = bridge_settings(config) if mode == 'bridge' else None
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -61,6 +71,9 @@ def load_model(config, expert_dim=512, device="cuda"):
         base.requires_grad_(True)
     model.to(device=device, dtype=dtype)
     configure_trainable_precision(model, config.get('trainable_parameter_dtype', 'base'))
+    if checkpointing:
+        base.gradient_checkpointing_enable(gradient_checkpointing_kwargs={
+            'use_reentrant': False, 'preserve_rng_state': True})
     return model, tokenizer
 
 

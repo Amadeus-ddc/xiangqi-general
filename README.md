@@ -70,7 +70,7 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 ## 讲解训练与搜索蒸馏
 
-正式讲解训练从四课全部完成后的模型开始。完整解码器先执行真实四卡容量和精确续跑检查，再训练与评测；后续搜索规模和蒸馏轮数根据实际合格数据产量与开发结果决定。[详细开发指南](docs/DEVELOPMENT_GUIDE.md)保留各版本命令和历史证据。
+正式讲解训练从四课全部完成后的模型开始。完整解码器先执行真实四卡容量和精确续跑检查，再训练与评测；当前两次预检因显存不足结束，[可选显存控制与接续入口](docs/FULL_DECODER_MEMORY_CONTROLS.md)记录实际边界。后续搜索规模和蒸馏轮数根据实际合格数据产量与开发结果决定。[详细开发指南](docs/DEVELOPMENT_GUIDE.md)保留各版本命令和历史证据。
 
 ## 原始输出与对弈评测
 
