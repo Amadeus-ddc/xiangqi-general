@@ -2,7 +2,7 @@
 
 2026-11-03，[四门课程完成读回](PAPER_FOUR_COURSES_COMPLETED.md)已确认结束第四课并选择42000步。原生CPU导出与四份所选权重核验已完成。[基础资产绑定修复](SFT_PINNED_DECODER_ASSETS.md)增加显式权重清单；新的108模块主队列已完成拥有权交接，须通过其完整CPU检查及原生四卡容量／续跑证明后才能正式训练讲解。旧90GiB空闲门槛等待器已退役，容量由原生最长样本与4步对2+2实测核验；本记录未提供GPU容量或正式SFT完成结论。讲解后四课复查的109模块源码保持，其拥有者也已交接。以下带日期的早期交接记录保留其历史范围。
 
-当前主控制器位于 `runs/pinned-base-postcourse-v5/`，回放控制器位于 `runs/pinned-base-post-sft-replay-v5/auto-initial-replay/`；分别查看 `queue-state.json`／`queue-handoff-verification.json` 和 `state.json`／`handoff.json`。完整四课、9823条讲解训练、四轮2456次更新、原词元与特征数据、开发评测／完整对弈／真实搜索pilot的配置保持。三次真实预检均完成1次更新后显存不足，新的[显存控制](FULL_DECODER_MEMORY_CONTROLS.md)须另行通过完整软件检查和真实容量／恢复证明，随后才能正式训练。旧控制器和失败的诊断尝试均保留原文件。恢复须读取实际拥有者和模型阶段合同，避免重复启动仍存活的拥有者。
+当前主控制器位于 `runs/pinned-base-postcourse-v6/`，回放控制器位于 `runs/pinned-base-post-sft-replay-v6/auto-initial-replay/`；分别查看 `queue-state.json`／`queue-handoff-verification.json` 和 `state.json`／`handoff.json`。完整四课、9823条讲解训练、四轮2456次更新、原词元与特征数据、开发评测／完整对弈／真实搜索pilot的配置保持。前三次真实预检均完成1次更新后显存不足；随后Adam分片试跑完成2次更新，但检查点收集超时。当前CPU收集实现的[显存控制](FULL_DECODER_MEMORY_CONTROLS.md)须另行通过完整软件检查和真实容量／恢复证明，随后才能正式训练。旧控制器和失败的诊断尝试均保留原文件。恢复须读取实际拥有者和模型阶段合同，避免重复启动仍存活的拥有者。
 
 2026-10-26，接续目标已改为[用户直接指定的三课前缀](USER_AUTHORIZED_COURSE_PREFIX.md)：第一课24000步、第二课30000步、第三课26000步；第四课已从选定权重实际开训。第二课原最低32000步和第三课原耐心停止规则未满足的事实保留，源第三课额外564次更新单列为弃用续训。新的108模块消费者通过1738项CPU检查，并绑定该三课声明；正式讲解仍须等待真实四课、原生导出及全解码器容量／恢复证明。见[实际交接](PAPER_FOURTH_COURSE_START_26000.md)和[核验记录](../evidence/direct-third-course-26000-handoff-v1.json)。
 
@@ -36,21 +36,21 @@
 
 | 项目 | 现役位置或合同 |
 | --- | --- |
-| 等待器目录 | `runs/pinned-base-postcourse-v5` |
-| 入口与会话 | `postcourse-entry.py`；`xqgeneral-pinned-base-postcourse-v5` |
+| 等待器目录 | `runs/pinned-base-postcourse-v6` |
+| 入口与会话 | `postcourse-entry.py`；`xqgeneral-pinned-base-postcourse-v6` |
 | 父课程 | `runs/curriculum-paper-user-direct26000-v1`；会话`xqgeneral-course4-from-26000-v1` |
 | 显式前缀声明 | `runs/user-third-course-direct-prefix-v1/authorized-prefix.json`及其锁定SHA256 |
-| 讲解输出与配置 | `runs/paper-sft-full-decoder-zero1-v1`及其`inputs/` |
+| 讲解输出与配置 | `runs/paper-sft-zero1-cpu-checkpoint-v1`及其`inputs/` |
 | 训练／验证索引 | `data/astra-explanations-engine-qualified-paper-index-v1/train`及`validation` |
 | 复用原生词元预检 | `runs/paper-sft-engine-qualified-v1/token-preflight/manifest.json` |
 | 搜索试批配置 | `runs/user-direct26000-postcourse-v1/pilot-owned/pilot.json` |
-| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-zero1-v1` |
+| 搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-zero1-cpu-checkpoint-v1` |
 
 `queue-plan.json`绑定不可变源码、配置、输入凭据及阶段合同；`queue-state.json`报告当前阶段；`queue-handoff.json`保存实际拥有权交接。诊断查看`queue-entry.log`和`queue-exit.json`。状态文件或日志不增长不能单独证明进程已经结束，应按保存的PID、启动时间、父进程及命令哈希核对实际进程与会话。
 
 ```bash
-.venv/bin/python -c 'import json; print(json.load(open("runs/pinned-base-postcourse-v5/queue-state.json")))'
-tmux capture-pane -p -t '=xqgeneral-pinned-base-postcourse-v5'
+.venv/bin/python -c 'import json; print(json.load(open("runs/pinned-base-postcourse-v6/queue-state.json")))'
+tmux capture-pane -p -t '=xqgeneral-pinned-base-postcourse-v6'
 ```
 
 外层拥有者没有可直接重复调用的`--resume`。原拥有者确已终止后，需要新的明确拥有权启动／交接，并只复用源码、输入和合同都不变的可续跑子阶段；不可续跑部分改用新输出。所有部分输出和旧交接证据保留。不得直接重跑旧`paper-followthrough-catalog-v1`入口，也不覆盖活任务的`queue-worker.json`。
@@ -62,4 +62,4 @@ tmux capture-pane -p -t '=xqgeneral-pinned-base-postcourse-v5'
 等待器完成初始讲解、三组开发验证、384局基线和512根真实试批后，仍需依据实际产量安排正式搜索与蒸馏，再锁定交付模型完成[独立验收](FINAL_INDEPENDENT_EVALUATION.md)。`queue-completion.json`不代表整个项目或最终教练模型已经合格。
 
 
-讲解后四课复查的独立等待器位于`runs/pinned-base-post-sft-replay-v5/auto-initial-replay`，会话为`xqgeneral-pinned-base-course-replay-v5`；按`owner.json`保存的完整进程身份核验存活，读取`state.json`、`completion.json`和`exit.json`判断进展。它使用自己的109份冻结源码及1761项已完成CPU检查，实际讲解模型完成后才在GPU 3空闲至少49152MiB时执行三组2600题。主队列讲解开发验证／试批使用GPU 0，对弈使用GPU 2。当前题目顺序、问法和金标已与42k原始验证逐条核对；实际讲解后成绩仍待产生。
+讲解后四课复查的独立等待器位于`runs/pinned-base-post-sft-replay-v6/auto-initial-replay`，会话为`xqgeneral-pinned-base-course-replay-v6`；按`owner.json`保存的完整进程身份核验存活，读取`state.json`、`completion.json`和`exit.json`判断进展。它使用自己的109份冻结源码及1761项已完成CPU检查，实际讲解模型完成后才在GPU 3空闲至少49152MiB时执行三组2600题。主队列讲解开发验证／试批使用GPU 0，对弈使用GPU 2。当前题目顺序、问法和金标已与42k原始验证逐条核对；实际讲解后成绩仍待产生。

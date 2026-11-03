@@ -1,0 +1,79 @@
+{
+  "kind": "zero1_cpu_checkpoint_collection_software_verification",
+  "status": "complete",
+  "utc": "2026-11-03T03:20:12.808804+00:00",
+  "current_source": {
+    "source_modules": 111,
+    "tests_passed": 1873,
+    "verification_sha256": "6d4981ca39159f0049b75693142fab8f123047edaeef93db7fc1909970b1676c",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "b47be2ebdb971c320f2ea0dd03e3ba647ca74eb8328d00135dd4f7b1bd8a1197",
+      "build": "1367104771f0b45c64ed9218a3d6216d5f8529e793c629485713014cab46cc0a",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 108,
+    "tests_passed": 1774,
+    "verification_sha256": "b276aa376362c984eeb961c7339756056a5d7159a82c4a49e37e20618c4cc846",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "d8bbea0b2b6d764e9e33163c1fa92b121fa0a5c6b4a4cf2792fc372b7aa5ffaf",
+      "build": "ffcbeb90114d8db15f929b081dea914937a0a5a7293632b111250d1af00b5cfd",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "training_source_sha256": "6d076772c2179c11295519106f87c128304720122fd25f55fdfe7d6ae9119531",
+  "implementation": {
+    "optimizer_state_sharding": "zero1",
+    "checkpoint_transport": "gloo_cpu",
+    "local_optimizer_states_copied_to_CPU_before_collection": true,
+    "original_Zero_global_state_mapping_and_resume_format_preserved": true,
+    "NCCL_training_and_DDP_gradient_reduction_unchanged": true,
+    "model_parameters_sharded": false,
+    "full_trainable_parameters": 4694274592,
+    "trainable_parameter_dtype": "float32",
+    "computation_dtype": "bfloat16",
+    "global_batch": 16,
+    "micro_batch": 1,
+    "world_size": 4,
+    "formal_sft_updates": 2456
+  },
+  "focused_checks": {
+    "passed": 42,
+    "log_sha256": "e103c67f8f924415c2ee8a7a2a7d9905b39c5494c7f0fb64274669c8b294b961",
+    "native_GPU_object_broadcast_rejected_by_regression": true,
+    "regression_red_log_sha256": "9a8ee74d05735f1b6f6dddd11d598ddb62eb852367ea6b4e005f5527cb2f54dc"
+  },
+  "matching_production_DDP_CPU_control": {
+    "different_rank_inputs_and_rng": true,
+    "ddp_find_unused_parameters": true,
+    "complete_parameters_global_Adam_and_rng_resume_exact": true,
+    "log_sha256": "8649b354351fb5db8071bab0ebbe7f76ddbacefca0b2a4da649ba2272d713f52"
+  },
+  "dev_only_control": {
+    "passed": 18,
+    "skipped_requires_optional_transformers": 8,
+    "server_training_environment_runs_all_model_checks": true,
+    "log_sha256": "503c994ac82e0b7f4d00901a4d40dc9a67e4ab4805016e6601f7262d696f5f3a"
+  },
+  "previous_real_GPU_trial": {
+    "completed_updates": 2,
+    "failed_at_checkpoint_state_collection": true,
+    "collective": "broadcast",
+    "numel": 1,
+    "timeout_ms": 600000,
+    "actual_stack_evidence_bound": true,
+    "terminal_readback_sha256": "17589ebfd4c0532b5b63b4df24177361ec6ae7d441c46907fda7ca1a14b6c728",
+    "log_sha256": "675a08c6e0240a1ded43788a46a5db978c270a61944c63b2eb9f92e7a0aaa4e3",
+    "training_log_sha256": "74652b75025ec19a191983f9bc678dc3f28506cc05f3f001f63c13232a80bded"
+  },
+  "actual_new_large_GPU_checkpoint_and_exact_resume_not_yet_proven": true,
+  "formal_sft_started": false,
+  "native_CUDA_four_vs_two_plus_two_gate_unchanged": true,
+  "all_four_courses_and_selected_42000_weights_preserved": true,
+  "unknown_GPU_processes_signaled": false,
+  "model_strength_or_teaching_quality_not_measured": true,
+  "full_goal_complete": false
+}

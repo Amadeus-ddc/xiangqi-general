@@ -63,10 +63,16 @@ def test_zero1_refuses_a_single_rank_group(tmp_path):
 
 def worker(rank,home):
     from pathlib import Path
+    from torch.distributed.optim import ZeroRedundancyOptimizer
+    import torch.distributed.optim.zero_redundancy_optimizer as zero_module
     root=Path(home)
     torch.set_num_threads(1)
     dist.init_process_group('gloo',rank=rank,world_size=4,
         init_method=(root/'group').as_uri(),timeout=timedelta(seconds=90))
+    original_broadcast=zero_module._broadcast_object
+    def reject_legacy_gpu_checkpoint(*args,**kwargs):
+        raise AssertionError('Optimizer checkpoints must use CPU collection, not the native GPU object broadcast')
+    zero_module._broadcast_object=reject_legacy_gpu_checkpoint
     try:
         torch.manual_seed(217)
         plain=Network();sharded=deepcopy(plain)
@@ -74,7 +80,7 @@ def worker(rank,home):
         right=DistributedDataParallel(sharded,gradient_as_bucket_view=True)
         dense=training.training_optimizer(plain,configuration(False))
         split=training.training_optimizer(sharded,configuration(True))
-        assert type(split).__name__=='ZeroRedundancyOptimizer'
+        assert isinstance(split,ZeroRedundancyOptimizer)
         assert split._overlap_with_ddp is False
         def update(network,optimizer,step):
             # Identical rank inputs isolate optimizer/checkpoint behavior from
@@ -105,6 +111,7 @@ def worker(rank,home):
                 {name:p.grad.clone() for name,p in sharded.named_parameters()})
             if step==1:
                 training.consolidate_optimizer_state(split,configuration(True))
+                assert dist.get_backend(split._checkpoint_group)=='gloo'
                 rngs=[None]*4;dist.all_gather_object(rngs,torch.get_rng_state())
                 if rank==0:
                     torch.save(dict(model=sharded.state_dict(),optimizer=split.state_dict(),rngs=rngs),root/'checkpoint.pt')
@@ -144,7 +151,9 @@ def worker(rank,home):
                 for name,value in state.items():assert torch.equal(value,actual['state'][index][name])
         torch.save(dict(local_optimizer_parameters=local,all_rank_counts=counts,
             global_parameters=total,weights_and_global_adam_and_rng_exact=True),root/f'rank-{rank}.pt')
-    finally:dist.destroy_process_group()
+    finally:
+        zero_module._broadcast_object=original_broadcast
+        dist.destroy_process_group()
 
 
 def test_actual_four_rank_adam_matches_dense_and_resumes_exactly(tmp_path):

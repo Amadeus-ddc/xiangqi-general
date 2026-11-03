@@ -79,6 +79,7 @@ def training_memory_settings(config):
         settings['autocast_cache_enabled'] = False
     if sharding != 'none':
         settings['optimizer_state_sharding'] = sharding
+        settings['optimizer_checkpoint_transport'] = 'gloo_cpu'
     return settings
 
 
@@ -141,9 +142,37 @@ def training_optimizer(model, config):
         if not dist.is_initialized() or dist.get_world_size() < 2:
             raise ValueError('zero1 requires an initialized multi-rank process group')
         from torch.distributed.optim import ZeroRedundancyOptimizer
-        return ZeroRedundancyOptimizer(parameters, optimizer_class=torch.optim.AdamW,
-                                       overlap_with_ddp=False, parameters_as_bucket_view=False, **options)
+        class CPUCheckpointedZero(ZeroRedundancyOptimizer):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self._checkpoint_group = dist.new_group(backend='gloo')
+
+            def consolidate_state_dict(self, to=0):
+                # Keep the native global parameter/state mapping, while moving
+                # large serialized checkpoint traffic off the CUDA process group.
+                self._check_overlap_initialized()
+                self._sync_param_groups(self.param_groups, self.optim.param_groups)
+                local = optimizer_state_on_cpu(self.optim.state_dict())
+                gathered = [None] * self.world_size if self.rank == to else None
+                destination = dist.get_global_rank(self.process_group, to)
+                dist.gather_object(local, gathered, dst=destination, group=self._checkpoint_group)
+                self._all_state_dicts = gathered if gathered is not None else []
+
+        return CPUCheckpointedZero(parameters, optimizer_class=torch.optim.AdamW,
+                                   overlap_with_ddp=False, parameters_as_bucket_view=False, **options)
     return torch.optim.AdamW(parameters, **options)
+
+
+def optimizer_state_on_cpu(value):
+    if torch.is_tensor(value):
+        return value.detach().cpu()
+    if isinstance(value, dict):
+        return {key: optimizer_state_on_cpu(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [optimizer_state_on_cpu(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(optimizer_state_on_cpu(item) for item in value)
+    return value
 
 
 def consolidate_optimizer_state(optimizer, config):

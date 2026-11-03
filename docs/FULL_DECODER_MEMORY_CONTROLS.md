@@ -28,13 +28,17 @@
 
 `optimizer_state_sharding`默认为`none`；`zero1`使用[PyTorch ZeroRedundancyOptimizer](https://docs.pytorch.org/docs/2.10/distributed.optim.html)，将Adam状态分配到不同rank。模型权重和梯度归约仍使用原来的DDP，Adam参数分组、学习率和FP32动量保持，禁止在精确续跑中改变分片设置。该模式需要已初始化的多进程组，关闭与DDP重叠更新，避免跳过初始更新；保存检查点前由全部rank参与状态收集，rank 0保存完整CPU优化器状态，恢复时只将本rank的动量放回相应设备。
 
+原生Zero状态收集在实际大模型中发生600秒超时：已完成2次更新并保存选中参数，但没有形成完整优化器检查点。非暂停栈采样显示发送卡位于`torch.ByteTensor(data).to(device)`，其他三卡等待长度广播；这与前三次训练前向／反向显存不足属于不同故障。
+
+当前实现只将检查点收集切到CPU。各rank先复制本地Adam字典到CPU，通过独立Gloo组收集到rank 0，再复用原Zero的全局参数／状态映射。训练仍使用原NCCL和DDP，模型、动量精度、样本与更新预算保持。实现依赖Zero当前的状态映射接口；四进程回归逐值检查完整全局Adam字典与普通Adam一致，保存后恢复的参数和随机状态一致，并拒绝调用旧GPU对象广播路径。实际大模型收集与恢复仍须通过原生四卡门禁。
+
 四进程CPU检查覆盖与普通Adam逐步一致、分片覆盖全部参数、完整动量形状和值、保存与恢复及随机状态。它使用相同的各卡输入来隔离优化器状态行为；不同各卡输入的Gloo恢复对照存在约1e-8的差异，未分片Adam也复现相同差异。原真实CUDA数据、连续4步对2+2、完整参数与优化器逐值相同的准入规则保持，不以CPU对照替代。
 
 CPU检查使用真实的小型Qwen解码器和连接桥，验证参数身份、实际重计算、损失／梯度／随机状态一致、Adam与随机状态连续4步对2+2恢复，以及验证和生成的缓存设置传递。未安装可选Transformers训练依赖时，开发测试仍可收集并运行独立检查；服务器完整训练环境执行全部模型检查。这些CPU结果不证明真实GPU显存足够。
 
 ## 当前服务器入口
 
-当前主队列在`runs/pinned-base-postcourse-v5`，模型阶段在`runs/paper-sft-full-decoder-zero1-v1/pipeline`。相对同时启用重计算与关闭权重缓存的上一轮，唯一新增内存设置是`optimizer_state_sharding=zero1`。源代码、数据、输入凭据和配置分别冻结，先要求相同108模块消费者的完整CPU检查、构建与发布检查，再执行原生四卡连续4步对2+2恢复，全部通过后才进入2456次正式讲解更新。
+当前主队列在`runs/pinned-base-postcourse-v6`，模型阶段在`runs/paper-sft-zero1-cpu-checkpoint-v1/pipeline`。当前配置保持重计算、关闭AMP权重缓存与Adam分片，检查点收集使用CPU Gloo；各项训练超参数保持。源代码、数据、输入凭据和配置分别冻结，先要求相同108模块消费者的完整CPU检查、构建与发布检查，再执行原生四卡连续4步对2+2恢复，全部通过后才进入2456次正式讲解更新。
 
 可查看`queue-state.json`、`queue-plan.json`、`queue-handoff-verification.json`和`monitoring/hourly.jsonl`；原主队列终止后才能在新控制目录中恢复，并检查完整进程身份，避免重复启动。训练观测按小时取样，阶段变化与拥有者存活单独检查。未知GPU任务保持，不能用终止其他任务来代替本项目的容量验证。
 
@@ -43,3 +47,5 @@ CPU检查使用真实的小型Qwen解码器和连接桥，验证参数身份、�
 [软件核验记录](../evidence/full-decoder-memory-controls-v1.json)绑定111模块1866项和实际108模块1767项完整CPU检查及构建／发布检查；真实GPU容量及正式讲解完成仍单独验收。
 
 [Adam分片软件核验](../evidence/full-decoder-zero1-v1.json)绑定111模块1873项和实际108模块1774项完整CPU检查、构建与发布检查；真实GPU容量与恢复另行验收。
+
+[CPU检查点收集核验](../evidence/zero1-cpu-checkpoint-v1.json)绑定1873项当前源码和1774项实际消费者检查、构建及发布检查；真实大模型检查点与精确恢复仍单独验收。
