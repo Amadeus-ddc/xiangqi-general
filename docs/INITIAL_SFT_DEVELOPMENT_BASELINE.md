@@ -30,3 +30,5 @@
 1792到2456步有28题由错转对、39题由对转错，净少11题。完整四轮后的旧任务遗忘仍存在，不能靠改选末步解决。本次继续保留1792步基线，没有把末次权重作为新的已验收模型。
 
 原始正常讲解、末步对照和另外的CPU静态规则读回分别保存在`runs/paper-sft-fsdp2-v1/capability-validation/normal`、`runs/initial-sft-terminal-retention-v1`及`runs/initial-sft-normal384-static-readback-v1`。后者仅做规则计算，不替代独立引擎或正文判断。后续依据实际搜索产量和开发收益安排蒸馏及旧能力保持改进，当前尚无正式搜索蒸馏轮次完成。
+
+已完成仅使用训练集的[旧课回放词元预算分析](RETENTION_REPLAY_TOKEN_BUDGET.md)：短问答与长讲解的样本比例和监督词元比例有明显差异。当前没有因此新增训练或证明旧能力恢复。
