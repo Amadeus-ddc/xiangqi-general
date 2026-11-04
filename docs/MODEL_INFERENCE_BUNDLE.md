@@ -19,7 +19,7 @@ xqgeneral-ask --adapter runs/xiangqi-general-inference-v1 \
 xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 ```
 
-`runs/completed-model-training` 是待替换的实际选模目录，当前新四课和后续 SFT 尚未完成。原 `adapter.pt` 文件入口继续可用。模型和数据不提交到源码仓库；权重来源与用途仍依照 [模型说明](MODEL_CARD.md) 和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
+`runs/completed-model-training` 是待替换的实际选模目录。当前新四课已完成，[真实全模型门禁与正式SFT开训](FULL_DECODER_SFT_START.md)已核对；SFT完成、足量蒸馏、最终独立验收和正式交付仍待完成。原 `adapter.pt` 文件入口继续可用。模型和数据不提交到源码仓库；权重来源与用途仍依照 [模型说明](MODEL_CARD.md) 和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
 
 ## 评测交付目录
 
