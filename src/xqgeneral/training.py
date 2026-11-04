@@ -247,10 +247,28 @@ def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_to
             'attention_mask': torch.tensor(mask, device=device), 'use_cache': False}
 
 
+def shuffled_feature_rows(records):
+    """Permute the full feature multiset without retaining any matching history."""
+    groups = defaultdict(list)
+    for position, record in enumerate(records):
+        groups[record['feature_key']].append(position)
+    ordered_groups = sorted(groups.values(), key=len, reverse=True)
+    largest = len(ordered_groups[0]) if ordered_groups else 0
+    if not largest or 2 * largest > len(records):
+        raise ValueError('Feature shuffling requires enough different histories to mismatch every row')
+    order = [position for group in ordered_groups for position in group]
+    # A shift by the largest group excludes every original group, including
+    # repeated histories, while preserving each feature's original multiplicity.
+    donors = order[largest:] + order[:largest]
+    result = [None] * len(records)
+    for position, donor in zip(order, donors):
+        result[position] = records[donor]
+    return result
+
+
 def select_features(cache, indices, records, device, zero=False, rotate=False):
-    keys = [indices[r['feature_key']] for r in records]
-    if rotate:
-        keys = keys[1:] + keys[:1]
+    feature_rows = shuffled_feature_rows(records) if rotate else records
+    keys = [indices[r['feature_key']] for r in feature_rows]
     features = gather_features(cache, keys, device)
     return [torch.zeros_like(f) for f in features] if zero else features
 
@@ -317,6 +335,7 @@ def sample_batch(rows, mixture, rng, global_batch_size, rank=0, world=1, pools=N
 
 @torch.no_grad()
 def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False, rotate=False):
+    feature_rows = shuffled_feature_rows(rows) if rotate else rows
     model.eval()
     weighted, count = 0.0, 0
     size = config.get('eval_batch_size', config['batch_size'])
@@ -325,7 +344,8 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
         inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'),
                               config.get('board_tokens', False), config.get('board_text'))
         tokens = int((inputs['labels'][:, 1:] != -100).sum())
-        with model.board_context(select_features(cache, indices, batch, device, zero, rotate)), model_autocast(device, autocast_cache_setting(config)):
+        features = select_features(cache, indices, feature_rows[offset:offset + size], device, zero=zero)
+        with model.board_context(features), model_autocast(device, autocast_cache_setting(config)):
             loss = model(**inputs).loss
         weighted += float(loss) * tokens
         count += tokens
@@ -709,6 +729,10 @@ def _main():
                                                   if p.grad is not None and p.grad._is_view()),
                   'initial_validation_nll': initial_loss, 'final_validation_nll': after,
                   'zero_memory_validation_nll': zero, 'shuffled_memory_validation_nll': shuffled,
+                  'shuffled_memory_validation_pairing': {
+                      'method': 'global_feature_multiset_derangement_v1',
+                      'examples': len(validation), 'different_history_pairs': len(validation),
+                      'independent_of_eval_batch_size': True},
                   'trainable_parameters': sum(p.numel() for p in parameters),
                   'trainable_parameter_dtypes': {str(dtype): sum(p.numel() for p in parameters if p.dtype == dtype)
                                                for dtype in {p.dtype for p in parameters}},
