@@ -5,7 +5,7 @@ from .feature_store import FeatureStore, gather_features, open_feature_cache
 from .expert import FrozenPx0, encode_history
 from .modeling import load_checkpoint
 from .rules import replay
-from .training import messages, model_autocast
+from .training import messages, model_autocast, autocast_cache_setting
 from .board_tokens import decode_board_text, encode_board_text
 from .sampling import sample_rng, sampling_options
 
@@ -15,6 +15,7 @@ class Predictor:
         torch.set_num_threads(4)
         self.device = device
         self.model, self.tokenizer, self.config = load_checkpoint(checkpoint, device)
+        autocast_cache_setting(self.config)
         if weights is None:
             weights = self.config.get('inference_expert_path', 'models/px0-latest.pb.gz')
         expected_expert = self.config.get('inference_expert_sha256')
@@ -110,7 +111,8 @@ class Predictor:
                        _move_constraints[batch].allowed(ids[prefix_length:].tolist()),
                        'num_beams': _beams, 'length_penalty': 0.0}
             features = [f.repeat_interleave(_beams, dim=0) for f in features]
-        with self.model.board_context(features), model_autocast(self.device), sample_rng(self.device, seed):
+        cache_options = {} if autocast_cache_setting(self.config) else {'cache_enabled': False}
+        with self.model.board_context(features), model_autocast(self.device, **cache_options), sample_rng(self.device, seed):
             outputs = self.model.base.generate(**inputs, max_new_tokens=max_new_tokens,
                                                pad_token_id=self.tokenizer.pad_token_id, **generation, **options)
         answers = [self.tokenizer.decode(o[inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
