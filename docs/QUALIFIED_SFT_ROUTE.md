@@ -1,5 +1,7 @@
 # 筛选后讲解数据的训练接续
 
+2026-11-05（UTC+8），v2开发控制器在已完成正常组384条模型／引擎结果后，因缺少4040个缓存依赖绑定而退出。原始数据保留并完整复核，[修复后的显式复用](PAIRED_RAW_REUSE.md)继续要求所有输入精确一致。清零／错配由`runs/initial-sft-remaining-raw-validation-v1`执行，v3串行拥有者位于`runs/post-sft-full-bf16-development-v3`，在完整源码检查和三组原始结果就绪后继续盲评／384局／512根试批。实际完整27B教师已有[单条四卡原生推理证明](FULL_BF16_TEACHER_NATIVE.md)。旧v2错误及各自源码、配置、输出均保留。
+
 2026-11-05（UTC+8），[同设置课程能力核验](INITIAL_SFT_RETENTION.md)完成。训前GPU原始回答在`runs/initial-sft-retention-control-v2/before-normal`，凭据会话内完整收尾在`runs/initial-sft-retention-control-v3-readback`，五组再次评分在`runs/initial-sft-retention-readback-v2`。旧CPU收尾及首版等待器已在确认拥有权和无子进程后退役，输出保留；未知GPU任务保持。原v8课程复查正常结束，开发串行v2已接续讲解评测；2456步权重的独立诊断在`runs/initial-sft-terminal-retention-v1`，未更换当前1792步基线。
 
 2026-11-04 22:57（UTC+8），[完整初始讲解SFT已结束](INITIAL_SFT_COMPLETED.md)，实际2456次更新、选1792步。评测遗漏用户课程前缀传递的问题已修复，1906项完整CPU检查和真实选中模型CPU校验通过；新的复查v8、开发串行v2使用112模块冻结评测来源。以下保留准备期、开训和失败的历史快照，现役路径统一见[当前运行定位](#本服务器运行定位与恢复)。
