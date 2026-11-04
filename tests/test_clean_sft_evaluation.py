@@ -19,9 +19,14 @@ def artifact(path):
     return {'sha256': digest(path), 'bytes': Path(path).stat().st_size}
 
 
-def setup_evaluation(tmp_path, monkeypatch, complete=True):
+def setup_evaluation(tmp_path, monkeypatch, complete=True, authorized_prefix=False):
     curriculum, recipe_path, token_path = setup_data(tmp_path)
     recipe = json.loads(recipe_path.read_text());token = json.loads(token_path.read_text())
+    if authorized_prefix:
+        from test_foundation_prefix import controlled_third_boundary
+        curriculum, declaration, _, _ = controlled_third_boundary(tmp_path, original_root=curriculum, direct=True)
+        recipe['authorized_foundation_prefix'] = {'path': str(declaration), 'sha256': digest(declaration)}
+        atomic_json(recipe_path, recipe)
     for split in ['train', 'validation']:
         path = Path(recipe['data_path']) / (split + '.jsonl');rows = load_jsonl(path)
         for row in rows:
@@ -106,6 +111,32 @@ class ControlledEvaluation:
                 [root / 'responses.jsonl', root / 'deployment.json'], {'examples': len(responses), 'teacher': identity}))
         else:raise AssertionError('Unexpected controlled command: ' + module)
         return SimpleNamespace(returncode=0)
+
+
+def test_completed_user_authorized_course_prefix_reaches_paired_development_evaluation(tmp_path, monkeypatch):
+    pipeline, config, original = setup_evaluation(tmp_path, monkeypatch, authorized_prefix=True)
+    controlled = ControlledEvaluation(original, monkeypatch)
+    result = evaluation.run_evaluation(pipeline, 'owned-sft', config, tmp_path / 'authorized-validation')
+    assert result['all_validation_examples'] == 16 and controlled.loads == 3
+    assert {memory for memory, _, _ in controlled.batches} == {'normal', 'zero', 'shuffled'}
+    handoff = json.loads((pipeline / 'handoff/manifest.json').read_text())
+    assert handoff['verification']['courses'][1]['selection']['decision']['stop'] is False
+    assert handoff['verification']['courses'][2]['original_declared_validation_stopping_policy_met'] is False
+
+
+@pytest.mark.parametrize('problem', ['missing', 'foreign_declaration'])
+def test_completed_sft_evaluation_still_requires_its_exact_authorized_prefix(tmp_path, monkeypatch, problem):
+    pipeline, config_path, _ = setup_evaluation(tmp_path, monkeypatch, authorized_prefix=True)
+    config = json.loads(config_path.read_text())
+    _, _, recipe = evaluation.validation_spec(config)
+    if problem == 'missing':
+        recipe.pop('authorized_foundation_prefix')
+    else:
+        original = Path(recipe['authorized_foundation_prefix']['path'])
+        other = tmp_path / 'foreign-prefix.json';other.write_bytes(original.read_bytes())
+        recipe['authorized_foundation_prefix'] = {'path': str(other), 'sha256': digest(other)}
+    with pytest.raises(ValueError, match='explicitly opt in'):
+        evaluation.checked_sft(pipeline, config, recipe)
 
 
 def test_complete_paired_raw_validation_and_full_blinded_review_preserve_errors(tmp_path, monkeypatch):

@@ -1,5 +1,7 @@
 # 筛选后讲解数据的训练接续
 
+2026-11-04 22:57（UTC+8），[完整初始讲解SFT已结束](INITIAL_SFT_COMPLETED.md)，实际2456次更新、选1792步。评测遗漏用户课程前缀传递的问题已修复，1906项完整CPU检查和真实选中模型CPU校验通过；新的复查v8、开发串行v2使用112模块冻结评测来源。以下保留准备期、开训和失败的历史快照，现役路径统一见[当前运行定位](#本服务器运行定位与恢复)。
+
 2026-11-04 17:43（UTC+8）首读回：真实全模型容量及完整状态4对2+2门禁已通过，v7已进入正式讲解，完成前三次更新。训练预算仍为四轮2456次更新，后续按小时观测。课程复查和开发／对弈／真实试批各有独立拥有者，按顺序在实际SFT完成后启动，来源未知任务保持。见[真实开训证据](FULL_DECODER_SFT_START.md)；以下准备期与失败记录保留其原时间范围。
 
 2026-11-04分片接续：当前v7主队列在`runs/pinned-base-postcourse-v7`，模型流水线在`runs/paper-sft-fsdp2-v1/pipeline`，使用109份独立冻结源码。1889项当前源码和1790项实际消费者完整检查、构建／发布已通过，原始全模型4对2+2门禁保持，通过才执行正式讲解。9823条训练数据、四轮2456次更新、完整FP32主参数与BF16计算、所选42k父权重及学习率保持。按`queue-worker.json`核验拥有者，查看`queue-state.json`、模型`state.json`及`monitoring/hourly.jsonl`；失败后保留旧输出，再按原合同恢复或新建配置实验。后续开发评测、对弈和真实搜索使用独立接续合同，不能复用v6中指向旧配方及固定单卡的配置。
@@ -34,9 +36,30 @@
 
 512根搜索保持既有未用棋谱池、递归规则与完整教师设置，用于量测真实可用标签产量。后续正式搜索预算与蒸馏轮次须由实际产量、开发棋力和讲解结果决定。六项受控门禁检查覆盖真实隔离tmux拥有者、错误进程身份、未完成四课、缺失／失败检查及变化的检查日志；它们不等于真实四课或训练完成。
 
-四课已完成；完整讲解、足量真实蒸馏、最终独立棋力／教学验收及训练模型交付仍待完成。原始数据、运行等待器与机器路径保留在服务器运行目录；公开发布的数据／权重范围和许可证仍按模型卡及第三方说明核定。
+四课及初始讲解已完成；足量真实蒸馏、最终独立棋力／教学验收及训练模型交付仍待完成。原始数据、运行等待器与机器路径保留在服务器运行目录；公开发布的数据／权重范围和许可证仍按模型卡及第三方说明核定。
 
 ## 本服务器运行定位与恢复
+
+初始讲解已完成，原拥有队列`runs/pinned-base-postcourse-v7/queue-exit.json`为0。实际模型是`runs/paper-sft-fsdp2-v1/pipeline/sft/adapter.pt`，选1792步、完整4694274592参数；当前尚未通过教练交付验收。
+
+| 项目 | 当前定位 |
+| --- | --- |
+| 训练完成证明 | `runs/paper-sft-fsdp2-v1/pipeline/manifest.json`、`sft/metrics.json` |
+| 原实际训练来源 | `runs/full-decoder-fsdp2-v1/consumer-source-run/source`，109模块，完整1790项检查 |
+| 修复后的评测来源与检查 | `runs/post-sft-evaluation-prefix-v1/source-run`，112模块，完整1906项检查 |
+| 四课复查拥有者 | `runs/pinned-base-post-sft-replay-v8/auto-initial-replay`；会话`xqgeneral-pinned-base-course-replay-v8` |
+| 四课复查输出 | `runs/pinned-base-post-sft-replay-v8/actual-initial-sft-validation` |
+| 后续串行拥有者 | `runs/post-sft-full-bf16-development-v2`；会话`xqgeneral-post-sft-full-bf16-development-v2` |
+| 开发／对弈／试批配置 | `runs/paper-sft-fsdp2-v1/development-inputs-v1` |
+| 配对讲解与对弈输出 | `runs/paper-sft-fsdp2-v1/capability-validation`、`baseline` |
+| 真实搜索试批输出 | `runs/fresh-paper-student-search-yield-pilot-fsdp2-v1` |
+| 小时记录与轻量阶段变化 | `runs/post-sft-full-bf16-development-v2/monitoring` |
+
+按各拥有者的`owner.json`核对PID、启动时间、父进程和命令哈希；查看`state.json`、`entry.log`与`exit.json`。当前课程复查、配对讲解、完整BF16教师、384局及512根试批依次使用GPU；没有沿用旧的未实测80／48GiB门槛。实际推理失败仍须保存原输出并按同一合同恢复，配置或源码改变时使用新目录。
+
+SFT原始109模块来源、权重、授权证明和完成记录保持；首次复查v7及开发等待器v1已失败终止，日志保留。后续评测不重跑已经完成的SFT。外层拥有者仍须明确交接，不能因观察超时重复启动存活任务；子阶段是否可续跑以该阶段原合同为准。
+
+## 历史运行定位（v6，已失败）
 
 直接26000步路线使用新的单进程拥有者与108份冻结消费者源码，并绑定实际三课声明及1738项完整CPU检查。原两课等待器随父课程被最新指令退役而结束，其实际退出与历史输入保留；新拥有者须单独确认旧队列终止和四课门禁为假。2026-10-22的1708项检查及2026-10-20的[只读核对](../evidence/qualified-postcourse-runbook-readback-v1.json)均作为历史路线保留。
 
