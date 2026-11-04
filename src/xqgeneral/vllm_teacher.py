@@ -2,6 +2,7 @@
 import hashlib
 from importlib.metadata import version
 import json
+import math
 from pathlib import Path
 
 from .evidence import digest
@@ -12,6 +13,16 @@ from .teacher_generation import checked_budget, checked_prompt_width, generation
 
 REQUEST_SEED_PROFILE = 'sha256_teacher_batch_seed_and_request_ordinal_v1'
 MAX_SEQUENCES = 16
+
+
+def deployment_settings(config):
+    parallel = config.get('tensor_parallel_size', 1)
+    memory = config.get('gpu_memory_utilization', .88)
+    if type(parallel) is not int or parallel < 1:
+        raise ValueError('Teacher tensor_parallel_size must be a positive integer')
+    if type(memory) not in (int, float) or not math.isfinite(memory) or not 0 < memory <= 1:
+        raise ValueError('Teacher gpu_memory_utilization must be finite and between zero and one')
+    return {'tensor_parallel_size': parallel, 'gpu_memory_utilization': memory}
 
 
 def request_seed(seed, ordinal):
@@ -45,6 +56,7 @@ class VllmConsolidator(LocalConsolidator):
 
     def __init__(self, config):
         self.config = config
+        deployment = deployment_settings(config)
         self.prefill_chunk_size = None
         if config.get('prefill_chunk_size') is not None:
             raise ValueError('HF prefill chunk settings cannot be applied to the vLLM backend')
@@ -85,32 +97,39 @@ class VllmConsolidator(LocalConsolidator):
         self.sampling_class = SamplingParams
         self.tokenizer = AutoTokenizer.from_pretrained(root, local_files_only=True)
         self.model = LLM(model=str(root), tokenizer=str(root), dtype='bfloat16', quantization=None,
-            tensor_parallel_size=1, max_model_len=self.max_context_tokens, max_num_seqs=MAX_SEQUENCES,
+            tensor_parallel_size=deployment['tensor_parallel_size'], max_model_len=self.max_context_tokens, max_num_seqs=MAX_SEQUENCES,
             max_num_batched_tokens=1024, enable_chunked_prefill=True, enable_prefix_caching=True,
-            gpu_memory_utilization=0.88, limit_mm_per_prompt={'image': 1, 'video': 0},
+            gpu_memory_utilization=deployment['gpu_memory_utilization'], limit_mm_per_prompt={'image': 1, 'video': 0},
             disable_log_stats=True, worker_extension_cls='xqgeneral.vllm_teacher.TeacherInspection')
         try:
             identities = self.model.collective_rpc('xqgeneral_teacher_identity')
-            if len(identities) != 1:
-                raise ValueError('The teacher backend requires one complete local worker')
-            loaded = identities[0]
-            dtypes = loaded['parameter_elements_by_dtype']
-            if (not dtypes.get('torch.bfloat16') or set(dtypes) - {'torch.bfloat16', 'torch.float32'} or
-                    any(type(n) is not int or n <= 0 for n in dtypes.values()) or
-                    loaded.get('model_quant_config_is_none') is not True or
-                    any(not name.startswith('Unquantized') for name in loaded['quant_methods']) or
-                    self.model.llm_engine.vllm_config.model_config.quantization is not None or
-                    'vision_config' in model_config and loaded.get('vision_tower_present') is not True):
+            if len(identities) != deployment['tensor_parallel_size']:
+                raise ValueError('The teacher worker count differs from tensor_parallel_size')
+            observed = {}
+            for loaded in identities:
+                dtypes = loaded['parameter_elements_by_dtype']
+                if (not dtypes.get('torch.bfloat16') or set(dtypes) - {'torch.bfloat16', 'torch.float32'} or
+                        any(type(n) is not int or n <= 0 for n in dtypes.values()) or
+                        loaded.get('model_quant_config_is_none') is not True or
+                        any(not name.startswith('Unquantized') for name in loaded['quant_methods']) or
+                        'vision_config' in model_config and loaded.get('vision_tower_present') is not True):
+                    raise ValueError('Loaded teacher worker differs from the complete unquantized BF16 contract')
+                for dtype, count in dtypes.items():
+                    observed[dtype] = observed.get(dtype, 0) + count
+            if self.model.llm_engine.vllm_config.model_config.quantization is not None:
                 raise ValueError('Loaded teacher differs from the complete unquantized BF16 contract')
             self.guard.unchanged()
             self.identity = {'repository': config['repository'], 'revision': config['revision'],
                 'quantization': 'none', 'inference_dtype': 'bfloat16', 'backend': 'vllm',
-                'parameter_elements_by_dtype': dtypes, 'loaded_worker_identity': loaded,
+                'parameter_elements_by_dtype': observed, 'loaded_worker_identity': identities[0],
                 'weight_manifest_sha256': digest(root / 'weights.manifest.json'),
                 'max_context_tokens': self.max_context_tokens, 'model_context_capacity': capacity,
                 'max_num_seqs': MAX_SEQUENCES, 'max_num_batched_tokens': 1024,
-                'gpu_memory_utilization': 0.88, 'request_seed_profile': REQUEST_SEED_PROFILE,
+                **deployment, 'request_seed_profile': REQUEST_SEED_PROFILE,
                 'generation_software': {name: version(name) for name in ['vllm', 'torch', 'transformers']}}
+            if deployment['tensor_parallel_size'] > 1:
+                self.identity.update(loaded_worker_identities=identities,
+                    parameter_count_scope='sum_of_observed_worker_parameters_including_replicated_tensors')
             if self.generation_profile is not None:
                 self.identity['generation_profile'] = self.generation_profile
         except BaseException:

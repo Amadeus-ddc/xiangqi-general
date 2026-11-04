@@ -1,0 +1,51 @@
+{
+  "kind": "complete_BF16_teacher_multigpu_software_verification",
+  "status": "complete",
+  "utc": "2026-11-04T09:31:30.441342+00:00",
+  "current_source": {
+    "source_modules": 112,
+    "tests_passed": 1903,
+    "verification_sha256": "e3e9b81f16d514bde636b248c0268ec228bb19508e45c89ee6a41545a5280c62",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "66b73a0dbb3afc835be1d1a268ba0c8768c4ddc57530e172f7dad0c23388d259",
+      "build": "14fff0a34c50f244cd4b6c1d80db7dcae3e8cb68f31a14caa5026e117247b1d5",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 109,
+    "tests_passed": 1804,
+    "verification_sha256": "7d0aaa99696f55f84d93f79aaede9d698a9b195f2c698eadc2eac090acd60f4e",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "f534447dd81610239742bf089830925c353e375bfdfdee379035b4a16f431d43",
+      "build": "23386278aafab6dbc9151a9e16ada4e9073d235957f9d937c45c4ff7fc4bd789",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "focused_CPU_protocol_tests": 41,
+  "default_tensor_parallel_size": 1,
+  "default_gpu_memory_utilization": 0.88,
+  "default_reviewer_backend": "transformers",
+  "explicitly_configurable_reviewer_backend": "vllm",
+  "explicit_development_deployment": {
+    "tensor_parallel_size": 4,
+    "gpu_memory_utilization": 0.3,
+    "max_context_tokens": 16384,
+    "quantization": "none",
+    "inference_dtype": "bfloat16"
+  },
+  "all_workers_inspected_for_unquantized_BF16_contract": true,
+  "worker_count_must_match_requested_tensor_parallel_size": true,
+  "any_quantized_worker_rejected_and_engine_closed": true,
+  "worker_parameter_sum_explicitly_includes_replicated_tensors": true,
+  "actual_reviewer_backend_checked_against_inference_manifest": true,
+  "official_full_weight_hash_requirement_unchanged": true,
+  "complete_real_teacher_GPU_capacity_not_yet_measured": true,
+  "controlled_CPU_engine_is_not_real_neural_teacher_evidence": true,
+  "initial_SFT_then_course_replay_then_development_then_matches_then_actual_search_pilot": true,
+  "formal_search_distillation_independent_acceptance_and_model_delivery_still_required": true,
+  "unknown_GPU_processes_signaled": false,
+  "full_goal_complete": false
+}

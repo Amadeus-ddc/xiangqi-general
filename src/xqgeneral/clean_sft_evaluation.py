@@ -24,7 +24,15 @@ def capability_kind(token):
             else 'clean_initial_sft_capability_validation')
 
 
+def reviewer_backend(config):
+    backend = config.get('review_teacher_backend', 'transformers')
+    if not isinstance(backend, str) or backend not in {'transformers', 'vllm'}:
+        raise ValueError('review_teacher_backend must be transformers or vllm')
+    return backend
+
+
 def validation_spec(config):
+    reviewer_backend(config)
     if config['split'] != 'validation' or config['memories'] != ['normal', 'zero', 'shuffled']:
         raise ValueError('Development evaluation requires all three paired validation memories')
     for key in ['validation_examples', 'batch_size', 'max_new_tokens', 'nodes', 'workers', 'review_max_new_tokens']:
@@ -269,13 +277,17 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
                 any(q != expected_queries.get(q['id']) for q in query_rows)):
             raise ValueError('Blinded review must cover the exact normal raw validation and grounded queries')
         if not (inference / 'manifest.json').exists():
-            execute([sys.executable, '-u', '-m', 'xqgeneral.local_teacher', '--config', config['teacher_config'],
+            command = [sys.executable, '-u', '-m', 'xqgeneral.local_teacher', '--config', config['teacher_config'],
                      '--input', str(queries / 'queries.jsonl'), '--max-new-tokens', str(config['review_max_new_tokens']),
-                     '--output', str(inference)])
+                     '--output', str(inference)]
+            if reviewer_backend(config) != 'transformers':
+                command += ['--backend', reviewer_backend(config)]
+            execute(command)
         inference_proof = json.loads((inference / 'manifest.json').read_text());checked_artifacts(inference_proof)
         if (inference_proof.get('kind') != 'local_teacher_inference' or inference_proof['code'] != contract['code'] or
                 inference_proof['config']['input'] != str(queries / 'queries.jsonl') or
                 inference_proof['config']['config'] != config['teacher_config'] or
+                inference_proof['config'].get('backend', 'transformers') != reviewer_backend(config) or
                 inference_proof['config']['max_new_tokens'] != config['review_max_new_tokens']):
             raise ValueError('Reviewer inference differs from the actual grounded queries and pinned teacher')
         if not (ratings / 'manifest.json').exists():

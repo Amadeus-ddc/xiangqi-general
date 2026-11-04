@@ -96,6 +96,47 @@ def backend(tmp_path, monkeypatch):
     return SimpleNamespace(config=config, profile=profile, root=root, engine=Engine)
 
 
+@pytest.mark.parametrize('key,value', [
+    ('tensor_parallel_size', 0), ('tensor_parallel_size', True), ('tensor_parallel_size', 1.5),
+    ('gpu_memory_utilization', 0), ('gpu_memory_utilization', 1.01),
+    ('gpu_memory_utilization', True), ('gpu_memory_utilization', float('nan')),
+])
+def test_invalid_deployment_rejected_before_model_or_asset_access(key, value):
+    with pytest.raises(ValueError, match=key):
+        vllm_teacher.VllmConsolidator({key: value})
+
+
+def test_four_worker_teacher_checks_every_unquantized_shard_and_memory_budget(backend, monkeypatch):
+    original = backend.engine.collective_rpc
+    def identities(engine, name):
+        return [dict(original(engine, name)[0]) for _ in range(4)]
+    monkeypatch.setattr(backend.engine, 'collective_rpc', identities)
+    config = dict(backend.config, tensor_parallel_size=4, gpu_memory_utilization=.30)
+    with local_teacher.teacher_session(config, 'vllm') as teacher:
+        assert teacher.model.options['tensor_parallel_size'] == 4
+        assert teacher.model.options['gpu_memory_utilization'] == .30
+        assert teacher.model.options['dtype'] == 'bfloat16' and teacher.model.options['quantization'] is None
+        assert len(teacher.identity['loaded_worker_identities']) == 4
+        assert teacher.identity['parameter_elements_by_dtype'] == {'torch.bfloat16':128, 'torch.float32':8}
+        assert teacher.identity['parameter_count_scope'].endswith('including_replicated_tensors')
+
+
+@pytest.mark.parametrize('failure', ['missing_worker', 'last_worker_quantized'])
+def test_parallel_worker_mismatch_or_one_quantized_worker_closes_engine(backend, monkeypatch, failure):
+    original = backend.engine.collective_rpc
+    def identities(engine, name):
+        results = [dict(original(engine, name)[0]) for _ in range(4)]
+        if failure == 'missing_worker':
+            results.pop()
+        else:
+            results[-1]['quant_methods'] = ['QuantizedLinear']
+        return results
+    monkeypatch.setattr(backend.engine, 'collective_rpc', identities)
+    with pytest.raises(ValueError, match='worker'):
+        vllm_teacher.VllmConsolidator(dict(backend.config, tensor_parallel_size=4))
+    assert backend.engine.instances[-1].closed == 1
+
+
 def test_uneven_context_budgets_preserve_every_input_and_raw_reasoning(backend):
     with local_teacher.teacher_session(backend.config, 'vllm') as teacher:
         rows = teacher.generate_batch([[{'content': '1 2'}], [{'content': ' '.join(map(str, range(10)))}]],
