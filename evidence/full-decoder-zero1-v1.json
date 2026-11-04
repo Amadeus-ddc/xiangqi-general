@@ -1,0 +1,80 @@
+{
+  "kind": "full_decoder_zero1_optimizer_software_verification",
+  "status": "complete",
+  "utc": "2026-11-03T02:37:25.272147+00:00",
+  "current_source": {
+    "source_modules": 111,
+    "tests_passed": 1873,
+    "verification_sha256": "bf5d21c5fe6741d95653467ce3776ea743b4a31097a66ceb32dc553135325c55",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "48122f1c6cbd7ca3648fbacf222e734484d0320c9a3a52ac686d4757af5f95f2",
+      "build": "b482298e2c00386c90c945e96b35828e27339b8b355985660ccf59cab4c107f3",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 108,
+    "tests_passed": 1774,
+    "verification_sha256": "81859ad420e7253a5e3018fb587121f7d1d23d0fb606a680a46ae82f366b3e50",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "f9f617597d0e276941cc0f7cea1ee3de0441ee276b1594c1d797c1ec3943b634",
+      "build": "a9c97d8262f48e879da9f86f5cd0b2fc7a5835e206219b55fa13e7c45f4b931b",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "training_source_sha256": "894961da11c1ff8f7eec4b6a493c04a3baacabbe8fe36b02922464907ed33d12",
+  "configuration": {
+    "optimizer_state_sharding_default": "none",
+    "next_probe_optimizer_state_sharding": "zero1",
+    "decoder_gradient_checkpointing": true,
+    "autocast_cache_enabled": false,
+    "model_parameters_sharded": false,
+    "full_trainable_parameters": 4694274592,
+    "trainable_parameter_dtype": "float32",
+    "computation_dtype": "bfloat16",
+    "world_size": 4,
+    "global_batch": 16,
+    "micro_batch": 1,
+    "formal_sft_updates": 2456
+  },
+  "focused_checks": {
+    "passed": 42,
+    "log_sha256": "24d06724dd312b33c3f2b90a8ee3fc63fd518de8c6736c9601e71ad23551f837"
+  },
+  "four_rank_CPU_control": {
+    "input_profile": "identical_per_rank_to_isolate_optimizer_state",
+    "dense_and_sharded_updates_equal": true,
+    "all_parameters_covered_by_local_states": true,
+    "complete_global_Adam_and_parameters_and_RNG_resume_equal": true,
+    "unequal_rank_Gloo_difference_reproduced_with_unsharded_Adam": true,
+    "original_unequal_rank_control_log_sha256": "fa2cf7bdf61e67de0e21467abf6bd65f6054465e220ae19559fd16bf45a8971b",
+    "unsharded_unequal_rank_control_log_sha256": "300214897c994b9095026be934f094cefdb63c7e386a014b0b999d918005818a",
+    "actual_real_data_CUDA_exact_resume_gate_unchanged": true
+  },
+  "dev_only_import_control": {
+    "passed": 18,
+    "skipped_requires_optional_transformers": 8,
+    "log_sha256": "ea09fe434509b856b89e70010875512dde0cf577383f884dbd0cea0efb4725a6",
+    "server_training_environment_runs_all_model_checks": true
+  },
+  "previous_actual_GPU_trial": {
+    "completed_updates": 1,
+    "all_four_ranks_OOM": true,
+    "failure_boundary_by_rank": {
+      "0": "forward",
+      "1": "forward",
+      "2": "backward",
+      "3": "forward"
+    },
+    "diagnostic_sha256": "f21896e4c32725ad2922fbb042d338b4e7553a032619142ca3700dc9b5ca1db4",
+    "log_sha256": "dd12edde678b22ee4cfeab801a36cff62312b0c5d0a58090d45ed3fe1ed5c7c5"
+  },
+  "new_real_GPU_capacity_and_exact_resume_proof_completed": false,
+  "formal_sft_started": false,
+  "selected_42000_foundation_and_datasets_and_budget_preserved": true,
+  "unknown_gpu_processes_signaled": false,
+  "student_strength_or_teaching_not_measured": true,
+  "full_goal_complete": false
+}

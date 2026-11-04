@@ -1,0 +1,170 @@
+{
+  "kind": "zero1_resume_canonical_local_state_verification",
+  "status": "complete",
+  "utc": "2026-11-04T08:20:34.030840+00:00",
+  "current_source": {
+    "source_modules": 111,
+    "tests_passed": 1873,
+    "verification_sha256": "3f03d673142d4040510de93ecfbe07c1bbde13ea3cc9a2480c133efd1daa9cbc",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "1d30e1db8653fbafc2f01635f52bc5216190e1bb8e505e7d4a1804fc7dd1bfdd",
+      "build": "7b65febdaadbc1b9312576b7c5d71a2e27048bb167453a0ba3b81964ef1e567b",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 108,
+    "tests_passed": 1774,
+    "verification_sha256": "02c8c5b40535969d37cbd4b83b20f011e0f0ad55a3b9b9647635d2802a11c7a1",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "268fb084f2ade389fdb267ea69a56b126203f4cad7d6c03048f054f042493964",
+      "build": "da347026f9a0249dd13fe0528f6d6d40c9ac3e1f3626be1a5ddfeb871d734267",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "training_source_sha256": "02ac1e497610aefde9670efe0a02c12efea260ea962aad1e7577ed6ae10a00c1",
+  "implementation": {
+    "restored_wrapper_state_shares_local_optimizer_state": true,
+    "unchanged_global_checkpoint_format": true,
+    "full_FP32_parameters_and_moments": true,
+    "BF16_computation": true,
+    "global_batch": 16,
+    "micro_batch": 1,
+    "formal_updates": 2456
+  },
+  "four_GPU_synthetic_storage_control": {
+    "baseline": [
+      {
+        "rank": 0,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": false,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 4,
+        "duplicate_wrapper_moment_bytes": 4194304,
+        "local_moment_bytes": 4194304,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "6d076772c2179c11295519106f87c128304720122fd25f55fdfe7d6ae9119531",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 1,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": false,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 4,
+        "duplicate_wrapper_moment_bytes": 2101248,
+        "local_moment_bytes": 2101248,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "6d076772c2179c11295519106f87c128304720122fd25f55fdfe7d6ae9119531",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 2,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": false,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 4,
+        "duplicate_wrapper_moment_bytes": 2101248,
+        "local_moment_bytes": 2101248,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "6d076772c2179c11295519106f87c128304720122fd25f55fdfe7d6ae9119531",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 3,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": false,
+        "moment_pairs": 6,
+        "distinct_storage_pairs": 6,
+        "duplicate_wrapper_moment_bytes": 2105344,
+        "local_moment_bytes": 2105344,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "6d076772c2179c11295519106f87c128304720122fd25f55fdfe7d6ae9119531",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      }
+    ],
+    "fixed": [
+      {
+        "rank": 0,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": true,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 0,
+        "duplicate_wrapper_moment_bytes": 0,
+        "local_moment_bytes": 4194304,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "02ac1e497610aefde9670efe0a02c12efea260ea962aad1e7577ed6ae10a00c1",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 1,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": true,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 0,
+        "duplicate_wrapper_moment_bytes": 0,
+        "local_moment_bytes": 2101248,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "02ac1e497610aefde9670efe0a02c12efea260ea962aad1e7577ed6ae10a00c1",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 2,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": true,
+        "moment_pairs": 4,
+        "distinct_storage_pairs": 0,
+        "duplicate_wrapper_moment_bytes": 0,
+        "local_moment_bytes": 2101248,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "02ac1e497610aefde9670efe0a02c12efea260ea962aad1e7577ed6ae10a00c1",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      },
+      {
+        "rank": 3,
+        "world_size": 4,
+        "device_type": "cuda",
+        "wrapper_and_local_state_same_owner": true,
+        "moment_pairs": 6,
+        "distinct_storage_pairs": 0,
+        "duplicate_wrapper_moment_bytes": 0,
+        "local_moment_bytes": 2105344,
+        "duplicate_values_equal": true,
+        "source_training_sha256": "02ac1e497610aefde9670efe0a02c12efea260ea962aad1e7577ed6ae10a00c1",
+        "torch_version": "2.10.0+cu128",
+        "project_student_or_teacher_training_started": false
+      }
+    ],
+    "full_model_or_project_data_used": false,
+    "duplicate_storage_removed_all_ranks": true,
+    "proof_sha256": "f497c00725499c10dc02bdf2f2db087207d8cc246a05bd30f68c5c1e02fc3e00"
+  },
+  "real_model_prior_attempt": {
+    "continuous_updates_completed": 4,
+    "initial_resume_leg_updates_completed": 2,
+    "continuous_full_model_and_optimizer_checkpoint_saved": true,
+    "next_resumed_backward_failed_out_of_memory": true,
+    "continuous_peak_allocated_gib_max": 64.5658221244812
+  },
+  "full_model_exact_resume_after_this_fix_not_yet_proven": true,
+  "current_free_memory_below_previous_continuous_peak": true,
+  "formal_sft_started": false,
+  "unknown_GPU_processes_signaled": false,
+  "full_goal_complete": false
+}
