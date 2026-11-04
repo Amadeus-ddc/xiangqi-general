@@ -23,3 +23,7 @@ git show e8744cf80386d66928174aff823ce0b65a3735fe:src/xqgeneral/paper_curriculum
 此前[截至b9e402a的30提交对象包](https://github.com/Amadeus-ddc/xiangqi-general/raw/main/reproducibility/source-history-through-b9e402a.bundle)和上述33提交基包原字节保留。30提交包SHA256仍为`b14c6ce9f8375113550c96fd9e44cae41546c6af3f087162be179ec61d10da19`，旧`refs/heads/main`入口与[原核验证据](../evidence/paper-rationale-corpus-complete-native-v1.json)继续有效。
 
 这项验证恢复执行源码；训练数据、专家权重、环境和模型身份仍按实验清单准备，不提供棋力或讲解能力结论。[本次软件核验证据](../evidence/model-bundle-auxiliary-evaluations-v1.json)绑定受控回归、完整CPU检查和源码历史链。
+
+后续完整讲解开发评测另保留[实际112模块冻结源码](../reproducibility/paired-evaluation-inputs-v1-112-source.tar.gz)，身份为`paired-evaluation-inputs-112-v1`，附逐模块SHA256及原1922项匹配消费者检查的证明身份。归档共116个普通文件、359313字节，SHA256为`f0997e7e666754a4a92139f39915219f4734e08b86704f82a7d828f4bad66be6`；独立解包逐字节比较和真实隔离导入通过。当前公开源码在`training.py`、`inference.py`和`model_bundle.py`有后续修复，本归档保持实际评测版本。实际初始SFT仍为另行归档的109模块。
+
+该112模块归档同样只含项目源码、来源清单和许可说明，不含模型、数据、查询输入或日志，只随Git仓库保存；它不单独提供端到端复现或棋力／教学验收。[完整开发报告](INITIAL_SFT_FULL_DEVELOPMENT_REVIEW.md)及其[结构化证据](../evidence/initial-sft-full-development-review-v1.json)记录结果、来源差异与仍待完成的阶段。
