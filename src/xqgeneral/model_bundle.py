@@ -14,7 +14,7 @@ KIND = 'portable_xiangqi_inference_model'
 RUNTIME_FIELDS = ('mode', 'decoder_training', 'decoder_bridge_positions', 'bridge_width',
                   'bridge_architecture', 'bridge_heads', 'board_tokens', 'board_text',
                   'trainable_parameter_dtype', 'expert_feature_depths', 'model_revision',
-                  'mixture', 'feature_cache_mmap')
+                  'mixture', 'feature_cache_mmap', 'autocast_cache_enabled')
 RUNTIME_MODULES = ('expert.py', 'bridge.py', 'board_tokens.py', 'modeling.py', 'inference.py',
                    'training.py', 'rules.py', 'net_pb2.py', 'sampling.py')
 
@@ -87,6 +87,8 @@ def export_model(training, weights, output):
         raise ValueError('A completed training manifest must bind the actual selected checkpoint')
     saved = torch.load(checkpoint_path, map_location='cpu', weights_only=True, mmap=True)
     config, metrics = saved['config'], proof['verification']
+    from .training import autocast_cache_setting
+    autocast_cache_setting(config)
     selected = saved.get('selected_step')
     if (config != proof['config'] or saved.get('code') != proof.get('code') or
             type(selected) is not int or selected < 1 or metrics.get('selected_step') != selected or
@@ -210,6 +212,8 @@ def read_bundle(directory):
     files = proof['files']
     checkpoint = torch.load(root / 'adapter.pt', map_location='cpu', weights_only=True, mmap=True)
     config = json.loads((root / 'config.json').read_text())
+    from .training import autocast_cache_setting
+    autocast_cache_setting(config)
     if (config != proof.get('config') or checkpoint['config'] != config or config.get('model_path') != 'decoder' or
             checkpoint.get('selected_step') != proof['source_training']['selected_step'] or
             _parameters(checkpoint['trainable']) != {k: proof['verification'][k]
