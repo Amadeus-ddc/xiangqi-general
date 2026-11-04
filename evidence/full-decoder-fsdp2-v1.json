@@ -1,0 +1,93 @@
+{
+  "kind": "full_decoder_fsdp2_software_and_synthetic_GPU_verification",
+  "status": "complete",
+  "utc": "2026-11-04T08:54:53.531793+00:00",
+  "current_source": {
+    "source_modules": 112,
+    "tests_passed": 1889,
+    "verification_sha256": "da86e6d960cdf61aa421cb5115d1ea7417564f1595f1c3a9e5e05c6579b28c06",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "fbaa0dee4f54964e4ecdb268a0c2659a05cb37b1d006cfdabf9d290cb167aa5d",
+      "build": "c93354196de3fdb86ddb85153645509691e10eb1bef5799cf617e18f0d9ab526",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "exact_frozen_consumer": {
+    "source_modules": 109,
+    "tests_passed": 1790,
+    "verification_sha256": "8b58c8aa015da9ff6542fef20ca7b3716770bfc32ebf64d70e7da5b03f68e541",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "8a51301fc972b589b89b8d7e3fb5eec870691bacd156791bbf6e0341e23529c8",
+      "build": "727364c9db79b584c4da0eacdb855a50bbefbc0f7866b3288bb25abc96d6b408",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "full_model_parameters": 4694274592,
+  "master_parameter_and_Adam_dtype": "float32",
+  "compute_dtype": "bfloat16",
+  "unchanged_formal_global_batch": 16,
+  "unchanged_micro_batch": 1,
+  "unchanged_finite_epochs": 4,
+  "unchanged_formal_updates": 2456,
+  "distributed_strategy": "fsdp2",
+  "parameters_gradients_and_Adam_sharded": true,
+  "every_microbatch_gradient_reduction": true,
+  "default_DDP_unchanged": true,
+  "portable_full_CPU_parameter_and_integer_index_Adam_checkpoints": true,
+  "all_rank_validation_save_reload_and_generation": true,
+  "actual_four_GPU_training_CLI_control": {
+    "synthetic_parameters": 9220,
+    "complete_four_vs_two_plus_two": true,
+    "actual_three_separate_process_groups": true,
+    "exact_checkpoint_fields": {
+      "trainable": true,
+      "optimizer": true,
+      "step": true,
+      "best_loss": true,
+      "best_step": true,
+      "tokens_seen": true,
+      "random_state": true,
+      "torch_rng_state": true,
+      "cuda_rng_states": true,
+      "data_state": true,
+      "initial_loss": true,
+      "patience_count": true,
+      "compute_contract": true,
+      "input_hashes": true,
+      "code": true
+    },
+    "final_validation_and_generation_executed": true,
+    "epoch_tail_padding_exercised": true,
+    "real_project_student_and_data_used": false,
+    "exit_sha256": "43a525b2bf4b8621d8f5dbbcd35a64bc7864c7fc904b81b91fb59fb88ce9834c",
+    "verification_sha256": "66e8cfd0264f4d458482182dfd6f5fb1d87cced58f6236200fcd84c2647b0334",
+    "stage_logs": [
+      {
+        "stage": "continuous",
+        "stop": 4,
+        "returncode": 0,
+        "log_sha256": "f754acc60f6e94d388077446db2dcabc7ad1e2c22c51c32c27f4a1ae9040e7b5"
+      },
+      {
+        "stage": "resumed",
+        "stop": 2,
+        "returncode": 0,
+        "log_sha256": "8ed97e2770ca908c263ab01b9a2ac3239c0ecff645f61180fdc7f4638ae804f2"
+      },
+      {
+        "stage": "resumed",
+        "stop": 4,
+        "returncode": 0,
+        "log_sha256": "5c6c998918040cc4f3516050ac01ec41bd784cb417f15ed2ddbbb95a2943362c"
+      }
+    ]
+  },
+  "CPU_two_process_actual_FSDP_test_included": true,
+  "full_model_capacity_and_exact_resume_require_separate_native_gate": true,
+  "formal_SFT_completion_not_claimed": true,
+  "model_strength_and_coaching_not_measured": true,
+  "unknown_GPU_processes_signaled": false,
+  "full_goal_complete": false
+}
