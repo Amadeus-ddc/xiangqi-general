@@ -1,0 +1,131 @@
+{
+  "kind": "actual_full_decoder_capacity_exact_resume_and_formal_SFT_start",
+  "status": "complete_readback",
+  "evidence_state": "reconstructed_baseline",
+  "first_formal_observation_utc": "2026-11-04T09:43:03Z",
+  "native_manifest_sha256": "305bcef660e27381f2f199536b1cdb60d630a3728d2617cd0911116a80332e90",
+  "native_verification_sha256": "dfcffce78904cc6021694871cabdb65e28250a05451e0ff9c09f6bcb569243b2",
+  "complete_parameters": 4694274592,
+  "trainable_tensors": 624,
+  "updated_tensors_by_group": {
+    "decoder": 398,
+    "bridge": 224,
+    "board": 2
+  },
+  "native_exact_resume": {
+    "status": "complete",
+    "mismatched_fields": [],
+    "mismatched_trainable_tensors": 0,
+    "max_parameter_absolute_error": 0,
+    "steps": [
+      4,
+      4
+    ],
+    "world_sizes": [
+      4,
+      4
+    ]
+  },
+  "all_weights_and_Adam_states_finite_FP32": true,
+  "compute_dtype": "bfloat16",
+  "preflight_peak_torch_allocated_gib": 24.810006141662598,
+  "preflight_peak_is_not_total_driver_occupancy_or_formal_training_peak": true,
+  "formal_budget": {
+    "epochs": 4,
+    "updates": 2456,
+    "training_examples": 9823,
+    "global_batch": 16,
+    "micro_batch": 1,
+    "validation_examples": 384,
+    "independent_test_examples": 512
+  },
+  "first_three_formal_updates": [
+    {
+      "step": 1,
+      "loss": 2.9584367275238037,
+      "gradient_norm": 59.28580093383789,
+      "supervised_tokens": 6492,
+      "lr": 8.19672131147541e-09,
+      "seconds": 272.4055946180597,
+      "data_batch": {
+        "epoch": 0,
+        "optimizer_batch_in_epoch": 0,
+        "global_valid_rows": 16,
+        "global_padding_rows": 0,
+        "global_rows": 16
+      }
+    },
+    {
+      "step": 2,
+      "loss": 3.0935914516448975,
+      "gradient_norm": 62.77443313598633,
+      "supervised_tokens": 12984,
+      "lr": 1.639344262295082e-08,
+      "seconds": 278.38316768966615,
+      "data_batch": {
+        "epoch": 0,
+        "optimizer_batch_in_epoch": 1,
+        "global_valid_rows": 16,
+        "global_padding_rows": 0,
+        "global_rows": 16
+      }
+    },
+    {
+      "step": 3,
+      "loss": 2.8828048706054688,
+      "gradient_norm": 55.80207061767578,
+      "supervised_tokens": 19455,
+      "lr": 2.459016393442623e-08,
+      "seconds": 283.7473006108776,
+      "data_batch": {
+        "epoch": 0,
+        "optimizer_batch_in_epoch": 2,
+        "global_valid_rows": 16,
+        "global_padding_rows": 0,
+        "global_rows": 16
+      }
+    }
+  ],
+  "formal_execution_sha256": "3fec4c4ea3519d7dcae210b5a55939950936f4834d69da11560e44e36a86ff1c",
+  "formal_config_sha256": "7f7455bf7ac6038281d56da1e39b225334c45cea05c9a2d38ba80db11c8292b8",
+  "formal_source_revision": "full-decoder-fsdp2-v1-109-frozen",
+  "formal_source_modules": 109,
+  "actual_frozen_formal_consumer_tests": 1790,
+  "formal_code_matches_native_preflight": true,
+  "large_checkpoint_payloads_verified_by_completed_native_verifier": true,
+  "large_payloads_not_rehashed_by_this_readback": true,
+  "feature_cache_binding_reused_from_prior_full_byte_verification_receipt": true,
+  "new_full_feature_cache_byte_hash_not_claimed": true,
+  "training_complete_not_claimed": true,
+  "independent_test_used_for_training_or_selection": false,
+  "teacher_actual_capacity_search_distillation_independent_strength_and_coaching_model_delivery_still_required": true,
+  "unknown_GPU_processes_signaled": false,
+  "full_goal_complete": false,
+  "restorable_actual_training_source": {
+    "status": "complete_exact_source_archive_roundtrip",
+    "archive_path": "reproducibility/full-decoder-fsdp2-v1-109-source.tar.gz",
+    "archive_bytes": 350223,
+    "archive_sha256": "3c06cb2f5816742d27e296cfb778293948312dd0cee3b0d9e8f432de41425b53",
+    "source_modules": 109,
+    "all_module_bytes_match_actual_native_and_formal_execution": true,
+    "isolated_real_training_module_import_from_extracted_source_verified": true,
+    "installed_repository_source_not_used_by_probe": true,
+    "all_plain_source_credential_pattern_checks_passed": true,
+    "models_datasets_logs_and_credentials_not_included": true,
+    "source_revision": "full-decoder-fsdp2-v1-109-frozen",
+    "actual_frozen_consumer_tests": 1790,
+    "large_model_payloads_not_read": true
+  },
+  "unchanged_software_checks_reused": {
+    "source_modules": 112,
+    "tests_passed": 1903,
+    "verification_sha256": "e3e9b81f16d514bde636b248c0268ec228bb19508e45c89ee6a41545a5280c62",
+    "pytest_build_and_release_all_passed": true,
+    "stage_log_sha256": {
+      "pytest": "66b73a0dbb3afc835be1d1a268ba0c8768c4ddc57530e172f7dad0c23388d259",
+      "build": "14fff0a34c50f244cd4b6c1d80db7dcae3e8cb68f31a14caa5026e117247b1d5",
+      "release": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+    }
+  },
+  "all_source_test_configuration_and_build_bindings_unchanged_since_checks": true
+}
