@@ -132,6 +132,7 @@ def worker(rank,home):
         resumed=DistributedDataParallel(resumed,gradient_as_bucket_view=True)
         resumed_optimizer=training.training_optimizer(resumed.module,configuration(True))
         training.restore_optimizer_state(resumed_optimizer,saved['optimizer'],configuration(True),'cpu')
+        assert resumed_optimizer.state is resumed_optimizer.optim.state
         torch.set_rng_state(saved['rngs'][rank])
         for step in range(2,4):
             update(resumed,resumed_optimizer,step)

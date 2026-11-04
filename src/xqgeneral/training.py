@@ -147,6 +147,13 @@ def training_optimizer(model, config):
                 super().__init__(*args, **kwargs)
                 self._checkpoint_group = dist.new_group(backend='gloo')
 
+            def load_state_dict(self, state_dict):
+                super().load_state_dict(state_dict)
+                # Native loading also casts the wrapper's exposed state to the
+                # parameter device. Expose the actual local Adam state instead
+                # of retaining a second GPU copy of every owned moment.
+                self.state = self.optim.state
+
             def consolidate_state_dict(self, to=0):
                 # Keep the native global parameter/state mapping, while moving
                 # large serialized checkpoint traffic off the CUDA process group.
