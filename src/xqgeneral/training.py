@@ -21,6 +21,8 @@ from .finite_training import data_profile, prepare_finite_epochs
 from .training_index import IndexedTrainingRows, index_paths, training_row_indexes
 from .feature_store import FeatureStore, feature_paths, gather_features, is_feature_store, open_feature_cache
 from .verified_inputs import input_digest_execution, input_session_from_environment
+from .training_parallel import (parallel_settings, shard_training_model, parameter_prefix,
+                                gather_sharded_state, restore_sharded_optimizer, load_sharded_trainable)
 
 SYSTEM = "你是中国象棋助手。根据输入棋盘回答，只输出问题要求的内容。"
 
@@ -72,7 +74,7 @@ def training_memory_settings(config):
     sharding = config.get('optimizer_state_sharding', 'none')
     if not isinstance(sharding, str) or sharding not in {'none', 'zero1'}:
         raise ValueError('optimizer_state_sharding must be none or zero1')
-    settings = {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view}
+    settings = {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view, **parallel_settings(config)}
     if decoder_checkpointing(config):
         settings['decoder_gradient_checkpointing'] = True
     if not autocast_cache_setting(config):
@@ -333,7 +335,7 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
 
 
 @torch.no_grad()
-def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None, autocast_cache_enabled=True):
+def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None, autocast_cache_enabled=True, synced_gpus=False):
     model.eval()
     results = []
     for record in rows:
@@ -342,8 +344,9 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
             text = encode_board_text(text)
         inputs = tokenizer(text, return_tensors='pt', add_special_tokens=False).to(device)
         with model.board_context(select_features(cache, indices, [record], device)), model_autocast(device, autocast_cache_enabled):
+            options = {'synced_gpus': True} if synced_gpus else {}
             tokens = model.base.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens,
-                                         pad_token_id=tokenizer.pad_token_id)
+                                         pad_token_id=tokenizer.pad_token_id, **options)
         answer = tokenizer.decode(tokens[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
         if board_tokens:
             answer = decode_board_text(answer)
@@ -405,6 +408,7 @@ def _main():
     if normalization not in {'token', 'example'}:
         raise ValueError('Loss normalization must be token or example')
     memory_settings = training_memory_settings(config)
+    sharded = bool(parallel_settings(config))
     padding_policy = microbatch_padding_policy(config)
     compute_contract = {**configure_determinism(config.get('deterministic_training', False)), **memory_settings}
     world, rank = int(os.environ.get('WORLD_SIZE', 1)), int(os.environ.get('RANK', 0))
@@ -468,8 +472,6 @@ def _main():
     finite_epochs = prepare_finite_epochs(rows['train'], mixture, config, world)
     model, tokenizer = load_model(config, cache['features'][0].shape[-1], device)
     pools = None if finite_epochs is not None else sample_groups(rows['train'])
-    parameters = [p for p in model.parameters() if p.requires_grad]
-    optimizer = training_optimizer(model, config)
     begin, best_loss, best_step, tokens_seen = 0, float('inf'), 0, 0
     resume = None
     if args.resume:
@@ -486,43 +488,56 @@ def _main():
         if finite_epochs is not None:
             finite_epochs.check_resume(resume.get('data_state'), resume['step'])
         load_trainable(model, resume)
-        restore_optimizer_state(optimizer, resume['optimizer'], config, device)
-        if any(group.get('foreach') is not memory_settings['optimizer_foreach'] for group in optimizer.param_groups):
-            raise ValueError('Resume optimizer state differs from its foreach configuration')
         begin, best_loss, best_step, tokens_seen = (resume[k] for k in ['step', 'best_loss', 'best_step', 'tokens_seen'])
-        rng.setstate(resume['random_state'])
-        torch.set_rng_state(resume['torch_rng_state'])
-        torch.cuda.set_rng_state(resume['cuda_rng_states'][rank], device=device)
     elif config.get('init_from'):
         source = torch.load(config['init_from'], map_location='cpu', weights_only=True)
         if source['config'].get('mode', 'bridge') != config.get('mode', 'bridge'):
             raise ValueError('Cannot initialize a different model mode')
         initialize_trainable(model, source, config)
-    frozen = [(p, p.detach().flatten()[:1024].clone()) for p in model.parameters() if not p.requires_grad]
+        del source
+    model = shard_training_model(model, config)
+    parameters = [p for p in model.parameters() if p.requires_grad]
+    optimizer = training_optimizer(model, config)
+    if resume:
+        if sharded:
+            restore_sharded_optimizer(model, optimizer, resume['optimizer'])
+        else:
+            restore_optimizer_state(optimizer, resume['optimizer'], config, device)
+        if any(group.get('foreach') is not memory_settings['optimizer_foreach'] for group in optimizer.param_groups):
+            raise ValueError('Resume optimizer state differs from its foreach configuration')
+        rng.setstate(resume['random_state'])
+        torch.set_rng_state(resume['torch_rng_state'])
+        torch.cuda.set_rng_state(resume['cuda_rng_states'][rank], device=device)
+    frozen = [(p, parameter_prefix(p)) for p in model.parameters() if not p.requires_grad]
     decoder_probe = next((p for n, p in model.named_parameters()
                           if n.endswith(('q_proj.weight', 'q_proj.base_layer.weight')) and p.requires_grad), None)
-    decoder_before = decoder_probe.detach().flatten()[:1024].clone() if decoder_probe is not None else None
+    decoder_before = parameter_prefix(decoder_probe) if decoder_probe is not None else None
     find_unused = config.get('ddp_find_unused_parameters', False)
     if type(find_unused) is not bool:
         raise ValueError('ddp_find_unused_parameters must be a boolean')
     wrapped = DistributedDataParallel(model, device_ids=[int(os.environ['LOCAL_RANK'])],
                                        broadcast_buffers=False, find_unused_parameters=find_unused,
-                                       gradient_as_bucket_view=memory_settings['ddp_gradient_as_bucket_view']) if world > 1 else model
+                                       gradient_as_bucket_view=memory_settings['ddp_gradient_as_bucket_view']) if world > 1 and not sharded else model
+    if not resume:
+        if rank == 0 or sharded:
+            best_loss = evaluate(model, tokenizer, validation, cache, indices, config, device)
+        initial_state = gather_sharded_state(model)[0] if sharded else (trainable_state(model) if rank == 0 else None)
+    initial_loss = resume['initial_loss'] if resume else best_loss
     if rank == 0:
         dest.mkdir(parents=True, exist_ok=True)
         atomic_json(dest / 'config.json', config)
         atomic_json(dest / 'validation_ids.json', [r['id'] for r in validation])
         if not resume:
-            best_loss = evaluate(model, tokenizer, validation, cache, indices, config, device)
-            atomic_checkpoint(dest / 'adapter.pt', {'trainable': trainable_state(model), 'config': config,
+            atomic_checkpoint(dest / 'adapter.pt', {'trainable': initial_state, 'config': config,
                               'selected_step': 0, 'input_hashes': input_hashes, 'code': execution_code})
-        initial_loss = resume['initial_loss'] if resume else best_loss
         atomic_json(dest / 'execution.json', {'code': execution_code, 'input_hashes': input_hashes,
                                             'resumed_from_step': begin, 'initial_loss': initial_loss,
                                             'compute_contract': compute_contract, **input_digest_execution()})
         if finite_epochs is not None:
             atomic_json(dest / 'training_data.json', finite_epochs.contract())
         handle = (dest / 'training.jsonl').open('a' if resume else 'w')
+    if not resume:
+        del initial_state
     if world > 1:
         state = [best_loss, best_step]
         dist.broadcast_object_list(state, src=0)
@@ -568,7 +583,9 @@ def _main():
             micro_tokens = (micro_inputs['labels'][:, 1:] != -100).sum()
             micro_units = len(batch) if normalization == 'example' else micro_tokens
             synchronize = offset + micro_size >= len(records)
-            context = wrapped.no_sync() if world > 1 and not synchronize else nullcontext()
+            # FSDP reduces every microbatch so gradients remain sharded while
+            # accumulating; no_sync would retain full gradient replicas.
+            context = wrapped.no_sync() if world > 1 and not synchronize and not sharded else nullcontext()
             with context, model.board_context(select_features(cache, indices, batch, device)), model_autocast(device, autocast_cache_setting(config)):
                 if normalization == 'example':
                     forward_inputs = {k: v for k, v in micro_inputs.items() if k != 'labels'}
@@ -581,6 +598,10 @@ def _main():
                 loss.backward()
             weighted += raw_loss.detach() * micro_units
         norm = torch.nn.utils.clip_grad_norm_(parameters, 1.0)
+        if sharded:
+            # Resolve the distributed scalar on every rank before rank-zero
+            # logging; converting a Partial DTensor only there would deadlock.
+            norm = norm.full_tensor()
         if not torch.isfinite(norm):
             raise RuntimeError('Non-finite gradients')
         optimizer.step()
@@ -607,11 +628,13 @@ def _main():
                 cache.check_unchanged()
             if world > 1:
                 dist.barrier()
-            if rank == 0:
+            if rank == 0 or sharded:
                 current = evaluate(model, tokenizer, validation, cache, indices, config, device)
+            candidate_state = gather_sharded_state(model)[0] if sharded else None
+            if rank == 0:
                 if current < best_loss - config.get('min_delta', 0.001):
                     best_loss, best_step, patience_count = current, completed, 0
-                    atomic_checkpoint(dest / 'adapter.pt', {'trainable': trainable_state(model), 'config': config,
+                    atomic_checkpoint(dest / 'adapter.pt', {'trainable': candidate_state if sharded else trainable_state(model), 'config': config,
                                       'selected_step': best_step, 'input_hashes': input_hashes, 'code': execution_code})
                 else:
                     patience_count += 1
@@ -621,20 +644,26 @@ def _main():
                 state = [best_loss, best_step, stop]
                 dist.broadcast_object_list(state, src=0)
                 best_loss, best_step, stop = state
-            consolidate_optimizer_state(optimizer, config)
+            if sharded:
+                latest_state, latest_optimizer = gather_sharded_state(model, optimizer)
+            else:
+                consolidate_optimizer_state(optimizer, config)
             cuda_states = [None] * world
             if world > 1:
                 dist.all_gather_object(cuda_states, torch.cuda.get_rng_state(device))
             else:
                 cuda_states = [torch.cuda.get_rng_state(device)]
             if rank == 0:
-                atomic_checkpoint(dest / 'latest.pt', {'trainable': trainable_state(model), 'optimizer': optimizer.state_dict(), 'step': completed,
+                atomic_checkpoint(dest / 'latest.pt', {'trainable': latest_state if sharded else trainable_state(model),
+                            'optimizer': latest_optimizer if sharded else optimizer.state_dict(), 'step': completed,
                             'config': config, 'best_loss': best_loss, 'best_step': best_step, 'tokens_seen': tokens_seen,
                             'random_state': rng.getstate(), 'torch_rng_state': torch.get_rng_state(),
                             'cuda_rng_states': cuda_states, 'world_size': world, 'input_hashes': input_hashes,
                             'initial_loss': initial_loss, 'patience_count': patience_count, 'code': execution_code,
                             'compute_contract': compute_contract,
                             **({'data_state': finite_epochs.state_at(completed)} if finite_epochs is not None else {})})
+            if sharded:
+                del candidate_state, latest_state, latest_optimizer
         if args.stop_after and completed >= args.stop_after and completed < config['steps']:
             incomplete = True
             break
@@ -651,17 +680,23 @@ def _main():
             dist.barrier()
             dist.destroy_process_group()
         return
-    if rank == 0:
-        assert all(torch.equal(saved, parameter.detach().flatten()[:1024]) for parameter, saved in frozen)
+    if rank == 0 or sharded:
+        assert all(torch.equal(saved, parameter_prefix(parameter)) for parameter, saved in frozen)
         assert all(p.grad is None for p in model.parameters() if not p.requires_grad)
-        load_trainable(model, torch.load(dest / 'adapter.pt', map_location='cpu', weights_only=True))
+        selected = torch.load(dest / 'adapter.pt', map_location='cpu', weights_only=True)
+        if sharded:
+            load_sharded_trainable(model, selected)
+        else:
+            load_trainable(model, selected)
+        del selected
         after = evaluate(model, tokenizer, validation, cache, indices, config, device)
         zero = evaluate(model, tokenizer, validation, cache, indices, config, device, zero=True)
         shuffled = evaluate(model, tokenizer, validation, cache, indices, config, device, rotate=True)
         examples = generate_examples(model, tokenizer, validation[:config.get('generation_examples', 12)], cache,
                                      indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64),
                                      config.get('board_tokens', False), config.get('board_text'),
-                                     autocast_cache_enabled=autocast_cache_setting(config))
+                                     autocast_cache_enabled=autocast_cache_setting(config), synced_gpus=sharded)
+    if rank == 0:
         atomic_json(dest / 'examples.json', examples)
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
                   'steps_completed': completed, 'selected_step': best_step, 'world_size': world,
@@ -683,13 +718,15 @@ def _main():
                   'frozen_parameter_dtypes': {str(dtype): sum(p.numel() for p, _ in frozen if p.dtype == dtype)
                                              for dtype in {p.dtype for p, _ in frozen}},
                   'compute_dtype': 'torch.bfloat16',
-                  'selected_decoder_probe_max_change': (float((decoder_probe.detach().flatten()[:1024] - decoder_before).abs().max())
+                  'selected_decoder_probe_max_change': (float((parameter_prefix(decoder_probe) - decoder_before).abs().max())
                                                         if decoder_probe is not None else None),
                   'frozen_parameter_gradients_verified': True,
                   'nonzero_gradients': any(n > 0 for n in norms), 'generation_examples': len(examples),
                   'generation_exact_matches': sum(e['exact_match'] for e in examples),
                   'peak_allocated_gib': torch.cuda.max_memory_allocated(device) / 2**30,
                   'seconds': time.monotonic() - started, 'purpose': config['purpose']}
+        if sharded:
+            result['decoder_probe_scope'] = 'rank_zero_local_parameter_shard'
         inputs = [p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]
         if config.get('init_from'):
             inputs.append(config['init_from'])
