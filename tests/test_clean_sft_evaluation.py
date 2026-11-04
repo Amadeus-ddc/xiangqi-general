@@ -129,6 +129,27 @@ def test_complete_paired_raw_validation_and_full_blinded_review_preserve_errors(
         evaluation.run_evaluation(pipeline, 'owned-sft', config, output, resume=True)
 
 
+@pytest.mark.parametrize('value', [None, True, 'unknown'])
+def test_invalid_reviewer_backend_rejected_before_assets(value):
+    with pytest.raises(ValueError, match='review_teacher_backend'):
+        evaluation.validation_spec({'review_teacher_backend': value})
+
+
+def test_explicit_vllm_reviewer_is_launched_and_bound_in_proof(tmp_path, monkeypatch):
+    pipeline, config, original = setup_evaluation(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    settings['review_teacher_backend'] = 'vllm'
+    atomic_json(config, settings)
+    controlled = ControlledEvaluation(original, monkeypatch)
+    output = tmp_path / 'parallel-review'
+    result = evaluation.run_evaluation(pipeline, 'owned-sft', config, output)
+    command = next(c for c in controlled.commands if 'xqgeneral.local_teacher' in c)
+    assert command[command.index('--backend') + 1] == 'vllm'
+    proof = json.loads((output / 'reviewer/manifest.json').read_text())
+    assert proof['config']['backend'] == 'vllm'
+    assert result['all_validation_examples'] == 16
+
+
 def test_missing_owned_sft_pipeline_never_loads_model_or_reviewer(tmp_path, monkeypatch):
     pipeline, config, original = setup_evaluation(tmp_path, monkeypatch, complete=False)
     controlled = ControlledEvaluation(original, monkeypatch)
