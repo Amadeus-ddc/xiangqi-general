@@ -16,6 +16,8 @@
 
 详见[最新状态](STATUS.md)、[模型说明](docs/MODEL_CARD.md)和[四课完成读回](docs/PAPER_FOUR_COURSES_COMPLETED.md)。
 
+[384条正常讲解及末步对照](docs/INITIAL_SFT_DEVELOPMENT_BASELINE.md)已完成：首着合法90.10%，结构与连续变化等合同有效3.91%；2456步旧课72.50%，未改善1792步的72.92%。原始验证已按[完整缓存依赖与完成产物复用](docs/PAIRED_RAW_REUSE.md)接续。[完整未量化27B教师四卡实际推理](docs/FULL_BF16_TEACHER_NATIVE.md)也已读回通过，正式三组汇总、正文盲评、对弈及蒸馏仍待完成。
+
 ## 安装与 CPU 验证
 
 需要Python 3.11+。在仓库根目录创建独立环境；GPU训练还需适合本机的PyTorch CUDA构建。

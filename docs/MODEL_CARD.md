@@ -1,5 +1,7 @@
 # Xiangqi General model card
 
+The [384-example normal development evaluation](INITIAL_SFT_DEVELOPMENT_BASELINE.md) is complete: 346 legal first moves, 262 first moves with calibrated expected-score loss below 0.10, 15 valid structural/line/fact contracts, and 99 legal full principal variations. This does not establish full-match strength or human teaching quality. The preserved terminal update 2,456 scores 1,885/2,600 on matched course QA, below the selected update 1,792 (1,896/2,600), so the selected baseline remains unchanged. A separate [full unquantized BF16 TP4 teacher probe](FULL_BF16_TEACHER_NATIVE.md) completed one 5,352-token request; formal distillation remains outstanding.
+
 Xiangqi General is an independent Chinese-chess adaptation of the [Queen research pipeline](https://arxiv.org/abs/2610.03695v1), intended to play strong Xiangqi and explain moves in Chinese for personal study.
 
 **No trained checkpoint has passed final playing-strength and coaching acceptance.** All four courses and [initial full-decoder explanation SFT](INITIAL_SFT_COMPLETED.md) are complete. SFT ran 2,456 updates over four finite passes and selected update 1,792 by fixed 384-example validation NLL (0.63950). A readback of eight closing validation generations found five legal first moves and zero fully passing structural/line results. These small validation examples do not estimate final quality. Real search distillation, independent acceptance and portable trained delivery remain outstanding.

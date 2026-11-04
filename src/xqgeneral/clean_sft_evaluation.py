@@ -13,6 +13,7 @@ from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
 from .evaluate_explanations import explanation_summary
 from .explanations import EXPLANATION_QUESTION
+from .feature_store import feature_paths
 from .foundation_handoff import Artifacts
 from .foundation_prefix import declared_prefix_reference
 from .review_explanations import DIMENSIONS, blinded_query, parse_rating
@@ -32,8 +33,42 @@ def reviewer_backend(config):
     return backend
 
 
+def raw_reuse_spec(config):
+    references = config.get('reuse_raw_validation', {})
+    if not isinstance(references, dict) or set(references) - {'normal', 'zero', 'shuffled'}:
+        raise ValueError('Reuse only explicitly declared completed raw validation memories')
+    for reference in references.values():
+        if (not isinstance(reference, dict) or set(reference) != {'path', 'manifest_sha256'} or
+                not isinstance(reference['path'], str) or not reference['path'] or
+                not isinstance(reference['manifest_sha256'], str) or len(reference['manifest_sha256']) != 64 or
+                any(c not in '0123456789abcdef' for c in reference['manifest_sha256'])):
+            raise ValueError('Raw reuse requires an exact directory and manifest SHA256')
+    return references
+
+
+def reused_raw_code(root, reference):
+    path = root / 'manifest.json'
+    if not path.is_file() or digest(path) != reference['manifest_sha256']:
+        raise ValueError('Declared completed raw validation manifest changed or is missing')
+    previous = json.loads(path.read_text()).get('code')
+    current = code_identity()
+    if (not isinstance(previous, dict) or set(previous) != set(current) or
+            not isinstance(previous.get('source_sha256'), dict) or
+            set(previous['source_sha256']) != set(current['source_sha256'])):
+        raise ValueError('Raw reuse requires the complete unchanged inference source inventory')
+    coordinator = 'src/xqgeneral/clean_sft_evaluation.py'
+    if (any(previous['source_sha256'][name] != current['source_sha256'][name]
+            for name in current['source_sha256'] if name != coordinator) or
+            not isinstance(previous['source_sha256'].get(coordinator), str) or
+            len(previous['source_sha256'][coordinator]) != 64 or
+            any(c not in '0123456789abcdef' for c in previous['source_sha256'][coordinator])):
+        raise ValueError('Raw reuse forbids changes to any inference, rules or scoring source')
+    return previous
+
+
 def validation_spec(config):
     reviewer_backend(config)
+    raw_reuse_spec(config)
     if config['split'] != 'validation' or config['memories'] != ['normal', 'zero', 'shuffled']:
         raise ValueError('Development evaluation requires all three paired validation memories')
     for key in ['validation_examples', 'batch_size', 'max_new_tokens', 'nodes', 'workers', 'review_max_new_tokens']:
@@ -181,10 +216,11 @@ def teacher_artifacts(path):
     return teacher, guard
 
 
-def checked_raw(root, memory, rows, args, core):
+def checked_raw(root, memory, rows, args, core, *, expected_code=None):
     proof = json.loads((root / 'manifest.json').read_text())
     if (proof.get('status') != 'complete' or proof.get('kind') != 'independent_explanation_evaluation' or
-            proof['config'] != args or proof['inputs'] != core.expected or proof['code'] != code_identity()):
+            proof['config'] != args or proof['inputs'] != core.expected or
+            proof['code'] != (code_identity() if expected_code is None else expected_code)):
         raise ValueError('Raw evaluation differs from the paired model, inputs or generation budget')
     core.unchanged();checked_artifacts({'status': 'complete', 'inputs': {}, 'outputs': proof['outputs']})
     raw = load_jsonl(root / 'raw-predictions.jsonl');judged = load_jsonl(root / 'judged-predictions.jsonl')
@@ -209,6 +245,7 @@ def checked_raw(root, memory, rows, args, core):
 def run_evaluation(pipeline, producer_session, config_path, output, *, resume=False, poll_seconds=30):
     config_path = Path(config_path);root = Path(output);config = json.loads(config_path.read_text())
     rows, token, recipe = validation_spec(config)
+    reuse = raw_reuse_spec(config)
     teacher, teacher_guard = teacher_artifacts(config['teacher_config'])
     contract = {'pipeline': str(pipeline), 'producer_session': producer_session,
         'config': str(config_path), 'config_sha256': digest(config_path), 'code': code_identity(),
@@ -228,12 +265,17 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
             return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
     stage = 'waiting_for_completed_clean_sft'
+    raw_guard, raw_paths = Artifacts(), {}
     def unchanged():
         if digest(config_path) != contract['config_sha256'] or code_identity() != contract['code']:
             raise ValueError('Evaluation configuration or preserved source changed')
         if any(digest(p) != sha for p, sha in contract['prerequisite_sha256'].items()):
             raise ValueError('Evaluation prerequisite changed')
         checked_artifacts(token)
+        raw_guard.unchanged()
+        for reference in reuse.values():
+            if digest(Path(reference['path']) / 'manifest.json') != reference['manifest_sha256']:
+                raise ValueError('Declared completed raw validation manifest changed')
     def execute(command):
         with (root / 'commands.jsonl').open('a') as log:log.write(json.dumps(command) + '\n')
         with (root / 'log.txt').open('a') as log:
@@ -249,12 +291,16 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
         core.add(source, parent['outputs'][str(source)])
         validation = str(Path(config['data']) / 'validation.jsonl');core.add(validation, token['inputs'][validation])
         cache = token['cache_header_only_input'];core.add(config['features'], {k: cache[k] for k in ['sha256', 'bytes']})
+        for path in feature_paths(config['features']):
+            core.add(path, {'sha256': digest(path), 'bytes': Path(path).stat().st_size})
         for path, item in contract['engine_artifacts'].items():core.add(path, item)
         core.verify();teacher_guard.verify()
         metrics, normal_rows, proofs = {}, None, []
         for memory in config['memories']:
             stage = 'raw_validation_' + memory;atomic_json(root / 'state.json', {'status': stage})
-            dest = root / memory
+            reference = reuse.get(memory)
+            dest = Path(reference['path']) if reference is not None else root / memory
+            expected_code = reused_raw_code(dest, reference) if reference is not None else None
             args = {'checkpoint': str(source), 'data': config['data'], 'features': config['features'],
                     'split': 'validation', 'limit': len(rows), 'memory': memory, 'output': str(dest),
                     **{key: config[key] for key in ['batch_size', 'max_new_tokens', 'nodes', 'workers', 'seed', 'executable', 'weights']}}
@@ -263,14 +309,20 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
                 command = [sys.executable, '-u', '-m', 'xqgeneral.evaluate_explanations']
                 for key, value in args.items():command += ['--' + key.replace('_', '-'), str(value)]
                 execute(command)
-            metrics[memory], judged = checked_raw(dest, memory, rows, args, core)
+            metrics[memory], judged = checked_raw(dest, memory, rows, args, core, expected_code=expected_code)
+            raw_paths[memory] = dest
+            raw_guard.add(dest / 'manifest.json', {'sha256': digest(dest / 'manifest.json'),
+                                                  'bytes': (dest / 'manifest.json').stat().st_size})
+            for path, binding in json.loads((dest / 'manifest.json').read_text())['outputs'].items():
+                raw_guard.add(path, binding)
+            raw_guard.verify()
             if memory == 'normal':normal_rows = judged
             proofs.append(dest / 'manifest.json');unchanged();teacher_guard.unchanged()
         stage = 'blinded_prose_review';atomic_json(root / 'state.json', {'status': stage})
         queries, inference, ratings = [root / name for name in ['queries', 'reviewer', 'ratings']]
         if not (queries / 'manifest.json').exists():
             execute([sys.executable, '-u', '-m', 'xqgeneral.review_explanations', 'prepare', '--predictions',
-                     str(root / 'normal/judged-predictions.jsonl'), '--limit', str(len(rows)), '--seed',
+                     str(raw_paths['normal'] / 'judged-predictions.jsonl'), '--limit', str(len(rows)), '--seed',
                      str(config['seed']), '--output', str(queries)])
         query_proof = json.loads((queries / 'manifest.json').read_text());checked_artifacts(query_proof)
         query_rows = load_jsonl(queries / 'queries.jsonl');expected_queries = {r['id']: blinded_query(r) for r in normal_rows}
@@ -327,6 +379,7 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
             'actual_selected_full_decoder_training_completed_before_model_or_reviewer_load': True,
             'trained_search_distillation_rounds': parent['verification'].get('trained_search_distillation_rounds', 0),
             'all_validation_examples': len(rows), 'raw_validation_by_memory': metrics,
+            'reused_raw_validation_memories': list(reuse),
             'paired_memory_rate_differences_normal_minus_ablation': {memory: {k: metrics['normal'][k] - metrics[memory][k]
                 for k in ['first_move_no_mistake_rate', 'structured_contract_valid_rate', 'pv_legal_rate']}
                 for memory in ['zero', 'shuffled']}, 'blinded_prose_review': summary,
