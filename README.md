@@ -12,7 +12,7 @@
 | 旧三课回放 | 1920/2000（96.00%） | 1924/2000（96.20%） |
 | 合计 | 2450/2600（94.23%） | 2459/2600（94.58%） |
 
-完整参数四卡容量与精确续跑已通过，正式讲解训练已开始，计划4轮、2456次更新。讲解完成、足量真实搜索蒸馏和独立棋力／教学验收仍待完成，目前还没有通过最终验收的教练模型。上述课程分数不代表实战棋力或讲解质量。见[真实开训读回](docs/FULL_DECODER_SFT_START.md)。
+[完整初始讲解训练已结束](docs/INITIAL_SFT_COMPLETED.md)：实际四轮2456次更新，验证NLL选1792步（0.63950）。末尾8条小型验证样例中，5条首着合法、0条完整通过主线与分支等全部检查，讲解可靠性仍不足。当前接续四课复查、完整开发评测、真实搜索和蒸馏；独立棋力／教学验收及正式教练模型仍待完成。上表是讲解前课程模型的结果，讲解后的能力保留另行复查。
 
 详见[最新状态](STATUS.md)、[模型说明](docs/MODEL_CARD.md)和[四课完成读回](docs/PAPER_FOUR_COURSES_COMPLETED.md)。
 
@@ -51,7 +51,7 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 ## 数据与训练
 
-[新监督语料的来源重建与整库配对](docs/PAPER_RATIONALE_CORPUS_PRODUCTION.md)已完成，后续CPU训练／验证索引已完成，词元／特征预检正在进行；本次完成的四课使用原配方。[原始源码历史](docs/SOURCE_HISTORY.md)可按实验引用的提交编号恢复。
+[新监督语料的来源重建与整库配对](docs/PAPER_RATIONALE_CORPUS_PRODUCTION.md)及其CPU准备另有记录；本次四课和初始讲解始终使用各自冻结的原数据及配方，未采用该新监督另训学生。[原始源码历史](docs/SOURCE_HISTORY.md)可按实验引用的提交编号恢复。
 
 四门课程用于训练连接桥，随后进行讲解训练和实际搜索蒸馏。四门课程按棋局划分训练／验证／独立测试，并混合已学课程。验证集用于选模，独立测试保留到最终模型与配置锁定之后。
 
@@ -70,11 +70,11 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 ## 讲解教师
 
-当前计划使用GPT-6-Astra Low生成并交叉复核初始讲解，以本地完整BF16 Qwen3.8-27B作为蒸馏汇总教师。教师标签、学生实际搜索产量与蒸馏收益分别核验；实际进度见[后续训练流程](docs/PAPER_POST_CURRICULUM.md)。
+初始讲解标签沿用用户授权的GPT-6-Astra Low生成和交叉复核记录；后续以本地完整BF16 Qwen3.8-27B作为蒸馏汇总教师。教师标签、学生实际搜索产量与蒸馏收益分别核验；实际进度见[后续训练流程](docs/PAPER_POST_CURRICULUM.md)。
 
 ## 讲解训练与搜索蒸馏
 
-正式讲解训练从四课全部完成后的模型开始。完整解码器先执行真实四卡容量和精确续跑检查，再训练与评测；优化器分摊已在试跑中完成2次更新，检查点收集改为CPU后继续验证，[可选显存控制与接续入口](docs/FULL_DECODER_MEMORY_CONTROLS.md)记录实际边界。后续搜索规模和蒸馏轮数根据实际合格数据产量与开发结果决定。[详细开发指南](docs/DEVELOPMENT_GUIDE.md)保留各版本命令和历史证据。
+初始讲解已从实际完成四课的模型完成完整参数训练，[完成读回](docs/INITIAL_SFT_COMPLETED.md)记录原生容量／精确恢复、全部更新、所选模型及现有质量问题。[显存控制历史](docs/FULL_DECODER_MEMORY_CONTROLS.md)保留此前失败；当前运行定位见[接续入口](docs/QUALIFIED_SFT_ROUTE.md#本服务器运行定位与恢复)。后续搜索规模和蒸馏轮数根据实际合格数据产量与开发结果决定。[详细开发指南](docs/DEVELOPMENT_GUIDE.md)保留各版本命令和历史证据。
 
 ## 原始输出与对弈评测
 

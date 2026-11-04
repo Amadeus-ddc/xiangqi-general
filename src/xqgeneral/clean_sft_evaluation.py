@@ -14,6 +14,7 @@ from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
 from .evaluate_explanations import explanation_summary
 from .explanations import EXPLANATION_QUESTION
 from .foundation_handoff import Artifacts
+from .foundation_prefix import declared_prefix_reference
 from .review_explanations import DIMENSIONS, blinded_query, parse_rating
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary
@@ -93,8 +94,10 @@ def checked_sft(pipeline, config, recipe):
         raise ValueError('Require the actual completed clean SFT pipeline and its exact selected model')
     trained = json.loads((root / 'sft/manifest.json').read_text());checked_artifacts(trained)
     saved = json.loads((root / 'sft/config.json').read_text())
-    expected = prepare_config(checked_parent(root / 'handoff/adapter.pt', True), recipe,
-                              root / 'handoff/adapter.pt', root / 'sft')
+    prefix = declared_prefix_reference(recipe)
+    parent_config = checked_parent(root / 'handoff/adapter.pt', True,
+                                   **({'authorized_prefix': prefix} if prefix else {}))
+    expected = prepare_config(parent_config, recipe, root / 'handoff/adapter.pt', root / 'sft')
     checkpoint = torch.load(source, map_location='cpu', weights_only=True, mmap=True)
     preflight = json.loads((root / 'preflight/manifest.json').read_text())
     initial_path = root / 'preflight/zero-init.pt'
