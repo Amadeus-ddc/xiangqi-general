@@ -18,6 +18,7 @@ from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_s
                        search_generation_policy)
 from .feature_store import feature_paths
 from .search_critical import acceptance_evidence, checked_acceptance_policy, mine_paper
+from .verified_inputs import input_session_from_environment
 
 
 CHILD_PROMPT_PROFILES = ('full_explanation', 'numeric_six_ply_v1')
@@ -478,7 +479,7 @@ class SearchMiner:
                 'child_contract': self.child_contract}
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--checkpoint', required=True)
     parser.add_argument('--data', default='data/research-balanced-v1')
@@ -659,6 +660,11 @@ def main():
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log], proof))
     print(json.dumps(proof), flush=True)
+
+
+def main():
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':

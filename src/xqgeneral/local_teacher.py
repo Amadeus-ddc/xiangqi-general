@@ -177,7 +177,7 @@ def teacher_session(config, backend):
             teacher.close()
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='configs/teachers.json')
     parser.add_argument('--input', required=True, help='JSONL with id and messages')
@@ -333,6 +333,12 @@ def main():
                 input_paths,
                 [root / 'responses.jsonl', root / 'deployment.json'], proof))
     print(json.dumps(proof), flush=True)
+
+
+def main():
+    from .verified_inputs import input_session_from_environment
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':
