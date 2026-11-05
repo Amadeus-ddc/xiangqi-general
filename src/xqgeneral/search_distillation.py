@@ -488,6 +488,8 @@ def main():
     pools.add_argument('--recorded-inputs', help='Completed unused canonical-game roots and held-out positions')
     parser.add_argument('--output', required=True)
     parser.add_argument('--limit', type=int, default=512)
+    parser.add_argument('--root-offset', type=int,
+                        help='Start at this zero-based index in a completed recorded pool; keep its stable order')
     parser.add_argument('--nodes', type=int, default=100000)
     parser.add_argument('--max-depth', type=int, default=5)
     parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
@@ -509,6 +511,11 @@ def main():
     args = parser.parse_args()
     if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
         raise ValueError('Search limits and node budgets must be positive; recursion depth cannot be negative')
+    if args.root_offset is not None:
+        from .recorded_search_inputs import checked_root_offset
+        checked_root_offset(args.root_offset)
+        if not args.recorded_inputs:
+            raise ValueError('A root offset requires completed recorded inputs')
     checked_child_prompt_profile(args.child_prompt_profile or 'full_explanation', args.child_contract)
     generation_policy = None
     if args.student_generation_config is not None:
@@ -524,7 +531,7 @@ def main():
     arguments = {k: v for k, v in vars(args).items()
                  if k not in {'student_generation_config', 'max_root_retries', 'root_candidate_policy',
                               'reuse_child_analysis', 'acceptance_policy', 'min_clean_ply',
-                              'child_prompt_profile'} or v is not None}
+                              'child_prompt_profile', 'root_offset'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -555,7 +562,8 @@ def main():
             'bytes': (Path(args.data) / f'{s}.jsonl').stat().st_size}
             for s in ['train', 'validation', 'test']}
         records, additional_reserved = prepared_roots(args.recorded_inputs, args.data,
-            args.limit, args.seed, base_identities)
+            args.limit, args.seed, base_identities,
+            offset=0 if args.root_offset is None else args.root_offset)
     elif args.prepared_inputs:
         train = Path(args.data) / 'train.jsonl'
         records = prepared_training_roots(args.prepared_inputs, args.data, args.limit, args.seed,
@@ -623,6 +631,10 @@ def main():
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
+    if args.root_offset is not None:
+        proof.update(recorded_root_offset=args.root_offset,
+            selected_recorded_root_ids_sha256=hashlib.sha256(json.dumps(
+                [row['id'] for row in records], separators=(',', ':')).encode()).hexdigest())
     if generation_policy is not None:
         proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
                      generation_software=contract['generation_software'],

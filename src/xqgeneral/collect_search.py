@@ -131,7 +131,8 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
     identities = {str(Path(data) / f'{split}.jsonl'):
         bound.bind(Path(data) / f'{split}.jsonl', declared(Path(data) / f'{split}.jsonl'))
         for split in ('train', 'validation', 'test')}
-    selected, additional = prepared_roots(pool, data, config['limit'], config['seed'], identities)
+    selected, additional = prepared_roots(pool, data, config['limit'], config['seed'], identities,
+                                        offset=config.get('root_offset', 0))
     if proof.get('additional_reserved_canonical_and_explanation_positions') != len(additional):
         raise ValueError('Mining reserved-position coverage differs from the recorded pool')
     pool_proof = bound.json(pool / 'manifest.json')
@@ -167,6 +168,8 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
                 validation_and_test_labels_byte_preserved_from_recorded_pool=True,
                 recorded_mining_isolation_rechecked_during_collection=True,
                 student_search_or_oracle_comparisons_recomputed=False)
+    if 'root_offset' in config:
+        info['recorded_root_offset'] = config['root_offset']
     return additional, info
 
 
