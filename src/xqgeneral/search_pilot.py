@@ -12,13 +12,14 @@ from .clean_sft_evaluation import checked_sft, teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs
 from .sampling import checked_seed, search_generation_policy
-from .search_distillation import checked_search_extensions
+from .search_distillation import checked_child_prompt_profile, checked_search_extensions, child_prompt_metadata
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
 from .teacher_generation import checked_budget, generation_profile
 from .teacher_prefill import checked_prefill_chunk_size
 
 
 def pilot_spec(config, bound):
+    checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
     if config.get('student_generation_config') is not None:
         if not isinstance(config['student_generation_config'], str) or not config['student_generation_config']:
             raise ValueError('Student sampling configuration must be a file path')
@@ -198,10 +199,13 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             arguments['root_candidate_policy'] = config['root_candidate_policy']
         if config.get('reuse_child_analysis') is True:
             arguments['reuse_child_analysis'] = True
-        for key in ['acceptance_policy', 'min_clean_ply']:
+        for key in ['acceptance_policy', 'min_clean_ply', 'child_prompt_profile']:
             if config.get(key) is not None:
                 arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
+        if (config.get('child_prompt_profile') is not None and
+                mined['verification'].get('child_prompt') != child_prompt_metadata(config['child_prompt_profile'])):
+            raise ValueError('Actual mining child prompt differs from the requested profile')
         queries = load_jsonl(mining / 'queries.jsonl')
         attempts = load_jsonl(mining / 'results.partial.jsonl')
         actual_queries = [row['query'] for row in attempts if row['query'] is not None]
