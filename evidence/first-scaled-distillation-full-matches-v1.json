@@ -1,0 +1,150 @@
+{
+  "status": "queued_after_actual_first_distilled_retention_and_paired_development_review",
+  "recorded_utc": "2026-11-05T14:33:21.240647+00:00",
+  "runtime_directory": "runs/first-scaled-distillation-full-matches-v1",
+  "tmux_session": "xqgeneral-first-scaled-distillation-full-matches-v1",
+  "actual_owned_waiting_process_verified": true,
+  "startup_verification_sha256": "8ca306507a841a292715d67fa5c2200f19ced7dd875c366a6d42fd6397e82131",
+  "plan_sha256": "472fd10d082b34bca66b486d957911af08d2245af6c013996626dbe64b99b770",
+  "runtime_sha256": {
+    "entry.py": "3a244f8195ab06ef47aeab927c4e1904e2a7898c3f446127db653b92633b6874",
+    "startup.py": "81eb82f62682081ed5f7d27e6ddd26ad410408e4cf34291481ca8c5bdfb98927",
+    "guarded-python": "3fa540794441b57d179a7c9b461917a76b8004420c2f685f3d22ae18838de287",
+    "launcher.py": "852ff5492c9208a0fe1b7d56b16674c71732bbd7e2c799c495162458b4a31285",
+    "comparison.py": "4b13a6c631d64e2bc67edbbe06682597617918cabc59adf0d78dafb1fac4c027"
+  },
+  "source": {
+    "revision": "paired-evaluation-inputs-112-v1",
+    "module_count": 112,
+    "exact_original_source_unmodified": true,
+    "original_full_CPU_checks": 1922,
+    "original_CPU_verification_sha256": "36961436415e59b0a4ea757e67bf3d6578e0223b73b75abd427469f11bfc271a"
+  },
+  "native_opening_admission": {
+    "protected_split": "validation",
+    "opening_groups": 64,
+    "both_model_colors": true,
+    "opponent_node_budgets": [
+      100,
+      1000,
+      10000
+    ],
+    "scheduled_games": 384,
+    "maximum_new_plies": 256,
+    "opening_plies": 12,
+    "action_mode": "explanation",
+    "move_beams": 4,
+    "schedule_sha256": "8e20c540b213e5583d8a9d2158eb3c62d7f2340bf73ca9efba10e5e982b3c5c6",
+    "actual_native_control_accepted_training_rows": 37,
+    "control_is_future_round_or_quality_evidence": false,
+    "future_evaluation_config_created_or_faked": false,
+    "only_actual_match_config_changes": [
+      "cuda_visible_devices",
+      "evaluation_config"
+    ]
+  },
+  "execution_gates": {
+    "requires_real_completed_round_kind": "full_decoder_search_distillation_sft_round",
+    "requires_exact_completed_round_count": 1,
+    "requires_actual_retention_and_paired_review": true,
+    "same_selected_checkpoint_required": true,
+    "same_input_recipe_feature_and_token_contracts_required": true,
+    "shared_startup_resource_lease": true,
+    "physical_GPU": 1,
+    "minimum_free_MiB_before_load": 32768,
+    "lease_release_requires_a_new_raw_model_turn_or_child_exit": true,
+    "resume_prior_turns_do_not_prove_new_model_load": true,
+    "partial_raw_outputs_preserved": true
+  },
+  "comparisons": {
+    "references": [
+      "original_initial_SFT",
+      "joint_initial_SFT"
+    ],
+    "only_after_all_each_384_raw_games_exist": true,
+    "checks_identical_opening_fen_moves_color_and_budget": true,
+    "requires_same_native_inference_and_grading_source": true,
+    "censored_games_counted_as_draws": false,
+    "independent_game_count_claimed": false,
+    "elo_estimate": null,
+    "raw_model_answers_repaired": false,
+    "single_change_causal_experiment": false
+  },
+  "CPU_qualification": {
+    "new_private_pairing_native_round_and_OS_cases_passed": 27,
+    "focused_log_sha256": "c06fc07ade16fae99d525532ad38f63a4856d15aa93cbf140c223561cd108ee6",
+    "actual_OS_lease_controls": [
+      {
+        "case": "normal",
+        "reason": "new_raw_model_turn_observed",
+        "previous_raw_turns": 0,
+        "observed_raw_turns": 1,
+        "child_pid": 2615175,
+        "child_returncode": null
+      },
+      {
+        "case": "resume",
+        "reason": "new_raw_model_turn_observed",
+        "previous_raw_turns": 1,
+        "observed_raw_turns": 2,
+        "child_pid": 2615177,
+        "child_returncode": null
+      },
+      {
+        "case": "completed",
+        "reason": "child_exited_without_observed_new_raw_turn",
+        "previous_raw_turns": 0,
+        "observed_raw_turns": 0,
+        "child_pid": 2615179,
+        "child_returncode": 0
+      },
+      {
+        "case": "failure",
+        "reason": "child_exited_without_observed_new_raw_turn",
+        "previous_raw_turns": 0,
+        "observed_raw_turns": 0,
+        "child_pid": 2615181,
+        "child_returncode": 7
+      }
+    ],
+    "actual_CLI_help_returncodes": [
+      0,
+      0
+    ],
+    "launcher_verification_sha256": "6e5dead26b42349059fcec963267c1eb92337165c8770b22d4d3e74cdb8d9926",
+    "CUDA_initialized": false,
+    "public_source_modules_unchanged": 113,
+    "public_checked_files_unchanged": 306,
+    "prior_full_CPU_cases_reused": 2087,
+    "prior_validation_verification_sha256": "94b85d200c088f11618feb462a346c810e63a032653527245c33573a09f8497b",
+    "full_CPU_suite_repeated_locally_this_milestone": false,
+    "source_validation_reuse_sha256": "6b3181f3f80632302dbedb55fab1330ca356dbb969e5f77dffa70b45437c01ac",
+    "fresh_build_and_release": {
+      "status": "passed",
+      "results": [
+        {
+          "stage": "build",
+          "returncode": 0,
+          "sha256": "922706613f9c074d24bbabb86ea9a8bc9f7463bc48fde620ab847f2a08892f82"
+        },
+        {
+          "stage": "release",
+          "returncode": 0,
+          "sha256": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f"
+        }
+      ],
+      "student_or_teacher_queries": 0
+    },
+    "fresh_packaging_verification_sha256": "6c1f0fe269b3ab1e007136d589c015f6a1d54e21249a1764720ef3ec576def74",
+    "actual_admitted_schedule_pairing_control_sha256": "ca227cbbd6670b98b13cad5c08a21adb7d0a89c601d51682ff1424abb949461b"
+  },
+  "new_student_or_teacher_queries": 0,
+  "new_student_SGD_updates": 0,
+  "actual_formal_distillation_rounds_completed": 0,
+  "new_match_quality_result_available": false,
+  "independent_test_used_for_training_selection_or_model_queries": false,
+  "unknown_GPU_occupants_terminated": false,
+  "strong_student_or_reliable_coach_proven": false,
+  "final_model_delivered": false,
+  "full_goal_complete": false
+}
