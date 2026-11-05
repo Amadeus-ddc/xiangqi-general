@@ -26,6 +26,12 @@ TACTICAL_CONTEXT_FIELDS = ('source_initial_fen', 'declared_participants',
     'provided_line_is_best_move_label', 'source_comments_or_analysis_branches_used_as_labels')
 
 
+def checked_root_offset(value):
+    if type(value) is not int or value < 0:
+        raise ValueError('Recorded root offset must be a nonnegative integer')
+    return value
+
+
 def candidate_source_kinds(value):
     if value is None:
         return set(KINDS)
@@ -357,8 +363,9 @@ def prepare(games, data, footprints, used_inputs, heldout_data, output, *,
     return counts
 
 
-def prepared_roots(pool, data, limit, seed, base_identities):
+def prepared_roots(pool, data, limit, seed, base_identities, *, offset=0):
     """Validate a complete unused-game pool before any student model is loaded."""
+    offset = checked_root_offset(offset)
     if type(limit) is not int or limit < 1:
         raise ValueError('Recorded search limits must be positive')
     pool, data = Path(pool), Path(data)
@@ -376,6 +383,8 @@ def prepared_roots(pool, data, limit, seed, base_identities):
         for path, identity in saved[group].items():
             bound.bind(path, identity)
     counts = bound.json(pool / 'counts.json')
+    if offset and offset + limit > counts['candidate_training_histories']:
+        raise ValueError('Recorded root range exceeds the completed pool coverage')
     selected_kinds = candidate_source_kinds(saved['config'].get('candidate_kinds'))
     if (counts != saved['verification'] or counts.get('new_color_derived_candidates') != 0 or
             counts.get('new_distillation_targets_generated') is not False or
@@ -410,7 +419,7 @@ def prepared_roots(pool, data, limit, seed, base_identities):
         games[row['game_id']] += 1
         kinds[row['recorded_source_kind']] += 1
         previous = ordered
-        if len(selected) < limit:
+        if offset <= len(keys) - 1 < offset + limit:
             if history_key(row['history']) != key:
                 raise ValueError('Selected recorded roots differ from their full-history keys')
             selected.append(row)

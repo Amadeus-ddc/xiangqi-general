@@ -10,7 +10,7 @@ import time
 
 from .clean_sft_evaluation import checked_sft, teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
-from .recorded_search_inputs import ARTIFACTS, BoundInputs
+from .recorded_search_inputs import ARTIFACTS, BoundInputs, checked_root_offset
 from .sampling import checked_seed, search_generation_policy
 from .search_distillation import checked_child_prompt_profile, checked_search_extensions, child_prompt_metadata
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
@@ -19,6 +19,7 @@ from .teacher_prefill import checked_prefill_chunk_size
 
 
 def pilot_spec(config, bound):
+    offset = checked_root_offset(config.get('root_offset', 0))
     checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
     if config.get('student_generation_config') is not None:
         if not isinstance(config['student_generation_config'], str) or not config['student_generation_config']:
@@ -64,7 +65,7 @@ def pilot_spec(config, bound):
     if (pool.get('status') != 'complete' or pool.get('kind') != 'prepared_unused_recorded_search_roots' or
             pool['config']['data'] != config['data'] or pool['config']['seed'] != config['seed'] or
             pool['config']['heldout_data'] != evaluation['data'] or
-            counts['candidate_training_histories'] < config['limit'] or
+            counts['candidate_training_histories'] < config['limit'] + offset or
             evaluation.get('split') != 'validation' or evaluation.get('memories') != ['normal', 'zero', 'shuffled'] or
             recipe.get('require_clean_foundation_handoff') is not True or
             recipe['data_path'] != evaluation['data'] or recipe['feature_path'] != evaluation['features'] or
@@ -199,10 +200,13 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             arguments['root_candidate_policy'] = config['root_candidate_policy']
         if config.get('reuse_child_analysis') is True:
             arguments['reuse_child_analysis'] = True
-        for key in ['acceptance_policy', 'min_clean_ply', 'child_prompt_profile']:
+        for key in ['acceptance_policy', 'min_clean_ply', 'child_prompt_profile', 'root_offset']:
             if config.get(key) is not None:
                 arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
+        if (config.get('root_offset') is not None and
+                mined['verification'].get('recorded_root_offset') != config['root_offset']):
+            raise ValueError('Actual mining root offset differs from the requested range')
         if (config.get('child_prompt_profile') is not None and
                 mined['verification'].get('child_prompt') != child_prompt_metadata(config['child_prompt_profile'])):
             raise ValueError('Actual mining child prompt differs from the requested profile')
