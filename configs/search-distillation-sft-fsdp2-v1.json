@@ -1,0 +1,50 @@
+{
+  "require_clean_foundation_handoff": false,
+  "decoder_training": "full",
+  "trainable_parameter_dtype": "float32",
+  "loss_normalization": "token",
+  "deterministic_training": true,
+  "feature_cache_mmap": true,
+  "ddp_world_size": 4,
+  "ddp_find_unused_parameters": true,
+  "ddp_gradient_as_bucket_view": true,
+  "optimizer_foreach": false,
+  "stages": [
+    "explanation"
+  ],
+  "mixture": {
+    "explanation": 1.0
+  },
+  "validation_stages": [
+    "explanation"
+  ],
+  "batch_size": 32,
+  "micro_batch_size": 1,
+  "eval_batch_size": 1,
+  "learning_rate": 0.0001,
+  "decoder_learning_rate": 1e-05,
+  "token_learning_rate": 1e-05,
+  "lr_schedule": "constant",
+  "weight_decay": 0.1,
+  "warmup_fraction": 0.05,
+  "max_steps": 30000,
+  "eval_every": 250,
+  "patience": 4,
+  "max_tokens": 2048,
+  "generation_examples": 0,
+  "max_new_tokens": 4096,
+  "seed": 20261072,
+  "mixture_seed": 0,
+  "training_data_profile": "author_finite_mixture_epochs_xiangqi_v1",
+  "purpose": "Explicit full-FP32 decoder FSDP2 and checkpointing profile. Preserve paper global/micro batch, rates and 30000-update ceiling; cap actual updates at four finite passes through the completed token-verified data. Bind all replay paths explicitly when selecting a joint course mixture. The actual dataset still requires its own four-GPU native capacity and exact-resume preflight; this profile is not a quality or paper-scale claim.",
+  "distributed_strategy": "fsdp2",
+  "fsdp_shard_paths": [
+    "bridges.*",
+    "base.model.layers.*",
+    "base"
+  ],
+  "decoder_gradient_checkpointing": true,
+  "autocast_cache_enabled": false,
+  "optimizer_state_sharding": "none",
+  "max_finite_passes": 4
+}

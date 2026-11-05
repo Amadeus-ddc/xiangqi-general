@@ -18,6 +18,8 @@
 
 [多批搜索标签合并](docs/SEARCH_COLLECTION_MERGE.md)重新核对原始搜索、完整 BF16 教师回答及所有接受／拒收记录，再按完整历史去重。重复回答保留来源，验证／测试文件逐字节保持；合并产物仍须通过特征、词元和训练预检。
 
+[完整参数蒸馏配方](docs/DISTILLATION_FSDP2_FINITE_BUDGET.md)显式选择FSDP2和梯度检查点，并可按实际混合数据限制有限遍历轮数。三万步仍为上限，旧模板保持；实际扩充数据仍须完成四卡容量、初始化与精确恢复预检，配方检查不代表已完成正式蒸馏或质量改善。
+
 [新联合模型的同设置384局对弈](docs/JOINT_SFT_MATCH_EVALUATION.md)已通过原生开局及启动协调检查并排队，在实际训练与讲解复查完成后自动执行；与原模型逐场对齐，保留非法弃负和截断，最终独立测试继续保留。
 
 详见[最新状态](STATUS.md)、[模型说明](docs/MODEL_CARD.md)和[四课完成读回](docs/PAPER_FOUR_COURSES_COMPLETED.md)。
