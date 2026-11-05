@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "milestone": "search-collection-merge-v1",
-  "status": "software_complete_actual_control_reconstruction_running",
+  "status": "complete_software_and_actual_70_history_collection_merge",
   "source_revision": "search-collection-merge-113-v2",
   "runtime_source_sha256": {
     "__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
@@ -135,10 +135,59 @@
     "flat_original_leaves_only": true
   },
   "actual_control": {
-    "status": "reopening_actual_original_search_teacher_and_native_gates",
-    "original_accepted_records": 81,
-    "previous_native_overlap_audit_unique_contexts": 70,
-    "merged_dataset_admission_completed": false
+    "status": "complete_actual_search_collection_merge_and_reconstruction_readback",
+    "verification_sha256": "308152689621b3b19c1135fa18723535ea3bf96139b0d3b1f04c1ee1055542a7",
+    "merged_manifest_sha256": "d78604daaa686bf81b4bc0b98d5d508d6f63b49251e86541ee7abce404364e91",
+    "raw_accepted_training_records": 81,
+    "unique_full_history_contexts": 70,
+    "duplicate_history_records": 11,
+    "duplicate_records_with_different_answers": 11,
+    "duplicate_records_with_different_selected_moves": 1,
+    "duplicate_records_with_different_pvs": 3,
+    "unique_attempted_starting_roots": 64,
+    "unique_accepted_starting_roots": 48,
+    "raw_teacher_answers": 91,
+    "raw_rejected_labels": 10,
+    "search_acceptance_profile": {
+      "policy": "paper_recursive",
+      "min_clean_ply": 1
+    },
+    "game_overlap": 0,
+    "root_and_future_overlap": 0,
+    "original_outputs": {
+      "train.jsonl": {
+        "sha256": "cf38ec7ebc237f00fa038d45140e0d21e11cf9d432011325ea3d6d80ae39471b",
+        "bytes": 682249
+      },
+      "provenance.jsonl": {
+        "sha256": "0b5154519c55ca576b5c910f6bc3df4b1cb2352ce56cd75433cd0cceff8fad42",
+        "bytes": 61286
+      },
+      "validation.jsonl": {
+        "sha256": "bd8c375af754b49d9f754934abfb3d8e9f27fa17d3e430f7ca6d156906988380",
+        "bytes": 2711612
+      },
+      "test.jsonl": {
+        "sha256": "db218093dfbb2587918d52ce95ce1fcad7af88d98e971b73b67c0ad6c67c5cc4",
+        "bytes": 3655338
+      }
+    },
+    "input_digest_verification": {
+      "profile": "verified_immutable_inputs_v1",
+      "receipt_sha256": "7d46993adfe6a646083e8cfcfbf46f1a7accbc6ada0a400fc95560c7ef446860",
+      "receipt_bound_files": 4559,
+      "reused_unique_files": 4112,
+      "reused_digest_calls": 12397,
+      "reused_digest_bytes": 10316999922942,
+      "fresh_digest_calls": 181,
+      "fresh_digest_bytes": 38787681843,
+      "all_receipt_file_signatures_checked": true,
+      "minimum_verified_inode_age_ns": 2000000000,
+      "reused_bytes_were_freshly_hashed_in_this_process": false
+    },
+    "merged_dataset_admission_completed": true,
+    "merged_70_feature_extension_and_token_preflight_completed": false,
+    "new_joint_initial_SFT_candidate_substituted_for_search_parent": false
   },
   "scaled_collection_waiter": {
     "status": "waiting_for_exact_producers",
