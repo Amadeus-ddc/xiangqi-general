@@ -173,7 +173,7 @@ def mine_paper(miner, original):
     from .calibration import evaluation_probability
     from .explanations import EXPLANATION_QUESTION
     from .evidence import position_key
-    from .search_distillation import descend, reachable_child_positions, root_evaluation
+    from .search_distillation import child_model_analysis, descend, reachable_child_positions, root_evaluation
     miner.generation_root, miner.generation_index = original, 0
     root, cached, trace = dict(original, question=EXPLANATION_QUESTION, future_moves=[]), None, []
     for depth in range(miner.max_depth + 1):
@@ -223,7 +223,7 @@ def mine_paper(miner, original):
                     sanitation={'valid_checked_prefix':True,'accepted_uci':[],'accepted_ply':0,
                                 'illegal_at':None,'first_mistake':None,'terminal_outcome':outcome})
                 continue
-            child_generation=miner.model_analysis(child)
+            child_generation=child_model_analysis(miner,child)
             item.update(child_generation,child_acceptance=miner.child_acceptance(child,child_generation))
             analysis=child_generation['analysis']
             if isinstance(analysis,dict) and reachable_child_positions(child,analysis) & miner.reserved:

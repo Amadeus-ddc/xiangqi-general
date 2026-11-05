@@ -2,6 +2,7 @@
 import argparse
 from collections import Counter
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -17,6 +18,36 @@ from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_s
                        search_generation_policy)
 from .feature_store import feature_paths
 from .search_critical import acceptance_evidence, checked_acceptance_policy, mine_paper
+
+
+CHILD_PROMPT_PROFILES = ('full_explanation', 'numeric_six_ply_v1')
+NUMERIC_CHILD_QUESTION = ('请分析当前局面，仅以JSON回答四个字段：move（建议走法，UCCI格式）、'
+    'pv（从建议走法开始、双方轮流走子的六个半步主要变化；若对局提前结束则停止）、'
+    'candidates（三个候选走法列表，第一个必须是move）、'
+    'evaluation（type为cp或mate、value为整数、perspective为side_to_move）。'
+    '只给这四个字段，不写facts、branches或explanation。')
+
+
+def checked_child_prompt_profile(profile, child_contract):
+    if profile not in CHILD_PROMPT_PROFILES:
+        raise ValueError('Unknown child prompt profile')
+    if profile == 'numeric_six_ply_v1' and child_contract != 'move_eval':
+        raise ValueError('The numerical child prompt requires the move_eval contract')
+    return profile
+
+
+def child_prompt_metadata(profile):
+    checked_child_prompt_profile(profile, 'move_eval')
+    question = NUMERIC_CHILD_QUESTION if profile == 'numeric_six_ply_v1' else EXPLANATION_QUESTION
+    return {'profile': profile, 'question': question,
+            'question_sha256': hashlib.sha256(question.encode()).hexdigest()}
+
+
+def child_model_analysis(miner, row):
+    profile = getattr(miner, 'child_prompt_profile', 'full_explanation')
+    if profile == 'full_explanation':
+        return miner.model_analysis(row)
+    return miner.model_analysis(row, child_prompt_profile=profile)
 
 
 def first_divergence(fen, before, after):
@@ -115,13 +146,14 @@ class SearchMiner:
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
                  record_oracle_query=None, generation_policy=None, generation_seed=0,
                  max_root_retries=None, root_candidate_policy='strict', reuse_child_analysis=False,
-                 acceptance_policy='strict', min_clean_ply=1):
+                 acceptance_policy='strict', min_clean_ply=1, child_prompt_profile='full_explanation'):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
         self.nodes, self.max_depth = nodes, max_depth
         self.candidate_threshold, self.child_threshold = candidate_threshold, child_threshold
         self.child_contract = child_contract
+        self.child_prompt_profile = checked_child_prompt_profile(child_prompt_profile, child_contract)
         self.engine_cache = {}
         self.record_oracle_query = record_oracle_query
         self.counts = Counter()
@@ -156,10 +188,15 @@ class SearchMiner:
             candidate = next(c for c in result['candidates'] if c['move'] == move)
         return candidate_probability(row['fen'], candidate)
 
-    def model_analysis(self, row):
+    def model_analysis(self, row, *, child_prompt_profile=None):
+        prompt = None
+        if child_prompt_profile is not None:
+            checked_child_prompt_profile(child_prompt_profile, self.child_contract)
+            prompt = child_prompt_metadata(child_prompt_profile)
+        question = prompt['question'] if prompt is not None else EXPLANATION_QUESTION
         generation = None
         if self.generation_policy is None:
-            raw = self.predictor.generate(row, EXPLANATION_QUESTION, 768)
+            raw = self.predictor.generate(row, question, 768)
         else:
             source = self.generation_root if self.generation_root is not None else row
             seed = generation_seed(self.generation_seed, source, self.generation_index)
@@ -168,7 +205,7 @@ class SearchMiner:
             self.generation_index += 1
             self.counts['stochastic_model_generations'] += 1
             sampling = {k: v for k, v in self.generation_policy.items() if k != 'max_new_tokens'}
-            raw = self.predictor.generate(row, EXPLANATION_QUESTION, self.generation_policy['max_new_tokens'],
+            raw = self.predictor.generate(row, question, self.generation_policy['max_new_tokens'],
                                           sampling=sampling, seed=seed)
         try:
             value = parse_explanation(raw)
@@ -182,6 +219,8 @@ class SearchMiner:
         except (ValueError, TypeError, KeyError, IndexError):
             value, proof = None, {'valid': False, 'errors': ['invalid_json']}
         result = {'raw': raw, 'analysis': value, 'verification': proof}
+        if prompt is not None:
+            result['prompt'] = prompt
         if generation is not None:
             result['generation'] = generation
         return result
@@ -197,7 +236,7 @@ class SearchMiner:
             if any(cached_child['record'][key] != row[key] for key in fields):
                 raise ValueError('Cached child differs from the complete recursive root history')
             generated = copy.deepcopy({key: cached_child[key] for key in
-                ['raw', 'analysis', 'verification', 'generation'] if key in cached_child})
+                ['raw', 'analysis', 'verification', 'generation', 'prompt'] if key in cached_child})
             acceptance = numerical_root_acceptance(row, generated)
             generated['root_evaluation_acceptance'] = dict(acceptance, attempt=0)
             generated['reused_child_analysis'] = {'record_id': row['id'], 'feature_key': row['feature_key'],
@@ -321,7 +360,7 @@ class SearchMiner:
                     children.append({'move': move, 'record': child, 'outcome': outcome, 'analysis': None,
                                      'root_evaluation': evaluation, 'root_pv': [move]})
                     continue
-                generation = self.model_analysis(child)
+                generation = child_model_analysis(self, child)
                 acceptance = self.child_acceptance(child, generation)
                 item = {'move': move, 'record': child, **generation, 'child_acceptance': acceptance}
                 children.append(item)
@@ -452,6 +491,8 @@ def main():
     parser.add_argument('--nodes', type=int, default=100000)
     parser.add_argument('--max-depth', type=int, default=5)
     parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
+    parser.add_argument('--child-prompt-profile', choices=CHILD_PROMPT_PROFILES,
+                        help='Optional versioned child request; the default retains full explanations')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
     parser.add_argument('--max-root-retries', type=int,
@@ -468,6 +509,7 @@ def main():
     args = parser.parse_args()
     if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
         raise ValueError('Search limits and node budgets must be positive; recursion depth cannot be negative')
+    checked_child_prompt_profile(args.child_prompt_profile or 'full_explanation', args.child_contract)
     generation_policy = None
     if args.student_generation_config is not None:
         generation_policy = search_generation_policy(json.loads(Path(args.student_generation_config).read_text()))
@@ -481,7 +523,8 @@ def main():
                               args.child_contract, args.max_root_retries, 1 if args.min_clean_ply is None else args.min_clean_ply)
     arguments = {k: v for k, v in vars(args).items()
                  if k not in {'student_generation_config', 'max_root_retries', 'root_candidate_policy',
-                              'reuse_child_analysis', 'acceptance_policy', 'min_clean_ply'} or v is not None}
+                              'reuse_child_analysis', 'acceptance_policy', 'min_clean_ply',
+                              'child_prompt_profile'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -543,7 +586,8 @@ def main():
                                 root_candidate_policy=args.root_candidate_policy or 'strict',
                                 reuse_child_analysis=bool(args.reuse_child_analysis),
                                 acceptance_policy=args.acceptance_policy or 'strict',
-                                min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply)
+                                min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
+                                child_prompt_profile=args.child_prompt_profile or 'full_explanation')
             for row in records:
                 if row['id'] in seen:
                     continue
@@ -574,6 +618,8 @@ def main():
              'raw_child_reachable_prefixes_isolated': True,
              'all_inferred_target_lines_history_validated': True,
              'unused_child_fields_passed_to_consolidator': args.child_contract == 'full'}
+    if args.child_prompt_profile is not None:
+        proof['child_prompt'] = child_prompt_metadata(args.child_prompt_profile)
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
