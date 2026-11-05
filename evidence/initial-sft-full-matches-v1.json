@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "kind": "original_initial_sft_full_match_development_result",
+  "status": "complete",
+  "evidence_state": "reconstructed_baseline",
+  "reported_date_UTC_plus_8": "2026-11-06",
+  "selected_step": 1792,
+  "selected_checkpoint_sha256": "66f375842809b8140e612116413dac28c88e996267f60d01ae3bcc2f9b123d61",
+  "evaluation_source_revision": "paired-evaluation-inputs-112-v1",
+  "original_evaluation_source_CPU_checks": 1922,
+  "baseline_manifest_sha256": "20c129b78dfefcbaedad1bf89c6b2ee214d2eda30d6ea4349af1789d2bded7b3",
+  "raw_games_sha256": "c17fcc011ee90b6db06247ff4424e6c318b0b4b24b32ec8ead973e02dc112c74",
+  "native_readback_verification_sha256": "1db86c5b1add88ab52f8e77e75cfc81fd9c5ec7f3daef1b300bce136abef8934",
+  "native_readback_UTC": "2026-11-05T18:14:24.018329+00:00",
+  "checked_artifact_bindings": 4888,
+  "raw_match_metrics": {
+    "games": 384,
+    "wins": 0,
+    "losses": 383,
+    "draws": 1,
+    "censored": 0,
+    "score_on_completed_games": 0.0013020833333333333,
+    "termination_reasons": {
+      "raw_model_invalid_move_forfeit": 277,
+      "checkmate_or_stalemate_loss": 106,
+      "AXF_repetition_or_move_limit": 1
+    },
+    "raw_model_forfeits": 277,
+    "censored_games_counted_as_draws": false,
+    "elo_estimate": null,
+    "model_oracle_repairs": 0,
+    "action_mode": "explanation",
+    "openings": 64,
+    "opening_split": "validation",
+    "both_model_colors_at_each_opening_and_budget": true,
+    "rule_legal_constraints": false,
+    "explanation_quality_evaluated": false,
+    "by_opponent_nodes": {
+      "100": {
+        "games": 128,
+        "wins": 0,
+        "losses": 127,
+        "draws": 1,
+        "censored": 0,
+        "score_on_completed_games": 0.00390625,
+        "termination_reasons": {
+          "raw_model_invalid_move_forfeit": 97,
+          "checkmate_or_stalemate_loss": 30,
+          "AXF_repetition_or_move_limit": 1
+        },
+        "raw_model_forfeits": 97,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      },
+      "1000": {
+        "games": 128,
+        "wins": 0,
+        "losses": 128,
+        "draws": 0,
+        "censored": 0,
+        "score_on_completed_games": 0.0,
+        "termination_reasons": {
+          "raw_model_invalid_move_forfeit": 94,
+          "checkmate_or_stalemate_loss": 34
+        },
+        "raw_model_forfeits": 94,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      },
+      "10000": {
+        "games": 128,
+        "wins": 0,
+        "losses": 128,
+        "draws": 0,
+        "censored": 0,
+        "score_on_completed_games": 0.0,
+        "termination_reasons": {
+          "checkmate_or_stalemate_loss": 42,
+          "raw_model_invalid_move_forfeit": 86
+        },
+        "raw_model_forfeits": 86,
+        "censored_games_counted_as_draws": false,
+        "elo_estimate": null,
+        "model_oracle_repairs": 0
+      }
+    },
+    "seconds": 71501.0624664342,
+    "elapsed_scope": "last_invocation",
+    "completed_games_reused": 0,
+    "saved_turns_reused": 0,
+    "rule_profile": "pyffish-0.0.90-xiangqi-AXF"
+  },
+  "model_turns": 5100,
+  "full_explanation_contract_valid_turns": 299,
+  "paired_schedule": {
+    "split": "validation",
+    "openings": 64,
+    "model_colors": [
+      "red",
+      "black"
+    ],
+    "opponent_nodes": [
+      100,
+      1000,
+      10000
+    ],
+    "maximum_new_plies": 256,
+    "maximum_generated_tokens_per_model_turn": 768,
+    "action_mode": "explanation",
+    "independent_game_count_claimed": false
+  },
+  "native_readback": {
+    "all_raw_game_and_progress_files_replayed_and_equal": true,
+    "all_opening_color_budget_pairs_checked": true,
+    "new_student_teacher_engine_queries": 0,
+    "CUDA_initialized": false,
+    "raw_answers_repaired": false,
+    "all_receipt_file_signatures_checked": true,
+    "reused_bytes_freshly_hashed_in_this_process": false
+  },
+  "original_512_root_pilot": {
+    "status": "actual_guarded_same_contract_search_started",
+    "qualification_verification_sha256": "fa41b96235dbcc7b863349cb19c7cbe95684cb85eb730de1b3463617039c2070",
+    "startup_verification_sha256": "459ff93e7f259a258bd404abd05ab937f635b032c7f21eb48954687405f67568",
+    "original_source_and_config_preserved": true,
+    "actual_nonempty_oracle_partial_present": true,
+    "completed_512_roots_claimed": false,
+    "previous_confirmed_zero_query_interruption_preserved": true,
+    "unknown_GPU_processes_stopped": false,
+    "part_of_existing_three_range_merge": false
+  },
+  "public_software_checks": {
+    "tests_passed": 2087,
+    "source_modules": 113,
+    "checked_code_test_config_build_files": 306,
+    "all_checked_files_currently_identical": true,
+    "complete_CPU_suite_reused_locally": true,
+    "suite_freshly_rerun_for_this_docs_only_milestone": false,
+    "existing_full_validation_sha256": "94b85d200c088f11618feb462a346c810e63a032653527245c33573a09f8497b"
+  },
+  "formal_search_distillation_SGD_rounds": 0,
+  "independent_test_used": false,
+  "human_Elo_estimated": false,
+  "strong_player_or_reliable_coach_proven": false,
+  "final_model_delivered": false,
+  "full_goal_complete": false,
+  "forfeit_diagnostic": {
+    "forfeits": 277,
+    "forfeit_on_first_model_turn": 3,
+    "forfeit_after_legal_model_turn": 274,
+    "first_model_turn_native_legal": 381,
+    "forfeit_raw_JSON_decode_errors": 0,
+    "forfeit_missing_or_nonstring_move": 0,
+    "forfeit_syntactically_board_coordinate_move": 277,
+    "median_model_turns_through_forfeit": 10,
+    "maximum_model_turns_through_forfeit": 51,
+    "all_underlying_games_previously_native_replayed": true,
+    "verification_sha256": "e707c14c2e368cbf0cc3d6f9bf0d3787958ae097ad9601cec4327f842ee87a0b",
+    "unique_cause_identified": false
+  }
+}
