@@ -7,7 +7,7 @@ from .modeling import load_checkpoint
 from .rules import replay
 from .training import messages, model_autocast, autocast_cache_setting
 from .board_tokens import decode_board_text, encode_board_text
-from .sampling import sample_rng, sampling_options
+from .sampling import request_sampling_processor, sample_rng, sampling_options
 
 
 class Predictor:
@@ -78,8 +78,14 @@ class Predictor:
 
     @torch.no_grad()
     def generate_batch(self, records, max_new_tokens=768, memory='normal', _move_constraints=None, _beams=1,
-                       *, sampling=None, seed=None):
+                       *, sampling=None, seed=None, seeds=None):
         generation = sampling_options(sampling)
+        if seeds is not None:
+            if seed is not None or _move_constraints is not None or _beams != 1:
+                raise ValueError('Per-request seeds require unconstrained single-beam generation and no batch seed')
+            processor = request_sampling_processor(sampling, seeds, len(records))
+            generation = {'do_sample': False, 'logits_processor': [processor],
+                          'num_beams': 1, 'num_return_sequences': 1}
         if seed is not None and sampling is None:
             raise ValueError('An explicit random seed requires stochastic decoding')
         if not records:

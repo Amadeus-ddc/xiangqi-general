@@ -9,6 +9,7 @@ import torch
 
 SAMPLING_KEYS = {'do_sample', 'temperature', 'top_k', 'top_p'}
 SEED_PROFILE = 'sha256_source_root_and_generation_ordinal_v1'
+REQUEST_SAMPLING_PROFILE = 'independent_request_multinomial_v1'
 
 
 def sampling_options(value):
@@ -37,6 +38,45 @@ def checked_seed(seed):
     if type(seed) is not int or not 0 <= seed < 2**63:
         raise ValueError('Generation seed must be a nonnegative signed 64-bit integer')
     return seed
+
+
+def request_sampling_processor(sampling, seeds, batch_size):
+    """Keep one independent random stream per request, outside global RNG state."""
+    options = sampling_options(sampling)
+    if options['do_sample'] is not True:
+        raise ValueError('Per-request seeds require explicit stochastic sampling')
+    if not isinstance(seeds, (list, tuple)) or len(seeds) != batch_size:
+        raise ValueError('Per-request seeds must match the input batch')
+    return _RequestSampler(options, tuple(checked_seed(seed) for seed in seeds))
+
+
+class _RequestSampler:
+    def __init__(self, options, seeds):
+        from transformers.generation.logits_process import (TemperatureLogitsWarper,
+            TopKLogitsWarper, TopPLogitsWarper)
+        self.seeds = seeds
+        self.warpers = [TemperatureLogitsWarper(options['temperature'])]
+        if options['top_k']:
+            self.warpers.append(TopKLogitsWarper(options['top_k']))
+        if options['top_p'] < 1:
+            self.warpers.append(TopPLogitsWarper(options['top_p']))
+        self.generators, self.device = None, None
+
+    def __call__(self, input_ids, scores):
+        if scores.ndim != 2 or scores.shape[0] != len(self.seeds) or input_ids.shape[0] != len(self.seeds):
+            raise ValueError('Per-request sampling requires one score row per original request')
+        if self.generators is None:
+            self.device = scores.device
+            self.generators = [torch.Generator(device=self.device).manual_seed(seed) for seed in self.seeds]
+        elif scores.device != self.device:
+            raise ValueError('A request random stream cannot change device during generation')
+        filtered = scores.float()
+        for warper in self.warpers:
+            filtered = warper(input_ids, filtered)
+        probabilities = filtered.softmax(dim=-1)
+        chosen = torch.cat([torch.multinomial(probabilities[i:i + 1], 1, generator=generator)
+                            for i, generator in enumerate(self.generators)], dim=0)
+        return torch.full_like(scores, -torch.inf).scatter_(1, chosen, 0)
 
 
 def generation_seed(base_seed, source_root, call_index):

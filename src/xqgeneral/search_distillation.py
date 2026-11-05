@@ -1,10 +1,12 @@
 """Mine improved model/child analyses; the oracle never supplies training prose."""
 import argparse
 from collections import Counter
+from contextlib import ExitStack, closing, contextmanager
 import copy
 import hashlib
 import json
 from pathlib import Path
+import threading
 
 from .calibration import candidate_probability, evaluation_probability
 from .evidence import atomic_json, code_identity, digest, history_key, iter_jsonl, load_jsonl, manifest, position_key, write_jsonl
@@ -14,11 +16,12 @@ from .oracle import Pikafish
 from .prose_moves import consolidation_messages
 from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
 from .search_inputs import prepared_training_roots, training_roots
-from .sampling import (SEED_PROFILE, checked_seed, generation_seed, generation_software,
+from .sampling import (REQUEST_SAMPLING_PROFILE, SEED_PROFILE, checked_seed, generation_seed, generation_software,
                        search_generation_policy)
 from .feature_store import feature_paths
 from .search_critical import acceptance_evidence, checked_acceptance_policy, mine_paper
 from .verified_inputs import input_session_from_environment
+from .batched_search import batched_roots, checked_batching
 
 
 CHILD_PROMPT_PROFILES = ('full_explanation', 'numeric_six_ply_v1')
@@ -142,6 +145,15 @@ def numerical_root_acceptance(row, generated):
         return {'valid': False, 'errors': ['invalid_evaluation_contract']}
 
 
+def checked_student_batching(batch_size, workers=None, wait_ms=None):
+    if batch_size is None:
+        if workers is not None or wait_ms is not None:
+            raise ValueError('Student worker/wait settings require an explicit batch size')
+        return None
+    return checked_batching(batch_size, batch_size if workers is None else workers,
+                            10 if wait_ms is None else wait_ms)
+
+
 class SearchMiner:
     def __init__(self, predictor, oracle, reserved, nodes=100000, max_depth=5,
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
@@ -203,6 +215,11 @@ class SearchMiner:
             seed = generation_seed(self.generation_seed, source, self.generation_index)
             generation = {'settings': self.generation_policy, 'seed_profile': SEED_PROFILE,
                           'seed': str(seed), 'call_index': self.generation_index}
+            request_profile = getattr(self.predictor, 'request_sampling_profile', None)
+            if request_profile is not None:
+                if request_profile != REQUEST_SAMPLING_PROFILE:
+                    raise ValueError('Unknown per-request sampling profile')
+                generation['request_sampling_profile'] = request_profile
             self.generation_index += 1
             self.counts['stochastic_model_generations'] += 1
             sampling = {k: v for k, v in self.generation_policy.items() if k != 'max_new_tokens'}
@@ -498,6 +515,12 @@ def _main():
                         help='Optional versioned child request; the default retains full explanations')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
+    parser.add_argument('--student-batch-size', type=int,
+                        help='Opt in to independent-request batched decoding across private root workers')
+    parser.add_argument('--student-workers', type=int,
+                        help='Private root/engine worker count; defaults to the explicit batch size')
+    parser.add_argument('--student-batch-wait-ms', type=float,
+                        help='Maximum coalescing delay after the first request; defaults to 10 milliseconds')
     parser.add_argument('--max-root-retries', type=int,
                         help='Regenerate malformed numerical root evaluations; excludes the initial attempt')
     parser.add_argument('--root-candidate-policy', choices=['strict', 'paper_fill'],
@@ -522,6 +545,9 @@ def _main():
     if args.student_generation_config is not None:
         generation_policy = search_generation_policy(json.loads(Path(args.student_generation_config).read_text()))
         checked_seed(args.seed)
+    batching = checked_student_batching(args.student_batch_size, args.student_workers, args.student_batch_wait_ms)
+    if batching is not None and generation_policy is None:
+        raise ValueError('Independent-request batching requires explicit stochastic student generation')
     if args.max_root_retries is not None and (args.max_root_retries < 0 or
             args.max_root_retries and generation_policy is None):
         raise ValueError('Root retries require a nonnegative budget and stochastic generation')
@@ -532,7 +558,8 @@ def _main():
     arguments = {k: v for k, v in vars(args).items()
                  if k not in {'student_generation_config', 'max_root_retries', 'root_candidate_policy',
                               'reuse_child_analysis', 'acceptance_policy', 'min_clean_ply',
-                              'child_prompt_profile', 'root_offset'} or v is not None}
+                              'child_prompt_profile', 'root_offset', 'student_batch_size',
+                              'student_workers', 'student_batch_wait_ms'} or v is not None}
     root = Path(args.output)
     if (root / 'manifest.json').exists():
         raise FileExistsError('Completed search mining exists')
@@ -550,6 +577,8 @@ def _main():
                 'code': code_identity()}
     if generation_policy is not None:
         contract['generation_software'] = generation_software()
+    if batching is not None:
+        contract['student_batching_profile'] = batching
     root.mkdir(parents=True, exist_ok=True)
     if (root / 'contract.json').exists():
         if json.loads((root / 'contract.json').read_text()) != contract:
@@ -579,42 +608,87 @@ def _main():
     seen = {r['source_root_id'] for r in results}
     if len(seen) != len(results) or not seen <= {r['id'] for r in records}:
         raise ValueError('Search continuation IDs differ')
+    batch_log = root / 'student-batches.partial.jsonl'
+    if batching is not None and results and not batch_log.exists():
+        raise ValueError('Batched continuation requires its original raw decoder batch ledger')
+    prior_batches = load_jsonl(batch_log) if batching is not None and batch_log.exists() else []
+    for index, batch in enumerate(prior_batches):
+        if (not isinstance(batch, dict) or batch.get('ordinal') != index or
+                batch.get('profile') != REQUEST_SAMPLING_PROFILE or
+                batch.get('generation_policy') != generation_policy or
+                not isinstance(batch.get('requests'), list) or
+                not 1 <= len(batch['requests']) <= batching['batch_size']):
+            raise ValueError('Original student batch ledger changed its order, policy or request pairing')
+        for item in batch['requests']:
+            if (not isinstance(item, dict) or not isinstance(item.get('record'), dict) or
+                    not isinstance(item.get('raw'), str) or not isinstance(item.get('seed'), str)):
+                raise ValueError('Original student batch ledger has malformed request data')
+            checked_seed(int(item['seed']))
     predictor = Predictor(args.checkpoint, feature_cache=args.features)
-    oracle = Pikafish(args.executable, args.weights, threads=2)
-    try:
-        with partial.open('a') as handle, oracle_log.open('a') as oracle_handle:
-            def record_oracle_query(item):
+    session_counts, batch_statistics = Counter(), {}
+    ledger_lock = threading.Lock()
+    reserved = reserved_positions(args.data) | additional_reserved
+    with partial.open('a') as handle, oracle_log.open('a') as oracle_handle, ExitStack() as cleanup:
+        batch_handle = cleanup.enter_context(batch_log.open('a')) if batching is not None else None
+        batch_ordinal = len(prior_batches)
+
+        def record_student_batch(rows, seeds, answers):
+            nonlocal batch_ordinal
+            item = {'ordinal': batch_ordinal, 'profile': REQUEST_SAMPLING_PROFILE,
+                'generation_policy': generation_policy, 'requests': [
+                    {'record': row, 'seed': str(seed), 'raw': answer}
+                    for row, seed, answer in zip(rows, seeds, answers)]}
+            batch_handle.write(json.dumps(item, ensure_ascii=False) + '\n')
+            batch_handle.flush()
+            batch_ordinal += 1
+
+        def record_oracle_query(item):
+            with ledger_lock:
                 oracle_handle.write(json.dumps(item, ensure_ascii=False) + '\n')
                 oracle_handle.flush()
 
-            miner = SearchMiner(predictor, oracle, reserved_positions(args.data) | additional_reserved,
-                                args.nodes, args.max_depth,
-                                child_contract=args.child_contract, record_oracle_query=record_oracle_query,
-                                generation_policy=generation_policy, generation_seed=args.seed,
-                                max_root_retries=args.max_root_retries,
-                                root_candidate_policy=args.root_candidate_policy or 'strict',
-                                reuse_child_analysis=bool(args.reuse_child_analysis),
-                                acceptance_policy=args.acceptance_policy or 'strict',
-                                min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
-                                child_prompt_profile=args.child_prompt_profile or 'full_explanation')
-            for row in records:
-                if row['id'] in seen:
-                    continue
+        @contextmanager
+        def worker(worker_predictor):
+            with closing(Pikafish(args.executable, args.weights, threads=2)) as oracle:
+                miner = SearchMiner(worker_predictor, oracle, reserved, args.nodes, args.max_depth,
+                    child_contract=args.child_contract, record_oracle_query=record_oracle_query,
+                    generation_policy=generation_policy, generation_seed=args.seed,
+                    max_root_retries=args.max_root_retries,
+                    root_candidate_policy=args.root_candidate_policy or 'strict',
+                    reuse_child_analysis=bool(args.reuse_child_analysis),
+                    acceptance_policy=args.acceptance_policy or 'strict',
+                    min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
+                    child_prompt_profile=args.child_prompt_profile or 'full_explanation')
+                def mine(row):
+                    try:
+                        return miner.mine(row)
+                    except (RuntimeError, TimeoutError, ValueError) as error:
+                        return None, [{'error': str(error)}], 'mining_error'
                 try:
-                    query, trace, reason = miner.mine(row)
-                except (RuntimeError, TimeoutError, ValueError) as error:
-                    query, trace, reason = None, [{'error': str(error)}], 'mining_error'
-                item = {'source_root_id': row['id'], 'reason': reason, 'query': query, 'trace': trace}
-                handle.write(json.dumps(item, ensure_ascii=False) + '\n'); handle.flush()
-                results.append(item)
-                print(json.dumps({'processed': len(results), 'requested': len(records),
-                                  'accepted': sum(r['query'] is not None for r in results)}), flush=True)
-    finally:
-        oracle.close()
+                    yield mine
+                finally:
+                    with ledger_lock:
+                        session_counts.update(miner.counts)
+
+        remaining = (row for row in records if row['id'] not in seen)
+        if batching is None:
+            mine = cleanup.enter_context(worker(predictor))
+            mined = ((row, mine(row)) for row in remaining)
+        else:
+            mined = batched_roots(remaining, predictor, worker, generation_policy,
+                batch_size=batching['batch_size'], workers=batching['workers'],
+                wait_ms=batching['wait_ms'], statistics=batch_statistics, record_batch=record_student_batch)
+            cleanup.callback(mined.close)
+        for row, (query, trace, reason) in mined:
+            item = {'source_root_id': row['id'], 'reason': reason, 'query': query, 'trace': trace}
+            handle.write(json.dumps(item, ensure_ascii=False) + '\n'); handle.flush()
+            results.append(item)
+            print(json.dumps({'processed': len(results), 'requested': len(records),
+                              'accepted': sum(r['query'] is not None for r in results)}), flush=True)
     accepted = [r['query'] for r in results if r['query'] is not None]
     write_jsonl(root / 'queries.jsonl', accepted)
     proof = {'processed': len(results), 'accepted_for_consolidation': len(accepted),
-             'reasons': dict(Counter(r['reason'] for r in results)), 'new_session_counters': dict(miner.counts),
+             'reasons': dict(Counter(r['reason'] for r in results)), 'new_session_counters': dict(session_counts),
              'training_roots_only': True, 'heldout_positions_excluded': True,
              'all_child_branch_positions_isolated': True, 'full_history_termination_checked': True,
              **acceptance_evidence(args.acceptance_policy or 'strict'),
@@ -639,26 +713,32 @@ def _main():
     if generation_policy is not None:
         proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
                      generation_software=contract['generation_software'],
-                     stochastic_model_generations_this_session=miner.counts['stochastic_model_generations'])
+                     stochastic_model_generations_this_session=session_counts['stochastic_model_generations'])
     if args.max_root_retries is not None:
         proof.update(max_root_retries=args.max_root_retries,
                      root_retry_condition='malformed_numerical_evaluation',
-                     root_evaluation_generations_this_session=miner.counts['root_evaluation_generations'],
-                     root_evaluation_retries_this_session=miner.counts['root_evaluation_retries'],
-                     root_evaluation_retry_exhaustions_this_session=miner.counts['root_evaluation_retry_exhaustions'])
+                     root_evaluation_generations_this_session=session_counts['root_evaluation_generations'],
+                     root_evaluation_retries_this_session=session_counts['root_evaluation_retries'],
+                     root_evaluation_retry_exhaustions_this_session=session_counts['root_evaluation_retry_exhaustions'])
     if args.root_candidate_policy is not None or args.reuse_child_analysis is not None:
         proof.update(root_candidate_policy=args.root_candidate_policy or 'strict',
                      reused_child_analysis_enabled=bool(args.reuse_child_analysis),
-                     engine_filled_candidates_this_session=miner.counts['engine_filled_root_candidates'],
-                     reused_child_root_analyses_this_session=miner.counts['reused_child_root_analyses'],
-                     unusable_cached_child_evaluations_this_session=miner.counts['unusable_cached_child_evaluations'],
+                     engine_filled_candidates_this_session=session_counts['engine_filled_root_candidates'],
+                     reused_child_root_analyses_this_session=session_counts['reused_child_root_analyses'],
+                     unusable_cached_child_evaluations_this_session=session_counts['unusable_cached_child_evaluations'],
                      candidate_preparation_is_mining_only=True)
     if args.acceptance_policy is not None or args.min_clean_ply is not None:
         proof.update(acceptance_policy=args.acceptance_policy or 'strict',
                      min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
                      raw_outputs_preserved=True, clean_prefixes_are_mining_only=True)
+    if batching is not None:
+        if not batch_statistics.get('completed'):
+            raise RuntimeError('Batched root collection did not complete cleanly')
+        proof['student_batching'] = batch_statistics
+        proof['all_successful_student_decode_batches_preserved'] = True
+        proof['student_decode_batch_records'] = batch_ordinal
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
-                [root / 'queries.jsonl', partial, oracle_log], proof))
+                [root / 'queries.jsonl', partial, oracle_log] + ([batch_log] if batching is not None else []), proof))
     print(json.dumps(proof), flush=True)
 
 
