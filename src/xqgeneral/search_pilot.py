@@ -296,7 +296,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         raise
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pipeline', required=True)
     parser.add_argument('--validation', required=True)
@@ -308,6 +308,12 @@ def main():
     args = parser.parse_args()
     print(json.dumps(run_pilot(args.pipeline, args.validation, args.producer_session, args.config,
         args.output, resume=args.resume, poll_seconds=args.poll_seconds)), flush=True)
+
+
+def main():
+    from .verified_inputs import input_session_from_environment
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':

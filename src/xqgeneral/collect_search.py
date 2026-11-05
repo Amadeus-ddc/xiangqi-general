@@ -197,7 +197,7 @@ def rebuild_labels(queries, responses, teacher, forbidden, *, max_eval_error_exc
     return train, rejected
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--queries', required=True)
     parser.add_argument('--responses', required=True)
@@ -263,6 +263,12 @@ def main():
     bound.unchanged()
     atomic_json(dest / 'manifest.json', saved)
     print(json.dumps(summary), flush=True)
+
+
+def main():
+    from .verified_inputs import input_session_from_environment
+    with input_session_from_environment():
+        return _main()
 
 
 if __name__ == '__main__':

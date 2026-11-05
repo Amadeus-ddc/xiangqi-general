@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "search_CLI_explicit_verified_input_sessions",
+  "status": "complete_software_and_readonly_real_input_verification",
+  "date_UTC_plus_8": "2026-11-06",
+  "source_revision": "search-cli-input-sessions-113-v1",
+  "source_modules": 113,
+  "changed_source_sha256": {
+    "search_pilot.py": "2d44f91f5dcda25da05df6af2cbc0797f76dfe139251f65acd87cffc46ab6ad3",
+    "search_distillation.py": "e1e558cb6dd332171ee7b6089df49b6f5509f0f01789b5b042498668ad00e8f3",
+    "local_teacher.py": "f5d8037867106196da09b353a15e5be3f8e7597e50a45cdfd239f7d1eb639fb3",
+    "collect_search.py": "b30c1a01c65e4cd3b3b0aa3bcbdf0aa9e9f90519426bca654020e63a1c67389a"
+  },
+  "full_CPU_checks_passed": 2099,
+  "checked_code_test_config_files": 307,
+  "full_CPU_validation_verification_sha256": "989850b52342792deefe360c15d007627d0e4f594818a7f791088423c4b3ff4e",
+  "regression": {
+    "real_OS_processes": true,
+    "actual_native_first_digest_call_sites": true,
+    "unchanged_test_sha256": "f25ec70ec58028b755ad4f6d991b3a6d8ee4579622c938f3f0a0ca451a4acc2f",
+    "before_fix_failed": 8,
+    "before_fix_passed": 4,
+    "after_fix_new_cases_passed": 12,
+    "focused_existing_and_new_cases_passed": 72,
+    "covered_cases": [
+      "registered_input_no_binary_reread",
+      "absent_receipt_fresh_hash",
+      "changed_registered_file_rejected_before_load"
+    ],
+    "focused_verification_sha256": "84d71a4c4b743aa5cdef498fe2b3ef1070b9079ebadcc474183b9aa072b43854"
+  },
+  "actual_module_CLI_entries": {
+    "help_returncodes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "real_receipt_bound_files": 4559,
+    "qualification_verification_sha256": "6ae4e04a0ac966af0e770e17fb195bbdaa6348fadb62a5290a55b0da41e0bde4"
+  },
+  "actual_original_mining_prequery_control": {
+    "verification_sha256": "153f710805aef3ea0f3ac0f7d66f6034068185efa0f1a496a0816355e0b5ff1b",
+    "feature_bytes": 250548260661,
+    "original_feature_binary_open_attempts": 1,
+    "original_read_gate_stopped_before_feature_bytes_were_read": true,
+    "fixed_feature_binary_open_attempts": 0,
+    "fixed_feature_digest_matches_original_receipt": true,
+    "original_native_arguments_retained_except_fresh_control_output": true,
+    "unregistered_selected_checkpoint_fresh_hash_matches_original": true,
+    "fixed_digest_execution": {
+      "profile": "verified_immutable_inputs_v1",
+      "receipt_sha256": "7d46993adfe6a646083e8cfcfbf46f1a7accbc6ada0a400fc95560c7ef446860",
+      "receipt_bound_files": 4559,
+      "reused_unique_files": 3,
+      "reused_digest_calls": 3,
+      "reused_digest_bytes": 250707361153,
+      "fresh_digest_calls": 1,
+      "fresh_digest_bytes": 18778040645,
+      "all_receipt_file_signatures_checked": true,
+      "minimum_verified_inode_age_ns": 2000000000,
+      "reused_bytes_were_freshly_hashed_in_this_process": false
+    },
+    "feature_signature_and_both_frozen_sources_unchanged": true,
+    "model_or_engine_constructions": 0,
+    "CUDA_initialized": false
+  },
+  "existing_digest_validation_unchanged": true,
+  "unscoped_digest_default_unchanged": true,
+  "search_generation_and_label_acceptance_policy_changed": false,
+  "active_frozen_runtime_sources_modified": false,
+  "GPU_resource_locking_changed": false,
+  "production_student_teacher_engine_queries_by_verification": 0,
+  "student_training_started_by_this_change": false,
+  "model_quality_improvement_claimed": false,
+  "full_goal_complete": false
+}
