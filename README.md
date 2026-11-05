@@ -18,6 +18,8 @@
 
 [多批搜索标签合并](docs/SEARCH_COLLECTION_MERGE.md)重新核对原始搜索、完整 BF16 教师回答及所有接受／拒收记录，再按完整历史去重。重复回答保留来源，验证／测试文件逐字节保持；合并产物仍须通过特征、词元和训练预检。
 
+[新联合模型的同设置384局对弈](docs/JOINT_SFT_MATCH_EVALUATION.md)已通过原生开局及启动协调检查并排队，在实际训练与讲解复查完成后自动执行；与原模型逐场对齐，保留非法弃负和截断，最终独立测试继续保留。
+
 详见[最新状态](STATUS.md)、[模型说明](docs/MODEL_CARD.md)和[四课完成读回](docs/PAPER_FOUR_COURSES_COMPLETED.md)。
 
 [完整所选讲解模型的导出与搬动推理核验](docs/FULL_SFT_INFERENCE_BUNDLE.md)已通过；最终棋力、教学质量与正式模型交付仍待验收。
