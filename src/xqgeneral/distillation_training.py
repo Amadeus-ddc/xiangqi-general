@@ -36,6 +36,16 @@ def compile_recipe(template, token, root):
     if (type(counts.get('train')) is not int or counts['train'] < 32 or
             type(counts.get('validation')) is not int or counts['validation'] < 1):
         raise ValueError('A real complete training batch and protected validation labels are required')
+    base_reference = token['config'].get('pinned_base_model_manifest')
+    if template.get('pinned_base_model_manifest') not in (None, base_reference):
+        raise ValueError('The recipe cannot replace its token-verified pinned decoder manifest')
+    if base_reference is not None:
+        if (not isinstance(base_reference, dict) or set(base_reference) != {'path', 'sha256'} or
+                not isinstance(base_reference['path'], str) or not base_reference['path'] or
+                not isinstance(base_reference['sha256'], str) or len(base_reference['sha256']) != 64 or
+                any(character not in '0123456789abcdef' for character in base_reference['sha256']) or
+                token.get('inputs', {}).get(base_reference['path'], {}).get('sha256') != base_reference['sha256']):
+            raise ValueError('The pinned decoder manifest must be bound by the completed token preflight')
     replay_paths = token['config'].get('replay_data_paths', [])
     if (not isinstance(replay_paths, list) or any(not isinstance(path, str) or not path for path in replay_paths) or
             len({str(Path(path).resolve()) for path in replay_paths}) != len(replay_paths) or
@@ -77,6 +87,8 @@ def compile_recipe(template, token, root):
         validation_examples=counts['validation'], epochs=math.ceil(template['max_steps'] / per_pass),
         min_steps=min(template['max_steps'], max(per_pass, math.ceil(template['max_steps'] * warmup))),
         row_index_paths={split: str(root / (split + '-index')) for split in ['train', 'validation']})
+    if base_reference is not None:
+        recipe['pinned_base_model_manifest'] = base_reference
     budget = {'accepted_training_rows': counts['train'], 'validation_rows': counts['validation'],
         'global_batch_size': template['batch_size'], 'updates_per_complete_pass': per_pass,
         'max_updates': template['max_steps'], 'minimum_updates': recipe['min_steps'],
