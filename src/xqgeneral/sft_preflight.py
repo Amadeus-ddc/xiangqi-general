@@ -104,15 +104,31 @@ def probe_data(recipe, token_proof, output, *, train_examples=24):
     for split, limit in [('train', train_examples), ('validation', 12)]:
         source = load_jsonl(Path(recipe['data_path']) / (split + '.jsonl'))
         by_id = {row['id']: row for row in source}
-        selected = sorted([item for item in lengths if item['split'] == split],
+        observed = [item for item in lengths if item['split'] == split]
+        selected = sorted([item for item in observed if item['id'] in by_id],
                           key=lambda item: (-item['tokens'], item['id']))[:limit]
         if len(selected) != limit or len({item['id'] for item in selected}) != limit:
             raise ValueError(f'The actual longest-sequence probe needs {train_examples} train and 12 validation labels')
         rows = [by_id[item['id']] for item in selected]
         if any(row['split'] != split or row['stage'] != 'explanation' for row in rows):
             raise ValueError('Probe labels must preserve their actual protected split and stage')
+        maximum = max(item['tokens'] for item in selected)
+        extra = [item for item in observed if item['id'] not in by_id]
+        replay_maximum = None
+        if extra:
+            replay = {row['id']: row for directory in recipe.get('replay_data_paths', [])
+                      for row in load_jsonl(Path(directory) / (split + '.jsonl'))}
+            if any(item['id'] not in replay or replay[item['id']]['split'] != split or
+                   replay[item['id']]['stage'] not in recipe['mixture'] or
+                   type(item['tokens']) is not int or item['tokens'] < 1 for item in extra):
+                raise ValueError('Additional token observations must belong to the actual replay sources')
+            replay_maximum = max(item['tokens'] for item in extra)
+            if replay_maximum > maximum:
+                raise ValueError('Replay sequences exceed the longest primary native probe; expand the capacity probe first')
         write_jsonl(Path(output) / (split + '.jsonl'), rows)
-        result[split] = {'ids': [row['id'] for row in rows], 'maximum_tokens': max(item['tokens'] for item in selected)}
+        result[split] = {'ids': [row['id'] for row in rows], 'maximum_tokens': maximum}
+        if replay_maximum is not None:
+            result[split]['replay_maximum_tokens'] = replay_maximum
     return result
 
 

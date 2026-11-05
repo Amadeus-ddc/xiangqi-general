@@ -241,11 +241,8 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             foundation.get('kind') != 'recorded_engine_clean_latent_foundation_preflight'):
         raise ValueError('Require the completed pinned-base foundation preflight')
     model_path = Path(saved['model_path'])
-    assets = {p: b for p, b in foundation['inputs'].items() if Path(p).resolve().parent == model_path.resolve()}
-    if not any(p.endswith('.safetensors') for p in assets):
-        raise ValueError('The full official pretrained base must remain hash-bound')
-    for p, expected in assets.items():
-        bound.bind(p, expected)
+    from .sft_preflight import pinned_decoder_assets
+    assets, base_reference = pinned_decoder_assets(saved, saved, foundation, bound)
     for name in ['config.json', 'tokenizer_config.json', 'tokenizer.json',
                  'special_tokens_map.json', 'added_tokens.json', 'vocab.json', 'merges.txt']:
         p = model_path / name
@@ -294,12 +291,16 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             all_raw_train_validation_answers_natively_regraded=True, all_features_present=True,
             combined_split_isolation_verified=True, train_validation_rows_tokenized=len(replay),
             independent_test_rows_tokenized=0)
+    if base_reference is not None:
+        result['pinned_base_model_manifest'] = base_reference
     atomic_json(root / 'verification.json', result)
     proof = manifest(TOKEN_KIND, {'data': str(data), 'source': str(source),
         'parent_completion': str(parent_completion), 'foundation_preflight': str(foundation_preflight),
         'evaluation_filter_profile': EVALUATION_FILTER_PROFILE,
         'max_tokens': max_tokens, 'workers': workers}, outputs=[observed, root / 'verification.json'], verification=result)
     proof['inputs'] = bound.artifacts
+    if base_reference is not None:
+        proof['config']['pinned_base_model_manifest'] = base_reference
     if replay_result['data_paths']:
         proof['config']['replay_data_paths'] = replay_result['data_paths']
     proof['cache_header_only_input'] = {'path': str(features), **bound.artifacts[str(features)],
