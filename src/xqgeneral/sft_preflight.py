@@ -140,13 +140,17 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
         raise ValueError('Actual four-worker full-decoder continuation differs')
     initial = torch.load(initial_path, map_location='cpu', weights_only=True, mmap=True)['trainable']
     actual = torch.load(root / 'continuous/latest.pt', map_location='cpu', weights_only=True, mmap=True)
+    finite_state = {}
     if config.get('training_data_profile') == FINITE_PROFILE:
+        roots = [Path(config['data_path']), *[Path(p) for p in config.get('replay_data_paths', [])]]
         rows = IndexedTrainingRows(config['row_index_paths']['train'],
-            [Path(config['data_path']) / 'train.jsonl'], config['mixture'])
+            [path / 'train.jsonl' for path in roots], config['mixture'])
         try:
             prepare_finite_epochs(rows, config['mixture'], config, 4).check_resume(actual.get('data_state'), 4)
         finally:
             rows.close()
+        finite_state = {'actual_finite_epoch_state_verified': True,
+                        'training_data_state': actual['data_state']}
     compatible_resume(actual['config'], config)
     if actual['code'] != execution_code or actual['input_hashes'] != expected_inputs or len(actual['cuda_rng_states']) != 4:
         raise ValueError('Full-decoder probe execution or immutable inputs differ')
@@ -191,7 +195,7 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
     return {'exact_resume': comparison, 'updated_tensors_by_group': changes,
             'trainable_tensors': len(initial), 'trainable_parameters': sum(t.numel() for t in initial.values()),
             'all_trainable_and_adam_states_finite_fp32': True, 'all_four_update_gradients_finite_nonzero': True,
-            'actual_gpu_worker_resources': resources}
+            'actual_gpu_worker_resources': resources, **finite_state}
 
 
 def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
@@ -327,6 +331,8 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     inputs = [recipe_path, token_manifest, foundation_path, Path(source), Path(source).parent / 'manifest.json',
               Path(source).parent / 'config.json', *[Path(p) for p in token['inputs']], *[Path(p) for p in token['outputs']],
               *[Path(p) for p in base_assets]]
+    inputs += [Path(directory) / f'{split}.jsonl' for directory in recipe.get('replay_data_paths', [])
+               for split in ['train', 'validation']]
     if base_reference is not None:
         inputs.append(Path(base_reference['path']))
     proof = manifest('four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight',
