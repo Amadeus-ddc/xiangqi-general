@@ -75,7 +75,7 @@ def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.0
 
 
 def mining_reservations(queries_path, queries, data, validation_data, bound,
-                        mining_manifest=None, recorded_inputs=None):
+                        mining_manifest=None, recorded_inputs=None, *, expected_attempted_root_ids=None):
     """Carry a completed recorded miner's source ownership and isolation into labels."""
     tagged_recorded = any(isinstance(query.get('record'), dict) and
         query['record'].get('recorded_continuation_is_best_move_label') is False for query in queries)
@@ -133,6 +133,8 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
         for split in ('train', 'validation', 'test')}
     selected, additional = prepared_roots(pool, data, config['limit'], config['seed'], identities,
                                         offset=config.get('root_offset', 0))
+    if expected_attempted_root_ids is not None and expected_attempted_root_ids != [row['id'] for row in selected]:
+        raise ValueError('Original root-attempt ledger differs from the exact selected recorded range')
     if proof.get('additional_reserved_canonical_and_explanation_positions') != len(additional):
         raise ValueError('Mining reserved-position coverage differs from the recorded pool')
     pool_proof = bound.json(pool / 'manifest.json')
@@ -173,6 +175,28 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
     return additional, info
 
 
+def rebuild_labels(queries, responses, teacher, forbidden, *, max_eval_error_exclusive=0.075):
+    """Reapply collection gates to preserved raw queries and teacher responses."""
+    by_id = {r['id']: r for r in responses}
+    if (len(by_id) != len(responses) or len({q['id'] for q in queries}) != len(queries) or
+            set(by_id) != {q['id'] for q in queries}):
+        raise ValueError('Consolidator response coverage differs from mined queries')
+    train, rejected, keys = [], [], set()
+    for query in queries:
+        try:
+            row = consolidated_label(query, by_id[query['id']], teacher,
+                                     max_eval_error_exclusive=max_eval_error_exclusive)
+            if continuation_positions(row, parse_explanation(row['answer'])) & forbidden:
+                raise ValueError('Consolidated root or branch overlaps a heldout position')
+            if row['feature_key'] in keys:
+                raise ValueError('Duplicate mined history context')
+        except (ValueError, KeyError, TypeError) as error:
+            rejected.append({'id': query['id'], 'reason': str(error)})
+            continue
+        keys.add(row['feature_key']); train.append(row)
+    return train, rejected
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--queries', required=True)
@@ -198,26 +222,11 @@ def main():
     teacher = bound.json(args.config)['search_consolidator']
     queries = load_jsonl(args.queries)
     responses = load_jsonl(args.responses)
-    by_id = {r['id']: r for r in responses}
-    if (len(by_id) != len(responses) or len({q['id'] for q in queries}) != len(queries) or
-            set(by_id) != {q['id'] for q in queries}):
-        raise ValueError('Consolidator response coverage differs from mined queries')
     additional, source_proof = mining_reservations(args.queries, queries, args.heldout_data,
         args.validation_data, bound, args.mining_manifest, args.recorded_inputs)
     forbidden = reserved_positions(args.heldout_data) | reserved_positions(args.validation_data) | additional
-    train, rejected, keys = [], [], set()
-    for query in queries:
-        try:
-            row = consolidated_label(query, by_id[query['id']], teacher,
+    train, rejected = rebuild_labels(queries, responses, teacher, forbidden,
                                      max_eval_error_exclusive=args.max_eval_error_exclusive)
-            if continuation_positions(row, parse_explanation(row['answer'])) & forbidden:
-                raise ValueError('Consolidated root or branch overlaps a heldout position')
-            if row['feature_key'] in keys:
-                raise ValueError('Duplicate mined history context')
-        except (ValueError, KeyError, TypeError) as error:
-            rejected.append({'id': query['id'], 'reason': str(error)})
-            continue
-        keys.add(row['feature_key']); train.append(row)
     dest.mkdir(parents=True)
     atomic_json(dest / 'rejected.json', rejected)
     if not train:
