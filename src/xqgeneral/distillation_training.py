@@ -82,20 +82,35 @@ def compile_recipe(template, token, root):
     warmup = template.get('warmup_fraction', 0)
     if type(warmup) not in (int, float) or not math.isfinite(warmup) or not 0 <= warmup <= 1:
         raise ValueError('A finite warmup fraction is required')
+    max_updates = template['max_steps']
+    passes = template.get('max_finite_passes')
+    if 'max_finite_passes' in template:
+        if type(passes) is not int or passes < 1:
+            raise ValueError('Maximum finite passes must be a positive integer')
+        if type(template.get('eval_every')) is not int or template['eval_every'] < 1:
+            raise ValueError('Finite-pass budgets require a positive integer validation interval')
+        max_updates = min(max_updates, passes * per_pass)
     root = Path(root)
     recipe = dict(template, data_path=token['config']['data'], feature_path=token['cache_header_only_input']['path'],
-        validation_examples=counts['validation'], epochs=math.ceil(template['max_steps'] / per_pass),
-        min_steps=min(template['max_steps'], max(per_pass, math.ceil(template['max_steps'] * warmup))),
+        validation_examples=counts['validation'], max_steps=max_updates, epochs=math.ceil(max_updates / per_pass),
+        min_steps=min(max_updates, max(per_pass, math.ceil(max_updates * warmup))),
         row_index_paths={split: str(root / (split + '-index')) for split in ['train', 'validation']})
+    if 'max_finite_passes' in template:
+        recipe['eval_every'] = min(template['eval_every'], per_pass)
     if base_reference is not None:
         recipe['pinned_base_model_manifest'] = base_reference
     budget = {'accepted_training_rows': counts['train'], 'validation_rows': counts['validation'],
         'global_batch_size': template['batch_size'], 'updates_per_complete_pass': per_pass,
-        'max_updates': template['max_steps'], 'minimum_updates': recipe['min_steps'],
+        'max_updates': max_updates, 'minimum_updates': recipe['min_steps'],
         'finite_passes_allocated_before_update_cap': recipe['epochs'],
-        'last_allocated_pass_may_be_partial_at_update_cap': template['max_steps'] % per_pass != 0,
+        'last_allocated_pass_may_be_partial_at_update_cap': max_updates % per_pass != 0,
         'at_least_one_complete_pass_required_before_early_stop': True,
         'paper_first_round_150000_label_scale_reached': counts['train'] >= 150000}
+    if 'max_finite_passes' in template:
+        budget.update(configured_max_updates=template['max_steps'], max_finite_passes=passes,
+            updates_for_requested_complete_passes=passes * per_pass,
+            finite_pass_limit_reduced_max_updates=max_updates < template['max_steps'],
+            validation_interval=recipe['eval_every'])
     if replay_paths:
         budget.update(course_replay_source_rows_by_stage={stage: source_counts[stage] for stage in STAGES},
             finite_mixture=mix, rows_per_complete_pass=mix['rows_per_epoch'],
