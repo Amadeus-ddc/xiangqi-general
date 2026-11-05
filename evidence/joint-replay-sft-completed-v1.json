@@ -1,0 +1,317 @@
+{
+  "status": "complete_actual_joint_replay_initial_SFT_and_native_checkpoint_readback",
+  "recorded_utc": "2026-11-05T16:32:20.627401+00:00",
+  "producer_completed_utc": "2026-11-05T16:02:23.549925+00:00",
+  "training": {
+    "actual_optimizer_updates": 3072,
+    "selected_update": 2304,
+    "finite_epochs": 4,
+    "global_batch_ceiling": 16,
+    "world_size": 4,
+    "micro_batch_size": 1,
+    "loss_normalization": "example",
+    "validation_loss_normalization": "token",
+    "training_data_state": {
+      "contract": {
+        "profile": "author_finite_mixture_epochs_xiangqi_v1",
+        "anchor_stage": "explanation",
+        "source_rows_by_stage": {
+          "explanation": 9823,
+          "static_current": 1792,
+          "dynamic_current": 1536,
+          "static_future": 1792,
+          "dynamic_future": 1536
+        },
+        "selected_rows_by_stage": {
+          "explanation": 9823,
+          "static_current": 614,
+          "dynamic_current": 614,
+          "static_future": 614,
+          "dynamic_future": 614
+        },
+        "requested_weights": {
+          "explanation": 0.8,
+          "static_current": 0.05,
+          "dynamic_current": 0.05,
+          "static_future": 0.05,
+          "dynamic_future": 0.05
+        },
+        "realized_weights": {
+          "explanation": 0.7999837120286668,
+          "static_current": 0.05000407199283329,
+          "dynamic_current": 0.05000407199283329,
+          "static_future": 0.05000407199283329,
+          "dynamic_future": 0.05000407199283329
+        },
+        "rows_per_epoch": 12279,
+        "mixture_seed": 0,
+        "epoch_seed": 20261066,
+        "selected_row_id_and_index_sha256": "095dee9f4835e3ea5b3174f559c46d0feb66c0857e8b3694bd211c89aab27079",
+        "global_batch_size": 16,
+        "world_size": 4,
+        "micro_batch_size": 1,
+        "optimizer_steps_per_epoch": 768,
+        "padded_rows_per_epoch": 1,
+        "tail_policy": "pad_distributed_microbatch_from_epoch_start",
+        "old_course_subsets_reselected_each_epoch": false,
+        "task_types_resampled_uniformly": false,
+        "independent_test_used": false
+      },
+      "epoch": 4,
+      "optimizer_batch_in_epoch": 0,
+      "unique_rows_consumed": 49116,
+      "padding_rows_consumed": 4,
+      "global_rows_consumed": 49120
+    },
+    "decoder_training": "full",
+    "distributed_strategy": "fsdp2",
+    "decoder_gradient_checkpointing": true,
+    "autocast_cache_enabled": false,
+    "complete_finite_FP32_parameters": 4694274592,
+    "trainable_tensors": 624,
+    "compute_dtype": "torch.bfloat16",
+    "peak_rank_zero_Torch_allocated_GiB": 24.802637100219727,
+    "peak_is_total_driver_occupancy": false
+  },
+  "selected_checkpoint": {
+    "project_relative_path": "runs/joint-replay-initial-sft-v1/pipeline/sft/adapter.pt",
+    "sha256": "fd76acab8f7673a759acde5337b9281390815316709590232257ce63657ae7d8",
+    "bytes": 18778041605
+  },
+  "selected_384_case_forward_NLL": {
+    "normal": 0.637782435261646,
+    "zero": 0.8525749888425984,
+    "different_history": 1.004633855158127,
+    "different_history_pairs": 384,
+    "NLL_is_playing_strength_or_coaching_acceptance": false
+  },
+  "eight_existing_training_samples": {
+    "count": 8,
+    "legal_first_moves": 7,
+    "native_full_structure_and_line_contract_valid": 0,
+    "raw_errors_retained": true,
+    "is_full_384_case_development_evaluation": false,
+    "is_independent_acceptance": false,
+    "new_model_or_engine_queries_by_readback": 0
+  },
+  "proofs": {
+    "producer_verification_sha256": "4ea1f1d927525cb5fc0d6f51ee00b7707c587465cf6204732ff065bbd3cc81de",
+    "pipeline_manifest_sha256": "7949a8959c42def1214cb1244812612a90c17b80bfa2ed712069d57d49b71668",
+    "training_manifest_sha256": "07f6d3e4855c3082214be09462d5399fde42b67aaaf4e334cede1a54a781bad1",
+    "native_selected_checkpoint_readback_sha256": "52789c0de41cf9fe6e0c2f1aca29dfb7afce429f3a3d845d332da24d70b0d72b",
+    "eight_sample_native_diagnostics_sha256": "1c5b583f3738618f07b7ef2b9d80b9403fcca38e43ecc2513e71dbb89a1dd2d0",
+    "actual_producer_source_CPU_checks": 1988,
+    "native_readback_original_source_CPU_checks": 1922,
+    "native_readback_original_source_revision": "paired-evaluation-inputs-112-v1",
+    "native_readback_CUDA_initialized": false
+  },
+  "software_validation": {
+    "public_modules_unchanged": 113,
+    "checked_files_unchanged": 306,
+    "exact_prior_full_CPU_cases_reused_locally": 2087,
+    "prior_CPU_verification_sha256": "94b85d200c088f11618feb462a346c810e63a032653527245c33573a09f8497b",
+    "source_validation_reuse_sha256": "34c9b68063094a58faed6cb6af8a1885518075c4efa6a8f8893caadbe5166606",
+    "full_CPU_suite_repeated_locally_this_documentation_milestone": false
+  },
+  "next_stages": {
+    "actual_2600_question_retention_evaluation_started": true,
+    "three_384_lecture_memories_and_full_BF16_review_queued": true,
+    "matched_384_game_development_evaluation_queued": true,
+    "original_1792_search_parent_replaced": false,
+    "actual_formal_distillation_rounds": 0,
+    "independent_test_model_queries": 0,
+    "new_2600_retention_score_or_full_lecture_quality_result_available": true,
+    "actual_2600_question_retention_evaluation_completed": true,
+    "full_384_lecture_quality_result_available": false,
+    "actual_three_memory_lecture_evaluation_started": true
+  },
+  "new_SGD_or_teacher_queries_by_readback_or_publication": 0,
+  "strong_player_or_reliable_coach_proven": false,
+  "final_model_delivered": false,
+  "full_goal_complete": false,
+  "completed_course_retention": {
+    "examples": 2600,
+    "correct": 2345,
+    "accuracy": 0.9019230769230769,
+    "format_errors": 0,
+    "content_errors": 255,
+    "before_initial_SFT_correct": 2465,
+    "original_post_SFT_correct": 1896,
+    "paired_changes": {
+      "clean_pre_SFT": {
+        "wrong_to_correct": 39,
+        "correct_to_wrong": 159,
+        "same_ordered_questions_and_gold": true
+      },
+      "original_post_SFT": {
+        "wrong_to_correct": 493,
+        "correct_to_wrong": 44,
+        "same_ordered_questions_and_gold": true
+      }
+    },
+    "by_course": {
+      "static_current": {
+        "examples": 700,
+        "correct": 654,
+        "accuracy": 0.9342857142857143,
+        "minimum_task_accuracy": 0.77,
+        "answer_format_errors": 0,
+        "distinct_game_ids": 12,
+        "by_task": {
+          "static_current/counts": {
+            "n": 100,
+            "accuracy": 1.0
+          },
+          "static_current/diagonal": {
+            "n": 100,
+            "accuracy": 0.91
+          },
+          "static_current/file": {
+            "n": 100,
+            "accuracy": 0.93
+          },
+          "static_current/locate": {
+            "n": 100,
+            "accuracy": 1.0
+          },
+          "static_current/materials": {
+            "n": 100,
+            "accuracy": 0.77
+          },
+          "static_current/piece": {
+            "n": 100,
+            "accuracy": 1.0
+          },
+          "static_current/rank": {
+            "n": 100,
+            "accuracy": 0.93
+          }
+        }
+      },
+      "dynamic_current": {
+        "examples": 600,
+        "correct": 568,
+        "accuracy": 0.9466666666666667,
+        "minimum_task_accuracy": 0.89,
+        "answer_format_errors": 0,
+        "distinct_game_ids": 65,
+        "by_task": {
+          "dynamic_current/captures": {
+            "n": 100,
+            "accuracy": 0.94
+          },
+          "dynamic_current/checks": {
+            "n": 100,
+            "accuracy": 0.97
+          },
+          "dynamic_current/controllers": {
+            "n": 100,
+            "accuracy": 0.95
+          },
+          "dynamic_current/mate": {
+            "n": 100,
+            "accuracy": 0.98
+          },
+          "dynamic_current/moves": {
+            "n": 100,
+            "accuracy": 0.95
+          },
+          "dynamic_current/parries": {
+            "n": 100,
+            "accuracy": 0.89
+          }
+        }
+      },
+      "static_future": {
+        "examples": 700,
+        "correct": 605,
+        "accuracy": 0.8642857142857143,
+        "minimum_task_accuracy": 0.59,
+        "answer_format_errors": 0,
+        "distinct_game_ids": 12,
+        "by_task": {
+          "static_future/counts": {
+            "n": 100,
+            "accuracy": 0.96
+          },
+          "static_future/diagonal": {
+            "n": 100,
+            "accuracy": 0.76
+          },
+          "static_future/file": {
+            "n": 100,
+            "accuracy": 0.92
+          },
+          "static_future/locate": {
+            "n": 100,
+            "accuracy": 0.98
+          },
+          "static_future/materials": {
+            "n": 100,
+            "accuracy": 0.59
+          },
+          "static_future/piece": {
+            "n": 100,
+            "accuracy": 1.0
+          },
+          "static_future/rank": {
+            "n": 100,
+            "accuracy": 0.84
+          }
+        }
+      },
+      "dynamic_future": {
+        "examples": 600,
+        "correct": 518,
+        "accuracy": 0.8633333333333333,
+        "minimum_task_accuracy": 0.7,
+        "answer_format_errors": 0,
+        "distinct_game_ids": 16,
+        "by_task": {
+          "dynamic_future/captures": {
+            "n": 100,
+            "accuracy": 0.83
+          },
+          "dynamic_future/checks": {
+            "n": 100,
+            "accuracy": 0.9
+          },
+          "dynamic_future/controllers": {
+            "n": 100,
+            "accuracy": 0.95
+          },
+          "dynamic_future/mate": {
+            "n": 100,
+            "accuracy": 0.89
+          },
+          "dynamic_future/moves": {
+            "n": 100,
+            "accuracy": 0.91
+          },
+          "dynamic_future/parries": {
+            "n": 100,
+            "accuracy": 0.7
+          }
+        }
+      }
+    },
+    "minimum_task": {
+      "task": "static_future/materials",
+      "correct": 59,
+      "examples": 100
+    },
+    "other_weak_task": {
+      "task": "dynamic_future/parries",
+      "correct": 70,
+      "examples": 100
+    },
+    "same_original_QA_inference_and_grading_source": true,
+    "all_7800_actual_answers_regraded": true,
+    "native_QA_manifest_sha256": "ad224c623741a12fc802cf36d63a8c022e66411420ac07dfcc74e3bf55806839",
+    "retention_report_sha256": "8bc9fc83af5a2a076ec873083f8dae7916e0ac6031294cf3e197646e88fbe43b",
+    "independent_native_readback_sha256": "27cf454c5f19205158df2abacd318d4d2847ec4d6e314249cbd5482cc4e87ae6",
+    "new_queries_by_readback": 0,
+    "test_used": false,
+    "single_change_causal_experiment": false
+  }
+}
