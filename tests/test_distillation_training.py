@@ -96,7 +96,8 @@ class RoundRunner(ControlledRunner):
         saved = torch.load(p, weights_only=True)
         saved['input_hashes'] = {str(q): digest(q) for q in training_input_paths(config)}
         indexed = IndexedTrainingRows(config['row_index_paths']['train'],
-            [Path(config['data_path']) / 'train.jsonl'], config['mixture'])
+            [Path(directory) / 'train.jsonl' for directory in
+             [config['data_path'], *config.get('replay_data_paths', [])]], config['mixture'])
         try:
             epochs = prepare_finite_epochs(indexed, config['mixture'], config, 4)
             saved['data_state'] = epochs.state_at(saved.get('step', config['steps']))

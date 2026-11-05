@@ -1,0 +1,428 @@
+{
+  "schema_version": 1,
+  "kind": "joint_course_replay_distillation_component_and_initial_SFT_start",
+  "status": "complete_software_and_actual_initial_SFT_start_with_distillation_data_preparation_running",
+  "evidence_state": "reconstructed_baseline",
+  "utc": "2026-11-05T04:12:35.733214+00:00",
+  "software": {
+    "added_regression_cases": 28,
+    "related_CPU_checks_passed": 91,
+    "full_CPU_checks_passed": 2016,
+    "source_modules": 112,
+    "source_revision": "distillation-joint-replay-112-v1",
+    "source_sha256": {
+      "__init__.py": "b23a327e7b714ab7ef69413ba4fe0f9df54b6a632c10066f22acee7822d04daf",
+      "ask.py": "50334b5fdb7037a87a37266b9fb65c8985f5d38b1cd4e5fd41821fc2c429e8f4",
+      "board_tokens.py": "f542ad740bf9fd56a17b0b8c8333ea2c1f5c8db8275897e282f6236f8d979ea7",
+      "bridge.py": "cf112573feb560ddd7a656e2db1c887fff2e3c3a3951a1a04207492a1a3514fb",
+      "bundled_games.py": "95be8b19ea876eeff61620bc5fb9e5142349bad43210beb69cd1b18336c74644",
+      "cache_feature_store.py": "5d91f3031f4a547c0fd91fc0c3952bbabfd7b5fe358ec35fb992ecfc097a2d19",
+      "cache_features.py": "1a610f8d5b0450fc2d607f8992dd6ab1a6ad4acbd6c2c938a28bf36f4000b5c5",
+      "calibration.py": "5d6348f1794e4c19e7905cf555a12aa8c2fd50033860b67ea8fef010fb30a64e",
+      "clean_sft_evaluation.py": "a8b45beb63c1b79792db0fdd185e0e1f11f19a4a453d6339c9e0e758157de69d",
+      "clean_sft_matches.py": "10b8cf14bdbe74dea8eff3b8dddddbcfc60847c44c62c78d75564c7cd102e0ab",
+      "coach.py": "79b524d07d4d82e9cbb69597b32eeb02f9b7d50d0cf8ae379acd5ab5b4082ee7",
+      "collect_recorded.py": "31753ae301b3a026e1fbce29041ad6f3b1f8ec2090cd6271b7820358e0e970aa",
+      "collect_search.py": "29dfa55a721e0c5c6e146adde640f2c449d8ce788db2edf30d95222b89992395",
+      "collect_teacher.py": "016b87788dc701c54c73e53aa3978e47e5648294f6c62a30f495e1b901155e37",
+      "course_position_sampling.py": "dec6ea882e94fd779c5941546f7a860647dfd0dbc0327d0a4e72cf1c307f6c00",
+      "course_render_spool.py": "0b6aeca4e01cc604d980c775c22c5bad28178ce6190211cb17b95e5f6f59fe34",
+      "course_rendering.py": "36008abc492aee3640001d18d7c2afc25f06ab2f592856008a6e52add320a466",
+      "course_sampling.py": "8161b1a8c0d8a584e71aaca436f675223f08a7ac7421f064291e303d1b6c9080",
+      "course_source_semantics.py": "2d111bcedf246a3779a82a062eac924717b6887c705a149fafca2bceb46d6c1c",
+      "course_tasks.py": "c9aaf819dfcbaedc67046a5647f632cfd97cbdb11edc5f050574027d45560de0",
+      "curriculum.py": "ab1a9967f7e7b0930e3f3c5ff0b6c3090c6869cb61e2db96f838f7ea4f603f7f",
+      "curriculum_data.py": "318d192ea69c57de5cc803537728246a56cc3922498869189141b41d8ddece7f",
+      "curriculum_replay.py": "754f1057d4c87a6f15e448894cd8349cbd6e23598bb0b3e0ae89108399f676a4",
+      "curriculum_selection.py": "95b9be673c3c8b9c94fac61b5cf9591d6b6a24c9faef5175e9a7524b64818473",
+      "data.py": "e90f87e072e08b6811b90e16ef64a2108af3fce7bb56e336d04cb7e329397c77",
+      "diagnose_moves.py": "a2b24dc2c8b8fa4d3c8fb606669db60a57ece61b4e470b8b06465c9b3dc4fc8a",
+      "distillation_preflight.py": "f9786d8d2e1b7376bb409a006c39459d2440fe749548a9267d503ac0f6892bd8",
+      "distillation_training.py": "ccce5af868d513a0f6d5649dce3e8abde42ccf694570f7657ad0e1e927545307",
+      "elephant_games.py": "64a67d2940324444909a897e4f8555f135b9270b4bc8d7eba13fc6ee9b5ff363",
+      "engine_qualified_explanations.py": "1fefcbdd671312659b82904bc41c10c485948df0c0c0c348525e8d9fcf3304f2",
+      "engine_selfplay.py": "867c51d5bfbb8fb4e8b67c914ad9d13e24a406f8fefbdac658a3eaf5180a829c",
+      "evaluate_explanations.py": "020546982b9aac8e4d0bc537f98e8520dc1b0b789dbd58b7b666a87e3f3a6d4b",
+      "evaluate_games.py": "56dd0c3e29eceed878a754a22814182fe1e889f7f16f6ee2fcf901937e4d39cf",
+      "evaluate_moves.py": "b218b736b9adbe0ebb9c44ab6a9ab54f210d8b161a6c32a76864869f106e537b",
+      "evaluate_plans.py": "22c97bdf7ef1ee12fc0958cab76dd6a9292f298b137e846e1917f647cfd63ef4",
+      "evaluate_qa.py": "a5c6e4ed29ef36c863c97065f9d0e131e45792c9a537f6475ac1cc575e6e4ab8",
+      "evidence.py": "891b9be3cd6cd3e69304d72e36499b293a46a6624c9c382937bed3f0f6516afc",
+      "expert.py": "b009ac2442829c2973161abd187555910c64365634fce691607b40f4eda74d99",
+      "explanation_preflight.py": "82f672e772ef4731a2bc1c1a5b908a1a7d4ea61ef6bd283b6339efa0cd179786",
+      "explanations.py": "4fc973d12cb1364d2b77ed457e37bef5ade553d2733fcef8754bae12cf7ba2b2",
+      "extend_features.py": "7f0a910bc2427020358b8a8c6fb8324800c55963c769bfacd59be453f45f6f8c",
+      "feature_store.py": "5db3e7bc10b8da176a9b41b2dab01b753f1dd35b4461714f5c7792c941f6563f",
+      "finite_training.py": "e4ff0cc2f215718a06a8af74440c99294bc0a962b9255f0c92c281a2853c8e1e",
+      "forward_rationale.py": "7bc5c17a925d59e7046880ccea4c6dfdb8928acaacf04bf07124c62147ca6907",
+      "foundation_handoff.py": "3f8a0d7319e4c1c118fada30e6f53e629410c0d1a44f3bd6aacf226bde39b1c8",
+      "foundation_prefix.py": "e0301782a67626254500d007bc19106c17919c07d140ed701c384e00983ebd89",
+      "foundation_preflight.py": "30452d75da538b0383cefb92e1c90546828cb307ec37cea55b8a2044ceefdf03",
+      "foundation_readback.py": "972d9d47727c42bfeb5b4a40164e5c0986021a4cd3339c99e3288f8c253cc5a8",
+      "gated_curriculum.py": "d9d5fa3b00cbe913aa54b4bd30fe2dca5b39a576f3027f53e44f612be37ed338",
+      "human_games.py": "2e6a7426817e9f0566e7843e2cf0a9eb02b001a012861bdb59311aabbdf70e30",
+      "inference.py": "a1072ee2d813d4aae1731009a5c17e9c81ee605c0bea12691c3dfff5ea853288",
+      "local_teacher.py": "1af2d5196e84ae09b91469e94149d364028c235bf879fde8153bc27baa708b83",
+      "match_openings.py": "ba42589fee4bb10e2bccb729f430c9925cf28a1750dd0a043ff2e1d6bbb98330",
+      "merge_teacher.py": "4d640c91e931cd5c91a80aef8d853a9d89912662e908db708ace555b573aa07b",
+      "model_bundle.py": "a04fc0cec0fe4270c7b973286ade30e7decc368ff32a86d9fbb9ad2e7b6f19e6",
+      "modeling.py": "abd2a8901d36a188d7f18881f4155ccc4cf4fbe95e5007fccb171146820ec4a4",
+      "move_decoding.py": "84507ab4a8a76142f37dc8e57a522130c52fed4404dfa0f5cca520873a6353e5",
+      "native_catalog.py": "a4c10e707d24e539f11f742154c641d70b33980a54ef1909e4625678f1c59759",
+      "net_pb2.py": "d00bb7fe8465fe149bbce9f8c98d1c7a5f6a7705411adeed670e91773eeeef0d",
+      "oracle.py": "2bed40736e2d0e4fe05405783a60bb85073ee92876f79aadf6863ea1c53edb19",
+      "paper_curriculum.py": "d3f874a5298fc77fcf55e5cbcf595a5bbfeb43ba36622254bd5ddad528c89810",
+      "paper_readback_reuse.py": "705ac13fa508d0eb79193212253c76b97f79d5c58c71d2e718f43ea3cf389339",
+      "parry_rationale.py": "7103c205370637adcd1cc42d90546df3fe40a065c8a246f998690b91436532b3",
+      "planning_data.py": "f5a1a2234b5abdfb4de0bf9b8f08cfe2ad9b2a10b55f26916cd77805737afba8",
+      "platform_games.py": "2656f0cee66739cb46e6ad8a3821058c859b1ee65b579b8a2b7dfa859e46ba17",
+      "policy_data.py": "d2f9e0ccdc230c39fc2055575604cee6cee4d05e547f49e99c3d81c319a61fcf",
+      "prepare_explanations.py": "3499af039e968a922e551cb023ab063dc664a95b7c147cbf4cd6c04616536230",
+      "prose_moves.py": "e590f88819a9195df88832ea6efa42dab34b03d2c6efab84e3a8a3e047b5294b",
+      "recorded_coach.py": "62dcb4972e7829d51032c6d4082838a9dbfe78dea01d6b5703ef58d86a7b8aa9",
+      "recorded_coach_isolation_readback.py": "1cf1b56568cc01e1681c80f4114fc07fdaaa03519bb2f873fdc4843c8a30dae7",
+      "recorded_coach_prose.py": "286b8563b9cb2b6b082e8b3db6a5bb5701605fa8219580a2b6efbc41ee343b5c",
+      "recorded_coach_readback.py": "22b15e3b88051f2709a77bc5e37135c45a0fc2d9a5f9e6f7f486f718605cc5db",
+      "recorded_course_pools.py": "9367d3408d3b2d63b282b331d6551d149e6c9c0999ae81f538c82b3ba050bb6f",
+      "recorded_curriculum.py": "485166d8fd76a03e005e30e06297d5a75f72aef3bfc5d80cdd20cfa1cda1991e",
+      "recorded_full_course_pools.py": "6c7a3c652ba3030d097fb3e44a5b8db22142c900ef0b97740971ee0694a3b3a9",
+      "recorded_search_inputs.py": "4a65adf72a3e0504a226561290564c1310034a43af0386696d79e3135fa7df07",
+      "recorded_sources.py": "5cd0f21d1bc87dc0a364de3df96d5401615d99539e96975886bc0b7a35363207",
+      "reference_oracle.py": "205750dc41c3b017e927a522fdf9eec2edc8aefe2ad289776a3ace9af2abc825",
+      "reference_prose.py": "188af55f9f872a8a2ddce17bba247de708d5b13b83eda68bf79a4d418f278955",
+      "review_explanations.py": "74b5229e7159b26428992762c45c237c36cfb2e7ab67c0a528c4fc6b263941f8",
+      "reviewed_explanations.py": "d589052a3f2e40cabbb9ff3ebbb1db8e35c8aa7346283cc043de879bca8f70bb",
+      "revise_prose.py": "6d3f3ad54cf203888b4c9800e35804c008f16d0515d5cf47d79345607e2feb9b",
+      "rules.py": "9381eb6560758511d77859d7bdb42a64e689617526bbc1b5634f3ca332e178c3",
+      "sampling.py": "b983e5018e07295d5967aa085ffdcde6877aa1af61d9198676abc0ada4a792c2",
+      "search_critical.py": "27a8965220a5f6292e21f8b70559adc85700268a39e36050bec4ba46f2fdf6de",
+      "search_distillation.py": "8ae42cdb593d2af82e9e4fa0f8e0518ea6cba7571d5c2b553c03fd64a474e7bf",
+      "search_inputs.py": "7cbe433c7a14219bf12abc66867e4680825e7130bc5d7162be4b8a155772d0a4",
+      "search_pilot.py": "5def7e79de3de08e42b535bbfcebcd6f19c9330914ad7a3efa56167b656fed9a",
+      "select_checkpoint.py": "c2a00cf5abac474527c07867465388eec6935e212605edada5b0d654a9d1b86f",
+      "selfplay_grounding.py": "0916f4a5336d9430d875367c5e36351f1f0d76670c6207aabecc6dc92141a46c",
+      "sft.py": "9fb6a08eedef8c6a1a4dfb43467a71dc74865be75589822ac1f50948c1033821",
+      "sft_pipeline.py": "f892b44e3d36ffc2e50a6f81a9f98549bb1ae7825cba8eeeadcf02bf96a5df2b",
+      "sft_preflight.py": "1f50193ef60a4d7878e003e4bb5e511be921d182f9fff6d4a69b6d932c75732c",
+      "sft_probe_worker.py": "11d741a1d42c0efb2bf473b3be161779a550c2734e819037c6d863e601751dff",
+      "symmetry.py": "017a0a72377d44141df1388177bcd3df0d6c1572c9daffab519d4be88619bda1",
+      "tactical_course_pools.py": "0eee247da8873488def13976b656fbcf116f7a5c8e1b2dabdb9005e61afe4e30",
+      "tactical_games.py": "d8498e43499ea6a3510e48d6ba7a9f9550510228a4f9d91390cad5042668da33",
+      "tactical_positions.py": "3ad076f06d5afd5bbb88a8578e32c2a304db735e69561ce539e9c75967f95f62",
+      "teacher_benchmark.py": "af46a553ee5cd7a9ba380727d271beda338289f96eaeec02d16cb2a2e76d7c39",
+      "teacher_generation.py": "e6ee391840e2c553e2203293c554e70075a1d7a21b50b6ab3bbe2bc74784e8ce",
+      "teacher_prefill.py": "72903a5ad174af626a2cbdfaa15018da6cffeec7ea149d9dfed9a1f5365084ab",
+      "train.py": "96a92ecbc20f34e94683bfaa53db10441d67f43685c176a2e904954a7ab39816",
+      "training.py": "e06b1e51255dcaddec2fbe3e6d6090422f4e186617b757514b03fda520977372",
+      "training_index.py": "cc643484e7b3c4cbb7179dda904320c712acf3418bbf2d4d3a9ba06675e1850b",
+      "training_label_reference.py": "b45439fc2cfff4e0aecae930657a775924f014d12bfd6f15062f7353d9fd7248",
+      "training_label_reference_readback.py": "f8de396092f008ec16c841ef48513a891c837a5522eb397eb80e19c68d1572e7",
+      "training_parallel.py": "25ae7e8529044103b2285bce15d3636c2d078a82d804e4607100304efc7a28f5",
+      "validation_curriculum.py": "4af16e22a40fed548824dcbc8dde1d32c1aaa230876d17bf66e2ee49c528e49f",
+      "verified_inputs.py": "f7243b1882b1192bbe58e62964650dc2cc9d7b7fd6fdcfac440b1c18a1537c13",
+      "verify_native.py": "d8d7d0430009ef5190da74011358c22bf1bf8f62205d9c2cc2f0208117043347",
+      "verify_network.py": "ce60be8396a75eb7a67d725913c3a82c18665b272208c5158be3e08c211b63e9",
+      "vllm_teacher.py": "3a51f1018372f0a44f678165cb66d1b476bd1ff09526705befb8e9aa0b7263bf"
+    },
+    "checked_code_test_config_files": 281,
+    "all_checked_files_match": true,
+    "results": [
+      {
+        "stage": "pytest",
+        "returncode": 0,
+        "log_sha256": "c482705995effae3c1334cac6f1ab5fce5fb21bb65edcf414aff99a391162eb3",
+        "seconds": 1015.8792975591496
+      },
+      {
+        "stage": "build",
+        "returncode": 0,
+        "log_sha256": "588da0600a7951ce4ab1bef41dc1890cc7dfcd33646698aea18a6470b860cde7",
+        "seconds": 17.79744835756719
+      },
+      {
+        "stage": "release",
+        "returncode": 0,
+        "log_sha256": "3c26e34db5ff2573a94d74d458306cac0ca8db1e766dc53a2324925ea9958d6f",
+        "seconds": 0.8271552883088589
+      }
+    ],
+    "verification_sha256": "ea45f817ca3e6d10e85a36fb32452ae00d2553c7e62eec4f19a5b9feb11db580",
+    "native_course_answers_and_split_leakage_checked_in_CPU_fixtures": true,
+    "controlled_model_artifacts_are_not_actual_GPU_training": true
+  },
+  "actual_joint_initial_SFT": {
+    "run": "runs/joint-replay-initial-sft-v1",
+    "source_CPU_checks": 1988,
+    "source_revision": "search-root-ranges-112-v1",
+    "native_model_tensors": 624,
+    "native_model_parameters": 4694274592,
+    "producer_native_exact_resume": {
+      "status": "complete",
+      "mismatched_fields": [],
+      "mismatched_trainable_tensors": 0,
+      "max_parameter_absolute_error": 0,
+      "steps": [
+        4,
+        4
+      ],
+      "world_sizes": [
+        4,
+        4
+      ]
+    },
+    "native_full_weight_and_Adam_bytes_rehashed_again_by_startup_readback": false,
+    "native_manifest_sha256": "e8864c8578ff7246fc91658a08611a548b427f4429f8cc57a7001e4507160a09",
+    "startup_readback_sha256": "9c3c7b1aeccf79b7345c3c357739b9a770f53e8d8bda53eadd36dc13b20d45b2",
+    "first_three_actual_formal_updates": [
+      {
+        "step": 1,
+        "loss": 2.4961915016174316,
+        "gradient_norm": 49.888668060302734,
+        "supervised_tokens": 5452,
+        "lr": 6.535947712418301e-09,
+        "seconds": 364.16000750660896,
+        "data_batch": {
+          "epoch": 0,
+          "optimizer_batch_in_epoch": 0,
+          "global_valid_rows": 16,
+          "global_padding_rows": 0,
+          "global_rows": 16
+        }
+      },
+      {
+        "step": 2,
+        "loss": 2.0396487712860107,
+        "gradient_norm": 34.830482482910156,
+        "supervised_tokens": 10011,
+        "lr": 1.3071895424836602e-08,
+        "seconds": 377.6938540181145,
+        "data_batch": {
+          "epoch": 0,
+          "optimizer_batch_in_epoch": 1,
+          "global_valid_rows": 16,
+          "global_padding_rows": 0,
+          "global_rows": 16
+        }
+      },
+      {
+        "step": 3,
+        "loss": 2.053907871246338,
+        "gradient_norm": 42.312984466552734,
+        "supervised_tokens": 14648,
+        "lr": 1.9607843137254902e-08,
+        "seconds": 391.4504781123251,
+        "data_batch": {
+          "epoch": 0,
+          "optimizer_batch_in_epoch": 2,
+          "global_valid_rows": 16,
+          "global_padding_rows": 0,
+          "global_rows": 16
+        }
+      }
+    ],
+    "first_three_batches_reconstructed_using_actual_sampler": [
+      {
+        "step": 1,
+        "stage_counts": {
+          "explanation": 13,
+          "dynamic_future": 2,
+          "dynamic_current": 1
+        },
+        "global_row_ids_sha256": "dffb964272ddf5fb2c115552c3a33b95054fc8967de967c0ae4a9d49f72691fc"
+      },
+      {
+        "step": 2,
+        "stage_counts": {
+          "explanation": 11,
+          "dynamic_future": 1,
+          "static_future": 3,
+          "static_current": 1
+        },
+        "global_row_ids_sha256": "b7d2515fe39c11229efcfc290fdc1416f937390a6f449d11ecf91c5b33a3e731"
+      },
+      {
+        "step": 3,
+        "stage_counts": {
+          "static_current": 1,
+          "explanation": 11,
+          "dynamic_current": 2,
+          "dynamic_future": 2
+        },
+        "global_row_ids_sha256": "eba45fdc4e714ddd81d899f43cc38c0209dd7ac65da732e9bb6639bb67e6fd6d"
+      }
+    ],
+    "finite_epoch_contract": {
+      "profile": "author_finite_mixture_epochs_xiangqi_v1",
+      "anchor_stage": "explanation",
+      "source_rows_by_stage": {
+        "explanation": 9823,
+        "static_current": 1792,
+        "dynamic_current": 1536,
+        "static_future": 1792,
+        "dynamic_future": 1536
+      },
+      "selected_rows_by_stage": {
+        "explanation": 9823,
+        "static_current": 614,
+        "dynamic_current": 614,
+        "static_future": 614,
+        "dynamic_future": 614
+      },
+      "requested_weights": {
+        "explanation": 0.8,
+        "static_current": 0.05,
+        "dynamic_current": 0.05,
+        "static_future": 0.05,
+        "dynamic_future": 0.05
+      },
+      "realized_weights": {
+        "explanation": 0.7999837120286668,
+        "static_current": 0.05000407199283329,
+        "dynamic_current": 0.05000407199283329,
+        "static_future": 0.05000407199283329,
+        "dynamic_future": 0.05000407199283329
+      },
+      "rows_per_epoch": 12279,
+      "mixture_seed": 0,
+      "epoch_seed": 20261066,
+      "selected_row_id_and_index_sha256": "095dee9f4835e3ea5b3174f559c46d0feb66c0857e8b3694bd211c89aab27079",
+      "global_batch_size": 16,
+      "world_size": 4,
+      "micro_batch_size": 1,
+      "optimizer_steps_per_epoch": 768,
+      "padded_rows_per_epoch": 1,
+      "tail_policy": "pad_distributed_microbatch_from_epoch_start",
+      "old_course_subsets_reselected_each_epoch": false,
+      "task_types_resampled_uniformly": false,
+      "independent_test_used": false
+    },
+    "planned_updates": 3072,
+    "planned_epochs": 4,
+    "all_original_explanations_each_epoch": 9823,
+    "selected_course_rows_each_epoch": 2456,
+    "loss_normalization": "example",
+    "validation_selects_with_384_original_lecture_rows": true,
+    "old_token_average_NLL_directly_comparable": false,
+    "training_completion_or_retention_improvement_proven": false
+  },
+  "numeric_trial": {
+    "source_CPU_checks": 1974,
+    "independent_readback_sha256": "37433ad7905a99b896614ee5c4d6817288728c181bd5c2ebd586d86213dfb208",
+    "attempted_roots": 64,
+    "mined_queries": 46,
+    "accepted_structured_labels": 37,
+    "rejected_consolidations": 9,
+    "final_structured_label_yield": 0.578125,
+    "same_root_baseline_labels": 44,
+    "two_trials_count_as_independent_roots": false,
+    "source_differences_from_baseline": [
+      "inference.py",
+      "model_bundle.py",
+      "search_critical.py",
+      "search_distillation.py",
+      "search_pilot.py",
+      "sft_preflight.py",
+      "training.py"
+    ],
+    "strict_single_source_causal_comparison": false,
+    "rejection_classes": {
+      "exclusive_evaluation_threshold": 3,
+      "unpaired_chinese_notation": 4,
+      "generation_limit_with_unfinished_reasoning": 2
+    },
+    "pipeline_wall_seconds_excluding_queue": 6036.054542,
+    "accepted_structured_labels_per_pipeline_hour": 22.067395029844317,
+    "teacher": {
+      "repository": "Qwen/Qwen3.8-27B",
+      "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+      "precision": "full_unquantized_BF16",
+      "observed_workers": 4,
+      "configured_batch_size": 16,
+      "configured_output_budget": 8192,
+      "configured_context_budget": 16384,
+      "new_teacher_queries": 46
+    },
+    "heldout_labels_byte_preserved": {
+      "validation": 384,
+      "test": 512
+    },
+    "semantic_coaching_quality_proven": false
+  },
+  "real_joint_distillation_data_preparation": {
+    "run": "runs/distillation-joint-replay-real-preparation-v1",
+    "state_at_snapshot": {
+      "status": "extending_full_parent_cache_only_for_actual_training_roots",
+      "student_training_started": false
+    },
+    "plan_sha256": "ea4b7592ede40caca0c7da602cde8ed27a9396992f399e3ab10a57b34d1dbe35",
+    "selected_search_parent": "original initial SFT selected at update 1792",
+    "prepared_course_train_rows": 6656,
+    "prepared_course_validation_rows": 2600,
+    "new_student_SGD": false,
+    "completion_proven": false
+  },
+  "post_joint_evaluation": {
+    "run": "runs/joint-replay-post-sft-evaluation-v1",
+    "plan_sha256": "53f519661a2f28b0a6ade58740c1c319fb81f2eb7a3b87148c6fc2461262bc01",
+    "state_at_snapshot": {
+      "status": "waiting_for_exact_actual_joint_SFT_completion",
+      "utc": "2026-11-05T04:12:33.160640+00:00",
+      "new_student_training": false,
+      "full_goal_complete": false,
+      "model_or_teacher_loaded": false
+    },
+    "QA_examples": 2600,
+    "lecture_examples_each_of_three_memories": 384,
+    "both_evaluators_match_exact_historical_source": true,
+    "new_model_evaluation_completion_proven": false
+  },
+  "expanded_search": {
+    "planned_roots": 1536,
+    "latest_hourly_snapshot": {
+      "utc": "2026-11-05T03:58:05.469457+00:00",
+      "phases": {
+        "512": {
+          "parent": "actual_disjoint_512_root_numeric_mining_and_consolidation",
+          "pilot": "student_recursive_search",
+          "exact_owned_parent_alive": true
+        },
+        "1024": {
+          "parent": "actual_disjoint_512_root_numeric_mining_and_consolidation",
+          "pilot": "student_recursive_search",
+          "exact_owned_parent_alive": true
+        },
+        "1536": {
+          "parent": "actual_disjoint_512_root_numeric_mining_and_consolidation",
+          "pilot": "student_recursive_search",
+          "exact_owned_parent_alive": true
+        }
+      },
+      "workers": {
+        "512": {
+          "completed_root_attempts": 41,
+          "raw_consolidation_response_records": 0,
+          "collected_training_rows_before_cross_worker_deduplication": 0
+        },
+        "1024": {
+          "completed_root_attempts": 43,
+          "raw_consolidation_response_records": 0,
+          "collected_training_rows_before_cross_worker_deduplication": 0
+        },
+        "1536": {
+          "completed_root_attempts": 50,
+          "raw_consolidation_response_records": 0,
+          "collected_training_rows_before_cross_worker_deduplication": 0
+        }
+      },
+      "terminal_results": null,
+      "new_model_teacher_or_engine_queries_by_monitor": 0,
+      "new_student_SGD": false,
+      "full_goal_complete": false
+    },
+    "cross_worker_history_dedup_required_before_combined_training": true
+  },
+  "trained_search_distillation_rounds": 0,
+  "independent_test_used_for_student_predictions_training_or_selection": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "full_goal_complete": false
+}

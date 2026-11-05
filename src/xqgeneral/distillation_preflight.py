@@ -6,15 +6,15 @@ import json
 import multiprocessing
 from pathlib import Path
 
-from .course_tasks import validate_context
+from .course_tasks import PAPER_PROFILE, grade_answer, row_profile, validate_context
 from .collect_search import EVALUATION_FILTER_PROFILE, search_evaluation_filter
-from .curriculum_data import verify_splits
+from .curriculum_data import STAGES, verify_splits
 from .evidence import atomic_json, digest, iter_jsonl, manifest
 from .explanation_preflight import token_chunk, token_initializer
 from .explanations import continuation_positions, parse_explanation, validate_explanation
 from .extend_features import validate_cache
 from .feature_store import FeatureStore, feature_paths
-from .foundation_preflight import bounded_results
+from .foundation_preflight import bounded_results, native_answer, validate_task
 from .prose_moves import validate_prose_moves
 from .recorded_coach import ordered_native_map
 from .recorded_search_inputs import BoundInputs
@@ -145,7 +145,59 @@ def extended_cache(features, saved, bound):
     return cache
 
 
-def preflight(source, parent_completion, data, features, foundation_preflight, output, *, max_tokens=2048, workers=8):
+def course_replay_sources(paths, bound):
+    """Reopen certified original-course subsets; keep tests out of replay."""
+    if not isinstance(paths, (list, tuple)):
+        raise ValueError('Course replay data paths must be an explicit sequence')
+    directories, rows, seen, counts = [], [], set(), {split: Counter() for split in ['train', 'validation']}
+    for path in paths:
+        if not isinstance(path, (str, Path)) or not str(path):
+            raise ValueError('Course replay paths must name data directories')
+        directory = Path(path)
+        resolved = directory.resolve()
+        if resolved in seen:
+            raise ValueError('Course replay directories must be distinct')
+        seen.add(resolved); directories.append(str(directory))
+        proof = bound.json(directory / 'manifest.json')
+        result = proof.get('verification', {})
+        if (proof.get('status') != 'complete' or proof.get('kind') != 'latent_only_course_replay_data_preflight' or
+                any(result.get(key) is not True for key in [
+                    'all_selected_train_and_validation_answers_natively_regraded',
+                    'all_selected_full_histories_and_futures_natively_checked',
+                    'training_rows_drawn_only_from_original_train_split',
+                    'original_training_rows_preserved_byte_for_byte']) or
+                result.get('independent_test_used_for_training_or_selection') is not False or
+                result.get('by_split', {}).get('test') != 0):
+            raise ValueError('Require a certified original-training-only course replay subset')
+        for section in ['inputs', 'outputs']:
+            for name, binding in proof[section].items():
+                bound.bind(name, binding)
+        for split in ['train', 'validation']:
+            filename = directory / (split + '.jsonl')
+            if str(filename) not in proof['outputs']:
+                raise ValueError('Course replay completion must bind its raw rows')
+            selected = list(iter_jsonl(filename))
+            if len(selected) != result['by_split'].get(split):
+                raise ValueError('Actual course replay coverage differs from its completion')
+            for row in selected:
+                if row.get('split') != split or row.get('stage') not in STAGES or row_profile(row) != PAPER_PROFILE:
+                    raise ValueError('Course replay must retain the declared paper task profile and split')
+                counts[split][row['stage']] += 1
+            rows.extend(selected)
+    return rows, {'data_paths': directories, 'by_split_and_stage': {
+        split: {stage: counts[split][stage] for stage in STAGES} for split in counts}}
+
+
+def native_replay_label(row):
+    validate_task(row, PAPER_PROFILE)
+    validate_context(row, check_future=True)
+    if not grade_answer(native_answer(row), row['answer'], row['task_type'])['correct']:
+        raise ValueError('Course replay answer differs from native QA rules')
+    return row['feature_key']
+
+
+def preflight(source, parent_completion, data, features, foundation_preflight, output, *, max_tokens=2048,
+              workers=8, replay_data_paths=()):
     if type(workers) is not int or workers < 1 or type(max_tokens) is not int or max_tokens < 1:
         raise ValueError('Positive native/token worker and length budgets are required')
     root, data, source = Path(output), Path(data), Path(source)
@@ -166,6 +218,11 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             ids.add(row['id']); keys.add(row['feature_key']); counts[split] += 1; rows.append(row)
     if counts['train'] != labels['verification']['accepted_training_roots'] or not counts['validation']:
         raise ValueError('Actual label coverage differs from completed collection')
+    replay, replay_result = course_replay_sources(replay_data_paths, bound)
+    for row in replay:
+        if row['id'] in ids:
+            raise ValueError('Course replay and explanation labels must have distinct IDs')
+        ids.add(row['id']); keys.add(row['feature_key'])
     cached_keys = set(cache.keys)
     if not keys.issubset(cached_keys):
         raise ValueError('A distillation label is missing its expert history features')
@@ -174,9 +231,11 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
         value = parse_explanation(row['answer'])
         native_split_rows.append(dict(row, future_moves=list(value['pv']),
             future_branches=[list(branch['pv']) for branch in value.get('branches', [])]))
-    split_proof = verify_splits(native_split_rows, workers=workers)
+    split_proof = verify_splits([*native_split_rows, *replay], workers=workers)
     if list(ordered_native_map(native_label, rows, workers)) != [r['feature_key'] for r in rows]:
         raise ValueError('Native full-history label coverage differs')
+    if replay and list(ordered_native_map(native_replay_label, replay, workers)) != [r['feature_key'] for r in replay]:
+        raise ValueError('Native course replay coverage differs')
     foundation = bound.json(foundation_preflight)
     if (foundation.get('status') != 'complete' or
             foundation.get('kind') != 'recorded_engine_clean_latent_foundation_preflight'):
@@ -192,13 +251,19 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
         p = model_path / name
         if p.exists():
             bound.bind(p)
-    eligible = [row for row in rows if row['split'] != 'test']
+    eligible = [row for row in [*rows, *replay] if row['split'] != 'test']
+    eligible_by_id = {row['id']: row for row in eligible}
     root.mkdir(parents=True)
     observed = root / 'token-lengths.jsonl'
-    maxima, token_counts = Counter(), Counter()
+    maxima, token_counts, token_ids = Counter(), Counter(), set()
     with observed.open('x') as handle:
         def emit(results):
             for item in results:
+                identity = item['id']
+                if (identity not in eligible_by_id or identity in token_ids or
+                        item['split'] != eligible_by_id[identity]['split']):
+                    raise ValueError('Token checks must cover every distinct actual supervision row')
+                token_ids.add(identity)
                 maxima[item['split']] = max(maxima[item['split']], item['tokens'])
                 token_counts[item['split']] += 1
                 handle.write(json.dumps(item) + '\n')
@@ -210,7 +275,8 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
                     initializer=token_initializer, initargs=(str(model_path), max_tokens)) as pool:
                 for result in bounded_results(pool, token_chunk, eligible, workers, 128):
                     emit(result)
-    if dict(token_counts) != {s: counts[s] for s in ['train', 'validation']}:
+    expected_tokens = Counter(row['split'] for row in eligible)
+    if token_counts != expected_tokens or token_ids != set(eligible_by_id):
         raise ValueError('Every actual train/validation label must fit without truncation')
     cache.check_unchanged(); bound.unchanged()
     result = {'status': 'complete', 'by_split': dict(counts), 'token_limit': max_tokens,
@@ -223,12 +289,19 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
         'all_label_feature_contexts_present': True, 'parent_full_decoder_completion_verified': True,
         'all_original_feature_keys_and_tensor_references_preserved': True,
         'model_weights_loaded_or_training_started': False, 'strong_play_or_coaching_proven': False}
+    if replay:
+        result['course_replay'] = dict(replay_result,
+            all_raw_train_validation_answers_natively_regraded=True, all_features_present=True,
+            combined_split_isolation_verified=True, train_validation_rows_tokenized=len(replay),
+            independent_test_rows_tokenized=0)
     atomic_json(root / 'verification.json', result)
     proof = manifest(TOKEN_KIND, {'data': str(data), 'source': str(source),
         'parent_completion': str(parent_completion), 'foundation_preflight': str(foundation_preflight),
         'evaluation_filter_profile': EVALUATION_FILTER_PROFILE,
         'max_tokens': max_tokens, 'workers': workers}, outputs=[observed, root / 'verification.json'], verification=result)
     proof['inputs'] = bound.artifacts
+    if replay_result['data_paths']:
+        proof['config']['replay_data_paths'] = replay_result['data_paths']
     proof['cache_header_only_input'] = {'path': str(features), **bound.artifacts[str(features)],
                                        'fresh_full_bytes_hash_verified_by_this_preflight': True}
     atomic_json(root / 'manifest.json', proof)
@@ -241,9 +314,11 @@ def main():
         parser.add_argument('--' + name, required=True)
     parser.add_argument('--max-tokens', type=int, default=2048)
     parser.add_argument('--workers', type=int, default=8)
+    parser.add_argument('--replay-data', nargs='+', default=[], help='Certified original-course replay subsets')
     args = parser.parse_args()
     print(json.dumps(preflight(args.init, args.parent_completion, args.data, args.features,
-        args.foundation_preflight, args.output, max_tokens=args.max_tokens, workers=args.workers)), flush=True)
+        args.foundation_preflight, args.output, max_tokens=args.max_tokens, workers=args.workers,
+        replay_data_paths=args.replay_data)), flush=True)
 
 
 if __name__ == '__main__':

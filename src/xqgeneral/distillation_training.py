@@ -9,8 +9,9 @@ import sys
 import torch
 
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
+from .curriculum_data import STAGES
 from .evidence import atomic_json, code_identity, digest, manifest
-from .finite_training import FINITE_PROFILE, prepare_finite_epochs
+from .finite_training import FINITE_PROFILE, mixture_counts, prepare_finite_epochs
 from .recorded_search_inputs import BoundInputs
 from .sft import prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
@@ -27,7 +28,6 @@ def compile_recipe(template, token, root):
             template.get('decoder_training') != 'full' or template.get('trainable_parameter_dtype') != 'float32' or
             template.get('ddp_world_size') != 4 or template.get('batch_size') != 32 or
             template.get('micro_batch_size') != 1 or template.get('training_data_profile') != FINITE_PROFILE or
-            template.get('stages') != ['explanation'] or template.get('mixture') != {'explanation': 1.0} or
             template.get('validation_stages') != ['explanation'] or
             template.get('max_tokens') != token['verification']['token_limit'] or
             type(template.get('max_steps')) is not int or template['max_steps'] < 1):
@@ -36,7 +36,37 @@ def compile_recipe(template, token, root):
     if (type(counts.get('train')) is not int or counts['train'] < 32 or
             type(counts.get('validation')) is not int or counts['validation'] < 1):
         raise ValueError('A real complete training batch and protected validation labels are required')
-    per_pass = math.ceil(counts['train'] / template['batch_size'])
+    replay_paths = token['config'].get('replay_data_paths', [])
+    if (not isinstance(replay_paths, list) or any(not isinstance(path, str) or not path for path in replay_paths) or
+            len({str(Path(path).resolve()) for path in replay_paths}) != len(replay_paths) or
+            template.get('replay_data_paths', []) != replay_paths):
+        raise ValueError('Training must use the exact token-verified course replay sources')
+    source_counts = {'explanation': counts['train']}
+    if replay_paths:
+        replay = token['verification'].get('course_replay', {})
+        if (template.get('stages') != ['explanation', *STAGES] or
+                not isinstance(template.get('mixture'), dict) or set(template['mixture']) != {'explanation', *STAGES} or
+                template.get('loss_normalization') != 'example' or replay.get('data_paths') != replay_paths or
+                any(replay.get(key) is not True for key in ['all_raw_train_validation_answers_natively_regraded',
+                    'all_features_present', 'combined_split_isolation_verified']) or
+                replay.get('independent_test_rows_tokenized') != 0):
+            raise ValueError('Joint distillation requires all four certified courses and per-example loss')
+        available = replay.get('by_split_and_stage', {})
+        if (not isinstance(available, dict) or set(available) != {'train', 'validation'} or
+                any(not isinstance(available[split], dict) or set(available[split]) != set(STAGES)
+                    for split in available) or
+                any(type(available[split][stage]) is not int or available[split][stage] < 1
+                    for split in available for stage in STAGES)):
+            raise ValueError('Course replay needs actual positive train and validation coverage for every course')
+        if replay.get('train_validation_rows_tokenized') != sum(sum(available[split].values()) for split in available):
+            raise ValueError('Course replay token coverage differs from its raw source counts')
+        source_counts.update(available['train'])
+    elif template.get('stages') != ['explanation'] or template.get('mixture') != {'explanation': 1.0}:
+        raise ValueError('Explanation-only distillation must retain its original mixture')
+    mix = mixture_counts(source_counts, template['mixture'])
+    if mix['anchor_stage'] != 'explanation' or any(count < 1 for count in mix['selected_rows_by_stage'].values()):
+        raise ValueError('Keep every accepted explanation and at least one actual row from each declared course')
+    per_pass = math.ceil(mix['rows_per_epoch'] / template['batch_size'])
     if per_pass > template['max_steps']:
         raise ValueError('The update cap cannot cover even one complete pass through accepted labels')
     warmup = template.get('warmup_fraction', 0)
@@ -54,6 +84,10 @@ def compile_recipe(template, token, root):
         'last_allocated_pass_may_be_partial_at_update_cap': template['max_steps'] % per_pass != 0,
         'at_least_one_complete_pass_required_before_early_stop': True,
         'paper_first_round_150000_label_scale_reached': counts['train'] >= 150000}
+    if replay_paths:
+        budget.update(course_replay_source_rows_by_stage={stage: source_counts[stage] for stage in STAGES},
+            finite_mixture=mix, rows_per_complete_pass=mix['rows_per_epoch'],
+            course_replay_counts_toward_paper_label_scale=False)
     return recipe, budget
 
 
@@ -69,6 +103,12 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         for path, expected in token[section].items():
             bound.bind(path, expected)
     recipe, budget = compile_recipe(template, token, root)
+    for directory in recipe.get('replay_data_paths', []):
+        for filename in ['manifest.json', 'train.jsonl', 'validation.jsonl']:
+            path = str(Path(directory) / filename)
+            if path not in token['inputs']:
+                raise ValueError('Course replay source must be bound by its completed token preflight')
+            bound.bind(path, token['inputs'][path])
     if token['config']['source'] != str(source):
         raise ValueError('The actual search and selected training parent must be identical')
     saved, parent = completed_parent(source, token['config']['parent_completion'], bound)
@@ -104,7 +144,8 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
     try:
         atomic_json(root / 'state.json', {'status': stage, 'formal_distillation_started': False})
         for split, directory in recipe['row_index_paths'].items():
-            paths = [Path(recipe['data_path']) / (split + '.jsonl')]
+            paths = [Path(directory) / (split + '.jsonl') for directory in
+                     [recipe['data_path'], *recipe.get('replay_data_paths', [])]]
             if Path(directory).exists():
                 IndexedTrainingRows(directory, paths, recipe['mixture'], split=split).close()
             else:
@@ -138,7 +179,8 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 not expected['min_steps'] <= metrics.get('steps_completed', 0) <= expected['steps']):
             raise ValueError('Actual distillation completion differs from its full-decoder recipe and budget')
         indexed = IndexedTrainingRows(recipe['row_index_paths']['train'],
-            [Path(recipe['data_path']) / 'train.jsonl'], recipe['mixture'])
+            [Path(directory) / 'train.jsonl' for directory in
+             [recipe['data_path'], *recipe.get('replay_data_paths', [])]], recipe['mixture'])
         try:
             prepare_finite_epochs(indexed, recipe['mixture'], expected, 4).check_resume(
                 metrics.get('training_data_state'), metrics['steps_completed'])
@@ -168,11 +210,18 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
             'validation_selects_checkpoint': True, 'independent_test_used_for_training_or_selection': False,
             'raw_answers_repaired': False, 'strength_and_coaching_gain_evaluated': False,
             'strong_play_or_reliable_coaching_proven': False, **summary}
+        if recipe.get('replay_data_paths'):
+            result.update(course_replay_sources=recipe['replay_data_paths'],
+                selected_training_rows_by_stage=budget['finite_mixture']['selected_rows_by_stage'],
+                rows_per_complete_pass=budget['rows_per_complete_pass'], loss_normalization='example',
+                course_replay_counts_toward_paper_label_scale=False)
         atomic_json(root / 'verification.json', result)
         inputs = [source, source.parent / 'manifest.json', source.parent / 'config.json',
             recipe_template, recipe_path, token_manifest, Path(token['config']['parent_completion']),
             preflight_root / 'manifest.json', trained / 'manifest.json', trained / 'config.json']
         inputs += [p for directory in recipe['row_index_paths'].values() for p in index_paths(directory)]
+        inputs += [Path(directory) / filename for directory in recipe.get('replay_data_paths', [])
+                   for filename in ['manifest.json', 'train.jsonl', 'validation.jsonl']]
         atomic_json(root / 'manifest.json', manifest(ROUND_KIND, contract, inputs,
             [root / 'verification.json', root / 'budget.json', selected_path, trained / 'metrics.json'], result))
         atomic_json(root / 'state.json', result)
