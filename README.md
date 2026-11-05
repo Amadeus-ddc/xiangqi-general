@@ -22,6 +22,8 @@
 
 [首轮扩充数据开发蒸馏](docs/FIRST_SCALED_DISTILLATION.md)已完成接续检查并真实排队：等待完整数据准备与新联合候选开发评测，保持原搜索父模型，至少512条去重讲解后按最多四轮编译，完整四卡原生预检通过才进入SGD。512为本机开发下限；目前尚无该轮更新或质量结论。
 
+[该轮权重的课程与讲解评测](docs/FIRST_SCALED_DISTILLATION_EVALUATION.md)也已启动等待：原2600题、三组各384讲解和正文辅助盲评将核对真实完成权重后执行，沿用原源码及保留特征。完整对弈与最终独立验收仍待完成。
+
 [新联合模型的同设置384局对弈](docs/JOINT_SFT_MATCH_EVALUATION.md)已通过原生开局及启动协调检查并排队，在实际训练与讲解复查完成后自动执行；与原模型逐场对齐，保留非法弃负和截断，最终独立测试继续保留。
 
 详见[最新状态](STATUS.md)、[模型说明](docs/MODEL_CARD.md)和[四课完成读回](docs/PAPER_FOUR_COURSES_COMPLETED.md)。

@@ -38,3 +38,5 @@ python FROZEN_ENTRY.py --plan RUN/plan.json --plan-sha256 SHA256_OF_FROZEN_PLAN 
 ## 已核验的当前范围
 
 [本次接续证据](../evidence/first-scaled-distillation-continuation-v1.json)记录18项新增、102项相关及2087项完整CPU检查通过，三项真实CLI检查、真实子进程脱敏／失败传播控制，以及实际冻结等待进程的身份与状态。CPU测试中的模型／原生GPU结果为受控替身；源代码、真实等待进程和真实OS文件锁的证据分别保留。当前等待完整数据准备及新联合候选开发评测，没有轮次目录或新蒸馏SGD。
+
+完成权重后的[课程、配对讲解和正文辅助评审接续](FIRST_SCALED_DISTILLATION_EVALUATION.md)现已通过检查并启动等待。它们的排队不构成模型质量结论；该蒸馏候选的完整对弈仍待安排。
