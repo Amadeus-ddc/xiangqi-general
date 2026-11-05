@@ -7,15 +7,15 @@ import multiprocessing
 from pathlib import Path
 
 from .course_tasks import PAPER_PROFILE, grade_answer, row_profile, validate_context
-from .collect_search import EVALUATION_FILTER_PROFILE, search_evaluation_filter
+from .collect_search import EVALUATION_FILTER_PROFILE
+from .merge_search import collected_dataset, native_label
 from .curriculum_data import STAGES, verify_splits
 from .evidence import atomic_json, digest, iter_jsonl, manifest
 from .explanation_preflight import token_chunk, token_initializer
-from .explanations import continuation_positions, parse_explanation, validate_explanation
+from .explanations import parse_explanation
 from .extend_features import validate_cache
 from .feature_store import FeatureStore, feature_paths
 from .foundation_preflight import bounded_results, native_answer, validate_task
-from .prose_moves import validate_prose_moves
 from .recorded_coach import ordered_native_map
 from .recorded_search_inputs import BoundInputs
 from .sft import checked_parent
@@ -67,61 +67,6 @@ def completed_parent(source, completion_path, bound=None):
         raise ValueError('Selected parent configuration changed')
     bound.unchanged()
     return saved, proof
-
-
-def collected_dataset(data, source, bound):
-    data = Path(data)
-    proof = bound.json(data / 'manifest.json')
-    result = proof.get('verification', {})
-    if (proof.get('status') != 'complete' or proof.get('kind') != 'search_consolidated_dataset' or
-            type(result.get('accepted_training_roots')) is not int or result['accepted_training_roots'] < 32 or
-            any(result.get(k) is not True for k in ['neural_consolidation_executed',
-                'structured_facts_verified', 'explicit_prose_moves_natively_verified',
-                'all_branch_positions_isolated', 'full_history_termination_checked',
-                'recorded_mining_isolation_rechecked_during_collection',
-                'selected_branch_evaluation_filter_applied']) or
-            result.get('evaluation_filter_profile') != EVALUATION_FILTER_PROFILE or
-            result.get('max_absolute_winrate_error_exclusive') != 0.075 or
-            result.get('teacher', {}).get('quantization') != 'none' or
-            result.get('teacher', {}).get('inference_dtype') != 'bfloat16'):
-        raise ValueError('Require at least 32 actually mined, consolidated and isolated training labels')
-    for section in ['inputs', 'outputs']:
-        for path, expected in proof[section].items():
-            bound.bind(path, expected)
-    config = proof['config']
-    mining_path = Path(config.get('mining_manifest') or Path(config['queries']).parent / 'manifest.json')
-    mining = bound.json(mining_path)
-    for section in ['inputs', 'outputs']:
-        for path, expected in mining[section].items():
-            bound.bind(path, expected)
-    if (mining.get('kind') != 'search_distillation_mining' or mining.get('status') != 'complete' or
-            mining['config']['checkpoint'] != str(source) or
-            proof['inputs'].get(str(mining_path)) != bound.artifacts[str(mining_path)] or
-            mining['inputs'].get(str(source)) != bound.bind(source) or
-            mining['verification'].get('unused_recorded_training_inputs') is not True):
-        raise ValueError('Actual search labels must come from this selected parent and unused recorded roots')
-    validation_data = Path(result['validation_source_unchanged'])
-    for split in ['validation', 'test']:
-        original, copied = validation_data / f'{split}.jsonl', data / f'{split}.jsonl'
-        if (proof['inputs'].get(str(original)) is None or
-                proof['outputs'].get(str(copied)) != proof['inputs'][str(original)]):
-            raise ValueError('Distillation must preserve the original protected validation and test bytes')
-    return proof
-
-
-def native_label(row):
-    validate_context(row)
-    value = parse_explanation(row['answer'])
-    facts = validate_explanation(row['fen'], value, require_branches=True)
-    prose = validate_prose_moves(row['fen'], value, value['explanation'])
-    if not facts['valid'] or not prose['valid']:
-        raise ValueError('A consolidated label has invalid native facts or explicit prose moves')
-    if row['split'] == 'train':
-        rechecked = search_evaluation_filter({'target_fields': value, 'record': row})
-        if row.get('search_evaluation_filter') != rechecked:
-            raise ValueError('A training label changed its original student evaluation or exclusive filter')
-    continuation_positions(row, value)
-    return row['feature_key']
 
 
 def extended_cache(features, saved, bound):
