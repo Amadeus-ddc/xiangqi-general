@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "kind": "current_expert_policy_and_first_scaled_search_labels",
+  "as_of_utc": "2026-11-05T23:47:13.600786+00:00",
+  "proofs": {
+    "expert_producer": {
+      "path": "runs/current-development-expert-policy-v1/verification.json",
+      "bytes": 2705,
+      "sha256": "c70c212b45c183bfecd9cfde58c1fc24465214932f70237a63dc08cfb34877b1"
+    },
+    "expert_native_qualification": {
+      "path": "runs/current-development-expert-policy-v1/qualification.json",
+      "bytes": 1993,
+      "sha256": "676c884db406229483959bfd83189dfa9811bd57a51c17a74889f0903cf34e21"
+    },
+    "expert_readback": {
+      "path": "runs/current-development-expert-policy-readback-v1/verification.json",
+      "bytes": 1117,
+      "sha256": "05f5727a493fb27dae876a4de889e188b7ca4644e5ac3341b4c0b41096a70115"
+    },
+    "expert_comparison": {
+      "path": "runs/current-development-expert-policy-readback-v1/comparison.json",
+      "bytes": 2651,
+      "sha256": "19e7e24a87ff7097e659256569c19152cfde23bb58b0a1c68a2c01c387954ab3"
+    },
+    "leaf_producer": {
+      "path": "runs/search-scaled-numeric-offset1024-v1/verification.json",
+      "bytes": 12276,
+      "sha256": "fc86647c0514d12f93c1f4f795b58cf8d22e58b0acd993ce7f2d4e4ad7772cae"
+    },
+    "leaf_readback": {
+      "path": "runs/scaled-leaf-offset1024-native-readback-v2/verification.json",
+      "bytes": 1377,
+      "sha256": "8d5c079397f9e3a86f72b4d789fc74764a55527b3271cca7f653fc9d8c28efcf"
+    },
+    "leaf_native_token_lengths": {
+      "path": "runs/scaled-leaf-offset1024-token-lengths-v1/verification.json",
+      "bytes": 12433,
+      "sha256": "aa0619f77b2d9de41ea26b4279b91cd364a07b5d58b6d0d04af5356373891bde"
+    }
+  },
+  "expert_diagnostic": {
+    "examples": 384,
+    "distinct_stored_game_ids": 216,
+    "IDs_marked_color_mirror": 96,
+    "distinct_ids_after_color_mirror_suffix_removal": 288,
+    "first_move_summary": {
+      "expert_unmasked_argmax": {
+        "examples": 384,
+        "legal": 335,
+        "no_mistake": 328,
+        "mean_expected_score_loss_conditional_on_legality": 0.008340298507462686,
+        "matches_shared_engine_best": 223,
+        "on_common_legal_LM_records": {
+          "examples": 330,
+          "no_mistake": 281
+        }
+      },
+      "expert_native_legal_mask": {
+        "examples": 384,
+        "legal": 384,
+        "no_mistake": 374,
+        "mean_expected_score_loss_conditional_on_legality": 0.009154947916666668,
+        "matches_shared_engine_best": 247,
+        "on_common_legal_LM_records": {
+          "examples": 330,
+          "no_mistake": 324
+        }
+      },
+      "original_SFT_raw": {
+        "examples": 384,
+        "legal": 346,
+        "no_mistake": 260,
+        "mean_expected_score_loss_conditional_on_legality": 0.1155592485549133,
+        "matches_shared_engine_best": 126,
+        "on_common_legal_LM_records": {
+          "examples": 330,
+          "no_mistake": 253
+        }
+      },
+      "joint_SFT_raw": {
+        "examples": 384,
+        "legal": 340,
+        "no_mistake": 259,
+        "mean_expected_score_loss_conditional_on_legality": 0.10848235294117647,
+        "matches_shared_engine_best": 121,
+        "on_common_legal_LM_records": {
+          "examples": 330,
+          "no_mistake": 251
+        }
+      }
+    },
+    "both_LMs_legal_records": 330,
+    "all_four_raw_moves_legal_records": 286,
+    "all_four_legal_subset": {
+      "expert_unmasked_argmax": {
+        "examples": 286,
+        "no_mistake": 281,
+        "mean_expected_score_loss": 0.007010489510489512
+      },
+      "expert_native_legal_mask": {
+        "examples": 286,
+        "no_mistake": 281,
+        "mean_expected_score_loss": 0.007010489510489512
+      },
+      "original_SFT_raw": {
+        "examples": 286,
+        "no_mistake": 219,
+        "mean_expected_score_loss": 0.10691608391608391
+      },
+      "joint_SFT_raw": {
+        "examples": 286,
+        "no_mistake": 216,
+        "mean_expected_score_loss": 0.11148076923076923
+      }
+    },
+    "limitations": {
+      "neural_policy_forward_recomputed": false,
+      "new_model_or_engine_queries": 0,
+      "same_native_rules_and_calibration_used": true,
+      "legal_mask_is_a_separate_expert_condition": true,
+      "common_raw_legal_subset_is_descriptive_posthoc_diagnostic": true,
+      "single_change_causal_claim": false,
+      "independent_test_used": false,
+      "new_training": false,
+      "full_games_or_explanations_evaluated": false,
+      "strong_play_or_reliable_coaching_proven": false,
+      "full_goal_complete": false
+    }
+  },
+  "expert_native_qualification_examples": 8,
+  "all_policy_logits_compared_per_qualification_example": 2062,
+  "expert_native_max_policy_logit_absolute_error": 7.331371307373047e-06,
+  "expert_production_engine_queries": 621,
+  "expert_production_seconds": 167.62850192189217,
+  "first_scaled_leaf": {
+    "status": "complete_318_label_native_reconstruction_and_full_BF16_teacher_readback",
+    "utc": "2026-11-05T23:44:41.663531+00:00",
+    "offset": 1024,
+    "original_roots": 512,
+    "teacher_original_responses": 356,
+    "accepted_training_histories": 318,
+    "rejected_consolidations": 38,
+    "reconstructed_all_accepts_and_rejections": true,
+    "rejection_categories": {
+      "selected_evaluation_error": 8,
+      "unsupported_prose_move": 20,
+      "generation_or_teacher_identity_gate": 10
+    },
+    "teacher_responses_at_generation_limit": 10,
+    "teacher_quantization": "none",
+    "teacher_dtype": "bfloat16",
+    "observed_TP_workers": 4,
+    "observed_parameter_elements_by_dtype": {
+      "torch.bfloat16": 27372607344,
+      "torch.float32": 2304
+    },
+    "source_modules": 112,
+    "matching_CPU_checks": 1988,
+    "parent_checkpoint_sha256": "66f375842809b8140e612116413dac28c88e996267f60d01ae3bcc2f9b123d61",
+    "heldout_files_byte_identical": true,
+    "full_training_rows_native_histories_facts_lines_prose_and_exclusive_filter_rechecked": true,
+    "full_reserved_position_set_independently_recomputed": false,
+    "producer_isolation_proof_retained": true,
+    "global_full_reconstruction_still_runs_in_actual_merger": true,
+    "new_teacher_student_expert_engine_queries": 0,
+    "new_training": false,
+    "strategic_prose_human_quality_or_playing_strength_proven": false,
+    "full_goal_complete": false
+  },
+  "leaf_rejection_detail": {
+    "evaluation_error_at_or_above_exclusive_0_075": 8,
+    "unsupported_explicit_prose_move": 20,
+    "hit_generation_limit": 10,
+    "generation_limit_IDs_equal_generic_teacher_gate_rejections": true
+  },
+  "pipeline_snapshot": {
+    "complete_merge_dependencies": 3,
+    "total_merge_dependencies": 5,
+    "pending_root_offsets": [
+      512,
+      1536
+    ],
+    "deduplicated_full_merged_training_count": null,
+    "formal_student_SGD_rounds": 0,
+    "round_directory_exists": false,
+    "minimum_deduplicated_training_labels_before_training": 512,
+    "global_isolation_rebuilt_by_merger_before_acceptance": true
+  },
+  "publication_software_changed": false,
+  "publication_independent_test_answers_used": false,
+  "publication_strong_play_or_reliable_coaching_proven": false,
+  "publication_validation": {
+    "status": "passed",
+    "tests_passed": 2099,
+    "source_modules": 113,
+    "code_test_and_build_files": 261,
+    "full_CPU_verification_path": "runs/current-expert-and-search-label-publication-v1/validation-verification.json",
+    "full_CPU_verification_sha256": "bb92664bb86abcf569502f5185b2b10150367f9191b67ecdce9b763f9d162d7a",
+    "public_code_unchanged_from_PR232": true
+  },
+  "full_goal_complete": false,
+  "first_scaled_leaf_native_tokens": {
+    "status": "complete_all_318_native_token_lengths",
+    "utc": "2026-11-05T23:51:24.037889+00:00",
+    "examples": 318,
+    "native_encoded_examples": 318,
+    "native_encoding_rejections": 0,
+    "max_tokens": 2048,
+    "total_tokens": 172863,
+    "longest_tokens": 638,
+    "p50_tokens": 547,
+    "p95_tokens": 608,
+    "p99_tokens": 631,
+    "supervised_tokens": 126753,
+    "source_revision": "search-collection-merge-113-v2",
+    "source_modules": 113,
+    "matching_source_CPU_checks": 2049,
+    "training_data_sha256": "1d0508d29dfd4529e25d44d58b0b21a54058cdf28fe63da26bd14d563ca999be",
+    "lengths_sha256": "ea76391f6e2e7bc9bfd6bc116e35c71e375bd2bc60c998b4c09bb07f4502479b",
+    "rejections_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "native_no_truncation_encoder_used": true,
+    "full_merged_feature_isolation_or_training_preflight_replaced": false,
+    "new_model_expert_teacher_engine_queries": 0,
+    "new_training": false,
+    "independent_test_answers_used": false,
+    "full_goal_complete": false
+  }
+}
