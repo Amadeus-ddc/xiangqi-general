@@ -263,6 +263,8 @@ def mine_paper(miner, original):
         selected_loss=max(0,truth-selected['true_root_probability'])
         rendered=sorted(children,key=lambda c:c['predicted_root_order'],reverse=True)
         query=miner.consolidation_query(original,root,rendered,selected,oracle,selected_loss,depth)
+        if query is None:
+            return None,trace,'missing_child_prose'
         query['acceptance_policy']='paper_recursive'
         return query,trace,'accepted_for_consolidation'
     return None,trace,'recursion_limit'

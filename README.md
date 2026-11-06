@@ -23,6 +23,8 @@
 
 后续先扩大不同训练历史的实际搜索／严格收取规模，并按实际数据配置旧课回放覆盖与学习率，再执行同题讲解、对弈和最终独立验收。当前每门旧课65条的采样已核对；现有可用回放池为6656条。首轮开发数据仍远小于论文每轮150K–285K的搜索蒸馏规模。
 
+[子讲解原文入口](docs/CHILD_PROSE_CONSOLIDATION.md)支持显式保留学生原文供教师核对，缺省消息保持。45份实际保存查询已复验126段原文完整传递，另有1个终局子项；本次无新教师查询、标签或SGD，讲解质量收益仍待真实对照。
+
 已完成记录：[四课](docs/PAPER_FOUR_COURSES_COMPLETED.md)、[初始讲解](docs/INITIAL_SFT_COMPLETED.md)、[联合讲解与回放](docs/JOINT_SFT_COMPLETED.md)、[原讲解384局](docs/INITIAL_SFT_FULL_MATCHES.md)、[专家与标签检查](docs/CURRENT_EXPERT_AND_SEARCH_LABELS.md)、[首次真实更新快照](docs/EXPANDED_SEARCH_DATA_READY.md)。原模型384局为0胜383负1和；联合候选对弈另行保留进行中的原始记录，尚无该候选完整成绩。
 
 [推理目录导出与搬动](docs/FULL_SFT_INFERENCE_BUNDLE.md)已验证旧开发权重的可用性，正式交付仍需模型能力验收。完整范围见[状态](STATUS.md)和[模型说明](docs/MODEL_CARD.md)。

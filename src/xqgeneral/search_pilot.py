@@ -17,6 +17,7 @@ from .search_distillation import (checked_child_prompt_profile, checked_search_e
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
 from .teacher_generation import checked_budget, generation_profile
 from .teacher_prefill import checked_prefill_chunk_size
+from .prose_moves import checked_consolidation_profile, consolidation_queries_evidence
 
 
 def pilot_spec(config, bound):
@@ -27,6 +28,9 @@ def pilot_spec(config, bound):
         raise ValueError('Student autocast cache override must be a boolean')
     offset = checked_root_offset(config.get('root_offset', 0))
     checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
+    if 'consolidation_profile' in config:
+        checked_consolidation_profile(config['consolidation_profile'],
+            child_prompt_profile=config.get('child_prompt_profile', 'full_explanation'))
     batching = checked_student_batching(config.get('student_batch_size'),
         config.get('student_workers'), config.get('student_batch_wait_ms'))
     if batching is not None and config.get('student_generation_config') is None:
@@ -204,6 +208,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             **{key: evaluation[key] for key in ['executable', 'weights']}}
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
+        if 'consolidation_profile' in config:
+            arguments['consolidation_profile'] = config['consolidation_profile']
         if 'student_autocast_cache_enabled' in config:
             arguments['student_autocast_cache'] = 'on' if config['student_autocast_cache_enabled'] else 'off'
         if config.get('max_root_retries') is not None:
@@ -237,6 +243,12 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                 mined['verification'].get('child_prompt') != child_prompt_metadata(config['child_prompt_profile'])):
             raise ValueError('Actual mining child prompt differs from the requested profile')
         queries = load_jsonl(mining / 'queries.jsonl')
+        if 'consolidation_profile' in config:
+            profile = config['consolidation_profile']
+            if (mined['verification'].get('consolidation_profile') != profile or
+                    mined['verification'].get('consolidation_child_prose_evidence') !=
+                    consolidation_queries_evidence(queries, profile)):
+                raise ValueError('Actual consolidation profile or child prose evidence was not applied')
         attempts = load_jsonl(mining / 'results.partial.jsonl')
         actual_queries = [row['query'] for row in attempts if row['query'] is not None]
         if (len(attempts) != config['limit'] or len({row['source_root_id'] for row in attempts}) != len(attempts) or

@@ -13,7 +13,9 @@ from .evidence import atomic_json, code_identity, digest, history_key, iter_json
 from .explanations import (EXPLANATION_QUESTION, continuation_positions, line_facts, move_facts,
                            parse_explanation, validate_explanation)
 from .oracle import Pikafish
-from .prose_moves import consolidation_messages
+from .prose_moves import (CONSOLIDATION_PROFILES, MissingChildProseError,
+                         checked_consolidation_profile, consolidation_messages,
+                         consolidation_queries_evidence)
 from .rules import adjudicate, legal_moves, piece_map, piece_name, play, replay, side
 from .search_inputs import prepared_training_roots, training_roots
 from .sampling import (REQUEST_SAMPLING_PROFILE, SEED_PROFILE, checked_seed, generation_seed, generation_software,
@@ -159,7 +161,8 @@ class SearchMiner:
                  candidate_threshold=0.05, child_threshold=0.10, child_contract='full',
                  record_oracle_query=None, generation_policy=None, generation_seed=0,
                  max_root_retries=None, root_candidate_policy='strict', reuse_child_analysis=False,
-                 acceptance_policy='strict', min_clean_ply=1, child_prompt_profile='full_explanation'):
+                 acceptance_policy='strict', min_clean_ply=1, child_prompt_profile='full_explanation',
+                 consolidation_profile=None):
         if child_contract not in {'full', 'move_eval'}:
             raise ValueError('Unknown child acceptance contract')
         self.predictor, self.oracle, self.reserved = predictor, oracle, reserved
@@ -167,6 +170,9 @@ class SearchMiner:
         self.candidate_threshold, self.child_threshold = candidate_threshold, child_threshold
         self.child_contract = child_contract
         self.child_prompt_profile = checked_child_prompt_profile(child_prompt_profile, child_contract)
+        self.consolidation_profile = (None if consolidation_profile is None else
+            checked_consolidation_profile(consolidation_profile,
+                                          child_prompt_profile=self.child_prompt_profile))
         self.engine_cache = {}
         self.record_oracle_query = record_oracle_query
         self.counts = Counter()
@@ -451,7 +457,8 @@ class SearchMiner:
                                      'after_probability': p_new, 'common_prefix': prefix}
             if p_new <= p_old:
                 return None, trace, 'pv_does_not_strictly_improve'
-            return self.consolidation_query(original, root, children, selected, oracle, selected_loss, depth), trace, 'accepted_for_consolidation'
+            query = self.consolidation_query(original, root, children, selected, oracle, selected_loss, depth)
+            return query, trace, ('accepted_for_consolidation' if query is not None else 'missing_child_prose')
         return None, trace, 'recursion_limit'
 
 
@@ -488,7 +495,13 @@ class SearchMiner:
                 sanitation = child['sanitation']
                 entry['critical_sanitation'] = {key:sanitation.get(key) for key in
                     ['accepted_ply', 'accepted_uci', 'valid_checked_prefix', 'full_line_legal']}
-        messages = consolidation_messages(content, root['fen'], target)
+        try:
+            messages = consolidation_messages(content, root['fen'], target,
+                **({'consolidation_profile': self.consolidation_profile}
+                   if self.consolidation_profile is not None else {}))
+        except MissingChildProseError:
+            self.counts['missing_child_prose_roots'] += 1
+            return None
         self.counts['mined_improvements'] += 1
         return {'id': root['id'] + '-search', 'record': root, 'target_fields': target,
                 'messages': messages, 'source_root_id': original['id'], 'depth': depth,
@@ -513,6 +526,8 @@ def _main():
     parser.add_argument('--child-contract', choices=['full', 'move_eval'], default='full')
     parser.add_argument('--child-prompt-profile', choices=CHILD_PROMPT_PROFILES,
                         help='Optional versioned child request; the default retains full explanations')
+    parser.add_argument('--consolidation-profile', choices=CONSOLIDATION_PROFILES, default=argparse.SUPPRESS,
+                        help='Explicit teacher-input profile; absent preserves legacy structured evidence')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
     parser.add_argument('--student-autocast-cache', choices=['on', 'off'], default=argparse.SUPPRESS,
@@ -543,6 +558,10 @@ def _main():
         if not args.recorded_inputs:
             raise ValueError('A root offset requires completed recorded inputs')
     checked_child_prompt_profile(args.child_prompt_profile or 'full_explanation', args.child_contract)
+    consolidation_profile = getattr(args, 'consolidation_profile', None)
+    if consolidation_profile is not None:
+        checked_consolidation_profile(consolidation_profile,
+            child_prompt_profile=args.child_prompt_profile or 'full_explanation')
     generation_policy = None
     if args.student_generation_config is not None:
         generation_policy = search_generation_policy(json.loads(Path(args.student_generation_config).read_text()))
@@ -667,7 +686,9 @@ def _main():
                     reuse_child_analysis=bool(args.reuse_child_analysis),
                     acceptance_policy=args.acceptance_policy or 'strict',
                     min_clean_ply=1 if args.min_clean_ply is None else args.min_clean_ply,
-                    child_prompt_profile=args.child_prompt_profile or 'full_explanation')
+                    child_prompt_profile=args.child_prompt_profile or 'full_explanation',
+                    **({'consolidation_profile': consolidation_profile}
+                       if consolidation_profile is not None else {}))
                 def mine(row):
                     try:
                         return miner.mine(row)
@@ -712,6 +733,9 @@ def _main():
              'unused_child_fields_passed_to_consolidator': args.child_contract == 'full'}
     if args.child_prompt_profile is not None:
         proof['child_prompt'] = child_prompt_metadata(args.child_prompt_profile)
+    if consolidation_profile is not None:
+        proof['consolidation_profile'] = consolidation_profile
+        proof['consolidation_child_prose_evidence'] = consolidation_queries_evidence(accepted, consolidation_profile)
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
