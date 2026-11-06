@@ -5,6 +5,8 @@ import re
 from .rules import adjudicate, gives_check, legal_moves, play, piece_map, piece_name, replay
 from .evidence import position_key
 
+IMMEDIATE_MATE_CONSISTENCY_PROFILE = 'full_history_immediate_mate_consistency_xiangqi_v1'
+
 EXPLANATION_QUESTION = ('请分析当前局面，以JSON回答，包含move（建议走法）、pv（主要变化列表）、'
                         'candidates（三个候选走法列表）、branches（各候选的move、pv和evaluation）、'
                         'evaluation（type为cp或mate、value为整数、'
@@ -128,6 +130,54 @@ def validate_explanation(fen, value, require_facts=True, require_branches=False)
         if any(m not in allowed for m in re.findall(r'[a-i][0-9][a-i][0-9]', prose)):
             errors.append('unsupported_prose_move')
     return {'valid': not errors, 'errors': errors, 'strategic_prose_verdict': 'requires_separate_human_review'}
+
+
+def immediate_mate_score_consistency(record, value):
+    """Check mate +/-1 against its supplied line, after structural validation.
+
+    This checks the given PV, not whether a different continuation could win.
+    Xiangqi stalemate and full-history rule wins count as terminal wins too.
+    Longer mate scores and strategic prose require other evidence.
+    """
+    scored = [('root', value.get('evaluation'), value.get('pv'))]
+    scored += [(f'branch_{i}', branch.get('evaluation'), branch.get('pv'))
+               for i, branch in enumerate(value.get('branches', []))]
+    cases = [(name, score, pv) for name, score, pv in scored
+             if isinstance(score, dict) and score.get('type') == 'mate' and
+             type(score.get('value')) is int and abs(score['value']) == 1]
+    errors = []
+    result = {'valid': True, 'errors': errors, 'checked_scored_lines': len(cases),
+              'profile': IMMEDIATE_MATE_CONSISTENCY_PROFILE,
+              'strategic_prose_verified': False}
+    if not cases:
+        return result
+    try:
+        initial, moves, fen = record['initial_fen'], record['moves'], record['fen']
+        if not isinstance(moves, list) or replay(initial, moves)[-1] != fen:
+            raise ValueError('Original history does not end at the declared root')
+        if adjudicate(initial, moves)['ended']:
+            raise ValueError('The scored root is already terminal')
+        root_color = 'red' if fen.split()[1] == 'w' else 'black'
+        for name, score, pv in cases:
+            required = 1 if score['value'] == 1 else 2
+            if score.get('perspective') != 'side_to_move':
+                errors.append(f'{name}_immediate_mate_requires_root_perspective')
+                continue
+            if not isinstance(pv, list) or len(pv) < required:
+                errors.append(f'{name}_immediate_mate_PV_is_incomplete')
+                continue
+            prefix = pv[:required]
+            if any(adjudicate(initial, moves + prefix[:i])['ended'] for i in range(1, required)):
+                errors.append(f'{name}_immediate_mate_PV_continues_after_terminal')
+                continue
+            outcome = adjudicate(initial, moves + prefix)
+            winner = root_color if score['value'] == 1 else ('black' if root_color == 'red' else 'red')
+            if not outcome['ended'] or outcome['winner'] != winner:
+                errors.append(f'{name}_mate_{score["value"]}_PV_does_not_realize_terminal_win')
+    except (KeyError, TypeError, ValueError) as error:
+        errors.append(f'immediate_mate_history_or_line_invalid: {error}')
+    result['valid'] = not errors
+    return result
 
 
 def expected_score(candidate):

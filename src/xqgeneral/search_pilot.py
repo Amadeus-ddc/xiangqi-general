@@ -19,6 +19,8 @@ from .teacher_prefill import checked_prefill_chunk_size
 
 
 def pilot_spec(config, bound):
+    if type(config.get('require_immediate_mate_consistency', False)) is not bool:
+        raise ValueError('Immediate mate consistency requirement must be boolean')
     offset = checked_root_offset(config.get('root_offset', 0))
     checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
     if config.get('student_generation_config') is not None:
@@ -258,6 +260,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     'validation_data': evaluation['data'], 'mining_manifest': str(mining / 'manifest.json'),
                     'recorded_inputs': config['recorded_inputs'], 'output': str(data)}
             args['max_eval_error_exclusive'] = config.get('max_eval_error_exclusive', 0.075)
+            if config.get('require_immediate_mate_consistency', False):
+                args['require_immediate_mate_consistency'] = True
             collected = completed_stage('collect_search', args, 'search_consolidated_dataset', data)
             labels = load_jsonl(data / 'train.jsonl')
             rejections = json.loads((data / 'rejected.json').read_text())

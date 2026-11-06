@@ -11,7 +11,9 @@ from .collect_search import (EVALUATION_FILTER_PROFILE, rebuild_labels, mining_r
 from .course_tasks import validate_context
 from .curriculum_data import verify_splits
 from .evidence import atomic_json, iter_jsonl, manifest, write_jsonl
-from .explanations import continuation_positions, parse_explanation, validate_explanation
+from .explanations import (IMMEDIATE_MATE_CONSISTENCY_PROFILE, continuation_positions,
+                          immediate_mate_score_consistency, parse_explanation,
+                          validate_explanation)
 from .prose_moves import validate_prose_moves
 from .recorded_search_inputs import BoundInputs
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
@@ -40,6 +42,16 @@ def _leaf_dataset(data, source, bound, minimum_labels=32):
         for path, expected in proof[section].items():
             bound.bind(path, expected)
     config = proof['config']
+    required = config.get('require_immediate_mate_consistency', False)
+    if (type(required) is not bool or
+            result.get('immediate_mate_score_consistency_required', False) is not required or
+            (required and result.get('immediate_mate_consistency_profile') != IMMEDIATE_MATE_CONSISTENCY_PROFILE) or
+            (not required and result.get('immediate_mate_consistency_profile') is not None)):
+        raise ValueError('Immediate mate consistency policy differs from collection evidence')
+    if required:
+        for row in iter_jsonl(data / 'train.jsonl'):
+            if not immediate_mate_score_consistency(row, parse_explanation(row['answer']))['valid']:
+                raise ValueError('An immediate-mate-filtered collection retains an inconsistent PV')
     mining_path = Path(config.get('mining_manifest') or Path(config['queries']).parent / 'manifest.json')
     mining = bound.json(mining_path)
     for section in ['inputs', 'outputs']:
@@ -177,7 +189,8 @@ def _production_leaf(data, source, bound):
         config['validation_data'], bound, mining_path, config.get('recorded_inputs'),
         expected_attempted_root_ids=attempted_ids)
     forbidden = reserved_positions(config['heldout_data']) | reserved_positions(config['validation_data']) | additional
-    rebuilt, rejected = rebuild_labels(queries, responses, teacher, forbidden)
+    rebuilt, rejected = rebuild_labels(queries, responses, teacher, forbidden,
+        require_immediate_mate_consistency=config.get('require_immediate_mate_consistency', False))
     actual = list(iter_jsonl(data / 'train.jsonl'))
     if (actual != rebuilt or bound.json(data / 'rejected.json') != rejected or
             len(actual) != result['accepted_training_roots'] or
@@ -236,6 +249,8 @@ def _merge_plan(collections, source, bound):
         leaves.append({'data': str(data), 'manifest_sha256': proof_hash,
                        'accepted_training_records': len(actual), 'attempted_starting_roots': len(root_ids),
                        'teacher_inference_manifest': inference_path})
+        if proof['config'].get('require_immediate_mate_consistency', False):
+            leaves[-1]['require_immediate_mate_consistency'] = True
         for row, (number, raw) in zip(actual, raw_lines, strict=True):
             key, identity_id = row['feature_key'], row['id']
             if identity_id in ids and ids[identity_id] != key:
@@ -297,6 +312,11 @@ def _merge_plan(collections, source, bound):
         'student_search_or_oracle_comparisons_recomputed': False,
         'new_model_teacher_or_engine_queries': 0, 'student_SGD_executed': False,
         'independent_test_used_for_training_or_selection': False}
+    mate_sources = sum(leaf.get('require_immediate_mate_consistency', False) for leaf in leaves)
+    if mate_sources:
+        summary.update(immediate_mate_consistency_source_collections=mate_sources,
+            all_source_collections_require_immediate_mate_consistency=mate_sources == len(leaves),
+            immediate_mate_consistency_profile=IMMEDIATE_MATE_CONSISTENCY_PROFILE)
     bound.unchanged()
     return paths, lines, provenance, summary
 

@@ -7,7 +7,9 @@ from pathlib import Path
 import shutil
 from .curriculum_data import verify_splits
 from .evidence import atomic_json, history_key, load_jsonl, manifest, write_jsonl
-from .explanations import EXPLANATION_QUESTION, continuation_positions, parse_explanation, validate_explanation
+from .explanations import (EXPLANATION_QUESTION, IMMEDIATE_MATE_CONSISTENCY_PROFILE,
+                          continuation_positions, immediate_mate_score_consistency,
+                          parse_explanation, validate_explanation)
 from .search_critical import checked_acceptance_evidence
 from .recorded_search_inputs import ARTIFACTS, BoundInputs, prepared_roots
 from .rules import replay
@@ -43,7 +45,10 @@ def search_evaluation_filter(query, threshold=0.075):
         'consolidated_prose_evaluation_error_measured': False}
 
 
-def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.075):
+def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.075,
+                       require_immediate_mate_consistency=False):
+    if type(require_immediate_mate_consistency) is not bool:
+        raise ValueError('Immediate mate consistency requirement must be boolean')
     identity = response.get('teacher', {})
     if (response.get('id') != query['id'] or response.get('hit_generation_limit', True) or
             any(identity.get(k) != teacher[k] for k in ['repository', 'revision', 'quantization', 'inference_dtype']) or
@@ -66,6 +71,10 @@ def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.0
     if row['split'] != 'train':
         raise ValueError('Search training must never use a heldout root')
     continuation_positions(row, value)
+    if require_immediate_mate_consistency:
+        mate = immediate_mate_score_consistency(row, value)
+        if not mate['valid']:
+            raise ValueError(f'Consolidation violates immediate-mate consistency: {mate["errors"]}')
     return dict(row, id=query['id'], stage='explanation', task_type='explanation', query={},
                 future_moves=list(value['pv']), future_branches=[list(b['pv']) for b in value['branches']],
                 question=EXPLANATION_QUESTION, answer=json.dumps(value, ensure_ascii=False),
@@ -175,8 +184,11 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
     return additional, info
 
 
-def rebuild_labels(queries, responses, teacher, forbidden, *, max_eval_error_exclusive=0.075):
+def rebuild_labels(queries, responses, teacher, forbidden, *, max_eval_error_exclusive=0.075,
+                   require_immediate_mate_consistency=False):
     """Reapply collection gates to preserved raw queries and teacher responses."""
+    if type(require_immediate_mate_consistency) is not bool:
+        raise ValueError('Immediate mate consistency requirement must be boolean')
     by_id = {r['id']: r for r in responses}
     if (len(by_id) != len(responses) or len({q['id'] for q in queries}) != len(queries) or
             set(by_id) != {q['id'] for q in queries}):
@@ -185,7 +197,8 @@ def rebuild_labels(queries, responses, teacher, forbidden, *, max_eval_error_exc
     for query in queries:
         try:
             row = consolidated_label(query, by_id[query['id']], teacher,
-                                     max_eval_error_exclusive=max_eval_error_exclusive)
+                                     max_eval_error_exclusive=max_eval_error_exclusive,
+                                     require_immediate_mate_consistency=require_immediate_mate_consistency)
             if continuation_positions(row, parse_explanation(row['answer'])) & forbidden:
                 raise ValueError('Consolidated root or branch overlaps a heldout position')
             if row['feature_key'] in keys:
@@ -209,6 +222,9 @@ def _main():
     parser.add_argument('--output', required=True)
     parser.add_argument('--max-eval-error-exclusive', type=float, default=0.075,
                         help='Selected student branch versus oracle expected-score error; reject equality')
+    parser.add_argument('--require-immediate-mate-consistency', action='store_true',
+                        default=argparse.SUPPRESS,
+                        help='Require mate +/-1 scores to be realized by the supplied full-history PV prefix')
     args = parser.parse_args()
     dest = Path(args.output)
     if dest.exists():
@@ -226,7 +242,9 @@ def _main():
         args.validation_data, bound, args.mining_manifest, args.recorded_inputs)
     forbidden = reserved_positions(args.heldout_data) | reserved_positions(args.validation_data) | additional
     train, rejected = rebuild_labels(queries, responses, teacher, forbidden,
-                                     max_eval_error_exclusive=args.max_eval_error_exclusive)
+                                     max_eval_error_exclusive=args.max_eval_error_exclusive,
+                                     require_immediate_mate_consistency=getattr(
+                                         args, 'require_immediate_mate_consistency', False))
     dest.mkdir(parents=True)
     atomic_json(dest / 'rejected.json', rejected)
     if not train:
@@ -258,6 +276,9 @@ def _main():
                'consolidated_prose_evaluation_error_measured': False,
                'validation_source_unchanged': args.validation_data, 'strategic_prose_human_rating': False,
                **source_proof}
+    if getattr(args, 'require_immediate_mate_consistency', False):
+        summary.update(immediate_mate_score_consistency_required=True,
+                       immediate_mate_consistency_profile=IMMEDIATE_MATE_CONSISTENCY_PROFILE)
     saved = manifest('search_consolidated_dataset', vars(args), [], outputs, summary)
     saved['inputs'] = bound.artifacts
     bound.unchanged()

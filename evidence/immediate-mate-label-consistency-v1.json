@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "kind": "optional_full_history_immediate_mate_training_label_gate",
+  "profile": "full_history_immediate_mate_consistency_xiangqi_v1",
+  "training_audit": {
+    "status": "complete_CPU_training_label_immediate_mate_coherence_audit",
+    "utc": "2026-11-06T00:57:47.974797+00:00",
+    "seconds": 23.59914880618453,
+    "datasets": {
+      "initial_engine_qualified": {
+        "counts": {
+          "rows_read": 9823,
+          "scored_sections_with_exact_mate_plus_or_minus_one": 125,
+          "distinct_scored_line_cases": 86,
+          "realizes_immediate_mate_score": 86
+        },
+        "distinct_rows_with_immediate_mate_PV_mismatch": 0,
+        "root_vs_branch_issue_sections": {}
+      },
+      "scaled_offset1024": {
+        "counts": {
+          "rows_read": 318,
+          "scored_sections_with_exact_mate_plus_or_minus_one": 27,
+          "distinct_scored_line_cases": 19,
+          "realizes_immediate_mate_score": 8,
+          "PV_does_not_realize_immediate_mate_score": 11
+        },
+        "distinct_rows_with_immediate_mate_PV_mismatch": 11,
+        "root_vs_branch_issue_sections": {
+          "root": 7,
+          "branch": 5
+        }
+      }
+    },
+    "total_training_rows": 10141,
+    "source_modules": 112,
+    "matching_CPU_checks": 1988,
+    "cases_sha256": "ffa3ea933d8902c1a9a09e3ec6b032543efcff39a0d92072a1eaf382153f9b4c",
+    "errors_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "schema_or_native_errors": 0,
+    "new_neural_or_teacher_queries": 0,
+    "new_Pikafish_queries": 0,
+    "new_native_bounded_rules_search": true,
+    "new_training": false,
+    "final_test_answers_used": false,
+    "production_labels_or_gates_changed": false,
+    "scope": "only exact mate +/-1 and sufficiently long given lines; mismatch does not itself falsify the root outcome score or quantify general prose quality",
+    "full_goal_complete": false
+  },
+  "real_response_control": {
+    "status": "complete_actual_356_response_legacy_and_optional_gate_control",
+    "utc": "2026-11-06T01:54:29.646903+00:00",
+    "source_revision": "immediate-mate-label-filter-113-v1",
+    "source_modules": 113,
+    "actual_original_teacher_responses": 356,
+    "legacy_accepted": 318,
+    "legacy_rejected": 38,
+    "legacy_all_accepts_and_rejections_identical": true,
+    "strict_accepted": 307,
+    "strict_rejected": 49,
+    "newly_rejected": 11,
+    "new_rejections_exactly_equal_independent_systematic_audit_IDs": true,
+    "old_rejection_IDs_and_reasons_unchanged": true,
+    "retained_original_rows_and_order_byte_preserved": true,
+    "initial_training_rows_checked": 9823,
+    "initial_exact_mate_scored_sections_checked": 125,
+    "initial_training_rows_rejected": 0,
+    "heldout_files_unchanged": {
+      "validation": {
+        "sha256": "bd8c375af754b49d9f754934abfb3d8e9f27fa17d3e430f7ca6d156906988380",
+        "bytes": 2711612
+      },
+      "test": {
+        "sha256": "db218093dfbb2587918d52ce95ce1fcad7af88d98e971b73b67c0ad6c67c5cc4",
+        "bytes": 3655338
+      }
+    },
+    "parent_isolation_proof_reused_for_an_exact_subset": true,
+    "full_reserved_position_set_freshly_recomputed": false,
+    "new_isolated_training_collection_created_or_qualified": false,
+    "matching_full_CPU_and_release_qualification_recorded_separately": true,
+    "new_student_expert_teacher_neural_queries": 0,
+    "new_Pikafish_queries": 0,
+    "new_training": false,
+    "production_labels_or_plans_changed": false,
+    "all_strategic_prose_verified": false,
+    "full_goal_complete": false
+  },
+  "focused_CPU_checks": 161,
+  "proofs": {
+    "runs/immediate-mate-training-label-audit-v1/verification.json": {
+      "bytes": 12225,
+      "sha256": "faa31a660996a6766ad9610a9fb05d7eb85691250afea43db0c51b90ff491c06"
+    },
+    "runs/scaled-leaf-offset1024-prose-spotcheck-v1/verification.json": {
+      "bytes": 2571,
+      "sha256": "1f748e7431dc44badb84a55d86323aa5f7380f0ac24a4ba8820818e8a6cfade2"
+    },
+    "runs/immediate-mate-label-filter-development-v1/real-356-response-control-v1/verification.json": {
+      "bytes": 12645,
+      "sha256": "9f486a0e42597ba622c0aa4a2815fcfa6df1f8b46afe8e6b1087b2437de9c01d"
+    },
+    "runs/immediate-mate-label-filter-development-v1/focused-v2-verification.json": {
+      "bytes": 26219,
+      "sha256": "d377f52b8d1e884be756ca5f66e18e063ef672beb5565b12b85ab1546f773ba6"
+    },
+    "runs/search-scaled-numeric-offset512-v1/verification.json": {
+      "bytes": 12346,
+      "sha256": "6edc67cb7ec92b466ede997f782476ffddb4b2fbcc3df70716bc3174575f9dc9"
+    }
+  },
+  "release_verification": {
+    "status": "full_CPU_passed_packaging_checked_separately_before_publication",
+    "tests_passed": 2126,
+    "source_modules": 113,
+    "code_test_build_files": 263,
+    "full_CPU_verification": "runs/immediate-mate-label-filter-development-v1/full-validation-verification.json",
+    "full_CPU_verification_sha256": "382e74bb5f88703d7c0bd79e46d998a9a5bfbfb9a18dad873776b678eabb7f9b",
+    "source_map_matches_actual_response_control": true,
+    "packaging_is_required_before_remote_publication": true
+  },
+  "current_frozen_production_queue_uses_new_gate": false,
+  "primary_semantic_spotcheck_is_not_human_blind_or_population_quality_estimate": true,
+  "new_student_model_training_or_final_test": false,
+  "full_goal_complete": false
+}
