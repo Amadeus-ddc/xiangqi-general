@@ -159,6 +159,8 @@ Earlier pretrained GPU controls verify frozen-decoder updates and portable-infer
 
 ## Delivery and distribution
 
+[Training-only student/engine gameplay](STUDENT_TRAINING_GAMES.md) retains original model replies and explicitly labeled legal fallbacks, with game ownership fixed before generation. A scripted-student control made 44 actual CPU-engine queries across four short games and verified saved prefixes, native histories and completed reopen behavior. It performed no neural-student or teacher inference and produced no training labels. Actual neural gameplay, strong-oracle filtering and protected-position isolation remain pending. These generated contexts are separate from raw-model playing-strength evaluations.
+
 An [explicit child-prose consolidation profile](CHILD_PROSE_CONSOLIDATION.md) can preserve the student's original child explanations while retaining structured rule evidence. A saved-input replay recovered 126 actual nonterminal explanations across 45 queries, with one terminal child, and reproduced all legacy messages byte for byte. This was an input transformation with zero new inference or SGD; raw prose remains semantically unverified, and no teaching-quality or model-strength improvement is established. Existing frozen search jobs keep their original profile.
 
 The [portable inference bundle](MODEL_INFERENCE_BUNDLE.md) carries the decoder, tokenizer, all trained tensors and matching expert assets, with per-file hashes and runtime configuration. Relocation controls now include the selected complete initial-SFT model and its cache-policy-preserving successor, with exact native outputs in three short development cases. A final independently accepted delivery bundle has not been produced.
