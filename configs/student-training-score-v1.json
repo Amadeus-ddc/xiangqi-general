@@ -1,0 +1,8 @@
+{
+  "oracle_nodes": 100000,
+  "force_keep_winrate_drop": 0.05,
+  "high_eval_cp": 250,
+  "high_eval_downsample": 4,
+  "ordinary_ply_divisor": 10,
+  "seed": 20261013
+}
