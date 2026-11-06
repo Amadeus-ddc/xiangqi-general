@@ -107,9 +107,34 @@ def test_default_cli_has_no_new_batch_arguments_or_profile(tmp_path, monkeypatch
     contract = json.loads((output / 'contract.json').read_text())
     proof = json.loads((output / 'manifest.json').read_text())['verification']
     assert 'student_batching_profile' not in contract and 'student_batching' not in proof
-    assert all(k not in contract['arguments'] for k in ['student_batch_size', 'student_workers', 'student_batch_wait_ms'])
+    assert all(k not in contract['arguments'] for k in ['student_batch_size', 'student_workers', 'student_batch_wait_ms',
+                                                       'student_autocast_cache'])
+    assert 'student_autocast_cache_enabled' not in proof
     assert len(entered) == len(closed) == 1 and not batches
     assert proof['processed'] == 4
+
+
+@pytest.mark.parametrize('setting,enabled', [('on', True), ('off', False)])
+def test_native_mining_cli_binds_actual_explicit_student_cache_policy(tmp_path, monkeypatch, setting, enabled):
+    from xqgeneral import inference
+    module, args, entered, closed, batches = fixture_inputs(tmp_path, monkeypatch)
+    original = inference.Predictor
+    observed = []
+    def predictor(*arguments, **kwargs):
+        observed.append(kwargs['autocast_cache_enabled'])
+        value = original(*arguments, **kwargs)
+        value.config = {'autocast_cache_enabled': kwargs['autocast_cache_enabled']}
+        return value
+    monkeypatch.setattr(inference, 'Predictor', predictor)
+    output = tmp_path/'explicit-cache'
+    monkeypatch.setattr(sys, 'argv', args + ['--output', str(output), '--student-batch-size', '2',
+                                         '--student-autocast-cache', setting])
+    module.main()
+    proof = json.loads((output/'manifest.json').read_text())
+    assert observed == [enabled]
+    assert proof['config']['student_autocast_cache'] == setting
+    assert proof['verification']['student_autocast_cache_enabled'] is enabled
+    assert proof['verification']['student_batching']['completed']
 
 
 @pytest.mark.parametrize('extra', [['--student-batch-size', '0'], ['--student-workers', '2'],

@@ -11,11 +11,16 @@ from .sampling import request_sampling_processor, sample_rng, sampling_options
 
 
 class Predictor:
-    def __init__(self, checkpoint, weights=None, device='cuda', feature_cache=None):
+    def __init__(self, checkpoint, weights=None, device='cuda', feature_cache=None, *,
+                 autocast_cache_enabled=None):
+        if autocast_cache_enabled is not None and type(autocast_cache_enabled) is not bool:
+            raise ValueError('autocast_cache_enabled override must be a boolean')
         torch.set_num_threads(4)
         self.device = device
         self.model, self.tokenizer, self.config = load_checkpoint(checkpoint, device)
         autocast_cache_setting(self.config)
+        if autocast_cache_enabled is not None:
+            self.config = dict(self.config, autocast_cache_enabled=autocast_cache_enabled)
         if weights is None:
             weights = self.config.get('inference_expert_path', 'models/px0-latest.pb.gz')
         expected_expert = self.config.get('inference_expert_sha256')

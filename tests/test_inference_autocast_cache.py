@@ -84,6 +84,30 @@ def test_invalid_cache_policy_never_reaches_generation():
     assert seen == []
 
 
+@pytest.mark.parametrize('enabled', [False, True])
+def test_explicit_inference_cache_override_reaches_torch_without_mutating_checkpoint(monkeypatch, enabled):
+    from xqgeneral import inference
+    controlled, seen = controlled_predictor(not enabled)
+    saved = dict(controlled.config, mode='text_lora')
+    monkeypatch.setattr(inference, 'load_checkpoint',
+                        lambda *args: (controlled.model, controlled.tokenizer, saved))
+    predictor = Predictor('controlled-no-download', device='cpu', autocast_cache_enabled=enabled)
+    predictor.features = controlled.features
+    assert predictor.generate_batch(records(), max_new_tokens=1) == ['raw model output'] * 2
+    assert seen == [enabled]
+    assert saved['autocast_cache_enabled'] is (not enabled)
+
+
+@pytest.mark.parametrize('value', [0, 1, 'false'])
+def test_invalid_inference_override_fails_before_loading_model(monkeypatch, value):
+    from xqgeneral import inference
+    def forbidden(*args):
+        raise AssertionError('Invalid inference option reached model loading')
+    monkeypatch.setattr(inference, 'load_checkpoint', forbidden)
+    with pytest.raises(ValueError, match='autocast_cache_enabled'):
+        Predictor('absent.pt', device='cpu', autocast_cache_enabled=value)
+
+
 def set_training_policy(fixture, setting):
     run, expert, _, _, _ = fixture
     selected = torch.load(run / 'adapter.pt', weights_only=True)

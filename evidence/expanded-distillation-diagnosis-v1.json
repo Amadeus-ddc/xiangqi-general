@@ -1,0 +1,405 @@
+{
+  "schema_version": 1,
+  "kind": "expanded_distillation_development_diagnosis_and_decoder_measurement",
+  "status": "complete_within_declared_diagnostic_scope",
+  "date": "2026-11-06",
+  "artifacts": [
+    {
+      "path": "runs/first-scaled-distillation-diagnosis-v1/verification.json",
+      "sha256": "687fedf43a354d5fccbd71fbd06115b567161ae257fb0c93f4b6cfa720e09e2c",
+      "bytes": 4229
+    },
+    {
+      "path": "runs/first-scaled-distillation-diagnosis-v1/checkpoint-derivation.json",
+      "sha256": "9a61122d030d68c53eb3d6667e580196f5ea29bfe6a6ff88096ebc45ccd35a45",
+      "bytes": 1335
+    },
+    {
+      "path": "runs/first-scaled-distillation-diagnosis-v1/qa-readback.json",
+      "sha256": "c85da7386168e9cb9079d5ee1ac48029dd63ff347a8bf43d5f53b56e509197e8",
+      "bytes": 20983
+    },
+    {
+      "path": "runs/first-scaled-distillation-diagnosis-v1/replay-coverage-audit.json",
+      "sha256": "554e8a3159537783d87e27b8c4fa4282d68f89613beba32a20b603bdb6cb581b",
+      "bytes": 3914
+    },
+    {
+      "path": "runs/first-scaled-distillation-diagnosis-v1/label-consistency-audit-v1/verification.json",
+      "sha256": "0ac505c85e7ad7a97f0905d645f9e3a49bf3d849cd9553777963fc9bb8aeaeeb",
+      "bytes": 19711
+    },
+    {
+      "path": "runs/first-scaled-distillation-field-order-loss-v1/verification.json",
+      "sha256": "f8cf89b35106355cf66474268d1c97f709e09fd61508aca582ff3db4b6fdffc2",
+      "bytes": 1546
+    },
+    {
+      "path": "runs/strict-search-label-recollection-v1/verification.json",
+      "sha256": "fad8b59f3c16ab03412621831242042d738d3d94e6537ad3fcf34a6ae96f28ef",
+      "bytes": 19438
+    },
+    {
+      "path": "runs/strict-search-label-recollection-v1/dataset/manifest.json",
+      "sha256": "a99ffbb8d15ec2367242fb9984023c8606faaa195d28e10e96ddc4c6dee307ed",
+      "bytes": 933583
+    },
+    {
+      "path": "runs/batched-root-mining-development-v1/actual-decoder-benchmark-v2/verification.json",
+      "sha256": "48e76aa1ebc352afd78f51257fd04905ef0372598f69f39ca2207afedda16eda",
+      "bytes": 7260
+    },
+    {
+      "path": "runs/batched-root-mining-development-v1/actual-decoder-benchmark-v2/plan.json",
+      "sha256": "4dc8b0de782f53091c72d2aef5518686fd4e600c6344adca3a1243fe6520de10",
+      "bytes": 15321
+    },
+    {
+      "path": "runs/batched-root-mining-development-v1/full-budget-capacity-v1/verification.json",
+      "sha256": "b8a81ac38856a51414c5a2c9e1651d2fe174cd6375c53d7c445655c03fb1b6b9",
+      "bytes": 2220
+    },
+    {
+      "path": "runs/batched-root-mining-development-v1/full-budget-capacity-v1/plan.json",
+      "sha256": "b3020381652069f883d2aa13e19dc94f8d63b46385a2d740aff2c0a7bf9bdbda",
+      "bytes": 16454
+    }
+  ],
+  "training": {
+    "actual_updates": 164,
+    "original_selected_step": 0,
+    "qualified_new_rounds": 0,
+    "all_624_FP32_tensors_changed": true,
+    "unpromoted_checkpoint_sha256": "63aef5662ca9cb7fa111fb6f339973b04adc64b3a2902c00ae63ff7cb662c6b3",
+    "new_checkpoint_promoted": false
+  },
+  "QA": {
+    "examples": 2600,
+    "actual_164_correct": 1860,
+    "initial_parent_correct": 1896,
+    "joint_correct": 2345,
+    "pre_SFT_matched_correct": 2465,
+    "format_errors": 3,
+    "wrong_to_correct_vs_parent": 300,
+    "correct_to_wrong_vs_parent": 336,
+    "old_course_training_rows_per_pass": 260,
+    "actual_per_task_training_rows_min": 5,
+    "actual_per_task_training_rows_max": 15
+  },
+  "normal_explanations": {
+    "initial": {
+      "manifest": {
+        "path": "runs/paper-sft-fsdp2-v1/capability-validation/normal/manifest.json",
+        "sha256": "b742ac058b5b81273f13a26c42acca590f6e7cbdb802ac7fccbb3d9699d07e88",
+        "bytes": 905874
+      },
+      "first_move_legal": 346,
+      "first_move_no_mistake": 262,
+      "pv_legal": 99,
+      "structured_contract_valid": 15
+    },
+    "joint": {
+      "manifest": {
+        "path": "runs/joint-replay-post-sft-evaluation-v1/capability/normal/manifest.json",
+        "sha256": "3f4f36adf1bdc223355ecfc2f422069db8e349d37767c73582112e29261756f8",
+        "bytes": 905910
+      },
+      "first_move_legal": 340,
+      "first_move_no_mistake": 263,
+      "pv_legal": 123,
+      "structured_contract_valid": 24
+    },
+    "actual_164": {
+      "manifest": {
+        "path": "runs/first-scaled-distillation-diagnosis-v1/explanations/manifest.json",
+        "sha256": "fc97cb93ec476e280b770fe32a4b8e223eb5ba9bbe02e3055b1f2bc837357687",
+        "bytes": 905950
+      },
+      "first_move_legal": 339,
+      "first_move_no_mistake": 253,
+      "pv_legal": 163,
+      "structured_contract_valid": 36
+    }
+  },
+  "field_order_control": {
+    "parent_1792/heldout_validation/old": {
+      "rows": 64,
+      "tokens": 26215,
+      "nll": 0.6288156067736158
+    },
+    "parent_1792/heldout_validation/search": {
+      "rows": 64,
+      "tokens": 26215,
+      "nll": 0.7119575954611329
+    },
+    "parent_1792/seen_search_train/old": {
+      "rows": 64,
+      "tokens": 25555,
+      "nll": 1.346540623694524
+    },
+    "parent_1792/seen_search_train/search": {
+      "rows": 64,
+      "tokens": 25555,
+      "nll": 1.3945404185821482
+    },
+    "unpromoted_actual_164/heldout_validation/old": {
+      "rows": 64,
+      "tokens": 26215,
+      "nll": 1.3239880501325862
+    },
+    "unpromoted_actual_164/heldout_validation/search": {
+      "rows": 64,
+      "tokens": 26215,
+      "nll": 1.2644480180972273
+    },
+    "unpromoted_actual_164/seen_search_train/old": {
+      "rows": 64,
+      "tokens": 25555,
+      "nll": 0.35138533804729666
+    },
+    "unpromoted_actual_164/seen_search_train/search": {
+      "rows": 64,
+      "tokens": 25555,
+      "nll": 0.11082791136222397
+    }
+  },
+  "strict_data": {
+    "raw_teacher_responses": 1185,
+    "raw_accepted": 1036,
+    "duplicate_histories": 11,
+    "unique_accepted_histories": 1025,
+    "inconsistent_rows_in_original_1046": 21,
+    "all_five_sources_require_immediate_mate_consistency": true,
+    "protected_validation_test_bytes_unchanged": true,
+    "new_model_teacher_engine_queries_for_recollection": 0,
+    "all_strategic_prose_semantics_verified": false
+  },
+  "short_decoder_measurement": {
+    "source_revision": "batched-root-mining-114-v1",
+    "development_records": 4,
+    "repeats": 2,
+    "max_new_tokens": 128,
+    "profiles": [
+      {
+        "profile": {
+          "name": "private_cache_off_B1",
+          "mode": "request_seeds",
+          "batch_size": 1,
+          "autocast_cache_enabled": false
+        },
+        "repeat": 0,
+        "seconds": 23.500116860494018,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 21.78712569981819,
+        "torch_peak_allocated_GiB": 18.803180694580078,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_off_B1",
+          "mode": "request_seeds",
+          "batch_size": 1,
+          "autocast_cache_enabled": false
+        },
+        "repeat": 1,
+        "seconds": 23.48267321381718,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 21.80330984203024,
+        "torch_peak_allocated_GiB": 18.803180694580078,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_off_B4",
+          "mode": "request_seeds",
+          "batch_size": 4,
+          "autocast_cache_enabled": false
+        },
+        "repeat": 0,
+        "seconds": 5.582245557568967,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 91.71936180875797,
+        "torch_peak_allocated_GiB": 19.013370037078857,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_off_B4",
+          "mode": "request_seeds",
+          "batch_size": 4,
+          "autocast_cache_enabled": false
+        },
+        "repeat": 1,
+        "seconds": 6.551659204997122,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 78.14814293293585,
+        "torch_peak_allocated_GiB": 19.013370037078857,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_on_B1",
+          "mode": "request_seeds",
+          "batch_size": 1,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 0,
+        "seconds": 18.71574192866683,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 27.356649923440735,
+        "torch_peak_allocated_GiB": 26.907413005828857,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_on_B1",
+          "mode": "request_seeds",
+          "batch_size": 1,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 1,
+        "seconds": 18.611533989198506,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 27.50982268829357,
+        "torch_peak_allocated_GiB": 26.907413005828857,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_on_B4",
+          "mode": "request_seeds",
+          "batch_size": 4,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 0,
+        "seconds": 4.867116647772491,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 105.19575285591819,
+        "torch_peak_allocated_GiB": 27.168610095977783,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "private_cache_on_B4",
+          "mode": "request_seeds",
+          "batch_size": 4,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 1,
+        "seconds": 4.874970467761159,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 105.02627726381635,
+        "torch_peak_allocated_GiB": 27.168610095977783,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "legacy_cache_on_B1",
+          "mode": "legacy_single_seed",
+          "batch_size": 1,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 0,
+        "seconds": 18.211571012623608,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 28.113994099965343,
+        "torch_peak_allocated_GiB": 26.907979011535645,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      },
+      {
+        "profile": {
+          "name": "legacy_cache_on_B1",
+          "mode": "legacy_single_seed",
+          "batch_size": 1,
+          "autocast_cache_enabled": true
+        },
+        "repeat": 1,
+        "seconds": 18.212082657963037,
+        "actual_generated_tokens_including_EOS": 512,
+        "generated_tokens_per_second": 28.113204272995844,
+        "torch_peak_allocated_GiB": 26.907979011535645,
+        "global_CPU_and_CUDA_RNG_unchanged": true
+      }
+    ],
+    "token_comparisons": [
+      {
+        "repeat": 0,
+        "legacy_vs_private_B1_identical": true,
+        "cache_on_vs_off_B1_identical": true,
+        "cache_on_B1_vs_B4_identical": false,
+        "cache_off_B1_vs_B4_identical": false
+      },
+      {
+        "repeat": 1,
+        "legacy_vs_private_B1_identical": true,
+        "cache_on_vs_off_B1_identical": true,
+        "cache_on_B1_vs_B4_identical": false,
+        "cache_off_B1_vs_B4_identical": false
+      }
+    ],
+    "B1_vs_B4_text_identical": false,
+    "real_root_throughput_measured": false
+  },
+  "capacity": {
+    "batch_size": 4,
+    "actual_masked_prefill_width": 2048,
+    "output_tokens_each": 4096,
+    "total_generated_tokens": 16384,
+    "seconds": 409.20193397440016,
+    "peak_allocated_GiB": 34.64200162887573,
+    "warmup_forward_observations": [
+      {
+        "forward": 1,
+        "input_width": 145,
+        "cache_returned": true,
+        "cache_sequence_length": 145
+      },
+      {
+        "forward": 2,
+        "input_width": 1,
+        "cache_returned": true,
+        "cache_sequence_length": 146
+      },
+      {
+        "forward": 8,
+        "input_width": 1,
+        "cache_returned": true,
+        "cache_sequence_length": 152
+      }
+    ],
+    "stress_forward_observations": [
+      {
+        "forward": 1,
+        "input_width": 2048,
+        "cache_returned": true,
+        "cache_sequence_length": 2048
+      },
+      {
+        "forward": 2,
+        "input_width": 1,
+        "cache_returned": true,
+        "cache_sequence_length": 2049
+      },
+      {
+        "forward": 4096,
+        "input_width": 1,
+        "cache_returned": true,
+        "cache_sequence_length": 6143
+      }
+    ],
+    "forced_outputs_are_not_training_labels": true
+  },
+  "integration_AST_and_source_checks": {
+    "batch_generation_AST_matches_measured_branch": true,
+    "search_miner_AST_matches_measured_branch": true,
+    "sampling_module_matches_measured_branch": true,
+    "batched_dispatch_module_matches_measured_branch": true,
+    "strict_collector_matches_qualified_main": true,
+    "strict_merge_matches_qualified_main": true
+  },
+  "current_integrated_source_real_root_pilot_complete": false,
+  "new_student_training_started": false,
+  "actual_164_semantic_review_full_matches_or_independent_acceptance_complete": false,
+  "final_model_delivered": false,
+  "full_goal_complete": false
+}

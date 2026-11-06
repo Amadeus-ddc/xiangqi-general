@@ -515,6 +515,8 @@ def _main():
                         help='Optional versioned child request; the default retains full explanations')
     parser.add_argument('--seed', type=int, default=20261013)
     parser.add_argument('--student-generation-config', help='Explicit sampling and output-token JSON; absent retains legacy greedy decoding')
+    parser.add_argument('--student-autocast-cache', choices=['on', 'off'], default=argparse.SUPPRESS,
+                        help='Explicitly override only the student inference autocast weight cache')
     parser.add_argument('--student-batch-size', type=int,
                         help='Opt in to independent-request batched decoding across private root workers')
     parser.add_argument('--student-workers', type=int,
@@ -624,7 +626,14 @@ def _main():
                     not isinstance(item.get('raw'), str) or not isinstance(item.get('seed'), str)):
                 raise ValueError('Original student batch ledger has malformed request data')
             checked_seed(int(item['seed']))
-    predictor = Predictor(args.checkpoint, feature_cache=args.features)
+    predictor_options = {'feature_cache': args.features}
+    cache_override = getattr(args, 'student_autocast_cache', None)
+    if cache_override is not None:
+        predictor_options['autocast_cache_enabled'] = cache_override == 'on'
+    predictor = Predictor(args.checkpoint, **predictor_options)
+    if (cache_override is not None and
+            predictor.config.get('autocast_cache_enabled') is not predictor_options['autocast_cache_enabled']):
+        raise ValueError('Student inference cache override was not applied')
     session_counts, batch_statistics = Counter(), {}
     ledger_lock = threading.Lock()
     reserved = reserved_positions(args.data) | additional_reserved
@@ -714,6 +723,8 @@ def _main():
         proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
                      generation_software=contract['generation_software'],
                      stochastic_model_generations_this_session=session_counts['stochastic_model_generations'])
+    if cache_override is not None:
+        proof['student_autocast_cache_enabled'] = predictor.config['autocast_cache_enabled']
     if args.max_root_retries is not None:
         proof.update(max_root_retries=args.max_root_retries,
                      root_retry_condition='malformed_numerical_evaluation',

@@ -20,6 +20,11 @@ from .teacher_prefill import checked_prefill_chunk_size
 
 
 def pilot_spec(config, bound):
+    if type(config.get('require_immediate_mate_consistency', False)) is not bool:
+        raise ValueError('Immediate mate consistency requirement must be boolean')
+    if ('student_autocast_cache_enabled' in config and
+            type(config['student_autocast_cache_enabled']) is not bool):
+        raise ValueError('Student autocast cache override must be a boolean')
     offset = checked_root_offset(config.get('root_offset', 0))
     checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
     batching = checked_student_batching(config.get('student_batch_size'),
@@ -199,6 +204,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             **{key: evaluation[key] for key in ['executable', 'weights']}}
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
+        if 'student_autocast_cache_enabled' in config:
+            arguments['student_autocast_cache'] = 'on' if config['student_autocast_cache_enabled'] else 'off'
         if config.get('max_root_retries') is not None:
             arguments['max_root_retries'] = config['max_root_retries']
         if config.get('root_candidate_policy') is not None:
@@ -210,6 +217,9 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             if config.get(key) is not None:
                 arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
+        if ('student_autocast_cache_enabled' in config and
+                mined['verification'].get('student_autocast_cache_enabled') is not config['student_autocast_cache_enabled']):
+            raise ValueError('Actual student cache evidence differs from the configured override')
         batching = checked_student_batching(config.get('student_batch_size'),
             config.get('student_workers'), config.get('student_batch_wait_ms'))
         if batching is not None:
@@ -274,6 +284,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     'validation_data': evaluation['data'], 'mining_manifest': str(mining / 'manifest.json'),
                     'recorded_inputs': config['recorded_inputs'], 'output': str(data)}
             args['max_eval_error_exclusive'] = config.get('max_eval_error_exclusive', 0.075)
+            if config.get('require_immediate_mate_consistency', False):
+                args['require_immediate_mate_consistency'] = True
             collected = completed_stage('collect_search', args, 'search_consolidated_dataset', data)
             labels = load_jsonl(data / 'train.jsonl')
             rejections = json.loads((data / 'rejected.json').read_text())
