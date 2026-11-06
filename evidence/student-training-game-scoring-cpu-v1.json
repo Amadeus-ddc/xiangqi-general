@@ -1,0 +1,66 @@
+{
+  "games": 4,
+  "actual_positions_per_run": 43,
+  "actual_CPU_query_counts_by_phase": {
+    "whole:loads": 2,
+    "whole:queries": 69,
+    "interrupted:loads": 2,
+    "interrupted:queries": 4,
+    "resumed:loads": 2,
+    "resumed:queries": 66
+  },
+  "actual_CPU_queries": 139,
+  "oracle_nodes": 100000,
+  "restricted_pair_nodes": 200000,
+  "raw_query_and_scored_position_prefixes_preserved": true,
+  "completed_reopens_constructed_no_engines_and_changed_no_bytes_or_mtimes": true,
+  "original_gameplay_unchanged": true,
+  "independent_engine_run_numeric_equivalence_not_claimed": true,
+  "CUDA_initialized": false,
+  "new_neural_student_calls": 0,
+  "new_teacher_calls": 0,
+  "student_SGD_updates": 0,
+  "source_neural_execution_verified": false,
+  "heldout_isolation_complete": false,
+  "training_labels_generated": false,
+  "playing_strength_gain_proven": false,
+  "full_goal_complete": false,
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_real_CPU_strong_training_game_scoring_control",
+  "source_base_commit": "179cf649408cceb2c09a051e72203be4eee5515c",
+  "source_module_count": 116,
+  "scoring_module_sha256": "6383e1f329626852dff7cff89c4b84d5f345f8fc483256a2ad4fdc0aca8a07ab",
+  "full_private_verification_sha256": "76c53d4513459b32faabac4375c81e455e1affd4525923b3f17305e330efb03d",
+  "actual_query_ledger_sha256": "531ae714b82320f2fc97432219a526e19dcf09bba347e1ec047ad4324f1c33b0",
+  "focused_checks_passed": 75,
+  "new_checks": 35,
+  "selection_counts_by_run": {
+    "whole": {
+      "raw_positions": 43,
+      "unique_positions": 40,
+      "duplicates_removed": 3,
+      "forced_positions": 8,
+      "ordinary_selected_positions": 7,
+      "selected_positions": 15
+    },
+    "resumed": {
+      "raw_positions": 43,
+      "unique_positions": 40,
+      "duplicates_removed": 3,
+      "forced_positions": 8,
+      "ordinary_selected_positions": 7,
+      "selected_positions": 15
+    }
+  },
+  "first_failed_actual_control_preserved": true,
+  "captured_bound_root_regressions_before_fix": {
+    "failed": 2,
+    "passed": 0
+  },
+  "captured_bound_root_regressions_after_fix": {
+    "failed": 0,
+    "passed": 2
+  },
+  "neural_training_game_and_label_pipeline_qualified": false
+}
