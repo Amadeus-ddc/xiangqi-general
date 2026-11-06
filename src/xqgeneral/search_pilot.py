@@ -20,6 +20,18 @@ from .teacher_prefill import checked_prefill_chunk_size
 from .prose_moves import checked_consolidation_profile, consolidation_queries_evidence
 
 
+def _source_pool(config):
+    recorded,student = config.get('recorded_inputs'),config.get('student_game_inputs')
+    if bool(recorded)==bool(student):
+        raise ValueError('A search pilot requires one explicit recorded or actual neural-game source pool')
+    if student:
+        if not isinstance(student,str) or not student.strip():
+            raise ValueError('The actual neural-game source pool must be an explicit path')
+        from .student_game_inputs import ARTIFACTS as STUDENT_ARTIFACTS, KIND
+        return 'student_game_inputs',student,KIND,STUDENT_ARTIFACTS
+    return 'recorded_inputs',recorded,'prepared_unused_recorded_search_roots',ARTIFACTS
+
+
 def pilot_spec(config, bound):
     if type(config.get('require_immediate_mate_consistency', False)) is not bool:
         raise ValueError('Immediate mate consistency requirement must be boolean')
@@ -74,9 +86,10 @@ def pilot_spec(config, bound):
     evaluation = bound.json(config['evaluation_config'])
     recipe = bound.json(evaluation['sft_recipe'])
     token = bound.json(evaluation['token_preflight'])
-    pool = bound.json(Path(config['recorded_inputs']) / 'manifest.json')
-    counts = bound.json(Path(config['recorded_inputs']) / 'counts.json')
-    if (pool.get('status') != 'complete' or pool.get('kind') != 'prepared_unused_recorded_search_roots' or
+    source_key,source_path,source_kind,_ = _source_pool(config)
+    pool = bound.json(Path(source_path) / 'manifest.json')
+    counts = bound.json(Path(source_path) / 'counts.json')
+    if (pool.get('status') != 'complete' or pool.get('kind') != source_kind or
             pool['config']['data'] != config['data'] or pool['config']['seed'] != config['seed'] or
             pool['config']['heldout_data'] != evaluation['data'] or
             counts['candidate_training_histories'] < config['limit'] + offset or
@@ -126,6 +139,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
     bound = BoundInputs()
     config = bound.json(config_path)
     evaluation, recipe, token, pool, teacher, teacher_guard = pilot_spec(config, bound)
+    pilot_kind = ('clean_student_game_search_yield_pilot' if _source_pool(config)[0]=='student_game_inputs'
+                  else 'clean_recorded_search_yield_pilot')
     contract = {'pipeline': str(pipeline), 'validation': str(validation),
         'producer_session': producer_session, 'config': str(config_path),
         'config_sha256': digest(config_path), 'code': code_identity(),
@@ -134,7 +149,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         if not resume or json.loads((root / 'contract.json').read_text()) != contract:
             raise ValueError('Resume only the exact preserved pilot contract; otherwise use a fresh output')
         if (root / 'manifest.json').exists():
-            return checked_proof(root / 'manifest.json', 'clean_recorded_search_yield_pilot', bound,
+            return checked_proof(root / 'manifest.json', pilot_kind, bound,
                                  arguments=contract, code=contract['code'])['verification']
     else:
         root.mkdir(parents=True)
@@ -189,8 +204,12 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         if capability['inputs'].get(str(source)) != parent['outputs'][str(source)]:
             raise ValueError('The search parent differs from the model actually evaluated')
         bound.bind(source, parent['outputs'][str(source)])
-        for name in ARTIFACTS:
-            path = Path(config['recorded_inputs']) / name
+        source_key,source_path,_,source_artifacts = _source_pool(config)
+        is_student = source_key=='student_game_inputs'
+        if is_student and Path(pool['config']['checkpoint']).resolve()!=Path(source).resolve():
+            raise ValueError('The actual neural-game source actor differs from the evaluated search parent')
+        for name in source_artifacts:
+            path = Path(source_path) / name
             bound.bind(path, pool['outputs'].get(str(path)))
         for path, expected in teacher_guard.expected.items():
             bound.bind(path, expected)
@@ -203,9 +222,11 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
         atomic_json(root / 'state.json', {'status': stage})
         mining = root / 'mining'
         arguments = {'checkpoint': str(source), 'data': config['data'], 'features': evaluation['features'],
-            'prepared_inputs': None, 'recorded_inputs': config['recorded_inputs'], 'output': str(mining),
+            'prepared_inputs': None, 'recorded_inputs': None if is_student else source_path,'output': str(mining),
             **{key: config[key] for key in ['limit', 'nodes', 'max_depth', 'child_contract', 'seed']},
             **{key: evaluation[key] for key in ['executable', 'weights']}}
+        if is_student:
+            arguments['student_game_inputs'] = source_path
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
         if 'consolidation_profile' in config:
@@ -237,7 +258,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                     mined['verification'].get('stochastic_model_generations_this_session')):
                 raise ValueError('Actual student decoding differs from its batched request profile')
         if (config.get('root_offset') is not None and
-                mined['verification'].get('recorded_root_offset') != config['root_offset']):
+                mined['verification'].get('student_game_root_offset' if is_student else 'recorded_root_offset') != config['root_offset']):
             raise ValueError('Actual mining root offset differs from the requested range')
         if (config.get('child_prompt_profile') is not None and
                 mined['verification'].get('child_prompt') != child_prompt_metadata(config['child_prompt_profile'])):
@@ -255,7 +276,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                 actual_queries != queries or mined['verification']['processed'] != len(attempts) or
                 mined['verification']['accepted_for_consolidation'] != len(queries) or
                 mined['verification']['reasons'] != dict(Counter(row['reason'] for row in attempts)) or
-                mined['verification'].get('unused_recorded_training_inputs') is not True):
+                mined['verification'].get('student_game_training_inputs' if is_student else
+                                           'unused_recorded_training_inputs') is not True):
             raise ValueError('Actual mining coverage and yield differ from the preserved raw attempts')
         if any(mined['verification'].get(key) is not True for key in [
                 'training_roots_only', 'heldout_positions_excluded', 'all_child_branch_positions_isolated',
@@ -294,7 +316,9 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             args = {'queries': str(mining / 'queries.jsonl'), 'responses': str(consolidation / 'responses.jsonl'),
                     'config': evaluation['teacher_config'], 'heldout_data': config['data'],
                     'validation_data': evaluation['data'], 'mining_manifest': str(mining / 'manifest.json'),
-                    'recorded_inputs': config['recorded_inputs'], 'output': str(data)}
+                    'recorded_inputs': None if is_student else source_path,'output': str(data)}
+            if is_student:
+                args['student_game_inputs'] = source_path
             args['max_eval_error_exclusive'] = config.get('max_eval_error_exclusive', 0.075)
             if config.get('require_immediate_mate_consistency', False):
                 args['require_immediate_mate_consistency'] = True
@@ -303,7 +327,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             rejections = json.loads((data / 'rejected.json').read_text())
             if (len(labels) != collected['verification']['accepted_training_roots'] or
                     len(labels) + len(rejections) != len(queries) or
-                    collected['verification'].get('recorded_mining_isolation_rechecked_during_collection') is not True):
+                    collected['verification'].get('student_game_mining_isolation_rechecked_during_collection' if is_student
+                        else 'recorded_mining_isolation_rechecked_during_collection') is not True):
                 raise ValueError('Final label counts and complete recorded isolation differ')
             proofs += [consolidation / 'manifest.json', data / 'manifest.json']
         unchanged()
@@ -321,7 +346,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             'next_action': 'Evaluate accepted prose and scale useful sources before creating a distillation training run'
                            if labels else 'Inspect preserved raw failures before spending more teacher or training budget'}
         atomic_json(root / 'verification.json', final)
-        completed = manifest('clean_recorded_search_yield_pilot', contract, proofs,
+        completed = manifest(pilot_kind, contract, proofs,
                              [root / 'verification.json'], final)
         completed['inputs'].update(bound.artifacts)
         for path in proofs:

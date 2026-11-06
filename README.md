@@ -29,6 +29,8 @@
 
 [训练棋局的强引擎重评](docs/STUDENT_TRAINING_GAME_SCORING.md)沿用作者公开代码的错误优先及每局普通局面配额，保留完整历史、实际执行走法和全部原始引擎响应。机械重评与筛选独立验证；真实神经执行认证、保留位置隔离及新来源标签合并仍须完成。
 
+[学生对弈来源的搜索接入](docs/STUDENT_GAME_SEARCH_INPUTS.md)增加执行证明与完整模型依赖核验、共享保留位置隔离、明确类型的搜索／收取，以及显式多来源合并。受控CLI链及重开通过，实际神经对弈和对应标签链仍待完成，不计作新模型收益。
+
 已完成记录：[四课](docs/PAPER_FOUR_COURSES_COMPLETED.md)、[初始讲解](docs/INITIAL_SFT_COMPLETED.md)、[联合讲解与回放](docs/JOINT_SFT_COMPLETED.md)、[原讲解384局](docs/INITIAL_SFT_FULL_MATCHES.md)、[专家与标签检查](docs/CURRENT_EXPERT_AND_SEARCH_LABELS.md)、[首次真实更新快照](docs/EXPANDED_SEARCH_DATA_READY.md)。原模型384局为0胜383负1和；联合候选对弈另行保留进行中的原始记录，尚无该候选完整成绩。
 
 [推理目录导出与搬动](docs/FULL_SFT_INFERENCE_BUNDLE.md)已验证旧开发权重的可用性，正式交付仍需模型能力验收。完整范围见[状态](STATUS.md)和[模型说明](docs/MODEL_CARD.md)。
