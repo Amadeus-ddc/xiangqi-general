@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 from .evidence import atomic_json, digest, iter_jsonl
-from .finite_training import FINITE_PROFILE, data_profile, mixture_counts
+from .finite_training import FINITE_PROFILE, check_full_source_selection, data_profile, mixture_counts
 
 
 def prepare_config(saved, recipe, source_path, output):
@@ -47,6 +47,8 @@ def prepare_config(saved, recipe, source_path, output):
     if type(weight) not in (int, float) or not math.isfinite(weight) or not 0 < weight <= 1:
         raise ValueError('Primary SFT mixture weight must be positive and at most one')
     finite = data_profile(recipe) == FINITE_PROFILE
+    if not finite and 'source_coverage_profile' in recipe:
+        raise ValueError('Full-source coverage requires finite SFT traversal')
     data_roots = [Path(recipe['data_path'])]
     if finite:
         if batch % (world * micro):
@@ -61,7 +63,9 @@ def prepare_config(saved, recipe, source_path, output):
         raise ValueError('The primary SFT dataset is empty')
     if finite:
         selected = mixture_counts(counts, recipe['mixture'])
-        if selected['anchor_stage'] != primary or not float(recipe['epochs']).is_integer():
+        full_source = check_full_source_selection(recipe, selected, counts)
+        if (not full_source and selected['anchor_stage'] != primary or
+                not float(recipe['epochs']).is_integer()):
             raise ValueError('Finite SFT requires the primary stage as anchor and a whole number of epochs')
         steps = min(recipe['max_steps'], math.ceil(selected['rows_per_epoch'] / batch) * int(recipe['epochs']))
     else:

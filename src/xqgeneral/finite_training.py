@@ -1,4 +1,5 @@
 """Finite author-style course mixtures and reproducible distributed epoch order."""
+from collections import Counter
 import hashlib
 import json
 import math
@@ -8,6 +9,7 @@ import torch
 
 LEGACY_PROFILE = 'replacement_task_balanced_v1'
 FINITE_PROFILE = 'author_finite_mixture_epochs_xiangqi_v1'
+FULL_SOURCE_PROFILE = 'all_actual_training_rows_v1'
 
 
 def data_profile(config):
@@ -44,6 +46,23 @@ def mixture_counts(counts, mixture):
     return {'anchor_stage': anchor, 'source_rows_by_stage': {s: counts.get(s, 0) for s in stages},
             'selected_rows_by_stage': selected, 'requested_weights': weights,
             'realized_weights': {s: n / total for s, n in selected.items()}, 'rows_per_epoch': total}
+
+
+def check_full_source_selection(config, selection, source_counts):
+    """An explicit full-source claim must match every actual source row count."""
+    if 'source_coverage_profile' not in config:
+        return False
+    if config['source_coverage_profile'] != FULL_SOURCE_PROFILE:
+        raise ValueError('Unknown full-source coverage profile')
+    if data_profile(config) != FINITE_PROFILE:
+        raise ValueError('Full-source coverage requires finite data traversal')
+    if (not isinstance(source_counts, dict) or not source_counts or
+            any(type(n) is not int or n < 1 for n in source_counts.values()) or
+            selection.get('source_rows_by_stage') != source_counts or
+            selection.get('selected_rows_by_stage') != source_counts or
+            selection.get('rows_per_epoch') != sum(source_counts.values())):
+        raise ValueError('Full-source coverage must select every actual training row from every source')
+    return True
 
 
 class FiniteMixtureEpochs:
@@ -95,7 +114,7 @@ class FiniteMixtureEpochs:
         self._epoch, self._order = None, None
 
     def contract(self):
-        return {'profile': FINITE_PROFILE, **self.mix, 'mixture_seed': self.mixture_seed,
+        result = {'profile': FINITE_PROFILE, **self.mix, 'mixture_seed': self.mixture_seed,
                 'epoch_seed': self.seed, 'selected_row_id_and_index_sha256': self.selection_sha256,
                 'global_batch_size': self.batch_size, 'world_size': self.world,
                 'micro_batch_size': self.micro, 'optimizer_steps_per_epoch': self.steps_per_epoch,
@@ -103,6 +122,10 @@ class FiniteMixtureEpochs:
                 'tail_policy': 'pad_distributed_microbatch_from_epoch_start' if self.world > 1 else 'retain_partial_microbatch',
                 'old_course_subsets_reselected_each_epoch': False,
                 'task_types_resampled_uniformly': False, 'independent_test_used': False}
+        if getattr(self, 'source_coverage_profile', None) is not None:
+            result.update(source_coverage_profile=self.source_coverage_profile,
+                          all_actual_training_rows_selected_each_epoch=True)
+        return result
 
     def state_at(self, completed_steps):
         if type(completed_steps) is not int or completed_steps < 0:
@@ -146,7 +169,15 @@ class FiniteMixtureEpochs:
 
 def prepare_finite_epochs(rows, mixture, config, world):
     if data_profile(config) == LEGACY_PROFILE:
+        if 'source_coverage_profile' in config:
+            raise ValueError('Full-source coverage requires finite data traversal')
         return None
-    return FiniteMixtureEpochs(rows, mixture, seed=config['seed'], mixture_seed=config.get('mixture_seed', 0),
-                               global_batch_size=config['batch_size'], world=world,
-                               micro_batch_size=config.get('micro_batch_size'))
+    finite = FiniteMixtureEpochs(rows, mixture, seed=config['seed'], mixture_seed=config.get('mixture_seed', 0),
+                                global_batch_size=config['batch_size'], world=world,
+                                micro_batch_size=config.get('micro_batch_size'))
+    if 'source_coverage_profile' in config:
+        metadata = rows.iter_metadata() if hasattr(rows, 'iter_metadata') else rows
+        counts = dict(Counter(row['stage'] for row in metadata))
+        check_full_source_selection(config, finite.mix, counts)
+        finite.source_coverage_profile = FULL_SOURCE_PROFILE
+    return finite
