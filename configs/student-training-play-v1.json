@@ -1,0 +1,18 @@
+{
+  "run_id": "student-training32-v1",
+  "games": 32,
+  "game_start": 0,
+  "seed": 20261013,
+  "concurrent_games": 8,
+  "batch_size": 4,
+  "max_plies": 200,
+  "opponent_nodes_min": 100,
+  "opponent_nodes_max": 100000,
+  "generation": {
+    "do_sample": true,
+    "temperature": 0.6,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_new_tokens": 4096
+  }
+}

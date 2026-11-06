@@ -25,6 +25,8 @@
 
 [子讲解原文入口](docs/CHILD_PROSE_CONSOLIDATION.md)支持显式保留学生原文供教师核对，缺省消息保持。45份实际保存查询已复验126段原文完整传递，另有1个终局子项；本次无新教师查询、标签或SGD，讲解质量收益仍待真实对照。
 
+[训练专用的学生对引擎棋局](docs/STUDENT_TRAINING_GAMES.md)已接入原始回答、显式合法回退及断点恢复。脚本学生／真实CPU引擎控制通过；真实神经对局、强搜索筛选与新来源挖掘合并仍待完成，尚无新增训练标签或棋力结论。
+
 已完成记录：[四课](docs/PAPER_FOUR_COURSES_COMPLETED.md)、[初始讲解](docs/INITIAL_SFT_COMPLETED.md)、[联合讲解与回放](docs/JOINT_SFT_COMPLETED.md)、[原讲解384局](docs/INITIAL_SFT_FULL_MATCHES.md)、[专家与标签检查](docs/CURRENT_EXPERT_AND_SEARCH_LABELS.md)、[首次真实更新快照](docs/EXPANDED_SEARCH_DATA_READY.md)。原模型384局为0胜383负1和；联合候选对弈另行保留进行中的原始记录，尚无该候选完整成绩。
 
 [推理目录导出与搬动](docs/FULL_SFT_INFERENCE_BUNDLE.md)已验证旧开发权重的可用性，正式交付仍需模型能力验收。完整范围见[状态](STATUS.md)和[模型说明](docs/MODEL_CARD.md)。
