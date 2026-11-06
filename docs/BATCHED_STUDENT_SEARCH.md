@@ -34,3 +34,5 @@
 同一冻结分支还通过有界压力检查：四条请求掩码左填充到2048输入宽度，各强制生成4096个词元，实际16384个词元、峰值34.64 GiB；实际KV缓存长度增长正常。这些强制输出不作为标签。实测与[训练质量诊断](EXPANDED_DISTILLATION_DIAGNOSIS.md)的[共同证据](../evidence/expanded-distillation-diagnosis-v1.json)分别记录源码和产物绑定。
 
 短解码速度及有界容量不等于整根搜索／教师汇总／严格收取吞吐，也不证明棋力或讲解改善。当前集成源码新增配置入口后，仍须通过完整软件回归和实际挖掘试批。最终棋力、可靠教学及独立测试仍待完成。
+
+The [actual integrated 128-root pilot](BATCHED_STRICT_SEARCH_PILOT.md) completed mining, full-BF16 consolidation and strict collection with 89 accepted records. This closes the integrated-generation qualification for this software profile; model-quality acceptance and the 4096-root production output remain separate.
