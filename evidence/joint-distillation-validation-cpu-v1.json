@@ -1,0 +1,35 @@
+{
+  "status": "verified_CPU_validation_selection_and_round_controls",
+  "profile": "joint_explanation_and_course_replay_v1",
+  "scope": "Opt-in original explanation plus all four course validation; legacy explanation-only selector unchanged",
+  "new_CPU_checks": 22,
+  "related_CPU_checks": 155,
+  "controlled_GPU_runner_is_actual_GPU_execution": false,
+  "actual_original_validation_readback": {
+    "verification_sha256": "7133522ff624181f495b3ca0222e85096a9676776d0cc1513af94efb10af00e2",
+    "explanation": 384,
+    "static_current": 700,
+    "dynamic_current": 600,
+    "static_future": 700,
+    "dynamic_future": 600,
+    "total": 2984,
+    "all_original_IDs_selected_once": true,
+    "native_index_and_output_reopen_unchanged": true,
+    "original_neural_execution_dependency_files_unchanged": 15,
+    "new_tokenization_or_answer_grading": false
+  },
+  "acceptance_checks": [
+    "Explicit version and exact token-verified source counts",
+    "All actual validation IDs before training and the same native ID ledger after training",
+    "Missing duplicate foreign or reordered native IDs rejected",
+    "Round-level resume binds profile counts and complete original selection",
+    "Source-count training weights normalized without changing finite quotas"
+  ],
+  "negative_pre_fix_control": "Original compiler rejects the explicit joint profile; preserved locally",
+  "actual_new_student_GPU_training": false,
+  "new_student_teacher_or_oracle_queries": 0,
+  "new_SGD_updates": 0,
+  "independent_test_opened_or_used": false,
+  "joint_NLL_or_model_quality_gain_proven": false,
+  "full_goal_complete": false
+}
