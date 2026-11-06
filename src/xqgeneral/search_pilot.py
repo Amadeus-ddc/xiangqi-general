@@ -12,7 +12,8 @@ from .clean_sft_evaluation import checked_sft, teacher_artifacts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs, checked_root_offset
 from .sampling import checked_seed, search_generation_policy
-from .search_distillation import checked_child_prompt_profile, checked_search_extensions, child_prompt_metadata
+from .search_distillation import (checked_child_prompt_profile, checked_search_extensions,
+                                   checked_student_batching, child_prompt_metadata)
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
 from .teacher_generation import checked_budget, generation_profile
 from .teacher_prefill import checked_prefill_chunk_size
@@ -21,8 +22,15 @@ from .teacher_prefill import checked_prefill_chunk_size
 def pilot_spec(config, bound):
     if type(config.get('require_immediate_mate_consistency', False)) is not bool:
         raise ValueError('Immediate mate consistency requirement must be boolean')
+    if ('student_autocast_cache_enabled' in config and
+            type(config['student_autocast_cache_enabled']) is not bool):
+        raise ValueError('Student autocast cache override must be a boolean')
     offset = checked_root_offset(config.get('root_offset', 0))
     checked_child_prompt_profile(config.get('child_prompt_profile', 'full_explanation'), config['child_contract'])
+    batching = checked_student_batching(config.get('student_batch_size'),
+        config.get('student_workers'), config.get('student_batch_wait_ms'))
+    if batching is not None and config.get('student_generation_config') is None:
+        raise ValueError('Independent-request batching requires explicit stochastic student generation')
     if config.get('student_generation_config') is not None:
         if not isinstance(config['student_generation_config'], str) or not config['student_generation_config']:
             raise ValueError('Student sampling configuration must be a file path')
@@ -196,16 +204,32 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             **{key: evaluation[key] for key in ['executable', 'weights']}}
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
+        if 'student_autocast_cache_enabled' in config:
+            arguments['student_autocast_cache'] = 'on' if config['student_autocast_cache_enabled'] else 'off'
         if config.get('max_root_retries') is not None:
             arguments['max_root_retries'] = config['max_root_retries']
         if config.get('root_candidate_policy') is not None:
             arguments['root_candidate_policy'] = config['root_candidate_policy']
         if config.get('reuse_child_analysis') is True:
             arguments['reuse_child_analysis'] = True
-        for key in ['acceptance_policy', 'min_clean_ply', 'child_prompt_profile', 'root_offset']:
+        for key in ['acceptance_policy', 'min_clean_ply', 'child_prompt_profile', 'root_offset',
+                    'student_batch_size', 'student_workers', 'student_batch_wait_ms']:
             if config.get(key) is not None:
                 arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
+        if ('student_autocast_cache_enabled' in config and
+                mined['verification'].get('student_autocast_cache_enabled') is not config['student_autocast_cache_enabled']):
+            raise ValueError('Actual student cache evidence differs from the configured override')
+        batching = checked_student_batching(config.get('student_batch_size'),
+            config.get('student_workers'), config.get('student_batch_wait_ms'))
+        if batching is not None:
+            actual = mined['verification'].get('student_batching', {})
+            if (any(actual.get(k) != value for k, value in batching.items()) or
+                    actual.get('completed') is not True or
+                    mined['verification'].get('all_successful_student_decode_batches_preserved') is not True or
+                    actual.get('generated_requests') !=
+                    mined['verification'].get('stochastic_model_generations_this_session')):
+                raise ValueError('Actual student decoding differs from its batched request profile')
         if (config.get('root_offset') is not None and
                 mined['verification'].get('recorded_root_offset') != config['root_offset']):
             raise ValueError('Actual mining root offset differs from the requested range')

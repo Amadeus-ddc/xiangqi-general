@@ -87,6 +87,7 @@ class ControlledChain:
         class Predictor:
             def __init__(self, *args, **kwargs):
                 owner.student_loads += 1
+                self.config = {'autocast_cache_enabled': kwargs.get('autocast_cache_enabled', False)}
         class Oracle:
             def __init__(self, *args, **kwargs):
                 pass
@@ -137,6 +138,8 @@ class ControlledChain:
             elif self.failure == 'changed_queries':
                 with (root / 'queries.jsonl').open('a') as handle:
                     handle.write('{}\n')
+            elif self.failure == 'false_student_cache':
+                proof['verification']['student_autocast_cache_enabled'] = False
             atomic_json(path, proof)
         return SimpleNamespace(returncode=0)
 
@@ -156,6 +159,56 @@ def test_configured_teacher_batch_passes_through_real_cli_collection(tmp_path, m
     assert result['accepted_structured_training_labels'] == 1
     assert result == search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output, resume=True)
     assert len(chain.commands) == 3
+
+
+@pytest.mark.parametrize('enabled', [True, False])
+def test_student_batch_cache_and_strict_collection_survive_same_native_cli_chain(tmp_path, monkeypatch, enabled):
+    from test_stochastic_search_generation import POLICY
+    pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    policy = tmp_path/'student-generation.json'
+    atomic_json(policy, POLICY)
+    settings.update(student_batch_size=2, student_workers=2,
+                    student_generation_config=str(policy), student_autocast_cache_enabled=enabled,
+                    require_immediate_mate_consistency=True)
+    atomic_json(config, settings)
+    chain = ControlledChain(monkeypatch, query)
+    output = tmp_path/'pilot'
+    result = search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output)
+    command = next(c for c in chain.commands if 'xqgeneral.search_distillation' in c)
+    assert command[command.index('--student-autocast-cache')+1] == ('on' if enabled else 'off')
+    mining = json.loads((output/'mining/manifest.json').read_text())
+    assert mining['verification']['student_autocast_cache_enabled'] is enabled
+    assert mining['verification']['student_batching']['completed']
+    collection = json.loads((output/'labels/manifest.json').read_text())
+    assert collection['verification']['immediate_mate_score_consistency_required'] is True
+    assert result['accepted_structured_training_labels'] == 1
+    assert result == search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, output, resume=True)
+    assert len(chain.commands) == 3
+
+
+@pytest.mark.parametrize('value', [None, 0, 1, 'false'])
+def test_invalid_student_cache_override_rejected_before_model_initialization(tmp_path, monkeypatch, value):
+    pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    settings['student_autocast_cache_enabled'] = value
+    atomic_json(config, settings)
+    chain = ControlledChain(monkeypatch, query)
+    with pytest.raises(ValueError, match='cache'):
+        search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, tmp_path/'pilot')
+    assert not chain.commands and chain.student_loads == chain.teacher_loads == 0
+
+
+def test_student_cache_evidence_mismatch_blocks_teacher_before_loading(tmp_path, monkeypatch):
+    pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
+    settings = json.loads(config.read_text())
+    settings['student_autocast_cache_enabled'] = True
+    atomic_json(config, settings)
+    chain = ControlledChain(monkeypatch, query)
+    chain.failure = 'false_student_cache'
+    with pytest.raises(ValueError, match='cache'):
+        search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, tmp_path/'pilot')
+    assert chain.student_loads == 1 and chain.teacher_loads == 0 and len(chain.commands) == 1
 
 
 @pytest.mark.parametrize('size', [0, -1, True, 1.5])

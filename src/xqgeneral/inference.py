@@ -7,15 +7,20 @@ from .modeling import load_checkpoint
 from .rules import replay
 from .training import messages, model_autocast, autocast_cache_setting
 from .board_tokens import decode_board_text, encode_board_text
-from .sampling import sample_rng, sampling_options
+from .sampling import request_sampling_processor, sample_rng, sampling_options
 
 
 class Predictor:
-    def __init__(self, checkpoint, weights=None, device='cuda', feature_cache=None):
+    def __init__(self, checkpoint, weights=None, device='cuda', feature_cache=None, *,
+                 autocast_cache_enabled=None):
+        if autocast_cache_enabled is not None and type(autocast_cache_enabled) is not bool:
+            raise ValueError('autocast_cache_enabled override must be a boolean')
         torch.set_num_threads(4)
         self.device = device
         self.model, self.tokenizer, self.config = load_checkpoint(checkpoint, device)
         autocast_cache_setting(self.config)
+        if autocast_cache_enabled is not None:
+            self.config = dict(self.config, autocast_cache_enabled=autocast_cache_enabled)
         if weights is None:
             weights = self.config.get('inference_expert_path', 'models/px0-latest.pb.gz')
         expected_expert = self.config.get('inference_expert_sha256')
@@ -78,8 +83,14 @@ class Predictor:
 
     @torch.no_grad()
     def generate_batch(self, records, max_new_tokens=768, memory='normal', _move_constraints=None, _beams=1,
-                       *, sampling=None, seed=None):
+                       *, sampling=None, seed=None, seeds=None):
         generation = sampling_options(sampling)
+        if seeds is not None:
+            if seed is not None or _move_constraints is not None or _beams != 1:
+                raise ValueError('Per-request seeds require unconstrained single-beam generation and no batch seed')
+            processor = request_sampling_processor(sampling, seeds, len(records))
+            generation = {'do_sample': False, 'logits_processor': [processor],
+                          'num_beams': 1, 'num_return_sequences': 1}
         if seed is not None and sampling is None:
             raise ValueError('An explicit random seed requires stochastic decoding')
         if not records:
