@@ -15,7 +15,7 @@ from .feature_store import feature_paths
 from .training_index import build_index, index_paths, IndexedTrainingRows
 from .finite_training import FINITE_PROFILE, prepare_finite_epochs
 from .recorded_search_inputs import BoundInputs
-from .full_decoder_topology import auxiliary_topology
+from .full_decoder_topology import auxiliary_topology, search_topology
 
 RESUME_FIELDS = ['step', 'world_size', 'trainable', 'optimizer', 'random_state', 'torch_rng_state',
     'cuda_rng_states', 'tokens_seen', 'initial_loss', 'input_hashes', 'code', 'compute_contract',
@@ -233,11 +233,10 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     distillation = token.get('kind') == TOKEN_KIND
     auxiliary = token.get('kind') == AUXILIARY_KIND
     post_sft = distillation or auxiliary
-    topology=auxiliary_topology(recipe) if auxiliary else None
-    world=topology['world_size'] if auxiliary else 4
-    batch=topology['global_batch_size'] if auxiliary else 32 if distillation else 16
-    preflight_kind = (topology['preflight_kind'] if auxiliary else
-        'four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight')
+    topology = auxiliary_topology(recipe) if auxiliary else search_topology(recipe) if distillation else None
+    world = topology['world_size'] if post_sft else 4
+    batch = topology['global_batch_size'] if post_sft else 16
+    preflight_kind = topology['preflight_kind'] if post_sft else 'four_gpu_clean_full_decoder_sft_preflight'
     if auxiliary:
         saved = auxiliary_parent(source,token,recipe,guard)
     elif distillation:
@@ -300,7 +299,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             guard.unchanged()
             return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
-    selected = probe_data(recipe, token, root / 'data', train_examples=batch if auxiliary else 32 if distillation else 24)
+    selected = probe_data(recipe, token, root / 'data', train_examples=batch if post_sft else 24)
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
                   validation_examples=12, generation_examples=0, purpose=f'{world}-worker full-decoder actual 4 versus 2+2 update probe; no independent test or completed SFT claim')
     if 'source_coverage_profile' in recipe:

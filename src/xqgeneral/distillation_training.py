@@ -11,12 +11,13 @@ import torch
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
 from .curriculum_data import STAGES
 from .evidence import atomic_json, code_identity, digest, manifest
-from .finite_training import (FINITE_PROFILE, check_full_source_selection,
+from .finite_training import (FINITE_PROFILE, FULL_SOURCE_PROFILE, check_full_source_selection,
                               mixture_counts, prepare_finite_epochs)
 from .recorded_search_inputs import BoundInputs
 from .sft import prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
 from .training_index import build_index, index_paths, IndexedTrainingRows
+from .full_decoder_topology import search_topology
 from .distillation_validation import (JOINT_VALIDATION_PROFILE, LEGACY_VALIDATION_PROFILE,
                                        joint_validation_coverage)
 
@@ -31,17 +32,17 @@ def compile_recipe(template, token, root):
     if validation_profile not in (LEGACY_VALIDATION_PROFILE, JOINT_VALIDATION_PROFILE):
         raise ValueError('Unknown explicit distillation validation profile')
     joint_validation = validation_profile == JOINT_VALIDATION_PROFILE
+    topology = search_topology(template)
     validation_stages = ['explanation', *STAGES] if joint_validation else ['explanation']
     if (template.get('require_clean_foundation_handoff') is not False or
             template.get('decoder_training') != 'full' or template.get('trainable_parameter_dtype') != 'float32' or
-            template.get('ddp_world_size') != 4 or template.get('batch_size') != 32 or
-            template.get('micro_batch_size') != 1 or template.get('training_data_profile') != FINITE_PROFILE or
+            template.get('training_data_profile') != FINITE_PROFILE or
             template.get('validation_stages') != validation_stages or
             template.get('max_tokens') != token['verification']['token_limit'] or
             type(template.get('max_steps')) is not int or template['max_steps'] < 1):
-        raise ValueError('Use the finite four-worker full-decoder distillation recipe and exact length limit')
+        raise ValueError('Use the finite declared-worker full-decoder distillation recipe and exact length limit')
     counts = token['verification']['by_split']
-    if (type(counts.get('train')) is not int or counts['train'] < 32 or
+    if (type(counts.get('train')) is not int or counts['train'] < topology['global_batch_size'] or
             type(counts.get('validation')) is not int or counts['validation'] < 1):
         raise ValueError('A real complete training batch and protected validation labels are required')
     base_reference = token['config'].get('pinned_base_model_manifest')
@@ -64,11 +65,12 @@ def compile_recipe(template, token, root):
         replay = token['verification'].get('course_replay', {})
         if (template.get('stages') != ['explanation', *STAGES] or
                 not isinstance(template.get('mixture'), dict) or set(template['mixture']) != {'explanation', *STAGES} or
-                template.get('loss_normalization') != 'example' or replay.get('data_paths') != replay_paths or
+                template.get('loss_normalization') not in ({'example', 'token'} if topology['world_size'] == 3 else {'example'}) or
+                replay.get('data_paths') != replay_paths or
                 any(replay.get(key) is not True for key in ['all_raw_train_validation_answers_natively_regraded',
                     'all_features_present', 'combined_split_isolation_verified']) or
                 replay.get('independent_test_rows_tokenized') != 0):
-            raise ValueError('Joint distillation requires all four certified courses and per-example loss')
+            raise ValueError('Joint distillation requires all four certified courses and its declared loss reduction')
         available = replay.get('by_split_and_stage', {})
         if (not isinstance(available, dict) or set(available) != {'train', 'validation'} or
                 any(not isinstance(available[split], dict) or set(available[split]) != set(STAGES)
@@ -89,7 +91,13 @@ def compile_recipe(template, token, root):
     if ('validation_rows_by_stage' in template and
             (not joint_validation or template['validation_rows_by_stage'] != validation_counts)):
         raise ValueError('Declared validation counts differ from actual token-verified original sources')
-    mix = mixture_counts(source_counts, template['mixture'])
+    weights = template['mixture']
+    derived_full_source = topology['world_size'] == 3 and template.get('source_coverage_profile') == FULL_SOURCE_PROFILE
+    if derived_full_source:
+        if any(type(v) not in (int, float) or not math.isfinite(v) or v <= 0 for v in weights.values()):
+            raise ValueError('Declared full-source mixture weights must be positive finite values')
+        weights = source_counts
+    mix = mixture_counts(source_counts, weights)
     full_source = check_full_source_selection(template, mix, source_counts)
     if (not full_source and mix['anchor_stage'] != 'explanation' or
             any(count < 1 for count in mix['selected_rows_by_stage'].values())):
@@ -117,7 +125,7 @@ def compile_recipe(template, token, root):
         recipe['eval_every'] = min(template['eval_every'], per_pass)
     if base_reference is not None:
         recipe['pinned_base_model_manifest'] = base_reference
-    if any(weight > 1 for weight in template['mixture'].values()):
+    if any(weight > 1 for weight in weights.values()):
         recipe['mixture'] = mix['requested_weights']
     if joint_validation:
         recipe['validation_rows_by_stage'] = validation_counts
@@ -143,6 +151,11 @@ def compile_recipe(template, token, root):
     if full_source:
         budget.update(source_coverage_profile=template['source_coverage_profile'],
             all_actual_training_rows_selected_each_epoch=True, finite_anchor_stage=mix['anchor_stage'])
+    if topology['world_size'] == 3:
+        budget.update(search_topology_profile=topology['profile'], world_size=3,
+            loss_normalization=recipe['loss_normalization'],
+            mixture_derived_from_actual_token_verified_counts=derived_full_source,
+            distributed_tail_repeated_rows_per_pass=(-mix['rows_per_epoch']) % 3)
     return recipe, budget
 
 
@@ -158,6 +171,8 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         for path, expected in token[section].items():
             bound.bind(path, expected)
     recipe, budget = compile_recipe(template, token, root)
+    topology = search_topology(recipe)
+    world, batch = topology['world_size'], topology['global_batch_size']
     for directory in recipe.get('replay_data_paths', []):
         for filename in ['manifest.json', 'train.jsonl', 'validation.jsonl']:
             path = str(Path(directory) / filename)
@@ -167,6 +182,10 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
     if token['config']['source'] != str(source):
         raise ValueError('The actual search and selected training parent must be identical')
     saved, parent = completed_parent(source, token['config']['parent_completion'], bound)
+    previous_rounds = parent['verification'].get('trained_search_distillation_rounds', 0)
+    previous_auxiliary = parent['verification'].get('trained_auxiliary_policy_rounds', 0)
+    if any(type(value) is not int or value < 0 for value in [previous_rounds, previous_auxiliary]):
+        raise ValueError('The actual completed parent must declare valid cumulative training round counts')
     contract = {'source': str(source), 'source_sha256': digest(source),
         'recipe_template': str(recipe_template), 'recipe_template_sha256': digest(recipe_template),
         'token_preflight': str(token_manifest), 'token_preflight_sha256': digest(token_manifest),
@@ -226,14 +245,21 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 atomic_json(path, validation_plan)
             bound.bind(path)
         unchanged()
-        stage = 'four_gpu_full_decoder_distillation_preflight'
+        stage = ('three' if world == 3 else 'four') + '_gpu_full_decoder_distillation_preflight'
         atomic_json(root / 'state.json', {'status': stage, 'formal_distillation_started': False})
         preflight_root = root / 'preflight'
         probe = run_preflight(source, recipe_path, token_manifest, preflight_root, resume=preflight_root.exists())
         if (probe.get('status') != 'complete' or
+                probe.get('world_size') != world or
                 probe.get('actual_continuous_four_and_two_plus_two_updates_compared') is not True or
                 probe.get('full_decoder_initialization_preserved_all_parent_tensors') is not True):
             raise ValueError('The actual full-decoder distillation GPU preflight must pass first')
+        probe_proof = json.loads((preflight_root / 'manifest.json').read_text())
+        if (probe_proof.get('status') != 'complete' or probe_proof.get('kind') != topology['preflight_kind'] or
+                probe_proof.get('verification') != probe or probe_proof.get('code') != contract['code'] or
+                probe_proof.get('config') != {'recipe': str(recipe_path), 'source': str(source),
+                                            'token_preflight': str(token_manifest)}):
+            raise ValueError('Actual search preflight must identify the declared worker topology')
         unchanged()
         stage = 'actual_search_distillation_sft'
         atomic_json(root / 'state.json', {'status': stage, 'formal_distillation_started': True})
@@ -249,15 +275,15 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         metrics = json.loads((trained / 'metrics.json').read_text())
         if (proof.get('kind') != 'model_training' or config != expected or proof.get('config') != expected or
                 proof.get('verification') != metrics or proof.get('code') != contract['code'] or
-                metrics.get('world_size') != 4 or metrics.get('decoder_training') != 'full' or
-                metrics.get('global_batch_size') != 32 or metrics.get('selected_step', 0) <= 0 or
+                metrics.get('world_size') != world or metrics.get('decoder_training') != 'full' or
+                metrics.get('global_batch_size') != batch or metrics.get('selected_step', 0) <= 0 or
                 not expected['min_steps'] <= metrics.get('steps_completed', 0) <= expected['steps']):
             raise ValueError('Actual distillation completion differs from its full-decoder recipe and budget')
         indexed = IndexedTrainingRows(recipe['row_index_paths']['train'],
             [Path(directory) / 'train.jsonl' for directory in
              [recipe['data_path'], *recipe.get('replay_data_paths', [])]], recipe['mixture'])
         try:
-            prepare_finite_epochs(indexed, recipe['mixture'], expected, 4).check_resume(
+            prepare_finite_epochs(indexed, recipe['mixture'], expected, world).check_resume(
                 metrics.get('training_data_state'), metrics['steps_completed'])
         finally:
             indexed.close()
@@ -291,22 +317,26 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         if summary['trainable_parameters'] != metrics['trainable_parameters'] or summary['trainable_tensors'] != probe['trainable_tensors']:
             raise ValueError('Distillation did not retain the actual full-decoder parameter set')
         del selected, reference
-        previous_rounds = parent['verification'].get('trained_search_distillation_rounds', 0)
         result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
             'initial_explanation_sft_completed_before_round': True,
-            'actual_four_gpu_full_decoder_preflight_passed': True, 'actual_distillation_sft_completed': True,
+            'actual_four_gpu_full_decoder_preflight_passed': world == 4,
+            'actual_distillation_sft_completed': True,
             'trained_search_distillation_rounds': previous_rounds + 1, 'selected_checkpoint': str(selected_path),
+            'trained_auxiliary_policy_rounds': previous_auxiliary,
             'selected_step': metrics['selected_step'], 'actual_steps': metrics['steps_completed'],
-            'world_size': 4, 'global_batch_size': 32, 'accepted_training_rows': budget['accepted_training_rows'],
+            'world_size': world, 'global_batch_size': batch, 'accepted_training_rows': budget['accepted_training_rows'],
             'actual_finite_epoch_state_verified': True, 'training_data_state': metrics['training_data_state'],
             'paper_first_round_150000_label_scale_reached': budget['paper_first_round_150000_label_scale_reached'],
             'validation_selects_checkpoint': True, 'independent_test_used_for_training_or_selection': False,
             'raw_answers_repaired': False, 'strength_and_coaching_gain_evaluated': False,
             'strong_play_or_reliable_coaching_proven': False, **summary}
+        if world == 3:
+            result.update(actual_three_gpu_full_decoder_preflight_passed=True,
+                          search_topology_profile=topology['profile'])
         if recipe.get('replay_data_paths'):
             result.update(course_replay_sources=recipe['replay_data_paths'],
                 selected_training_rows_by_stage=budget['finite_mixture']['selected_rows_by_stage'],
-                rows_per_complete_pass=budget['rows_per_complete_pass'], loss_normalization='example',
+                rows_per_complete_pass=budget['rows_per_complete_pass'], loss_normalization=recipe['loss_normalization'],
                 course_replay_counts_toward_paper_label_scale=False)
         if validation_coverage is not None:
             result['joint_validation_coverage'] = validation_coverage

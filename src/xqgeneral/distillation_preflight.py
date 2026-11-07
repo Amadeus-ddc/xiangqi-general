@@ -46,6 +46,11 @@ def completed_parent(source, completion_path, bound=None):
         topology=completed_auxiliary_topology(proof)
         required[AUXILIARY_ROUND_KIND]=['initial_explanation_sft_completed_before_round','actual_auxiliary_policy_sft_completed']
         world=topology['world_size']
+    elif proof.get('kind') == ROUND_KIND:
+        from .full_decoder_topology import completed_search_topology
+        topology = completed_search_topology(proof)
+        required[ROUND_KIND] = ['initial_explanation_sft_completed_before_round', 'actual_distillation_sft_completed']
+        world = topology['world_size']
     else:world=4
     if (proof.get('status') != 'complete' or proof.get('kind') not in required or
             any(result.get(k) is not True for k in required.get(proof.get('kind'), [])) or
@@ -70,6 +75,12 @@ def completed_parent(source, completion_path, bound=None):
                 metrics.get('global_batch_size')!=topology['global_batch_size'] or
                 result.get('global_batch_size')!=topology['global_batch_size']):
             raise ValueError('Auxiliary parent geometry differs from its actual completed training')
+    elif proof.get('kind') == ROUND_KIND and world == 3:
+        from .full_decoder_topology import search_topology
+        if (search_topology(saved) != topology or
+                metrics.get('global_batch_size') != topology['global_batch_size'] or
+                result.get('global_batch_size') != topology['global_batch_size']):
+            raise ValueError('Search parent geometry differs from its actual completed training')
     if (training.get('status') != 'complete' or training.get('kind') != 'model_training' or
             training.get('config') != saved or training['outputs'].get(str(source)) != selected_binding or
             saved.get('decoder_training') != 'full' or saved.get('trainable_parameter_dtype') != 'float32' or

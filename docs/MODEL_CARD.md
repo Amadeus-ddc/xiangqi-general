@@ -1,5 +1,12 @@
 # Xiangqi General model card
 
+The [three-worker search-distillation profile](THREE_GPU_SEARCH_DISTILLATION.md)
+uses FSDP2, global batch30/micro1 and an actual new three-worker capacity/resume
+preflight. Its full-source template derives quotas from token-verified counts and
+uses token-average loss. A completed search round retains auxiliary-round counts
+and increments only the search count. Real search SGD and retention of the two
+auxiliary engine-supervision tasks still require separate execution and evaluation.
+
 The [descendant search pilot](DESCENDANT_SEARCH_PILOT.md) checks actual completed
 full-decoder parents, cumulative auxiliary/search round counts, all paired raw
 validation answers and the complete auxiliary neural review. Auxiliary descendants

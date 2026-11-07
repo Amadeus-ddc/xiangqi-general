@@ -20,7 +20,7 @@ from .foundation_prefix import declared_prefix_reference
 from .review_explanations import DIMENSIONS, blinded_query, parse_rating
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary
-from .full_decoder_topology import auxiliary_topology
+from .full_decoder_topology import auxiliary_topology, search_topology
 
 
 def capability_kind(token):
@@ -205,7 +205,7 @@ def checked_distilled_sft(root, config, recipe, proof):
     saved, parent = completed_parent(source, root / 'manifest.json')
     contract = proof['config'];result = proof['verification']
     auxiliary = proof.get('kind') == AUXILIARY_ROUND_KIND
-    topology=auxiliary_topology(recipe) if auxiliary else None
+    topology = auxiliary_topology(recipe) if auxiliary else search_topology(recipe)
     token = json.loads(Path(config['token_preflight']).read_text())
     token_source = token['config']['logical']['source'] if auxiliary else token['config'].get('source')
     if (parent != proof or token.get('kind') != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND) or
@@ -223,8 +223,8 @@ def checked_distilled_sft(root, config, recipe, proof):
     expected = prepare_config(checked_parent(initial, False), recipe, initial, source.parent)
     preflight = json.loads((root / 'preflight/manifest.json').read_text());checked_artifacts(preflight)
     cache_binding = preflight.get('verified_feature_cache_input' if auxiliary else 'fresh_feature_cache_input', {})
-    if (preflight.get('kind') != (topology['preflight_kind'] if auxiliary else 'four_gpu_search_distillation_sft_preflight') or
-            auxiliary and preflight['verification'].get('world_size')!=topology['world_size'] or
+    if (preflight.get('kind') != topology['preflight_kind'] or
+            preflight['verification'].get('world_size') != topology['world_size'] or
             preflight['config'].get('source') != str(initial) or
             preflight['config'].get('token_preflight') != config['token_preflight'] or
             preflight['verification'].get('full_decoder_initialization_preserved_all_parent_tensors') is not True or
@@ -251,6 +251,13 @@ def checked_distilled_sft(root, config, recipe, proof):
                 result['trained_search_distillation_rounds'] != previous.get('trained_search_distillation_rounds', 0) or
                 result.get('auxiliary_supervision_is_new_on_policy_search_round') is not False):
             raise ValueError('Auxiliary evaluation cannot relabel the actual auxiliary and search round counts')
+    else:
+        _, initial_completion = completed_parent(initial, token['config']['parent_completion'])
+        previous = initial_completion['verification']
+        if (type(result.get('trained_auxiliary_policy_rounds', 0)) is not int or
+                result['trained_search_distillation_rounds'] != previous.get('trained_search_distillation_rounds', 0) + 1 or
+                result.get('trained_auxiliary_policy_rounds', 0) != previous.get('trained_auxiliary_policy_rounds', 0)):
+            raise ValueError('Search evaluation must increment only the actual search round and retain auxiliary rounds')
     del checkpoint, reference
     return source, proof
 
