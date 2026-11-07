@@ -255,7 +255,8 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         saved = checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {}))
     formal = prepare_config(saved, recipe, source, root / 'unused-formal-output')
     if (formal.get('decoder_training') != 'full' or formal.get('trainable_parameter_dtype') != 'float32' or
-            formal.get('ddp_world_size') != world or formal['batch_size'] != batch or formal.get('micro_batch_size') != 1 or
+            formal.get('ddp_world_size') != world or formal['batch_size'] != batch or
+            formal.get('micro_batch_size') != (topology.get('micro_batch_size', 1) if post_sft else 1) or
             not formal.get('deterministic_training') or not formal.get('feature_cache_mmap')):
         raise ValueError('Preflight requires the exact deterministic declared-worker full-decoder recipe')
     token_kind = AUXILIARY_KIND if auxiliary else TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight'
