@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 from .clean_sft_evaluation import capability_kind, checked_sft, validation_spec
-from .distillation_preflight import ROUND_KIND
+from .distillation_preflight import AUXILIARY_ROUND_KIND, ROUND_KIND
 from .evaluate_games import match_summary, restore_game
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .match_openings import load_openings
@@ -81,7 +81,8 @@ def run_baseline(pipeline, validation, producer_session, config_path, output, *,
     evaluation, recipe, openings = baseline_spec(config, bound)
     capability_type = capability_kind(bound.json(evaluation['token_preflight']))
     distilled = capability_type == 'search_distillation_capability_validation'
-    baseline_kind = ('search_distillation_full_match_baseline' if distilled
+    auxiliary = capability_type == 'auxiliary_policy_capability_validation'
+    baseline_kind = ('auxiliary_policy_full_match_baseline' if auxiliary else 'search_distillation_full_match_baseline' if distilled
                      else 'clean_initial_sft_full_match_baseline')
     contract = {'pipeline': str(pipeline), 'validation': str(validation), 'producer_session': producer_session,
                 'config': str(config_path), 'config_sha256': digest(config_path), 'code': code_identity(),
@@ -112,7 +113,7 @@ def run_baseline(pipeline, validation, producer_session, config_path, output, *,
         if (capability['config']['pipeline'] != str(pipeline) or
                 capability['config']['config'] != config['evaluation_config'] or
                 capability['config']['config_sha256'] != digest(config['evaluation_config']) or
-                result.get('actual_full_decoder_distillation_round_completed_before_evaluation' if distilled
+                result.get('actual_full_decoder_auxiliary_round_completed_before_evaluation' if auxiliary else 'actual_full_decoder_distillation_round_completed_before_evaluation' if distilled
                            else 'actual_clean_initial_sft_completed_before_model_or_reviewer_load') is not True or
                 result.get('split') != 'validation' or result.get('all_validation_examples') != evaluation['validation_examples'] or
                 result.get('independent_test_used_for_training_or_selection') is not False or
@@ -121,10 +122,12 @@ def run_baseline(pipeline, validation, producer_session, config_path, output, *,
             raise ValueError('Complete paired validation of the exact clean SFT must precede matches')
         stage = 'checking_selected_clean_sft'
         source, parent = checked_sft(pipeline, evaluation, recipe)
-        if (parent.get('kind') == ROUND_KIND) != distilled:
+        if ((parent.get('kind') == ROUND_KIND), (parent.get('kind') == AUXILIARY_ROUND_KIND)) != (distilled, auxiliary):
             raise ValueError('Match model completion differs from the actual paired evaluation stage')
-        if distilled and result.get('trained_search_distillation_rounds') != parent['verification'].get('trained_search_distillation_rounds'):
+        if (distilled or auxiliary) and result.get('trained_search_distillation_rounds') != parent['verification'].get('trained_search_distillation_rounds'):
             raise ValueError('Paired evaluation and full matches must refer to the same actual trained round count')
+        if auxiliary and result.get('trained_auxiliary_policy_rounds') != parent['verification'].get('trained_auxiliary_policy_rounds'):
+            raise ValueError('Paired evaluation and full matches must preserve the actual auxiliary round count')
         if capability['inputs'].get(str(source)) != parent['outputs'][str(source)]:
             raise ValueError('The match student differs from the selected model actually evaluated')
         bound.bind(source, parent['outputs'][str(source)])
@@ -151,6 +154,8 @@ def run_baseline(pipeline, validation, producer_session, config_path, output, *,
         final = {'status': 'complete', 'evidence_state': 'reconstructed_baseline', 'split': 'validation',
             'clean_sft_and_paired_validation_completed_before_matches': True,
             'actual_distillation_round_completed_before_matches': distilled,
+            'actual_auxiliary_round_completed_before_matches': auxiliary,
+            'trained_auxiliary_policy_rounds': parent['verification'].get('trained_auxiliary_policy_rounds', 0),
             'trained_search_distillation_rounds': parent['verification'].get('trained_search_distillation_rounds', 0),
             'actual_selected_checkpoint': str(source),
             'actual_selected_step': parent['verification'].get('selected_sft_step', parent['verification'].get('selected_step')),

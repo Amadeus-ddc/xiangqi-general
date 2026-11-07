@@ -2,6 +2,14 @@
 
 ## Current verified state (2026-11-07)
 
+The [auxiliary-model development evaluation](AUXILIARY_POLICY_EVALUATION.md)
+requires the actual selected full-decoder completion, preserves separate auxiliary
+and on-policy search round counts, and matches the complete original explanation
+validation rows byte-for-byte and in their original order against the seven-stage
+corpus. Paired raw generations, full-BF16 auxiliary review and raw full matches
+remain separate measurements. Fifteen new and 69 existing controlled CPU checks
+pass; these controls establish neither new neural scores nor real playing strength.
+
 The [auxiliary seven-stage training interface](AUXILIARY_POLICY_TRAINING.md)
 continues from a completed full-decoder explanation model, verifies native tokens
 and feature ancestry, compiles complete finite source coverage and validates every

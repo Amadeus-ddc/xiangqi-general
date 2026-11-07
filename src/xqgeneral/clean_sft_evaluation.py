@@ -10,7 +10,8 @@ import time
 import torch
 
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
-from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
+from .distillation_preflight import AUXILIARY_ROUND_KIND, ROUND_KIND, TOKEN_KIND, completed_parent
+from .auxiliary_policy_preflight import KIND as AUXILIARY_TOKEN_KIND, PROFILE as AUXILIARY_TOKEN_PROFILE
 from .evaluate_explanations import explanation_summary
 from .explanations import EXPLANATION_QUESTION
 from .feature_store import feature_paths
@@ -22,6 +23,8 @@ from .sft_preflight import checked_artifacts, full_parameter_summary
 
 
 def capability_kind(token):
+    if token.get('kind') == AUXILIARY_TOKEN_KIND:
+        return 'auxiliary_policy_capability_validation'
     return ('search_distillation_capability_validation' if token.get('kind') == TOKEN_KIND
             else 'clean_initial_sft_capability_validation')
 
@@ -75,18 +78,22 @@ def validation_spec(config):
         if type(config[key]) is not int or config[key] <= 0:raise ValueError('Evaluation budgets must be positive integers')
     token = json.loads(Path(config['token_preflight']).read_text());checked_artifacts(token)
     recipe = json.loads(Path(config['sft_recipe']).read_text())
+    auxiliary = token.get('kind') == AUXILIARY_TOKEN_KIND
     distilled = token.get('kind') == TOKEN_KIND
-    if (token.get('kind') not in {'latent_only_reviewed_explanation_data_preflight', TOKEN_KIND} or
-            token['config']['data'] != config['data'] or recipe['data_path'] != config['data'] or
-            recipe.get('require_clean_foundation_handoff') is not (not distilled) or
-            recipe['feature_path'] != config['features'] or token['cache_header_only_input']['path'] != config['features']):
-        raise ValueError('Evaluation must use the exact reviewed clean SFT data and cache')
-    if distilled and any(token['verification'].get(k) is not value for k, value in {
-            'protected_validation_and_test_bytes_unchanged': True,
-            'parent_full_decoder_completion_verified': True,
-            'all_original_feature_keys_and_tensor_references_preserved': True,
-            'independent_test_used_for_training_or_selection': False}.items()):
-        raise ValueError('Distilled evaluation requires the original protected validation and parent cache')
+    if auxiliary:
+        checked_auxiliary_validation(config,token,recipe)
+    else:
+        if (token.get('kind') not in {'latent_only_reviewed_explanation_data_preflight', TOKEN_KIND} or
+                token['config']['data'] != config['data'] or recipe['data_path'] != config['data'] or
+                recipe.get('require_clean_foundation_handoff') is not (not distilled) or
+                recipe['feature_path'] != config['features'] or token['cache_header_only_input']['path'] != config['features']):
+            raise ValueError('Evaluation must use the exact reviewed clean SFT data and cache')
+        if distilled and any(token['verification'].get(k) is not value for k, value in {
+                'protected_validation_and_test_bytes_unchanged': True,
+                'parent_full_decoder_completion_verified': True,
+                'all_original_feature_keys_and_tensor_references_preserved': True,
+                'independent_test_used_for_training_or_selection': False}.items()):
+            raise ValueError('Distilled evaluation requires the original protected validation and parent cache')
     path = Path(config['data']) / 'validation.jsonl';rows = load_jsonl(path)
     if (len(rows) != config['validation_examples'] or len({row['id'] for row in rows}) != len(rows) or
             len({row['feature_key'] for row in rows}) != len(rows) or
@@ -95,6 +102,42 @@ def validation_spec(config):
     if config['batch_size'] < 2 or len(rows) < 2 or len(rows) % config['batch_size'] == 1:
         raise ValueError('Every paired shuffled batch needs at least two histories')
     return rows, token, recipe
+
+
+def checked_auxiliary_validation(config, token, recipe):
+    """Match original explanation bytes inside the complete seven-stage validation."""
+    from .auxiliary_policy_preflight import ALL_STAGES, VALIDATION_PROFILE
+    logical = token.get('config', {}).get('logical', {})
+    result = token.get('verification', {})
+    required = ['all_actual_corpus_rows_tokenized', 'all_train_validation_supervision_fits_without_truncation',
+        'all_corpus_feature_keys_present', 'full_decoder_parent_completion_verified',
+        'original_parent_feature_keys_shards_and_expert_preserved']
+    expected = result.get('rows_by_split_and_stage', {}).get('validation', {})
+    if (logical.get('profile') != AUXILIARY_TOKEN_PROFILE or logical.get('data') != recipe.get('data_path') or
+            logical.get('features') != config['features'] or recipe.get('feature_path') != config['features'] or
+            recipe.get('require_clean_foundation_handoff') is not False or recipe.get('loss_normalization') != 'token' or
+            recipe.get('validation_profile') != VALIDATION_PROFILE or recipe.get('validation_rows_by_stage') != expected or
+            set(expected) != set(ALL_STAGES) or any(type(v) is not int or v < 1 for v in expected.values()) or
+            any(result.get(key) is not True for key in required) or
+            result.get('independent_test_rows_parsed_or_tokenized') != 0 or
+            result.get('independent_test_used_for_training_or_selection') is not False or
+            token.get('cache_header_only_input', {}).get('path') != config['features']):
+        raise ValueError('Auxiliary evaluation requires its actual seven-stage token/cache and original validation contract')
+    from .oracle_policy_corpus import _lines
+    from collections import Counter
+    observed = Counter(); originals = []; seen = set()
+    for _, raw, row in _lines(Path(logical['data']) / 'validation.jsonl'):
+        if row.get('split') != 'validation' or row.get('stage') not in ALL_STAGES or not isinstance(row.get('id'),str) or row.get('id') in seen:
+            raise ValueError('Auxiliary validation changed its original split, stage or unique IDs')
+        seen.add(row['id']);observed[row['stage']] += 1
+        if row['stage'] == 'explanation': originals.append((row['id'],raw))
+    actual = []; actual_ids = set()
+    for _, raw, row in _lines(Path(config['data']) / 'validation.jsonl'):
+        if row.get('id') in actual_ids:
+            raise ValueError('Original explanation validation IDs repeat')
+        actual_ids.add(row['id']);actual.append((row['id'],raw))
+    if observed != expected or actual != originals:
+        raise ValueError('Evaluate every original explanation row with the exact preserved bytes')
 
 
 def wait_for_sft(pipeline, producer_session, output, poll_seconds=30):
@@ -113,7 +156,7 @@ def wait_for_sft(pipeline, producer_session, output, poll_seconds=30):
 def checked_sft(pipeline, config, recipe):
     root = Path(pipeline);proof = json.loads((root / 'manifest.json').read_text());checked_artifacts(proof)
     result = proof['verification'];source = root / 'sft/adapter.pt'
-    if proof.get('kind') == ROUND_KIND:
+    if proof.get('kind') in {ROUND_KIND, AUXILIARY_ROUND_KIND}:
         return checked_distilled_sft(root, config, recipe, proof)
     if (proof.get('kind') != 'clean_curriculum_to_initial_sft_pipeline' or
             any(result.get(key) is not True for key in ['four_courses_completed_before_any_gpu_sft_work',
@@ -160,14 +203,16 @@ def checked_distilled_sft(root, config, recipe, proof):
     source = root / 'sft/adapter.pt'
     saved, parent = completed_parent(source, root / 'manifest.json')
     contract = proof['config'];result = proof['verification']
+    auxiliary = proof.get('kind') == AUXILIARY_ROUND_KIND
     token = json.loads(Path(config['token_preflight']).read_text())
-    if (parent != proof or token.get('kind') != TOKEN_KIND or
+    token_source = token['config']['logical']['source'] if auxiliary else token['config'].get('source')
+    if (parent != proof or token.get('kind') != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND) or
             type(result.get('selected_step')) is not int or result['selected_step'] < 1 or
             type(result.get('actual_steps')) is not int or result['actual_steps'] < result['selected_step'] or
             contract.get('compiled_recipe') != recipe or
             contract.get('token_preflight') != config['token_preflight'] or
             contract.get('token_preflight_sha256') != digest(config['token_preflight']) or
-            contract.get('source') != token['config'].get('source') or
+            contract.get('source') != token_source or
             proof['inputs'].get(config['sft_recipe']) != {
                 'sha256': digest(config['sft_recipe']), 'bytes': Path(config['sft_recipe']).stat().st_size}):
         raise ValueError('Distilled evaluation must bind its actual compiled recipe and data preflight')
@@ -175,17 +220,18 @@ def checked_distilled_sft(root, config, recipe, proof):
     initial = Path(contract['source'])
     expected = prepare_config(checked_parent(initial, False), recipe, initial, source.parent)
     preflight = json.loads((root / 'preflight/manifest.json').read_text());checked_artifacts(preflight)
-    if (preflight.get('kind') != 'four_gpu_search_distillation_sft_preflight' or
+    cache_binding = preflight.get('verified_feature_cache_input' if auxiliary else 'fresh_feature_cache_input', {})
+    if (preflight.get('kind') != ('four_gpu_auxiliary_policy_sft_preflight' if auxiliary else 'four_gpu_search_distillation_sft_preflight') or
             preflight['config'].get('source') != str(initial) or
             preflight['config'].get('token_preflight') != config['token_preflight'] or
             preflight['verification'].get('full_decoder_initialization_preserved_all_parent_tensors') is not True or
-            preflight['fresh_feature_cache_input']['path'] != config['features']):
+            cache_binding.get('path') != config['features']):
         raise ValueError('Distilled evaluation requires its actual full-decoder parent and feature preflight')
     reference = torch.load(root / 'preflight/zero-init.pt', map_location='cpu', weights_only=True, mmap=True)['trainable']
     checkpoint = torch.load(source, map_location='cpu', weights_only=True, mmap=True)
     summary = full_parameter_summary(checkpoint['trainable'], reference)
     inputs = {p: v['sha256'] for p, v in trained['inputs'].items()}
-    inputs[config['features']] = preflight['fresh_feature_cache_input']['sha256']
+    inputs[config['features']] = cache_binding['sha256']
     metrics = trained['verification']
     if (saved != expected or trained['config'] != expected or checkpoint['config'] != expected or
             checkpoint['code'] != proof['code'] or trained['code'] != proof['code'] or
@@ -193,8 +239,15 @@ def checked_distilled_sft(root, config, recipe, proof):
             metrics['selected_step'] != result['selected_step'] or metrics['steps_completed'] != result['actual_steps'] or
             expected['feature_path'] != config['features'] or
             any(summary[k] != result[k] for k in ['trainable_parameters', 'trainable_tensors']) or
-            type(result.get('trained_search_distillation_rounds')) is not int or result['trained_search_distillation_rounds'] < 1):
+            type(result.get('trained_search_distillation_rounds')) is not int or result['trained_search_distillation_rounds'] < (0 if auxiliary else 1)):
         raise ValueError('The selected complete distilled state differs from its actual training and initialization')
+    if auxiliary:
+        _, initial_completion = completed_parent(initial, token['config']['logical']['parent_completion'])
+        previous = initial_completion['verification']
+        if (result.get('trained_auxiliary_policy_rounds') != previous.get('trained_auxiliary_policy_rounds', 0) + 1 or
+                result['trained_search_distillation_rounds'] != previous.get('trained_search_distillation_rounds', 0) or
+                result.get('auxiliary_supervision_is_new_on_policy_search_round') is not False):
+            raise ValueError('Auxiliary evaluation cannot relabel the actual auxiliary and search round counts')
     del checkpoint, reference
     return source, proof
 
@@ -285,11 +338,13 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
         source_manifest = wait_for_sft(pipeline, producer_session, root, poll_seconds)
         unchanged();source, parent = checked_sft(pipeline, config, recipe)
         distilled = parent['kind'] == ROUND_KIND
-        if distilled != (token['kind'] == TOKEN_KIND):
+        auxiliary = parent['kind'] == AUXILIARY_ROUND_KIND
+        if (distilled, auxiliary) != (token['kind'] == TOKEN_KIND, token['kind'] == AUXILIARY_TOKEN_KIND):
             raise ValueError('Evaluation data preflight and selected training completion have different stages')
         core = Artifacts()
         core.add(source, parent['outputs'][str(source)])
-        validation = str(Path(config['data']) / 'validation.jsonl');core.add(validation, token['inputs'][validation])
+        validation = str(Path(config['data']) / 'validation.jsonl')
+        core.add(validation, {'sha256': digest(validation), 'bytes': Path(validation).stat().st_size} if auxiliary else token['inputs'][validation])
         cache = token['cache_header_only_input'];core.add(config['features'], {k: cache[k] for k in ['sha256', 'bytes']})
         for path in feature_paths(config['features']):
             core.add(path, {'sha256': digest(path), 'bytes': Path(path).stat().st_size})
@@ -374,8 +429,10 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
             raise ValueError('Neural aggregates differ from actual accepted and rejected ratings')
         unchanged();core.unchanged();teacher_guard.unchanged()
         final = {'status': 'complete', 'evidence_state': 'reconstructed_baseline', 'split': 'validation',
-            'actual_clean_initial_sft_completed_before_model_or_reviewer_load': not distilled,
+            'actual_clean_initial_sft_completed_before_model_or_reviewer_load': not (distilled or auxiliary),
             'actual_full_decoder_distillation_round_completed_before_evaluation': distilled,
+            'actual_full_decoder_auxiliary_round_completed_before_evaluation': auxiliary,
+            'trained_auxiliary_policy_rounds': parent['verification'].get('trained_auxiliary_policy_rounds', 0),
             'actual_selected_full_decoder_training_completed_before_model_or_reviewer_load': True,
             'trained_search_distillation_rounds': parent['verification'].get('trained_search_distillation_rounds', 0),
             'all_validation_examples': len(rows), 'raw_validation_by_memory': metrics,
