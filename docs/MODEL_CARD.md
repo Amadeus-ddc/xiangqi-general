@@ -1,5 +1,12 @@
 # Xiangqi General model card
 
+The [fixed oracle-policy validation diagnostics](ORACLE_POLICY_EVALUATION.md)
+retain381 numerical and384 move-answer views from384 original histories. Format,
+legal moves, history-valid PVs and conditional errors against the stored engine
+reference are reported separately. These are not measured playing strength or
+human coaching scores. Generation inputs omit targets and recorded futures;
+raw invalid outputs and interrupted batches remain preserved.
+
 The [three-worker search-distillation profile](THREE_GPU_SEARCH_DISTILLATION.md)
 uses FSDP2, global batch30/micro1 and an actual new three-worker capacity/resume
 preflight. Its full-source template derives quotas from token-verified counts and
