@@ -1,6 +1,7 @@
 """Declared full-decoder geometry, independent of physical GPU placement."""
 
 TWO_WORKERS = 'full_decoder_auxiliary_two_workers_v1'
+TWO_WORKERS_MICRO3 = 'full_decoder_auxiliary_two_workers_micro3_v1'
 THREE_WORKERS = 'full_decoder_auxiliary_three_workers_v1'
 FOUR_WORKERS = 'full_decoder_auxiliary_four_workers_v1'
 TWO_SEARCH_WORKERS = 'full_decoder_search_two_workers_v1'
@@ -12,19 +13,22 @@ def auxiliary_topology(config):
     if not isinstance(config, dict):
         raise ValueError('Auxiliary topology requires its complete recipe or training configuration')
     profile = config.get('auxiliary_topology_profile', FOUR_WORKERS)
-    geometries = {TWO_WORKERS: (2, 30, 'two'), THREE_WORKERS: (3, 30, 'three'),
-                  FOUR_WORKERS: (4, 32, 'four')}
+    geometries = {TWO_WORKERS: (2, 30, 'two', 1), TWO_WORKERS_MICRO3: (2, 30, 'two', 3),
+                  THREE_WORKERS: (3, 30, 'three', 1), FOUR_WORKERS: (4, 32, 'four', 1)}
     if profile not in geometries:
         raise ValueError('Unknown auxiliary full-decoder topology profile')
-    world, batch, word = geometries[profile]
-    for key, expected in [('ddp_world_size', world), ('batch_size', batch), ('micro_batch_size', 1)]:
+    world, batch, word, micro = geometries[profile]
+    for key, expected in [('ddp_world_size', world), ('batch_size', batch), ('micro_batch_size', micro)]:
         if type(config.get(key)) is not int or config[key] != expected:
             raise ValueError('Auxiliary topology differs from its declared worker count and divisible global batch')
     if world in {2, 3} and config.get('distributed_strategy') != 'fsdp2':
         raise ValueError('Two and three auxiliary workers require full parameter and gradient sharding')
-    return dict(profile=profile, world_size=world, global_batch_size=batch,
+    result = dict(profile=profile, world_size=world, global_batch_size=batch,
         preflight_kind=word + '_gpu_auxiliary_policy_sft_preflight',
         completion_flag='actual_' + word + '_gpu_full_decoder_preflight_passed')
+    if micro != 1:
+        result['micro_batch_size'] = micro
+    return result
 
 
 def completed_auxiliary_topology(proof):

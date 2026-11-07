@@ -93,6 +93,9 @@ def completed_parent(source, completion_path, bound=None):
         raise ValueError('Selected parent differs from its completed full-decoder training')
     if checked_parent(source, False) != saved:
         raise ValueError('Selected parent configuration changed')
+    if proof.get('kind')==AUXILIARY_ROUND_KIND:
+        from .auxiliary_resource_transition import completed_transition
+        completed_transition(proof,source.parent,saved,metrics,bound)
     bound.unchanged()
     return saved, proof
 
