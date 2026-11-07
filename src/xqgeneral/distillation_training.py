@@ -11,7 +11,8 @@ import torch
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
 from .curriculum_data import STAGES
 from .evidence import atomic_json, code_identity, digest, manifest
-from .finite_training import FINITE_PROFILE, mixture_counts, prepare_finite_epochs
+from .finite_training import (FINITE_PROFILE, check_full_source_selection,
+                              mixture_counts, prepare_finite_epochs)
 from .recorded_search_inputs import BoundInputs
 from .sft import prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
@@ -89,7 +90,9 @@ def compile_recipe(template, token, root):
             (not joint_validation or template['validation_rows_by_stage'] != validation_counts)):
         raise ValueError('Declared validation counts differ from actual token-verified original sources')
     mix = mixture_counts(source_counts, template['mixture'])
-    if mix['anchor_stage'] != 'explanation' or any(count < 1 for count in mix['selected_rows_by_stage'].values()):
+    full_source = check_full_source_selection(template, mix, source_counts)
+    if (not full_source and mix['anchor_stage'] != 'explanation' or
+            any(count < 1 for count in mix['selected_rows_by_stage'].values())):
         raise ValueError('Keep every accepted explanation and at least one actual row from each declared course')
     per_pass = math.ceil(mix['rows_per_epoch'] / template['batch_size'])
     if per_pass > template['max_steps']:
@@ -137,6 +140,9 @@ def compile_recipe(template, token, root):
     if joint_validation:
         budget.update(validation_profile=validation_profile, validation_rows_by_stage=validation_counts,
             validation_uses_all_original_rows=True, validation_metric='token_nll_over_complete_original_validation')
+    if full_source:
+        budget.update(source_coverage_profile=template['source_coverage_profile'],
+            all_actual_training_rows_selected_each_epoch=True, finite_anchor_stage=mix['anchor_stage'])
     return recipe, budget
 
 
@@ -304,6 +310,9 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 course_replay_counts_toward_paper_label_scale=False)
         if validation_coverage is not None:
             result['joint_validation_coverage'] = validation_coverage
+        if 'source_coverage_profile' in budget:
+            result.update(source_coverage_profile=budget['source_coverage_profile'],
+                          all_actual_training_rows_selected_each_epoch=True)
         atomic_json(root / 'verification.json', result)
         inputs = [source, source.parent / 'manifest.json', source.parent / 'config.json',
             recipe_template, recipe_path, token_manifest, Path(token['config']['parent_completion']),

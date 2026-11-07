@@ -286,6 +286,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     selected = probe_data(recipe, token, root / 'data', train_examples=32 if distillation else 24)
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
                   validation_examples=12, generation_examples=0, purpose='Four-GPU full-decoder actual 4 versus 2+2 probe; no independent test or completed SFT claim')
+    if 'source_coverage_profile' in recipe:
+        # Capacity/resume checks must exercise the longest explanations rather
+        # than inherit quotas from a much larger formal course-replay corpus.
+        for key in ['source_coverage_profile', 'validation_profile', 'validation_rows_by_stage']:
+            common.pop(key, None)
+        old_stages = [stage for stage in recipe['stages'] if stage != 'explanation']
+        common['mixture'] = ({'explanation': .8, **dict.fromkeys(old_stages, .2 / len(old_stages))}
+                             if old_stages else {'explanation': 1.0})
+        common['validation_stages'] = ['explanation']
     common = probe_row_indexes(common, root)
     expected_inputs = {str(p): guard.bind(p)['sha256'] for p in training_input_paths(common)}
     initial = root / 'zero-init.pt';initial_manifest = root / 'zero-init.manifest.json'
@@ -335,6 +344,9 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         'longest_actual_train_validation_probe': selected,
         'independent_test_used_for_training_or_selection': False,
         'formal_sft_started_by_this_preflight': False, 'strong_play_or_coaching_gain_proven': False}
+    if 'source_coverage_profile' in recipe:
+        result.update(formal_source_coverage_profile=recipe['source_coverage_profile'],
+                      bounded_probe_is_full_training_coverage=False)
     result['pinned_base_model_assets'] = base_assets
     result['pinned_base_model_manifest'] = base_reference
     atomic_json(root / 'verification.json', result)

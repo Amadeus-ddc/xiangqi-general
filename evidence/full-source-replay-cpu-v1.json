@@ -1,0 +1,27 @@
+{
+  "status": "verified_CPU_full_source_SFT_sampler_and_round_controls",
+  "source_coverage_profile": "all_actual_training_rows_v1",
+  "new_CPU_checks": 16,
+  "related_CPU_checks": 171,
+  "actual_7770_row_native_control_sha256": "ba4e2fe275a1afb4af69eebc582c19db1f1e40a3d2ffe9810c46559bde421b06",
+  "actual_training_rows_by_stage": {
+    "explanation": 1114,
+    "static_current": 1792,
+    "dynamic_current": 1536,
+    "static_future": 1792,
+    "dynamic_future": 1536
+  },
+  "all_actual_rows_selected_once_before_distributed_tail_padding": true,
+  "explicit_native_SFT_prepare_passed": true,
+  "native_optimizer_updates_per_complete_pass": 243,
+  "four_pass_update_budget_for_this_snapshot": 972,
+  "distributed_padding_rows_per_epoch": 2,
+  "capacity_resume_probe_uses_bounded_longest_explanations_and_reference_replay_mixture": true,
+  "bounded_capacity_probe_is_full_formal_training_coverage": false,
+  "legacy_without_explicit_profile_preserves_primary_anchor_requirement": true,
+  "actual_new_GPU_capacity_probe_or_student_SGD_executed": false,
+  "controlled_round_runner_is_real_GPU_execution": false,
+  "independent_test_used": false,
+  "model_strength_or_coaching_gain_proven": false,
+  "full_goal_complete": false
+}
