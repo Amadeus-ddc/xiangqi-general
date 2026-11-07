@@ -27,8 +27,8 @@ def cache_chain(root,keys):
     return paths
 
 
-def fixture(tmp_path,monkeypatch):
-    args=corpus_control.fixture(tmp_path);corpus.prepare(**args);data=args['output']
+def fixture(tmp_path,monkeypatch,*,validation_histories=1):
+    args=corpus_control.fixture(tmp_path,validation_histories=validation_histories);corpus.prepare(**args);data=args['output']
     keys=sorted({r['feature_key'] for s in ['train','validation'] for r in load_jsonl(data/(s+'.jsonl'))})
     paths=cache_chain(tmp_path,keys)
     parent=tmp_path/'parent';parent.mkdir();source=parent/'adapter.pt';source.write_bytes(b'controlled state; no weights loaded')

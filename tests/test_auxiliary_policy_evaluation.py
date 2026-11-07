@@ -93,8 +93,9 @@ def test_auxiliary_evaluation_rejects_changed_original_rows_or_token_contract(tm
     with pytest.raises(ValueError): evaluation.validation_spec(config)
 
 
-def native_completed_auxiliary(tmp_path, monkeypatch, *, world=4):
-    args, calls = training_control.setup(tmp_path, monkeypatch, world=world)
+def native_completed_auxiliary(tmp_path, monkeypatch, *, world=4, validation_histories=1, parent_rounds=2):
+    args, calls = training_control.setup(tmp_path, monkeypatch, world=world,
+        validation_histories=validation_histories, parent_rounds=parent_rounds)
     native_gpu = training.run_preflight
     def bounded_gpu(source, recipe, token, output, resume=False):
         result = native_gpu(source, recipe, token, output, resume=resume)
@@ -113,7 +114,7 @@ def native_completed_auxiliary(tmp_path, monkeypatch, *, world=4):
     original = evaluation.completed_parent
     def parent(source, completion, *more, **kwargs):
         if Path(source) == args['source']:
-            return saved, dict(verification=dict(trained_search_distillation_rounds=2))
+            return saved, dict(verification=dict(trained_search_distillation_rounds=parent_rounds))
         return original(source, completion, *more, **kwargs)
     monkeypatch.setattr(evaluation, 'completed_parent', parent)
     monkeypatch.setattr(evaluation, 'checked_parent', lambda source, clean: saved)

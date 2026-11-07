@@ -1,11 +1,20 @@
 # Xiangqi General model card
 
+The [descendant search pilot](DESCENDANT_SEARCH_PILOT.md) checks actual completed
+full-decoder parents, cumulative auxiliary/search round counts, all paired raw
+validation answers and the complete auxiliary neural review. Auxiliary descendants
+must retain the full validation-reference isolation certificate from their training
+corpus. An explicitly pinned historical source inventory permits compatible saved
+record/metric replay; it does not establish inference-deployment equivalence.
+Mining adds no SGD round. These CPU consumers establish neither real new-label
+yield nor improved chess strength or reliable teaching.
+
 The [search-protection exporter](SEARCH_PROTECTION.md) reconstructs the original
 held-out authority plus every auxiliary-validation reference PV and its color
 mirror, including unused long suffixes. Explicit mining, collection and merge
 contracts carry that same evidence; the original authority count remains separate.
-This is isolation infrastructure. It does not admit an auxiliary checkpoint to
-the pilot, complete three-process search distillation, or establish model quality.
+This isolation infrastructure is one required part of descendant pilot admission.
+It does not complete three-process search distillation or establish model quality.
 
 ## Current verified state (2026-11-07)
 

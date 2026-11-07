@@ -8,7 +8,8 @@ import subprocess
 import sys
 import time
 
-from .clean_sft_evaluation import checked_sft, teacher_artifacts
+from .clean_sft_evaluation import capability_kind, checked_sft, teacher_artifacts, validation_spec
+from .search_parent import admit_descendant, family, round_counts
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest
 from .recorded_search_inputs import ARTIFACTS, BoundInputs, checked_root_offset
 from .sampling import checked_seed, search_generation_policy
@@ -33,6 +34,9 @@ def _source_pool(config):
 
 
 def pilot_spec(config, bound):
+    if 'protection_manifest' in config and (not isinstance(config['protection_manifest'], str) or
+            not config['protection_manifest'].strip()):
+        raise ValueError('Search protection must be an explicit completed manifest path')
     if type(config.get('require_immediate_mate_consistency', False)) is not bool:
         raise ValueError('Immediate mate consistency requirement must be boolean')
     if ('student_autocast_cache_enabled' in config and
@@ -94,13 +98,16 @@ def pilot_spec(config, bound):
             pool['config']['heldout_data'] != evaluation['data'] or
             counts['candidate_training_histories'] < config['limit'] + offset or
             evaluation.get('split') != 'validation' or evaluation.get('memories') != ['normal', 'zero', 'shuffled'] or
-            recipe.get('require_clean_foundation_handoff') is not True or
-            recipe['data_path'] != evaluation['data'] or recipe['feature_path'] != evaluation['features'] or
-            token.get('status') != 'complete' or
-            token.get('kind') != 'latent_only_reviewed_explanation_data_preflight' or
-            token['config']['data'] != evaluation['data'] or
-            token['cache_header_only_input']['path'] != evaluation['features']):
+            token.get('status') != 'complete'):
         raise ValueError('The pilot requires the original isolated pool and exact clean SFT validation inputs')
+    if family(token) == 'clean':
+        if (recipe.get('require_clean_foundation_handoff') is not True or
+                recipe['data_path'] != evaluation['data'] or recipe['feature_path'] != evaluation['features'] or
+                token['config']['data'] != evaluation['data'] or
+                token['cache_header_only_input']['path'] != evaluation['features']):
+            raise ValueError('The initial pilot requires the exact clean SFT validation inputs')
+    else:
+        validation_spec(evaluation)
     teacher, teacher_guard = teacher_artifacts(evaluation['teacher_config'])
     bound.bind(evaluation['teacher_config'])
     return evaluation, recipe, token, pool, teacher, teacher_guard
@@ -141,6 +148,9 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
     evaluation, recipe, token, pool, teacher, teacher_guard = pilot_spec(config, bound)
     pilot_kind = ('clean_student_game_search_yield_pilot' if _source_pool(config)[0]=='student_game_inputs'
                   else 'clean_recorded_search_yield_pilot')
+    parent_family = family(token)
+    if parent_family != 'clean':
+        pilot_kind = pilot_kind.replace('clean_', parent_family + '_', 1)
     contract = {'pipeline': str(pipeline), 'validation': str(validation),
         'producer_session': producer_session, 'config': str(config_path),
         'config_sha256': digest(config_path), 'code': code_identity(),
@@ -189,12 +199,12 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
     try:
         validation_path = wait_for_validation(validation, producer_session, root, poll_seconds)
         unchanged()
-        capability = checked_proof(validation_path, 'clean_initial_sft_capability_validation', bound)
+        capability = checked_proof(validation_path, capability_kind(token), bound)
         result = capability['verification']
         if (capability['config']['pipeline'] != str(pipeline) or
                 capability['config']['config'] != config['evaluation_config'] or
                 capability['config']['config_sha256'] != digest(config['evaluation_config']) or
-                result.get('actual_clean_initial_sft_completed_before_model_or_reviewer_load') is not True or
+                result.get('actual_clean_initial_sft_completed_before_model_or_reviewer_load') is not (parent_family == 'clean') or
                 result.get('split') != 'validation' or result.get('all_validation_examples') != evaluation['validation_examples'] or
                 result.get('independent_test_used_for_training_or_selection') is not False or
                 result.get('raw_answers_repaired') is not False or
@@ -205,6 +215,10 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             raise ValueError('The search parent differs from the model actually evaluated')
         bound.bind(source, parent['outputs'][str(source)])
         source_key,source_path,_,source_artifacts = _source_pool(config)
+        admission = None
+        if parent_family != 'clean':
+            admission = admit_descendant(source, parent, token, validation_path, capability,
+                evaluation, config, source_path, bound)
         is_student = source_key=='student_game_inputs'
         if is_student and Path(pool['config']['checkpoint']).resolve()!=Path(source).resolve():
             raise ValueError('The actual neural-game source actor differs from the evaluated search parent')
@@ -227,6 +241,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             **{key: evaluation[key] for key in ['executable', 'weights']}}
         if is_student:
             arguments['student_game_inputs'] = source_path
+        if 'protection_manifest' in config:
+            arguments['protection_manifest'] = config['protection_manifest']
         if config.get('student_generation_config') is not None:
             arguments['student_generation_config'] = config['student_generation_config']
         if 'consolidation_profile' in config:
@@ -244,6 +260,8 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             if config.get(key) is not None:
                 arguments[key] = config[key]
         mined = completed_stage('search_distillation', arguments, 'search_distillation_mining', mining, True)
+        if admission is not None and mined['verification'].get('search_protection') != admission['search_protection']:
+            raise ValueError('Actual mining must retain the admitted descendant validation protection')
         if ('student_autocast_cache_enabled' in config and
                 mined['verification'].get('student_autocast_cache_enabled') is not config['student_autocast_cache_enabled']):
             raise ValueError('Actual student cache evidence differs from the configured override')
@@ -333,18 +351,23 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             proofs += [consolidation / 'manifest.json', data / 'manifest.json']
         unchanged()
         final = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
-            'clean_sft_and_paired_validation_completed_before_search': True,
-            'actual_selected_checkpoint': str(source), 'actual_selected_step': parent['verification']['selected_sft_step'],
+            'clean_sft_and_paired_validation_completed_before_search': parent_family == 'clean',
+            'selected_full_decoder_and_paired_validation_completed_before_search': True,
+            'actual_selected_checkpoint': str(source),
+            'actual_selected_step': parent['verification'].get('selected_sft_step', parent['verification'].get('selected_step')),
             'attempted_original_training_roots': len(attempts), 'mined_queries': len(queries),
             'mining_reasons': mined['verification']['reasons'], 'accepted_structured_training_labels': len(labels),
             'rejected_consolidations': len(rejections), 'mining_yield': len(queries) / len(attempts),
             'final_structured_label_yield': len(labels) / len(attempts),
             'neural_consolidation_executed': bool(queries), 'empty_distillation_training_started': False,
-            'strategic_prose_fully_verified': False, 'trained_search_distillation_rounds': 0,
+            'strategic_prose_fully_verified': False, **round_counts(parent),
+            'new_SGD_rounds_from_this_pilot': 0,
             'independent_test_used_for_training_or_selection': False,
             'strong_play_or_reliable_coaching_proven': False,
             'next_action': 'Evaluate accepted prose and scale useful sources before creating a distillation training run'
                            if labels else 'Inspect preserved raw failures before spending more teacher or training budget'}
+        if admission is not None:
+            final['descendant_admission'] = admission
         atomic_json(root / 'verification.json', final)
         completed = manifest(pilot_kind, contract, proofs,
                              [root / 'verification.json'], final)

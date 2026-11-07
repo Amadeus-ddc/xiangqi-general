@@ -14,8 +14,8 @@ from xqgeneral.finite_training import prepare_finite_epochs
 from xqgeneral.training_index import IndexedTrainingRows
 
 
-def setup(tmp_path,monkeypatch,damage=None,*,world=4):
-    args,saved,_=inputs_control.fixture(tmp_path,monkeypatch);auxiliary.prepare(**args)
+def setup(tmp_path,monkeypatch,damage=None,*,world=4,validation_histories=1,parent_rounds=2):
+    args,saved,_=inputs_control.fixture(tmp_path,monkeypatch,validation_histories=validation_histories);auxiliary.prepare(**args)
     token=args['output']/'manifest.json';template=tmp_path/'recipe-template.json';recipe=inputs_control.template()
     if world==3:
         from xqgeneral.full_decoder_topology import THREE_WORKERS
@@ -23,7 +23,7 @@ def setup(tmp_path,monkeypatch,damage=None,*,world=4):
             distributed_strategy='fsdp2',fsdp_shard_paths=['bridges.*','base'])
     atomic_json(template,recipe)
     monkeypatch.setattr(training,'completed_parent',lambda source,completion,bound:(
-        auxiliary.completed_parent(source,completion,bound)[0],dict(verification=dict(trained_search_distillation_rounds=2))))
+        auxiliary.completed_parent(source,completion,bound)[0],dict(verification=dict(trained_search_distillation_rounds=parent_rounds))))
     calls=[]
     def gpu(source,recipe_path,token_path,root,resume=False):
         calls.append('GPU_preflight');root=Path(root);root.mkdir()

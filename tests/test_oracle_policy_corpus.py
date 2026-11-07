@@ -71,32 +71,34 @@ def rebind(directory,name,rows):
     atomic_json(directory/'manifest.json',proof)
 
 
-def fixture(tmp_path):
+def fixture(tmp_path, *, validation_histories=1):
     reds=sorted(legal_moves(START_FEN));records=[]
     for red in reds[:10]:
         black=sorted(legal_moves(play(START_FEN,red)))
         records.extend(context([red,move]) for move in black[:5])
-    heldout=context([reds[-1],sorted(legal_moves(play(START_FEN,reds[-1])))[-1]],'validation')
+    heldouts=[context([reds[-1],sorted(legal_moves(play(START_FEN,reds[-1])))[-1-i]],'validation')
+              for i in range(validation_histories)]
     explanations=tmp_path/'explanations';base=tmp_path/'original-courses';rehearsal=tmp_path/'replay'
     policies=tmp_path/'policies';references=tmp_path/'references';authority=tmp_path/'authority'
-    val=explanation(heldout);train=[explanation(row) for row in records]
-    dataset(explanations,ENGINE_QUALIFIED_KIND,train,[val],dict(
-        completed_parent_native_and_isolation_proofs_reused=True,by_split=dict(train=len(train),validation=1,test=1)))
+    vals=[explanation(row) for row in heldouts];val=vals[0];train=[explanation(row) for row in records]
+    dataset(explanations,ENGINE_QUALIFIED_KIND,train,vals,dict(
+        completed_parent_native_and_isolation_proofs_reused=True,by_split=dict(train=len(train),validation=len(vals),test=1)))
     qa_train=[qa(row,stage) for row in records for stage in corpus.STAGES]
-    qa_val=[qa(heldout,stage) for stage in corpus.STAGES]
-    dataset(base,'controlled_original_qa',qa_train,qa_val,dict(by_split=dict(train=len(qa_train),validation=4,test=1)))
+    qa_val=[qa(row,stage) for row in heldouts for stage in corpus.STAGES]
+    dataset(base,'controlled_original_qa',qa_train,qa_val,dict(by_split=dict(train=len(qa_train),validation=len(qa_val),test=1)))
     required=['all_selected_train_and_validation_answers_natively_regraded',
         'all_selected_full_histories_and_futures_natively_checked',
         'original_completed_train_validation_test_split_proof_reused',
         'training_rows_drawn_only_from_original_train_split','original_training_rows_preserved_byte_for_byte',
         'validation_bytes_unchanged']
     proof=dataset(rehearsal,'latent_only_course_replay_data_preflight',qa_train,qa_val,
-        dict(by_split=dict(train=len(qa_train),validation=4,test=0),**dict.fromkeys(required,True)),[base/'train.jsonl'])
+        dict(by_split=dict(train=len(qa_train),validation=len(qa_val),test=0),**dict.fromkeys(required,True)),[base/'train.jsonl'])
     proof['config']['source_data']=str(base);atomic_json(rehearsal/'manifest.json',proof)
     executable,weights=tmp_path/'engine',tmp_path/'nnue'
     executable.write_bytes(b'controlled engine identity; never run');weights.write_bytes(b'controlled weights')
     authority.mkdir();atomic_json(authority/'manifest.json',dict(status='controlled_fixture'))
-    reserved=corpus._expanded(corpus._positions(val));atomic_json(authority/'heldout-positions.json',sorted(reserved))
+    reserved=set().union(*(corpus._expanded(corpus._positions(row)) for row in vals))
+    atomic_json(authority/'heldout-positions.json',sorted(reserved))
     shared=dict(profile='shared_canonical_heldout_authority_v1',authority=str(authority),
         authority_manifest_binding=binding(authority/'manifest.json'),reserved_positions_binding=binding(authority/'heldout-positions.json'),
         base_data_identities={str(base/(s+'.jsonl')):binding(base/(s+'.jsonl')) for s in ['train','validation','test']},
@@ -117,8 +119,11 @@ def fixture(tmp_path):
     atomic_json(policies/'contract.json',dict(logical=logical,shared_isolation_authority=shared))
     proof['config']['logical']=logical
     proof['outputs'][str(policies/'contract.json')]=binding(policies/'contract.json');atomic_json(policies/'manifest.json',proof)
-    references.mkdir();bare={k:val[k] for k in RECORD_FIELDS};q=query(bare,1000000)
-    write_jsonl(references/'roots.jsonl',[dict(record=bare,response=q['response'])])
+    references.mkdir();root_rows=[]
+    for row in vals:
+        bare={k:row[k] for k in RECORD_FIELDS};q=query(bare,1000000)
+        root_rows.append(dict(record=bare,response=q['response']))
+    write_jsonl(references/'roots.jsonl',root_rows)
     logical=dict(profile=REFERENCE_PROFILE,data=str(explanations),executable=str(executable),weights=str(weights),nodes=1000000)
     proof=manifest(REFERENCE_KIND,dict(logical=logical),[executable,weights,explanations/'validation.jsonl'],
         [references/'roots.jsonl'],dict(validation_only=True))
