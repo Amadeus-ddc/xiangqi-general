@@ -23,6 +23,7 @@ from .sft import checked_parent
 
 TOKEN_KIND = 'latent_only_search_distillation_data_preflight'
 ROUND_KIND = 'full_decoder_search_distillation_sft_round'
+AUXILIARY_ROUND_KIND = 'full_decoder_auxiliary_policy_sft_round'
 
 
 def completed_parent(source, completion_path, bound=None):
@@ -36,6 +37,8 @@ def completed_parent(source, completion_path, bound=None):
             'actual_four_gpu_full_decoder_preflight_passed', 'initial_explanation_sft_completed'],
         ROUND_KIND: ['initial_explanation_sft_completed_before_round',
             'actual_four_gpu_full_decoder_preflight_passed', 'actual_distillation_sft_completed'],
+        AUXILIARY_ROUND_KIND: ['initial_explanation_sft_completed_before_round',
+            'actual_four_gpu_full_decoder_preflight_passed','actual_auxiliary_policy_sft_completed'],
     }
     result = proof.get('verification', {})
     if (proof.get('status') != 'complete' or proof.get('kind') not in required or

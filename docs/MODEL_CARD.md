@@ -2,6 +2,15 @@
 
 ## Current verified state (2026-11-07)
 
+The [auxiliary seven-stage training interface](AUXILIARY_POLICY_TRAINING.md)
+continues from a completed full-decoder explanation model, verifies native tokens
+and feature ancestry, compiles complete finite source coverage and validates every
+original seven-stage validation ID. It requires a fresh, typed four-GPU capacity
+and exact-resume check before formal SGD. Controlled protocol tests do not prove
+actual GPU execution or model gains. A completed auxiliary round increments only
+the auxiliary count, preserving the trained on-policy search-distillation count.
+The real parent/cache readback is complete; new auxiliary training remains pending.
+
 The expanded four-course route and initial explanation/replay SFT have completed.
 The joint model answers 2345/2600 development QA questions correctly (90.19%).
 In 384 raw development matches, it records zero wins, 383 losses and one draw;

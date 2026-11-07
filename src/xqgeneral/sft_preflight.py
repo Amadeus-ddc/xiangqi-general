@@ -99,6 +99,9 @@ def full_parameter_summary(state, initial):
 
 
 def probe_data(recipe, token_proof, output, *, train_examples=24):
+    from .auxiliary_policy_preflight import KIND as AUXILIARY_KIND, auxiliary_probe_data
+    if token_proof.get('kind') == AUXILIARY_KIND:
+        return auxiliary_probe_data(recipe,token_proof,output,train_examples=train_examples)
     lengths = load_jsonl(next(p for p in token_proof['outputs'] if p.endswith('token-lengths.jsonl')))
     result = {}
     for split, limit in [('train', train_examples), ('validation', 12)]:
@@ -224,8 +227,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         for path, binding in token[section].items():
             guard.bind(path, binding)
     from .distillation_preflight import TOKEN_KIND, completed_parent
+    from .auxiliary_policy_preflight import KIND as AUXILIARY_KIND, auxiliary_parent
     distillation = token.get('kind') == TOKEN_KIND
-    if distillation:
+    auxiliary = token.get('kind') == AUXILIARY_KIND
+    post_sft = distillation or auxiliary
+    preflight_kind = ('four_gpu_auxiliary_policy_sft_preflight' if auxiliary else
+        'four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight')
+    if auxiliary:
+        saved = auxiliary_parent(source,token,recipe,guard)
+    elif distillation:
         required = ['all_full_native_histories_facts_branches_and_explicit_prose_moves_checked',
             'protected_validation_and_test_bytes_unchanged', 'all_label_feature_contexts_present',
             'parent_full_decoder_completion_verified', 'all_original_feature_keys_and_tensor_references_preserved',
@@ -241,18 +251,20 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         saved = checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {}))
     formal = prepare_config(saved, recipe, source, root / 'unused-formal-output')
     if (formal.get('decoder_training') != 'full' or formal.get('trainable_parameter_dtype') != 'float32' or
-            formal.get('ddp_world_size') != 4 or formal['batch_size'] != (32 if distillation else 16) or formal.get('micro_batch_size') != 1 or
+            formal.get('ddp_world_size') != 4 or formal['batch_size'] != (32 if post_sft else 16) or formal.get('micro_batch_size') != 1 or
             not formal.get('deterministic_training') or not formal.get('feature_cache_mmap')):
         raise ValueError('Preflight requires the exact deterministic four-worker full-decoder recipe')
-    if token.get('kind') != (TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight') or token['config']['data'] != recipe['data_path']:
+    token_kind = AUXILIARY_KIND if auxiliary else TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight'
+    token_data = token['config']['logical']['data'] if auxiliary else token['config']['data']
+    if token.get('kind') != token_kind or token_data != recipe['data_path']:
         raise ValueError('A completed token preflight for the exact reviewed data is required')
     if (token['verification']['token_limit'] != formal['max_tokens'] or
             not token['verification']['all_train_validation_supervision_fits_without_truncation']):
         raise ValueError('Formal token limit differs from the completed no-truncation preflight')
     cache_item = token['cache_header_only_input']
-    if formal['feature_path'] != cache_item['path'] or not distillation and formal['feature_path'] != saved['feature_path']:
+    if formal['feature_path'] != cache_item['path'] or not post_sft and formal['feature_path'] != saved['feature_path']:
         raise ValueError('Full-decoder preflight must use the exact foundation feature cache')
-    foundation_path = Path(token['config']['foundation_preflight'])
+    foundation_path = Path(token['config']['logical']['parent_completion'] if auxiliary else token['config']['foundation_preflight'])
     foundation = guard.json(foundation_path)
     if foundation.get('status') != 'complete':raise ValueError('Completed pinned-base foundation preflight is required')
     base_assets, base_reference = pinned_decoder_assets(formal, recipe, foundation, guard)
@@ -272,7 +284,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             raise ValueError('Preserve an existing preflight; resume only its exact immutable contract')
         if (root / 'manifest.json').exists():
             proof = guard.json(root / 'manifest.json')
-            kind = 'four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight'
+            kind = preflight_kind
             if (proof.get('status') != 'complete' or proof.get('kind') != kind or proof.get('code') != contract['code'] or
                     proof.get('config') != {'recipe': str(recipe_path), 'source': str(source),
                                             'token_preflight': str(token_manifest)}):
@@ -283,7 +295,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             guard.unchanged()
             return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
-    selected = probe_data(recipe, token, root / 'data', train_examples=32 if distillation else 24)
+    selected = probe_data(recipe, token, root / 'data', train_examples=32 if post_sft else 24)
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
                   validation_examples=12, generation_examples=0, purpose='Four-GPU full-decoder actual 4 versus 2+2 probe; no independent test or completed SFT claim')
     if 'source_coverage_profile' in recipe:
@@ -291,10 +303,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         # than inherit quotas from a much larger formal course-replay corpus.
         for key in ['source_coverage_profile', 'validation_profile', 'validation_rows_by_stage']:
             common.pop(key, None)
-        old_stages = [stage for stage in recipe['stages'] if stage != 'explanation']
-        common['mixture'] = ({'explanation': .8, **dict.fromkeys(old_stages, .2 / len(old_stages))}
-                             if old_stages else {'explanation': 1.0})
-        common['validation_stages'] = ['explanation']
+        if auxiliary:
+            counts=selected['train']['rows_by_stage'];total=sum(counts.values())
+            common['mixture']={stage:counts[stage]/total for stage in recipe['stages']}
+            common['validation_stages']=list(recipe['stages'])
+        else:
+            old_stages = [stage for stage in recipe['stages'] if stage != 'explanation']
+            common['mixture'] = ({'explanation': .8, **dict.fromkeys(old_stages, .2 / len(old_stages))}
+                                 if old_stages else {'explanation': 1.0})
+            common['validation_stages'] = ['explanation']
     common = probe_row_indexes(common, root)
     expected_inputs = {str(p): guard.bind(p)['sha256'] for p in training_input_paths(common)}
     initial = root / 'zero-init.pt';initial_manifest = root / 'zero-init.manifest.json'
@@ -338,7 +355,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             code_identity() != contract['code']):
         raise ValueError('Formal recipe or selected foundation changed during actual GPU preflight')
     result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline', **observed,
-        'full_decoder_initialization_preserved_all_foundation_tensors': not distillation,
+        'full_decoder_initialization_preserved_all_foundation_tensors': not post_sft,
         'full_decoder_initialization_preserved_all_parent_tensors': True,
         'actual_continuous_four_and_two_plus_two_updates_compared': True,
         'longest_actual_train_validation_probe': selected,
@@ -363,10 +380,14 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
                for split in ['train', 'validation']]
     if base_reference is not None:
         inputs.append(Path(base_reference['path']))
-    proof = manifest('four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight',
+    proof = manifest(preflight_kind,
         {'recipe': str(recipe_path), 'source': str(source), 'token_preflight': str(token_manifest)},
         list(dict.fromkeys(inputs)), outputs, result)
-    proof['fresh_feature_cache_input'] = dict(cache_item, fresh_full_bytes_hash_verified_by_this_preflight=True)
+    if auxiliary:
+        from .verified_inputs import input_digest_execution
+        proof['verified_feature_cache_input'] = dict(cache_item,execution=input_digest_execution())
+    else:
+        proof['fresh_feature_cache_input'] = dict(cache_item, fresh_full_bytes_hash_verified_by_this_preflight=True)
     atomic_json(root / 'manifest.json', proof)
     return result
 
