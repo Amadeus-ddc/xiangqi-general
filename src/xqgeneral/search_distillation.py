@@ -517,6 +517,8 @@ def _main():
     pools = parser.add_mutually_exclusive_group()
     pools.add_argument('--prepared-inputs', help='Completed search_inputs directory bound to this data and seed')
     pools.add_argument('--recorded-inputs', help='Completed unused canonical-game roots and held-out positions')
+    pools.add_argument('--student-game-inputs',default=argparse.SUPPRESS,
+                       help='Completed actual neural training-game roots under the shared held-out authority')
     parser.add_argument('--output', required=True)
     parser.add_argument('--limit', type=int, default=512)
     parser.add_argument('--root-offset', type=int,
@@ -550,12 +552,15 @@ def _main():
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
+    student_game_inputs = getattr(args,'student_game_inputs',None)
+    if student_game_inputs is not None and not student_game_inputs.strip():
+        raise ValueError('An explicit neural training-game pool cannot be empty')
     if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
         raise ValueError('Search limits and node budgets must be positive; recursion depth cannot be negative')
     if args.root_offset is not None:
         from .recorded_search_inputs import checked_root_offset
         checked_root_offset(args.root_offset)
-        if not args.recorded_inputs:
+        if not args.recorded_inputs and not student_game_inputs:
             raise ValueError('A root offset requires completed recorded inputs')
     checked_child_prompt_profile(args.child_prompt_profile or 'full_explanation', args.child_contract)
     consolidation_profile = getattr(args, 'consolidation_profile', None)
@@ -594,6 +599,16 @@ def _main():
     if args.recorded_inputs:
         from .recorded_search_inputs import ARTIFACTS, prepared_roots
         input_paths.extend(Path(args.recorded_inputs) / name for name in ARTIFACTS)
+    student_pool,student_bound = None,None
+    if student_game_inputs:
+        from .student_game_inputs import ARTIFACTS as STUDENT_ARTIFACTS, prepared_student_roots
+        from .recorded_search_inputs import BoundInputs
+        input_paths.extend(Path(student_game_inputs)/name for name in STUDENT_ARTIFACTS)
+        student_bound = BoundInputs()
+        student_pool = student_bound.json(Path(student_game_inputs)/'manifest.json')
+        if Path(student_pool['config']['checkpoint']).resolve()!=Path(args.checkpoint).resolve():
+            raise ValueError('Student training-game roots require the exact same original search actor')
+        input_paths.append(student_pool['config']['expert_weights'])
     contract = {'arguments': arguments, 'input_hashes': {str(p): digest(p) for p in input_paths},
                 'code': code_identity()}
     if generation_policy is not None:
@@ -607,12 +622,13 @@ def _main():
     else:
         atomic_json(root / 'contract.json', contract)
     additional_reserved = set()
-    if args.recorded_inputs:
+    if args.recorded_inputs or student_game_inputs:
         base_identities = {str(Path(args.data) / f'{s}.jsonl'): {
             'sha256': contract['input_hashes'][str(Path(args.data) / f'{s}.jsonl')],
             'bytes': (Path(args.data) / f'{s}.jsonl').stat().st_size}
             for s in ['train', 'validation', 'test']}
-        records, additional_reserved = prepared_roots(args.recorded_inputs, args.data,
+        reader = prepared_student_roots if student_game_inputs else prepared_roots
+        records, additional_reserved = reader(student_game_inputs or args.recorded_inputs, args.data,
             args.limit, args.seed, base_identities,
             offset=0 if args.root_offset is None else args.root_offset)
     elif args.prepared_inputs:
@@ -621,6 +637,11 @@ def _main():
             {'sha256': contract['input_hashes'][str(train)], 'bytes': train.stat().st_size})
     else:
         records = training_roots(args.data, args.limit, args.seed)
+    if student_bound is not None:
+        student_bound.unchanged()
+        for section in ['inputs','outputs']:
+            for path,binding in student_pool[section].items():
+                student_bound.bind(path,binding)
     partial = root / 'results.partial.jsonl'
     results = load_jsonl(partial) if partial.exists() else []
     oracle_log = root / 'oracle-queries.partial.jsonl'
@@ -646,6 +667,8 @@ def _main():
                 raise ValueError('Original student batch ledger has malformed request data')
             checked_seed(int(item['seed']))
     predictor_options = {'feature_cache': args.features}
+    if student_pool is not None:
+        predictor_options['weights'] = student_pool['config']['expert_weights']
     cache_override = getattr(args, 'student_autocast_cache', None)
     if cache_override is not None:
         predictor_options['autocast_cache_enabled'] = cache_override == 'on'
@@ -739,10 +762,14 @@ def _main():
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
+    if student_game_inputs:
+        proof.update(student_game_training_inputs=True,
+                     student_game_continuation_is_best_move_label=False,
+                     additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
     if args.root_offset is not None:
-        proof.update(recorded_root_offset=args.root_offset,
-            selected_recorded_root_ids_sha256=hashlib.sha256(json.dumps(
-                [row['id'] for row in records], separators=(',', ':')).encode()).hexdigest())
+        proof.update(**{('student_game_root_offset' if student_game_inputs else 'recorded_root_offset'):args.root_offset,
+            ('selected_student_game_root_ids_sha256' if student_game_inputs else 'selected_recorded_root_ids_sha256'):
+                hashlib.sha256(json.dumps([row['id'] for row in records], separators=(',', ':')).encode()).hexdigest()})
     if generation_policy is not None:
         proof.update(student_generation_policy=generation_policy, generation_seed_profile=SEED_PROFILE,
                      generation_software=contract['generation_software'],
@@ -772,6 +799,8 @@ def _main():
         proof['student_batching'] = batch_statistics
         proof['all_successful_student_decode_batches_preserved'] = True
         proof['student_decode_batch_records'] = batch_ordinal
+    if student_bound is not None:
+        student_bound.unchanged()
     atomic_json(root / 'manifest.json', manifest('search_distillation_mining', arguments, input_paths,
                 [root / 'queries.jsonl', partial, oracle_log] + ([batch_log] if batching is not None else []), proof))
     print(json.dumps(proof), flush=True)

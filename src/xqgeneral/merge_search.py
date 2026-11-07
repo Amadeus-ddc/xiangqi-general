@@ -22,16 +22,32 @@ from .search_distillation import reserved_positions
 MERGED_KIND = 'merged_search_consolidated_dataset'
 
 
-def _leaf_dataset(data, source, bound, minimum_labels=32):
+SHARED_SOURCE_PROFILE = 'shared_canonical_sources_v1'
+
+
+def _checked_source_profile(value):
+    if value not in {None,SHARED_SOURCE_PROFILE}:
+        raise ValueError('Unknown explicit search-source merge profile')
+    return value
+
+
+def _leaf_dataset(data, source, bound, minimum_labels=32, *, source_profile=None):
+    _checked_source_profile(source_profile)
     data = Path(data)
     proof = bound.json(data / 'manifest.json')
     result = proof.get('verification', {})
+    student_pool = proof.get('config',{}).get('student_game_inputs') or result.get('student_game_inputs')
+    is_student = bool(student_pool)
+    if is_student and source_profile!=SHARED_SOURCE_PROFILE:
+        raise ValueError('Actual neural-game collections require the explicit shared canonical source profile')
+    isolation_flag = ('student_game_mining_isolation_rechecked_during_collection' if is_student else
+                      'recorded_mining_isolation_rechecked_during_collection')
     if (proof.get('status') != 'complete' or proof.get('kind') != 'search_consolidated_dataset' or
             type(result.get('accepted_training_roots')) is not int or result['accepted_training_roots'] < minimum_labels or
             any(result.get(k) is not True for k in ['neural_consolidation_executed',
                 'structured_facts_verified', 'explicit_prose_moves_natively_verified',
                 'all_branch_positions_isolated', 'full_history_termination_checked',
-                'recorded_mining_isolation_rechecked_during_collection',
+                isolation_flag,
                 'selected_branch_evaluation_filter_applied']) or
             result.get('evaluation_filter_profile') != EVALUATION_FILTER_PROFILE or
             result.get('max_absolute_winrate_error_exclusive') != 0.075 or
@@ -54,6 +70,8 @@ def _leaf_dataset(data, source, bound, minimum_labels=32):
                 raise ValueError('An immediate-mate-filtered collection retains an inconsistent PV')
     mining_path = Path(config.get('mining_manifest') or Path(config['queries']).parent / 'manifest.json')
     mining = bound.json(mining_path)
+    if is_student!=bool(mining.get('config',{}).get('student_game_inputs')):
+        raise ValueError('Collection and original miner disagree about their explicit source type')
     for section in ['inputs', 'outputs']:
         for path, expected in mining[section].items():
             bound.bind(path, expected)
@@ -61,8 +79,13 @@ def _leaf_dataset(data, source, bound, minimum_labels=32):
             mining['config']['checkpoint'] != str(source) or
             proof['inputs'].get(str(mining_path)) != bound.artifacts[str(mining_path)] or
             mining['inputs'].get(str(source)) != bound.bind(source) or
-            mining['verification'].get('unused_recorded_training_inputs') is not True):
+            mining['verification'].get('student_game_training_inputs' if is_student else
+                                       'unused_recorded_training_inputs') is not True):
         raise ValueError('Actual search labels must come from this selected parent and unused recorded roots')
+    if is_student and (not mining['config'].get('student_game_inputs') or
+            Path(mining['config']['student_game_inputs']).resolve()!=Path(student_pool).resolve() or
+            mining['config'].get('recorded_inputs') or result.get('recorded_mining_isolation_rechecked_during_collection') is True):
+        raise ValueError('Actual neural-game labels lost or disguised their original source type')
     validation_data = Path(result['validation_source_unchanged'])
     for split in ['validation', 'test']:
         original, copied = validation_data / f'{split}.jsonl', data / f'{split}.jsonl'
@@ -153,9 +176,9 @@ def _teacher_production(config, queries, responses, teacher, bound):
         'weight_manifest_sha256', 'generation_profile']}, str(path)
 
 
-def _production_leaf(data, source, bound):
+def _production_leaf(data, source, bound, *, source_profile=None):
     # Small valid leaves may contribute; the combined unique-label floor stays 32.
-    proof = _leaf_dataset(data, source, bound, minimum_labels=1)
+    proof = _leaf_dataset(data, source, bound, minimum_labels=1,source_profile=source_profile)
     config, result = proof['config'], proof['verification']
     for name in [config['queries'], config['responses'], config['config']]:
         _required_binding(proof, 'inputs', name, bound)
@@ -187,7 +210,7 @@ def _production_leaf(data, source, bound):
         raise ValueError('Mined queries differ from the preserved original root attempts')
     additional, _ = mining_reservations(config['queries'], queries, config['heldout_data'],
         config['validation_data'], bound, mining_path, config.get('recorded_inputs'),
-        expected_attempted_root_ids=attempted_ids)
+        expected_attempted_root_ids=attempted_ids,student_game_inputs=config.get('student_game_inputs'))
     forbidden = reserved_positions(config['heldout_data']) | reserved_positions(config['validation_data']) | additional
     rebuilt, rejected = rebuild_labels(queries, responses, teacher, forbidden,
         require_immediate_mate_consistency=config.get('require_immediate_mate_consistency', False))
@@ -206,11 +229,20 @@ def _production_leaf(data, source, bound):
         raise ValueError('Raw training record coverage differs')
     for row in actual:
         native_label(row)
-    pool = Path(mining['config']['recorded_inputs'])
+    is_student = bool(mining['config'].get('student_game_inputs'))
+    pool = Path(mining['config']['student_game_inputs'] if is_student else mining['config']['recorded_inputs'])
     isolation = {'recorded_pool_manifest': bound.artifacts[str(pool / 'manifest.json')],
         'search_acceptance': {'policy': policy, 'min_clean_ply': clean_ply},
         **{f'base_{s}': bound.artifacts[str(Path(config['heldout_data']) / f'{s}.jsonl')]
            for s in ['validation', 'test']}}
+    if source_profile==SHARED_SOURCE_PROFILE:
+        from .student_game_inputs import shared_isolation_identity
+        pool_proof = bound.json(pool/'manifest.json')
+        authority = pool_proof['config']['shared_isolation_authority']['authority'] if is_student else pool
+        common = shared_isolation_identity(authority,config['heldout_data'],config['validation_data'],bound,len(additional))
+        isolation.pop('recorded_pool_manifest')
+        isolation.update(shared_isolation_authority=common,
+            require_immediate_mate_consistency=config.get('require_immediate_mate_consistency',False))
     return proof, actual, lines, identity, attempted_ids, teacher_path, isolation
 
 
@@ -224,14 +256,17 @@ def _collection_paths(collections):
     return paths
 
 
-def _merge_plan(collections, source, bound):
+def _merge_plan(collections, source, bound, *, source_profile=None):
+    _checked_source_profile(source_profile)
     paths = _collection_paths(collections)
     rows, lines, provenance, leaves = [], [], [], []
     kept, ids, manifest_hashes, attempted, accepted_roots = {}, {}, set(), set(), set()
     protected, teacher, teacher_identity, validation_source, isolation = None, None, None, None, None
     mined_queries, rejected_queries = 0, 0
     for data in paths:
-        proof, actual, raw_lines, identity, root_ids, inference_path, leaf_isolation = _production_leaf(data, source, bound)
+        leaf = (_production_leaf(data,source,bound) if source_profile is None else
+                _production_leaf(data,source,bound,source_profile=source_profile))
+        proof, actual, raw_lines, identity, root_ids, inference_path, leaf_isolation = leaf
         proof_hash = bound.artifacts[str(data / 'manifest.json')]['sha256']
         if proof_hash in manifest_hashes:
             raise ValueError('A collection completion is repeated through an alias')
@@ -249,6 +284,10 @@ def _merge_plan(collections, source, bound):
         leaves.append({'data': str(data), 'manifest_sha256': proof_hash,
                        'accepted_training_records': len(actual), 'attempted_starting_roots': len(root_ids),
                        'teacher_inference_manifest': inference_path})
+        if source_profile==SHARED_SOURCE_PROFILE:
+            leaves[-1]['source_kind'] = ('student_engine_training_game' if
+                proof['verification'].get('student_game_mining_isolation_rechecked_during_collection') is True
+                else 'original_recorded_game_or_tactical_source')
         if proof['config'].get('require_immediate_mate_consistency', False):
             leaves[-1]['require_immediate_mate_consistency'] = True
         for row, (number, raw) in zip(actual, raw_lines, strict=True):
@@ -317,11 +356,18 @@ def _merge_plan(collections, source, bound):
         summary.update(immediate_mate_consistency_source_collections=mate_sources,
             all_source_collections_require_immediate_mate_consistency=mate_sources == len(leaves),
             immediate_mate_consistency_profile=IMMEDIATE_MATE_CONSISTENCY_PROFILE)
+    if source_profile==SHARED_SOURCE_PROFILE:
+        summary.update(source_profile=source_profile,
+            shared_isolation_authority=isolation['shared_isolation_authority'],
+            all_source_mining_isolation_rechecked_during_collection=True,
+            source_kind_counts=dict(Counter(leaf['source_kind'] for leaf in leaves)))
+        if any(leaf['source_kind']=='student_engine_training_game' for leaf in leaves):
+            summary.pop('recorded_mining_isolation_rechecked_during_collection')
     bound.unchanged()
     return paths, lines, provenance, summary
 
 
-def merge_collections(collections, source, output):
+def merge_collections(collections, source, output, *, source_profile=None):
     """Requalify flat leaves, keep first original history bytes, bind every source.
 
     Runs CPU/native checks only. Call inside the project's verified-input session
@@ -335,7 +381,7 @@ def merge_collections(collections, source, output):
     if any(p.resolve() in output.resolve().parents for p in collections):
         raise ValueError('Merged output must be separate from all immutable leaf directories')
     bound = BoundInputs()
-    paths, lines, provenance, summary = _merge_plan(collections, source, bound)
+    paths, lines, provenance, summary = _merge_plan(collections, source, bound,source_profile=source_profile)
     output.mkdir(parents=True)
     train = output / 'train.jsonl'
     with train.open('xb') as handle:
@@ -348,6 +394,8 @@ def merge_collections(collections, source, output):
         shutil.copyfile(paths[0] / path.name, path); outputs.append(path)
     saved = manifest(MERGED_KIND, {'collections': [str(p) for p in paths], 'checkpoint': str(source),
         'duplicate_policy': summary['duplicate_policy']}, [], outputs, summary)
+    if source_profile is not None:
+        saved['config']['source_profile'] = source_profile
     saved['inputs'] = bound.artifacts
     bound.unchanged()
     atomic_json(output / 'manifest.json', saved)
@@ -364,7 +412,8 @@ def collected_dataset(data, source, bound):
     if proof.get('status') != 'complete' or config.get('checkpoint') != str(source):
         raise ValueError('Merged collection must bind this exact selected search parent')
     actual = BoundInputs()
-    paths, lines, provenance, summary = _merge_plan(config.get('collections'), source, actual)
+    paths, lines, provenance, summary = _merge_plan(config.get('collections'), source, actual,
+        source_profile=config.get('source_profile'))
     if (proof.get('verification') != summary or config.get('duplicate_policy') != summary['duplicate_policy'] or
             set(proof.get('outputs', {})) != {str(data / name) for name in
                 ['train.jsonl', 'validation.jsonl', 'test.jsonl', 'provenance.jsonl']}):
@@ -387,10 +436,14 @@ def main():
     parser.add_argument('--collections', nargs='+', required=True, help='Ordered original leaf data directories')
     parser.add_argument('--checkpoint', required=True, help='Exact same selected parent used by every miner')
     parser.add_argument('--output', required=True)
+    parser.add_argument('--source-profile',choices=[SHARED_SOURCE_PROFILE],
+                        help='Explicitly permit typed sources sharing the exact canonical held-out authority')
     args = parser.parse_args()
     from .verified_inputs import input_session_from_environment
     with input_session_from_environment():
-        print(json.dumps(merge_collections(args.collections, args.checkpoint, args.output)), flush=True)
+        options = {} if args.source_profile is None else {'source_profile':args.source_profile}
+        print(json.dumps(merge_collections(args.collections,args.checkpoint,args.output,
+            **options)),flush=True)
 
 
 if __name__ == '__main__':

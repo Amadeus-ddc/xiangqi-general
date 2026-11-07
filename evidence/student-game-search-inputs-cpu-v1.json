@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "status": "CPU_source_contract_and_actual_selected_model_asset_readback_complete",
+  "new_CPU_checks": 34,
+  "related_CPU_checks": 123,
+  "controlled_receipts_are_not_actual_neural_gameplay": true,
+  "covered": [
+    "pre-generation_training_ownership",
+    "raw_full_history_and_actual_move_provenance",
+    "actual_execution_receipt_and_selected_actor_assets",
+    "pinned_decoder_and_original_verified_input_session",
+    "full_strong_score_raw_query_replay",
+    "existing_shared_reserved_position_authority",
+    "root_and_eight_actual_future_plies_with_color_mirrors",
+    "same_actor_and_original_expert_in_miner",
+    "typed_mining_and_collection_with_range_validation",
+    "controlled_native_student_teacher_collection_stage_chain",
+    "explicit_shared_source_merge_and_full_native_reopen",
+    "legacy_recorded_default_source_behavior"
+  ],
+  "actual_selected_model_asset_readback": {
+    "selected_checkpoint": {
+      "sha256": "66f375842809b8140e612116413dac28c88e996267f60d01ae3bcc2f9b123d61",
+      "bytes": 18778040645
+    },
+    "selected_step": 1792,
+    "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "files": 11,
+    "all_asset_bytes": 8060907830,
+    "three_weight_shard_bytes": 8044982000,
+    "private_verification_sha256": "55221c2b829348c17e3c9bfe257e284dcf259c07664ad3c834f1b5af79fdb8ba",
+    "hash_reuse_is_not_fresh_full_weight_read": true,
+    "actual_neural_execution_certified_by_this_readback": false,
+    "decoder_or_expert_constructed": false,
+    "CUDA_initialized": false
+  },
+  "prior_wrong_control_byte_total_preserved": true,
+  "actual_neural_game_corpus_admitted": false,
+  "actual_new_source_teacher_labels_qualified": false,
+  "new_student_teacher_queries_in_these_CPU_checks": 0,
+  "student_SGD_updates": 0,
+  "qualified_new_distillation_rounds": 0,
+  "strategic_prose_fully_verified": false,
+  "playing_strength_improvement_proven": false,
+  "independent_final_test_executed": false,
+  "full_goal_complete": false,
+  "equivalent_relative_base_paths_and_ambiguous_aliases_verified": true,
+  "relative_path_defect_original_source_and_interrupted_CPU_attempt_preserved": true
+}

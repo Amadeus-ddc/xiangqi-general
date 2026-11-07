@@ -84,22 +84,32 @@ def consolidated_label(query, response, teacher, *, max_eval_error_exclusive=0.0
 
 
 def mining_reservations(queries_path, queries, data, validation_data, bound,
-                        mining_manifest=None, recorded_inputs=None, *, expected_attempted_root_ids=None):
+                        mining_manifest=None, recorded_inputs=None, *, expected_attempted_root_ids=None,
+                        student_game_inputs=None):
     """Carry a completed recorded miner's source ownership and isolation into labels."""
     tagged_recorded = any(isinstance(query.get('record'), dict) and
         query['record'].get('recorded_continuation_is_best_move_label') is False for query in queries)
+    tagged_student = any(isinstance(query.get('record'),dict) and
+        query['record'].get('student_game_continuation_is_best_move_label') is False for query in queries)
+    if recorded_inputs and student_game_inputs or tagged_recorded and tagged_student:
+        raise ValueError('One mining source must have one explicit recorded or neural-game type')
     source = Path(mining_manifest) if mining_manifest else Path(queries_path).parent / 'manifest.json'
     if not source.exists():
-        if mining_manifest or recorded_inputs or tagged_recorded:
+        if mining_manifest or recorded_inputs or student_game_inputs or tagged_recorded or tagged_student:
             raise ValueError('Recorded consolidation requires a completed mining manifest')
         return set(), {}
     saved = bound.json(source)
     config = saved.get('config', {})
-    declared_pool = config.get('recorded_inputs')
+    declared_recorded,declared_student = config.get('recorded_inputs'),config.get('student_game_inputs')
+    if declared_recorded and declared_student:
+        raise ValueError('Mining cannot declare two different source-pool types')
+    is_student = bool(declared_student)
+    declared_pool = declared_student or declared_recorded
     if not declared_pool and (tagged_recorded or
-            saved.get('verification', {}).get('unused_recorded_training_inputs') is True):
+            tagged_student or saved.get('verification', {}).get('unused_recorded_training_inputs') is True or
+            saved.get('verification', {}).get('student_game_training_inputs') is True):
         raise ValueError('Recorded mining lost its declared input pool')
-    if not declared_pool and not mining_manifest and not recorded_inputs:
+    if not declared_pool and not mining_manifest and not recorded_inputs and not student_game_inputs:
         return set(), {}
     if (saved.get('kind') != 'search_distillation_mining' or saved.get('status') != 'complete' or
             not isinstance(config.get('data'), str) or not Path(config['data']).samefile(data)):
@@ -113,14 +123,22 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
         raise ValueError('Mining query coverage differs')
     info = {'source_mining_manifest': str(source), 'source_mining_queries_byte_verified': True}
     if not declared_pool:
-        if recorded_inputs:
+        if recorded_inputs or student_game_inputs:
             raise ValueError('Mining did not use the requested recorded pool')
         return set(), info
     pool = Path(declared_pool)
+    if (is_student and (recorded_inputs or tagged_recorded) or
+            not is_student and (student_game_inputs or tagged_student)):
+        raise ValueError('Consolidation source type differs from its actual miner')
     if recorded_inputs and not pool.samefile(recorded_inputs):
         raise ValueError('Recorded consolidation pool differs from mining')
+    if student_game_inputs and not pool.samefile(student_game_inputs):
+        raise ValueError('Neural-game consolidation pool differs from mining')
     proof = saved.get('verification', {})
-    required = ['unused_recorded_training_inputs', 'training_roots_only',
+    if (is_student and proof.get('unused_recorded_training_inputs') is True or
+            not is_student and proof.get('student_game_training_inputs') is True):
+        raise ValueError('Mining evidence cannot disguise neural games as recorded source games')
+    required = [('student_game_training_inputs' if is_student else 'unused_recorded_training_inputs'), 'training_roots_only',
                 'heldout_positions_excluded', 'all_child_branch_positions_isolated',
                 'raw_child_reachable_prefixes_isolated', 'all_inferred_target_lines_history_validated',
                 'all_successful_oracle_queries_preserved']
@@ -135,12 +153,18 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
             raise ValueError('Mining does not bind the complete recorded pool and base data')
         return values[0]
 
-    for name in ARTIFACTS:
+    artifact_names,reader = ARTIFACTS,prepared_roots
+    if is_student:
+        from .student_game_inputs import ARTIFACTS as STUDENT_ARTIFACTS, prepared_student_roots
+        artifact_names,reader = STUDENT_ARTIFACTS,prepared_student_roots
+        if proof.get('student_game_continuation_is_best_move_label') is not False:
+            raise ValueError('Actual student-game continuations cannot become best-move labels')
+    for name in artifact_names:
         bound.bind(pool / name, declared(pool / name))
     identities = {str(Path(data) / f'{split}.jsonl'):
         bound.bind(Path(data) / f'{split}.jsonl', declared(Path(data) / f'{split}.jsonl'))
         for split in ('train', 'validation', 'test')}
-    selected, additional = prepared_roots(pool, data, config['limit'], config['seed'], identities,
+    selected, additional = reader(pool, data, config['limit'], config['seed'], identities,
                                         offset=config.get('root_offset', 0))
     if expected_attempted_root_ids is not None and expected_attempted_root_ids != [row['id'] for row in selected]:
         raise ValueError('Original root-attempt ledger differs from the exact selected recorded range')
@@ -167,6 +191,12 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
                       'recorded_source_provenance', 'recorded_source_context']:
             if json.dumps(row.get(field), sort_keys=True) != json.dumps(original.get(field), sort_keys=True):
                 raise ValueError('Consolidation changed original recorded source or supplied-history context')
+        if is_student and (row.get('student_game_continuation_is_best_move_label') is not False or
+                row.get('source_kind')!=original.get('source_kind') or
+                row.get('provenance')!=original.get('provenance') or
+                row.get('student_game_source')!=original.get('student_game_source') or
+                any(field.startswith('recorded_') for field in row)):
+            raise ValueError('Consolidation changed actual neural-game actor, raw answer or occurrence provenance')
         history = replay(row['initial_fen'], row['moves'])
         suffix = ''.join('-' + move for move in row['moves'][len(original['moves']):])
         if (row.get('history') != history or row.get('fen') != history[-1] or
@@ -174,13 +204,20 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
                 row.get('id') != original['id'] + suffix or query.get('id') != row['id'] + '-search'):
             raise ValueError('Consolidation root history, cache key or identity differs from mining')
     bound.unchanged()
-    info.update(recorded_inputs=str(pool), additional_reserved_canonical_and_explanation_positions=len(additional),
+    info.update(additional_reserved_canonical_and_explanation_positions=len(additional),
                 original_selected_root_ownership_and_descendants_verified=True,
-                validation_and_test_labels_byte_preserved_from_recorded_pool=True,
-                recorded_mining_isolation_rechecked_during_collection=True,
                 student_search_or_oracle_comparisons_recomputed=False)
+    if is_student:
+        info.update(student_game_inputs=str(pool),
+            validation_and_test_labels_byte_preserved_from_student_pool=True,
+            student_game_mining_isolation_rechecked_during_collection=True,
+            student_game_continuation_is_best_move_label=False,
+            shared_isolation_authority=pool_proof['config']['shared_isolation_authority'])
+    else:
+        info.update(recorded_inputs=str(pool),validation_and_test_labels_byte_preserved_from_recorded_pool=True,
+                    recorded_mining_isolation_rechecked_during_collection=True)
     if 'root_offset' in config:
-        info['recorded_root_offset'] = config['root_offset']
+        info['student_game_root_offset' if is_student else 'recorded_root_offset'] = config['root_offset']
     return additional, info
 
 
@@ -219,6 +256,8 @@ def _main():
     parser.add_argument('--validation-data', default='data/astra-explanations-v1')
     parser.add_argument('--mining-manifest', help='Completed miner manifest; defaults to the queries sibling')
     parser.add_argument('--recorded-inputs', help='Require this exact unused-recorded pool from the miner')
+    parser.add_argument('--student-game-inputs',default=argparse.SUPPRESS,
+                        help='Require this exact completed actual-neural-game pool from the miner')
     parser.add_argument('--output', required=True)
     parser.add_argument('--max-eval-error-exclusive', type=float, default=0.075,
                         help='Selected student branch versus oracle expected-score error; reject equality')
@@ -239,7 +278,8 @@ def _main():
     queries = load_jsonl(args.queries)
     responses = load_jsonl(args.responses)
     additional, source_proof = mining_reservations(args.queries, queries, args.heldout_data,
-        args.validation_data, bound, args.mining_manifest, args.recorded_inputs)
+        args.validation_data, bound, args.mining_manifest, args.recorded_inputs,
+        student_game_inputs=getattr(args,'student_game_inputs',None))
     forbidden = reserved_positions(args.heldout_data) | reserved_positions(args.validation_data) | additional
     train, rejected = rebuild_labels(queries, responses, teacher, forbidden,
                                      max_eval_error_exclusive=args.max_eval_error_exclusive,
