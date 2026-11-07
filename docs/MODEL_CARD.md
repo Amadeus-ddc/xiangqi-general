@@ -1,5 +1,25 @@
 # Xiangqi General model card
 
+## Current verified state (2026-11-07)
+
+The expanded four-course route and initial explanation/replay SFT have completed.
+The joint model answers 2345/2600 development QA questions correctly (90.19%).
+In 384 raw development matches, it records zero wins, 383 losses and one draw;
+266 losses are invalid-move forfeits. These are validation-opening development
+measurements, not final independent-test results. No engine repairs are counted
+as student moves. The model is not yet a qualified strong player or reliable coach.
+
+The completed query-log corpus contains 293089 question views over 148157
+history contexts, with both expert features and native token-length checks.
+These rows are auxiliary policy/numeric supervision, not newly generated
+Chinese explanations or independent human games. The larger original-course
+replay pool contains 53248 training rows and 2600 unchanged validation rows.
+The [seven-stage corpus workflow](ORACLE_POLICY_CORPUS.md) preserves provenance,
+protects heldout positions and distinguishes preparation from actual SGD.
+No student improvement from that auxiliary corpus has been established.
+Qualified search-distillation gains, final independent evaluation and model
+delivery remain pending. The following sections retain historical snapshots.
+
 The explicit [full-source finite replay profile](FULL_SOURCE_REPLAY.md) requires every actual explanation and course row in each selected epoch, including when course sources exceed explanations. Native CPU readback of the actual 1114 plus 6656 rows passes SFT preparation and all 7770 unique row selections. The current four-pass budget is 972 updates, with distributed tail padding reported separately. Capacity probes use bounded longest-example mixtures and do not claim full formal data coverage. No new student GPU training or quality gain is claimed by these CPU controls.
 
 An explicit [joint explanation and course validation profile](JOINT_DISTILLATION_VALIDATION.md) compiles every original validation row and requires a bound, complete native validation-ID ledger before round qualification. CPU readback covers the actual 384 explanation and 2600 course validation rows, without model inference, tokenization or independent-test access. Selection remains aggregate token NLL; this does not establish per-course accuracy, prose quality or playing strength. The original explanation-only recipes and failed 164-update round are preserved. No new jointly selected neural model is claimed.
