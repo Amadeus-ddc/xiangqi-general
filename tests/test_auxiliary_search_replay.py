@@ -202,13 +202,19 @@ def test_native_search_token_gate_covers_six_task_subset_with_original_features_
 
 
 @pytest.mark.parametrize('missing_policy_ledger', [False, True])
-def test_native_three_worker_search_round_consumes_seven_stage_validation_and_reopens(tmp_path, monkeypatch,
-                                                                                  missing_policy_ledger):
+@pytest.mark.parametrize('world', [2, 3])
+def test_native_declared_worker_search_round_consumes_seven_stage_validation_and_reopens(tmp_path, monkeypatch,
+                                                                                      missing_policy_ledger, world):
     import test_distillation_training as training_control
     from test_three_gpu_search_distillation import template as three_template
     from xqgeneral.distillation_preflight import completed_parent
     from xqgeneral.training import select_validation_rows
-    monkeypatch.setattr(training_control, 'template', three_template)
+    def declared_template():
+        value = three_template()
+        if world == 2:
+            value.update(ddp_world_size=2, search_topology_profile='full_decoder_search_two_workers_v1')
+        return value
+    monkeypatch.setattr(training_control, 'template', declared_template)
     source, recipe_path, token_path, runner, raw = joint_control.controlled_joint_round(tmp_path, monkeypatch)
     token = json.loads(token_path.read_text())
     for split, count in [('train', 4), ('validation', 2)]:
@@ -225,6 +231,8 @@ def test_native_three_worker_search_round_consumes_seven_stage_validation_and_re
         path = raw / name
         token['inputs'][str(path)] = dict(sha256=digest(path), bytes=path.stat().st_size)
     value = dict(template(), replay_data_paths=[str(raw)], max_steps=12, max_finite_passes=2, eval_every=2)
+    if world == 2:
+        value.update(ddp_world_size=2, search_topology_profile='full_decoder_search_two_workers_v1')
     atomic_json(recipe_path, value); atomic_json(token_path, token)
     def run(command, **kwargs):
         result = runner(command, **kwargs)
@@ -247,6 +255,8 @@ def test_native_three_worker_search_round_consumes_seven_stage_validation_and_re
         assert not (output / 'manifest.json').exists()
     else:
         result = distillation_training.run_round(source, recipe_path, token_path, output)
+        assert result['world_size'] == world and result['global_batch_size'] == 30
+        assert result['actual_' + {2: 'two', 3: 'three'}[world] + '_gpu_full_decoder_preflight_passed']
         assert result['joint_validation_coverage']['profile'] == AUXILIARY_VALIDATION_PROFILE
         assert result['joint_validation_coverage']['validation_rows'] == 28
         assert set(result['selected_training_rows_by_stage']) == set(ALL_STAGES)

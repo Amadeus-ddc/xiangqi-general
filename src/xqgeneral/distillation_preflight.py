@@ -77,7 +77,7 @@ def completed_parent(source, completion_path, bound=None):
                 metrics.get('global_batch_size')!=topology['global_batch_size'] or
                 result.get('global_batch_size')!=topology['global_batch_size']):
             raise ValueError('Auxiliary parent geometry differs from its actual completed training')
-    elif proof.get('kind') == ROUND_KIND and world == 3:
+    elif proof.get('kind') == ROUND_KIND and world in {2, 3}:
         from .full_decoder_topology import search_topology
         if (search_topology(saved) != topology or
                 metrics.get('global_batch_size') != topology['global_batch_size'] or
