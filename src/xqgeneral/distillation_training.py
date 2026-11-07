@@ -19,7 +19,9 @@ from .sft_preflight import checked_artifacts, full_parameter_summary, run_prefli
 from .training_index import build_index, index_paths, IndexedTrainingRows
 from .full_decoder_topology import search_topology
 from .distillation_validation import (JOINT_VALIDATION_PROFILE, LEGACY_VALIDATION_PROFILE,
-                                       joint_validation_coverage)
+    AUXILIARY_VALIDATION_PROFILE, joint_validation_coverage, validation_stages as stage_names)
+from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
+    LEGACY_PROFILE as LEGACY_REPLAY_PROFILE, STAGES as AUXILIARY_REPLAY_STAGES)
 
 
 def compile_recipe(template, token, root):
@@ -29,11 +31,17 @@ def compile_recipe(template, token, root):
             token['verification'].get('independent_test_used_for_training_or_selection') is not False):
         raise ValueError('Require the exact completed search-label token preflight')
     validation_profile = template.get('validation_profile', LEGACY_VALIDATION_PROFILE)
-    if validation_profile not in (LEGACY_VALIDATION_PROFILE, JOINT_VALIDATION_PROFILE):
-        raise ValueError('Unknown explicit distillation validation profile')
-    joint_validation = validation_profile == JOINT_VALIDATION_PROFILE
+    validation_stages = stage_names(validation_profile)
+    joint_validation = validation_profile in (JOINT_VALIDATION_PROFILE, AUXILIARY_VALIDATION_PROFILE)
+    auxiliary_replay = validation_profile == AUXILIARY_VALIDATION_PROFILE
+    replay_stages = AUXILIARY_REPLAY_STAGES if auxiliary_replay else STAGES
     topology = search_topology(template)
-    validation_stages = ['explanation', *STAGES] if joint_validation else ['explanation']
+    replay_profile = AUXILIARY_REPLAY_PROFILE if auxiliary_replay else LEGACY_REPLAY_PROFILE
+    if (template.get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
+            token['config'].get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
+            auxiliary_replay and (topology['world_size'] != 3 or template.get('loss_normalization') != 'token' or
+                template.get('source_coverage_profile') != FULL_SOURCE_PROFILE)):
+        raise ValueError('Six-stage replay requires matching three-worker token-loss and full-subset profiles')
     if (template.get('require_clean_foundation_handoff') is not False or
             template.get('decoder_training') != 'full' or template.get('trainable_parameter_dtype') != 'float32' or
             template.get('training_data_profile') != FINITE_PROFILE or
@@ -63,8 +71,8 @@ def compile_recipe(template, token, root):
     source_counts = {'explanation': counts['train']}
     if replay_paths:
         replay = token['verification'].get('course_replay', {})
-        if (template.get('stages') != ['explanation', *STAGES] or
-                not isinstance(template.get('mixture'), dict) or set(template['mixture']) != {'explanation', *STAGES} or
+        if (template.get('stages') != ['explanation', *replay_stages] or
+                not isinstance(template.get('mixture'), dict) or set(template['mixture']) != {'explanation', *replay_stages} or
                 template.get('loss_normalization') not in ({'example', 'token'} if topology['world_size'] == 3 else {'example'}) or
                 replay.get('data_paths') != replay_paths or
                 any(replay.get(key) is not True for key in ['all_raw_train_validation_answers_natively_regraded',
@@ -73,10 +81,10 @@ def compile_recipe(template, token, root):
             raise ValueError('Joint distillation requires all four certified courses and its declared loss reduction')
         available = replay.get('by_split_and_stage', {})
         if (not isinstance(available, dict) or set(available) != {'train', 'validation'} or
-                any(not isinstance(available[split], dict) or set(available[split]) != set(STAGES)
+                any(not isinstance(available[split], dict) or set(available[split]) != set(replay_stages)
                     for split in available) or
                 any(type(available[split][stage]) is not int or available[split][stage] < 1
-                    for split in available for stage in STAGES)):
+                    for split in available for stage in replay_stages)):
             raise ValueError('Course replay needs actual positive train and validation coverage for every course')
         if replay.get('train_validation_rows_tokenized') != sum(sum(available[split].values()) for split in available):
             raise ValueError('Course replay token coverage differs from its raw source counts')
@@ -142,12 +150,16 @@ def compile_recipe(template, token, root):
             finite_pass_limit_reduced_max_updates=max_updates < template['max_steps'],
             validation_interval=recipe['eval_every'])
     if replay_paths:
-        budget.update(course_replay_source_rows_by_stage={stage: source_counts[stage] for stage in STAGES},
+        budget.update(course_replay_source_rows_by_stage={stage: source_counts[stage] for stage in replay_stages},
             finite_mixture=mix, rows_per_complete_pass=mix['rows_per_epoch'],
             course_replay_counts_toward_paper_label_scale=False)
     if joint_validation:
         budget.update(validation_profile=validation_profile, validation_rows_by_stage=validation_counts,
             validation_uses_all_original_rows=True, validation_metric='token_nll_over_complete_original_validation')
+    if auxiliary_replay:
+        budget.update(replay_profile=replay_profile, auxiliary_policy_replay_included=True,
+                      replay_is_explicit_original_training_subset=True,
+                      auxiliary_replay_counts_toward_new_search_label_scale=False)
     if full_source:
         budget.update(source_coverage_profile=template['source_coverage_profile'],
             all_actual_training_rows_selected_each_epoch=True, finite_anchor_stage=mix['anchor_stage'])
@@ -225,7 +237,7 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
             else:
                 build_index(paths, directory, split=split)
         validation_plan = None
-        if recipe.get('validation_profile') == JOINT_VALIDATION_PROFILE:
+        if recipe.get('validation_profile') in (JOINT_VALIDATION_PROFILE, AUXILIARY_VALIDATION_PROFILE):
             from .training import select_validation_rows
             indexed = IndexedTrainingRows(recipe['row_index_paths']['validation'],
                 [Path(directory) / 'validation.jsonl' for directory in
@@ -234,7 +246,7 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 selected_ids = [row['id'] for row in select_validation_rows(indexed,
                     recipe['validation_stages'], recipe['seed'], recipe['validation_examples'])]
                 validation_plan = {'selected_ids': selected_ids, 'coverage': joint_validation_coverage(
-                    indexed, selected_ids, budget['validation_rows_by_stage'])}
+                    indexed, selected_ids, budget['validation_rows_by_stage'], profile=recipe['validation_profile'])}
             finally:
                 indexed.close()
             path = root / 'joint-validation-plan.json'
@@ -288,7 +300,7 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         finally:
             indexed.close()
         validation_coverage = None
-        if recipe.get('validation_profile') == JOINT_VALIDATION_PROFILE:
+        if recipe.get('validation_profile') in (JOINT_VALIDATION_PROFILE, AUXILIARY_VALIDATION_PROFILE):
             validation_ids_path = trained / 'validation_ids.json'
             if not validation_ids_path.is_file():
                 raise ValueError('Joint validation requires the actual native saved validation ID ledger')
@@ -299,7 +311,7 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
             try:
                 actual_ids = json.loads(validation_ids_path.read_text())
                 validation_coverage = joint_validation_coverage(indexed, actual_ids,
-                    budget['validation_rows_by_stage'])
+                    budget['validation_rows_by_stage'], profile=recipe['validation_profile'])
             finally:
                 indexed.close()
             if (actual_ids != validation_plan['selected_ids'] or
@@ -362,7 +374,7 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         raise
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['init', 'recipe', 'token-preflight', 'output']:
         parser.add_argument('--' + name, required=True)
@@ -370,6 +382,12 @@ def main():
     args = parser.parse_args()
     torch.set_num_threads(8)
     print(json.dumps(run_round(args.init, args.recipe, args.token_preflight, args.output, resume=args.resume)), flush=True)
+
+
+def main():
+    from .verified_inputs import input_session_from_environment
+    with input_session_from_environment():
+        _main()
 
 
 if __name__ == '__main__':

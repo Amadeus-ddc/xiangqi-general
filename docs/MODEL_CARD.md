@@ -1,5 +1,9 @@
 # Xiangqi General model card
 
+2026-11-08（UTC+8），六类回放分别使用课程未来局面、数值目标PV和当前单走法的原生合同。数值变化允许在六步前以AXF和棋等合法终局结束；课程题原有限制和终局后不能继续走的规则保留。真实曾误拒的一条三步和棋数值验证记录已用原始字节通过正确合同，目标与模型输入未改。新增回归覆盖生产／消费、合法和棋、保留课程限制及非法继续；实际整库复建仍另行验收。本次修正未改变正在训练的固定数据、配方或冻结源码。
+
+2026-11-07（UTC+8），新增[搜索蒸馏的六类回放与七类验证](AUXILIARY_SEARCH_REPLAY.md)：从实际完成的七类语料确定性选择原始训练子集，保留全部四课／数值／走法验证原始字节；消费时从来源重新选择，重判原生答案，数值PV进入合并分割检查。新三卡配置按实际完整子集与新搜索标签编译有限遍历，实际保存验证ID必须覆盖全部七类，CLI可显式复用已核验输入收据。该子集不替代此前完整辅助训练；新搜索SGD、能力保持与最终质量仍待实测。当前服务器已有三卡辅助预检的真实参数／Adam精确续跑证据，正式任务已启动；本次新回放尚未用于实际搜索训练，GPU2继续保留。以下保留历史快照。
+
 The [fixed oracle-policy validation diagnostics](ORACLE_POLICY_EVALUATION.md)
 retain381 numerical and384 move-answer views from384 original histories. Format,
 legal moves, history-valid PVs and conditional errors against the stored engine
