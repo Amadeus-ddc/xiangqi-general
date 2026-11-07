@@ -19,6 +19,8 @@ from .foundation_preflight import bounded_results, native_answer, validate_task
 from .recorded_coach import ordered_native_map
 from .recorded_search_inputs import BoundInputs
 from .sft import checked_parent
+from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
+    LEGACY_PROFILE as LEGACY_REPLAY_PROFILE)
 
 
 TOKEN_KIND = 'latent_only_search_distillation_data_preflight'
@@ -116,10 +118,18 @@ def extended_cache(features, saved, bound):
     return cache
 
 
-def course_replay_sources(paths, bound):
+def course_replay_sources(paths, bound, *, profile=LEGACY_REPLAY_PROFILE):
     """Reopen certified original-course subsets; keep tests out of replay."""
     if not isinstance(paths, (list, tuple)):
         raise ValueError('Course replay data paths must be an explicit sequence')
+    if profile == AUXILIARY_REPLAY_PROFILE:
+        if len(paths) != 1 or not isinstance(paths[0], (str, Path)) or not str(paths[0]):
+            raise ValueError('Six-stage replay requires exactly one declared original-corpus subset')
+        from .auxiliary_search_replay import checked_subset
+        rows, result = checked_subset(paths[0], bound)
+        return rows, dict(data_paths=[str(Path(paths[0]).resolve())], by_split_and_stage=result['by_split_and_stage'])
+    if profile != LEGACY_REPLAY_PROFILE:
+        raise ValueError('Unknown explicit replay source profile')
     directories, rows, seen, counts = [], [], set(), {split: Counter() for split in ['train', 'validation']}
     for path in paths:
         if not isinstance(path, (str, Path)) or not str(path):
@@ -160,6 +170,9 @@ def course_replay_sources(paths, bound):
 
 
 def native_replay_label(row):
+    if row.get('stage') in ('engine_numeric', 'move_quality'):
+        from .auxiliary_search_replay import native_label
+        return native_label(row)
     validate_task(row, PAPER_PROFILE)
     validate_context(row, check_future=True)
     if not grade_answer(native_answer(row), row['answer'], row['task_type'])['correct']:
@@ -168,7 +181,7 @@ def native_replay_label(row):
 
 
 def preflight(source, parent_completion, data, features, foundation_preflight, output, *, max_tokens=2048,
-              workers=8, replay_data_paths=()):
+              workers=8, replay_data_paths=(), replay_profile=LEGACY_REPLAY_PROFILE):
     if type(workers) is not int or workers < 1 or type(max_tokens) is not int or max_tokens < 1:
         raise ValueError('Positive native/token worker and length budgets are required')
     root, data, source = Path(output), Path(data), Path(source)
@@ -189,7 +202,7 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             ids.add(row['id']); keys.add(row['feature_key']); counts[split] += 1; rows.append(row)
     if counts['train'] != labels['verification']['accepted_training_roots'] or not counts['validation']:
         raise ValueError('Actual label coverage differs from completed collection')
-    replay, replay_result = course_replay_sources(replay_data_paths, bound)
+    replay, replay_result = course_replay_sources(replay_data_paths, bound, profile=replay_profile)
     for row in replay:
         if row['id'] in ids:
             raise ValueError('Course replay and explanation labels must have distinct IDs')
@@ -198,11 +211,14 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
     if not keys.issubset(cached_keys):
         raise ValueError('A distillation label is missing its expert history features')
     native_split_rows = []
-    for row in rows:
-        value = parse_explanation(row['answer'])
-        native_split_rows.append(dict(row, future_moves=list(value['pv']),
-            future_branches=[list(branch['pv']) for branch in value.get('branches', [])]))
-    split_proof = verify_splits([*native_split_rows, *replay], workers=workers)
+    for row in [*rows, *replay]:
+        if row['stage'] in ('explanation', 'engine_numeric'):
+            value = parse_explanation(row['answer'])
+            native_split_rows.append(dict(row, future_moves=list(value['pv']),
+                future_branches=[list(branch['pv']) for branch in value.get('branches', [])]))
+        else:
+            native_split_rows.append(row)
+    split_proof = verify_splits(native_split_rows, workers=workers)
     if list(ordered_native_map(native_label, rows, workers)) != [r['feature_key'] for r in rows]:
         raise ValueError('Native full-history label coverage differs')
     if replay and list(ordered_native_map(native_replay_label, replay, workers)) != [r['feature_key'] for r in replay]:
@@ -274,23 +290,33 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
         proof['config']['pinned_base_model_manifest'] = base_reference
     if replay_result['data_paths']:
         proof['config']['replay_data_paths'] = replay_result['data_paths']
+    if replay_profile != LEGACY_REPLAY_PROFILE:
+        proof['config']['replay_profile'] = replay_profile
     proof['cache_header_only_input'] = {'path': str(features), **bound.artifacts[str(features)],
                                        'fresh_full_bytes_hash_verified_by_this_preflight': True}
     atomic_json(root / 'manifest.json', proof)
     return result
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['init', 'parent-completion', 'data', 'features', 'foundation-preflight', 'output']:
         parser.add_argument('--' + name, required=True)
     parser.add_argument('--max-tokens', type=int, default=2048)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--replay-data', nargs='+', default=[], help='Certified original-course replay subsets')
+    parser.add_argument('--replay-profile', choices=[LEGACY_REPLAY_PROFILE, AUXILIARY_REPLAY_PROFILE],
+                        default=LEGACY_REPLAY_PROFILE)
     args = parser.parse_args()
     print(json.dumps(preflight(args.init, args.parent_completion, args.data, args.features,
         args.foundation_preflight, args.output, max_tokens=args.max_tokens, workers=args.workers,
-        replay_data_paths=args.replay_data)), flush=True)
+        replay_data_paths=args.replay_data, replay_profile=args.replay_profile)), flush=True)
+
+
+def main():
+    from .verified_inputs import input_session_from_environment
+    with input_session_from_environment():
+        _main()
 
 
 if __name__ == '__main__':

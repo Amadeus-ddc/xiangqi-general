@@ -7,11 +7,24 @@ from .curriculum_data import STAGES
 
 LEGACY_VALIDATION_PROFILE = 'explanation_only_v1'
 JOINT_VALIDATION_PROFILE = 'joint_explanation_and_course_replay_v1'
+AUXILIARY_VALIDATION_PROFILE = 'joint_explanation_courses_and_oracle_policy_replay_v1'
 
 
-def joint_validation_coverage(rows, selected_ids, expected_counts):
+def validation_stages(profile):
+    if profile == LEGACY_VALIDATION_PROFILE:
+        return ['explanation']
+    if profile == JOINT_VALIDATION_PROFILE:
+        return ['explanation', *STAGES]
+    if profile == AUXILIARY_VALIDATION_PROFILE:
+        return ['explanation', *STAGES, 'engine_numeric', 'move_quality']
+    raise ValueError('Unknown explicit distillation validation profile')
+
+
+def joint_validation_coverage(rows, selected_ids, expected_counts, *, profile=JOINT_VALIDATION_PROFILE):
     """Check actual validation IDs once, without model or expert construction."""
-    stages = ['explanation', *STAGES]
+    stages = validation_stages(profile)
+    if profile == LEGACY_VALIDATION_PROFILE:
+        raise ValueError('Joint coverage requires an explicit joint validation profile')
     if (not isinstance(expected_counts, dict) or set(expected_counts) != set(stages) or
             any(type(expected_counts[s]) is not int or expected_counts[s] < 1 for s in stages)):
         raise ValueError('Joint validation requires actual positive coverage for every original stage')
@@ -29,7 +42,7 @@ def joint_validation_coverage(rows, selected_ids, expected_counts):
             len(selected_ids) != len(expected) or len(set(selected_ids)) != len(selected_ids) or
             set(selected_ids) != expected):
         raise ValueError('Joint validation selection must cover every original validation ID exactly once')
-    return {'profile': JOINT_VALIDATION_PROFILE, 'validation_rows': len(expected),
+    return {'profile': profile, 'validation_rows': len(expected),
         'validation_rows_by_stage': {stage: counts[stage] for stage in stages},
         'selected_validation_ids_sha256': hashlib.sha256(json.dumps(selected_ids,
             ensure_ascii=False, separators=(',', ':')).encode()).hexdigest(),
