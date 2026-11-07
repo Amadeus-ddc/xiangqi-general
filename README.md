@@ -4,6 +4,8 @@
 
 ## 当前进度
 
+新增[原始引擎日志的走法与数值监督入口](docs/ORACLE_POLICY_DATA.md)。同一完整历史可产生单走法及六步变化／候选／评分两种题目，按各自合同筛选，独立局面按历史并集计数。入口重新解析已完成搜索的原始日志，核验原棋谱范围、实际后续历史和共同保留位置；不新增教师正文、引擎查询或学生更新。真实整库生产与训练收益分别验收。
+
 新增[全量来源有限遍历](docs/FULL_SOURCE_REPLAY.md)：显式配置保证所有实际讲解与旧课行完整参与每次遍历，允许旧课大于讲解。真实1114条严格讲解＋6656条旧课的SFT准备与7770行采样已通过CPU检查；243步／轮、四轮上限972步仅为该快照预算。实际缓存、分词、四卡预检和新SGD仍独立验收，原历史配方与结果保持。
 
 新增[完整讲解与旧课验证](docs/JOINT_DISTILLATION_VALIDATION.md)的显式配置：从分词预检编译全部原始验证数量，轮次完成时绑定原生训练的实际验证ID，完成时重建覆盖。真实384条讲解与2600条旧课验证行已完成纯CPU索引和重开检查；尚未执行该配置的多卡SGD或证明棋力收益。旧实验和选模结果保留。
@@ -35,7 +37,7 @@
 
 [学生对弈来源的搜索接入](docs/STUDENT_GAME_SEARCH_INPUTS.md)增加执行证明与完整模型依赖核验、共享保留位置隔离、明确类型的搜索／收取，以及显式多来源合并。受控CLI链及重开通过，实际神经对弈和对应标签链仍待完成，不计作新模型收益。
 
-已完成记录：[四课](docs/PAPER_FOUR_COURSES_COMPLETED.md)、[初始讲解](docs/INITIAL_SFT_COMPLETED.md)、[联合讲解与回放](docs/JOINT_SFT_COMPLETED.md)、[原讲解384局](docs/INITIAL_SFT_FULL_MATCHES.md)、[专家与标签检查](docs/CURRENT_EXPERT_AND_SEARCH_LABELS.md)、[首次真实更新快照](docs/EXPANDED_SEARCH_DATA_READY.md)。原模型384局为0胜383负1和；联合候选对弈另行保留进行中的原始记录，尚无该候选完整成绩。
+已完成记录：[四课](docs/PAPER_FOUR_COURSES_COMPLETED.md)、[初始讲解](docs/INITIAL_SFT_COMPLETED.md)、[联合讲解与回放](docs/JOINT_SFT_COMPLETED.md)、[原讲解384局](docs/INITIAL_SFT_FULL_MATCHES.md)、[专家与标签检查](docs/CURRENT_EXPERT_AND_SEARCH_LABELS.md)、[首次真实更新快照](docs/EXPANDED_SEARCH_DATA_READY.md)。原模型384局为0胜383负1和。联合候选同一384局开发赛程已于2026-11-07完成，也是0胜383负1和，其中266局原始走法无效判负；这是保留原始错误、没有合法走法约束或引擎修复的开发结果，不能据此宣称棋力或可靠教学达标。
 
 [推理目录导出与搬动](docs/FULL_SFT_INFERENCE_BUNDLE.md)已验证旧开发权重的可用性，正式交付仍需模型能力验收。完整范围见[状态](STATUS.md)和[模型说明](docs/MODEL_CARD.md)。
 
