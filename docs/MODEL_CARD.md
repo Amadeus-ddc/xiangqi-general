@@ -2,6 +2,13 @@
 
 ## Current verified state (2026-11-07)
 
+The [three-worker auxiliary profile](AUXILIARY_POLICY_TRAINING.md#三卡资源配置)
+uses FSDP2 with global batch30 and requires a new native three-worker capacity
+and exact-continuation preflight. Physical GPU2 is reserved at the user's request;
+server jobs must respect that allocation. Four-worker optimizer checkpoints are
+preserved without claiming exact continuation on three workers. CPU protocol
+checks do not establish actual three-worker capacity, SGD completion or model gains.
+
 The [auxiliary-model development evaluation](AUXILIARY_POLICY_EVALUATION.md)
 requires the actual selected full-decoder completion, preserves separate auxiliary
 and on-policy search round counts, and matches the complete original explanation

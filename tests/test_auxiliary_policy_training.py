@@ -14,19 +14,27 @@ from xqgeneral.finite_training import prepare_finite_epochs
 from xqgeneral.training_index import IndexedTrainingRows
 
 
-def setup(tmp_path,monkeypatch,damage=None):
+def setup(tmp_path,monkeypatch,damage=None,*,world=4):
     args,saved,_=inputs_control.fixture(tmp_path,monkeypatch);auxiliary.prepare(**args)
-    token=args['output']/'manifest.json';template=tmp_path/'recipe-template.json';atomic_json(template,inputs_control.template())
+    token=args['output']/'manifest.json';template=tmp_path/'recipe-template.json';recipe=inputs_control.template()
+    if world==3:
+        from xqgeneral.full_decoder_topology import THREE_WORKERS
+        recipe.update(auxiliary_topology_profile=THREE_WORKERS,ddp_world_size=3,batch_size=30,
+            distributed_strategy='fsdp2',fsdp_shard_paths=['bridges.*','base'])
+    atomic_json(template,recipe)
     monkeypatch.setattr(training,'completed_parent',lambda source,completion,bound:(
         auxiliary.completed_parent(source,completion,bound)[0],dict(verification=dict(trained_search_distillation_rounds=2))))
     calls=[]
     def gpu(source,recipe_path,token_path,root,resume=False):
         calls.append('GPU_preflight');root=Path(root);root.mkdir()
         initial=root/'zero-init.pt';torch.save(dict(trainable=dict(bridge=torch.zeros(4))),initial)
-        result=dict(status='complete',actual_continuous_four_and_two_plus_two_updates_compared=True,
+        result=dict(status='complete',world_size=world,actual_continuous_four_and_two_plus_two_updates_compared=True,
             full_decoder_initialization_preserved_all_parent_tensors=True,trainable_tensors=1)
         if damage=='failed_GPU':result['status']='failed'
-        proof=manifest('four_gpu_auxiliary_policy_sft_preflight',{},[],[initial],result)
+        kind=('three' if world==3 else 'four')+'_gpu_auxiliary_policy_sft_preflight'
+        if damage=='wrong_probe_kind':kind='four_gpu_auxiliary_policy_sft_preflight'
+        if damage=='wrong_probe_world':result['world_size']=4
+        proof=manifest(kind,{},[],[initial],result)
         proof['verified_feature_cache_input']=json.loads(token_path.read_text())['cache_header_only_input']
         atomic_json(root/'manifest.json',proof);return result
     monkeypatch.setattr(training,'run_preflight',gpu)
@@ -35,10 +43,10 @@ def setup(tmp_path,monkeypatch,damage=None):
         recipe=json.loads(Path(command[command.index('--recipe')+1]).read_text())
         source=Path(command[command.index('--init')+1]);config=training.prepare_config(saved,recipe,source,root)
         indexed=IndexedTrainingRows(recipe['row_index_paths']['train'],[Path(recipe['data_path'])/'train.jsonl'],recipe['mixture'])
-        try:data_state=prepare_finite_epochs(indexed,recipe['mixture'],config,4).state_at(config['steps'])
+        try:data_state=prepare_finite_epochs(indexed,recipe['mixture'],config,world).state_at(config['steps'])
         finally:indexed.close()
         selected_step=0 if damage=='step_zero' else config['steps']
-        metrics=dict(world_size=4,decoder_training='full',global_batch_size=32,selected_step=selected_step,
+        metrics=dict(world_size=world,decoder_training='full',global_batch_size=recipe['batch_size'],selected_step=selected_step,
             steps_completed=config['steps'],training_data_state=data_state,trainable_parameters=4)
         if damage=='wrong_epoch':metrics['training_data_state']['optimizer_batch_in_epoch']=999
         ids=training._validation(recipe,recipe['validation_rows_by_stage'])['selected_ids']

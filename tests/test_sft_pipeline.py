@@ -67,6 +67,7 @@ class ControlledRunner:
             raise subprocess.CalledProcessError(1, command)
         if 'xqgeneral.sft_probe_worker' in command:
             config = json.loads(Path(command[command.index('--config') + 1]).read_text())
+            world = config['ddp_world_size']
             root = Path(config['output']);root.mkdir(parents=True, exist_ok=True)
             step = int(command[command.index('--stop-after') + 1])
             initial = torch.load(root.parent / 'zero-init.pt', weights_only=True)['trainable']
@@ -77,12 +78,12 @@ class ControlledRunner:
                 names = [n for n in initial if ('board' if n.endswith('board_weight') else
                          ('bridge' if n.startswith('bridges.') else 'decoder')) == group]
                 groups.append({'name': group, 'params': [ids[n] for n in names]})
-            saved = {'step': step, 'world_size': 4, 'trainable': state, 'config': config,
+            saved = {'step': step, 'world_size': world, 'trainable': state, 'config': config,
                 'optimizer': {'state': {ids[n]: {'step': torch.tensor(float(step)),
                     'exp_avg': torch.ones_like(t) * step, 'exp_avg_sq': torch.ones_like(t) * step}
                     for n, t in initial.items()}, 'param_groups': groups},
                 'random_state': random.Random(8).getstate(), 'torch_rng_state': torch.tensor([8], dtype=torch.uint8),
-                'cuda_rng_states': [torch.tensor([rank], dtype=torch.uint8) for rank in range(4)],
+                'cuda_rng_states': [torch.tensor([rank], dtype=torch.uint8) for rank in range(world)],
                 'tokens_seen': step * 100, 'initial_loss': 3.0, 'code': code_identity(),
                 'compute_contract': {'deterministic_training': True}, 'patience_count': 0,
                 'best_step': step, 'best_loss': 1 / step,
@@ -93,9 +94,9 @@ class ControlledRunner:
             atomic_json(root / 'execution.json', {'code': saved['code'], 'input_hashes': saved['input_hashes']})
             write_jsonl(root / 'training.jsonl', [{'step': s, 'loss': 1 / s, 'gradient_norm': .5,
                          'seconds': s} for s in range(1, step + 1)])
-            for rank in range(4):
+            for rank in range(world):
                 atomic_json(root / f'resources-step-{step}-rank-{rank}.json', {'rank': rank,
-                    'world_size': 4, 'actual_step': step, 'peak_allocated_gib': .25,
+                    'world_size': world, 'actual_step': step, 'peak_allocated_gib': .25,
                     'total_memory_gib': 96.0, 'training_main_returned_successfully': True})
             if self.failure == 'changed_probe_cache':
                 p = Path(config['feature_path']);p.write_bytes(p.read_bytes() + b'changed')

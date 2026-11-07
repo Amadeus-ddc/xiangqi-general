@@ -93,8 +93,8 @@ def test_auxiliary_evaluation_rejects_changed_original_rows_or_token_contract(tm
     with pytest.raises(ValueError): evaluation.validation_spec(config)
 
 
-def native_completed_auxiliary(tmp_path, monkeypatch):
-    args, calls = training_control.setup(tmp_path, monkeypatch)
+def native_completed_auxiliary(tmp_path, monkeypatch, *, world=4):
+    args, calls = training_control.setup(tmp_path, monkeypatch, world=world)
     native_gpu = training.run_preflight
     def bounded_gpu(source, recipe, token, output, resume=False):
         result = native_gpu(source, recipe, token, output, resume=resume)

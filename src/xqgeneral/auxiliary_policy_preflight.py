@@ -15,6 +15,7 @@ from .explanation_preflight import token_chunk,token_initializer
 from .extend_features import validate_cache
 from .feature_store import FeatureStore,feature_paths
 from .finite_training import FINITE_PROFILE,FULL_SOURCE_PROFILE,mixture_counts
+from .full_decoder_topology import auxiliary_topology
 from .foundation_preflight import bounded_results
 from .oracle_policy_corpus import ALL_STAGES,KIND as CORPUS_KIND,PROFILE as CORPUS_PROFILE,_basic,_lines
 from .oracle_policy_data import _binding
@@ -29,7 +30,7 @@ VALIDATION_PROFILE='seven_stage_complete_original_validation_v1'
 FILES=('token-lengths.jsonl','counts.json','contract.json','verified-inputs.json')
 CLOSURE=('auxiliary_policy_preflight.py','oracle_policy_corpus.py','distillation_preflight.py',
     'explanation_preflight.py','sft_preflight.py','sft.py','training.py','feature_store.py',
-    'extend_features.py','model_bundle.py','modeling.py','verified_inputs.py','evidence.py')
+    'extend_features.py','model_bundle.py','modeling.py','verified_inputs.py','evidence.py','full_decoder_topology.py')
 
 
 def _closure():
@@ -203,11 +204,11 @@ def compile_recipe(token,template,output):
     source_counts=result['rows_by_split_and_stage']['train'];validation=result['rows_by_split_and_stage']['validation']
     if any(set(c)!=set(ALL_STAGES) or any(type(n) is not int or n<1 for n in c.values()) for c in [source_counts,validation]):
         raise ValueError('Formal auxiliary training needs actual seven-stage coverage')
+    topology=auxiliary_topology(template)
     if (template.get('decoder_training')!='full' or template.get('trainable_parameter_dtype')!='float32' or
-            template.get('ddp_world_size')!=4 or template.get('batch_size')!=32 or template.get('micro_batch_size')!=1 or
             template.get('loss_normalization')!='token' or template.get('training_data_profile')!=FINITE_PROFILE or
             template.get('source_coverage_profile')!=FULL_SOURCE_PROFILE):
-        raise ValueError('Auxiliary SFT requires explicit four-worker full-source token-normalized training')
+        raise ValueError('Auxiliary SFT requires explicit full-source token-normalized training')
     passes=template.get('max_finite_passes')
     if type(passes) is not int or not 1<=passes<=4:raise ValueError('Declare one to four complete finite passes')
     total=sum(source_counts.values());mixture={s:source_counts[s]/total for s in ALL_STAGES}
@@ -226,7 +227,7 @@ def compile_recipe(token,template,output):
     budget=dict(training_question_rows=total,training_unique_history_contexts=result['training_unique_history_contexts'],
         training_rows_by_stage=source_counts,validation_rows_by_stage=validation,steps_per_pass=per_pass,
         max_finite_passes=passes,max_steps=config['steps'],minimum_steps=config['min_steps'],
-        distributed_tail_repeated_rows_per_pass=per_pass*template['batch_size']-total,
+        distributed_tail_repeated_rows_per_pass=(-total)%(topology['world_size']*template['micro_batch_size']),
         all_actual_rows_selected_once_before_tail_padding=True,loss_normalization='token',
         validation_metric='token_nll_over_all_seven_stage_validation_rows',new_independent_validation_contexts=0,
         auxiliary_supervision_is_new_on_policy_search_round=False,actual_SGD_started=False)
@@ -295,7 +296,7 @@ def auxiliary_probe_data(recipe,token,output,*,train_examples=32):
         for item in ordered:
             if len(chosen)==limit:break
             chosen.setdefault(item['id'],item)
-        if len(chosen)!=limit:raise ValueError('The bounded auxiliary probe needs32 train and12 validation rows')
+        if len(chosen)!=limit:raise ValueError(f'The bounded auxiliary probe needs{train_examples} train and12 validation rows')
         selected=sorted(chosen.values(),key=lambda row:(-row['tokens'],row['id']));raws={}
         for pointer,raw,row in _lines(Path(recipe['data_path'])/(split+'.jsonl')):
             if row['id'] not in chosen:continue

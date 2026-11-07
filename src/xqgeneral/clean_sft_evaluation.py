@@ -20,6 +20,7 @@ from .foundation_prefix import declared_prefix_reference
 from .review_explanations import DIMENSIONS, blinded_query, parse_rating
 from .sft import checked_parent, prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary
+from .full_decoder_topology import auxiliary_topology
 
 
 def capability_kind(token):
@@ -204,6 +205,7 @@ def checked_distilled_sft(root, config, recipe, proof):
     saved, parent = completed_parent(source, root / 'manifest.json')
     contract = proof['config'];result = proof['verification']
     auxiliary = proof.get('kind') == AUXILIARY_ROUND_KIND
+    topology=auxiliary_topology(recipe) if auxiliary else None
     token = json.loads(Path(config['token_preflight']).read_text())
     token_source = token['config']['logical']['source'] if auxiliary else token['config'].get('source')
     if (parent != proof or token.get('kind') != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND) or
@@ -221,7 +223,8 @@ def checked_distilled_sft(root, config, recipe, proof):
     expected = prepare_config(checked_parent(initial, False), recipe, initial, source.parent)
     preflight = json.loads((root / 'preflight/manifest.json').read_text());checked_artifacts(preflight)
     cache_binding = preflight.get('verified_feature_cache_input' if auxiliary else 'fresh_feature_cache_input', {})
-    if (preflight.get('kind') != ('four_gpu_auxiliary_policy_sft_preflight' if auxiliary else 'four_gpu_search_distillation_sft_preflight') or
+    if (preflight.get('kind') != (topology['preflight_kind'] if auxiliary else 'four_gpu_search_distillation_sft_preflight') or
+            auxiliary and preflight['verification'].get('world_size')!=topology['world_size'] or
             preflight['config'].get('source') != str(initial) or
             preflight['config'].get('token_preflight') != config['token_preflight'] or
             preflight['verification'].get('full_decoder_initialization_preserved_all_parent_tensors') is not True or

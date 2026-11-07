@@ -11,6 +11,7 @@ from .auxiliary_policy_preflight import KIND as TOKEN_KIND,compile_recipe,valida
 from .distillation_preflight import AUXILIARY_ROUND_KIND as KIND,completed_parent
 from .evidence import atomic_json,code_identity,digest,manifest
 from .finite_training import prepare_finite_epochs
+from .full_decoder_topology import auxiliary_topology
 from .recorded_search_inputs import BoundInputs
 from .sft import prepare_config
 from .sft_preflight import checked_artifacts,full_parameter_summary,run_preflight
@@ -33,6 +34,7 @@ def _validation(recipe,counts,actual_ids=None):
 def run_round(source,recipe_template,token_manifest,output,*,resume=False):
     source,recipe_template,token_manifest,root=map(lambda p:Path(p).resolve(),[source,recipe_template,token_manifest,output])
     bound=BoundInputs();template=bound.json(recipe_template);token=bound.json(token_manifest)
+    topology=auxiliary_topology(template);world=topology['world_size'];batch=topology['global_batch_size']
     if token.get('kind')!=TOKEN_KIND or token.get('status')!='complete':
         raise ValueError('Require the actual auxiliary corpus token/cache/parent preflight')
     for section in ['inputs','outputs']:
@@ -74,15 +76,16 @@ def run_round(source,recipe_template,token_manifest,output,*,resume=False):
             if json.loads(path.read_text())!=plan:raise ValueError('Frozen complete validation plan changed')
         else:atomic_json(path,plan)
         bound.bind(path);unchanged()
-        stage='actual_four_gpu_auxiliary_capacity_and_exact_resume_preflight'
+        stage=f'actual_{world}_worker_auxiliary_capacity_and_exact_resume_preflight'
         atomic_json(root/'state.json',dict(status=stage,formal_auxiliary_SGD_started=False))
         preflight=root/'preflight';probe=run_preflight(source,recipe_path,token_manifest,preflight,resume=preflight.exists())
         if (probe.get('status')!='complete' or
+                probe.get('world_size')!=world or
                 probe.get('actual_continuous_four_and_two_plus_two_updates_compared') is not True or
                 probe.get('full_decoder_initialization_preserved_all_parent_tensors') is not True):
-            raise ValueError('Actual four-GPU parent-preserving updates and exact resume must pass first')
+            raise ValueError('Actual declared-worker parent-preserving updates and exact resume must pass first')
         gpu=bound.json(preflight/'manifest.json')
-        if gpu.get('kind')!='four_gpu_auxiliary_policy_sft_preflight':
+        if gpu.get('kind')!=topology['preflight_kind']:
             raise ValueError('Auxiliary round cannot substitute a different GPU probe type')
         for section in ['inputs','outputs']:
             for name,identity in gpu[section].items():bound.bind(name,identity)
@@ -95,11 +98,11 @@ def run_round(source,recipe_template,token_manifest,output,*,resume=False):
         metrics=bound.json(trained/'metrics.json');config=bound.json(trained/'config.json')
         if (training.get('kind')!='model_training' or config!=expected or training.get('config')!=expected or
                 training.get('code')!=contract['code'] or training.get('verification')!=metrics or
-                metrics.get('world_size')!=4 or metrics.get('decoder_training')!='full' or metrics.get('global_batch_size')!=32 or
+                metrics.get('world_size')!=world or metrics.get('decoder_training')!='full' or metrics.get('global_batch_size')!=batch or
                 metrics.get('selected_step',0)<=0 or not expected['min_steps']<=metrics.get('steps_completed',0)<=expected['steps']):
             raise ValueError('Actual auxiliary completion differs from its full-decoder source, budget or selected updates')
         indexed=IndexedTrainingRows(recipe['row_index_paths']['train'],[Path(recipe['data_path'])/'train.jsonl'],recipe['mixture'])
-        try:prepare_finite_epochs(indexed,recipe['mixture'],expected,4).check_resume(metrics.get('training_data_state'),metrics['steps_completed'])
+        try:prepare_finite_epochs(indexed,recipe['mixture'],expected,world).check_resume(metrics.get('training_data_state'),metrics['steps_completed'])
         finally:indexed.close()
         actual_ids=bound.json(trained/'validation_ids.json')
         if _validation(recipe,budget['validation_rows_by_stage'],actual_ids)!=plan:
@@ -116,17 +119,18 @@ def run_round(source,recipe_template,token_manifest,output,*,resume=False):
             raise ValueError('Auxiliary round did not preserve its actual complete decoder/bridge parameter set')
         del selected,reference
         result=dict(status='complete',evidence_state='reconstructed_baseline',
-            initial_explanation_sft_completed_before_round=True,actual_four_gpu_full_decoder_preflight_passed=True,
+            initial_explanation_sft_completed_before_round=True,actual_four_gpu_full_decoder_preflight_passed=(world==4),
             actual_auxiliary_policy_sft_completed=True,trained_auxiliary_policy_rounds=parent['verification'].get('trained_auxiliary_policy_rounds',0)+1,
             trained_search_distillation_rounds=parent['verification'].get('trained_search_distillation_rounds',0),
             auxiliary_supervision_is_new_on_policy_search_round=False,selected_checkpoint=str(selected_path),
-            selected_step=metrics['selected_step'],actual_steps=metrics['steps_completed'],world_size=4,global_batch_size=32,
+            selected_step=metrics['selected_step'],actual_steps=metrics['steps_completed'],world_size=world,global_batch_size=batch,
             training_question_rows=budget['training_question_rows'],training_unique_history_contexts=budget['training_unique_history_contexts'],
             rows_per_complete_pass=budget['training_question_rows'],selected_checkpoint_complete_passes=metrics['selected_step']//budget['steps_per_pass'],
             actual_finite_epoch_state_verified=True,training_data_state=metrics['training_data_state'],
             full_source_sampling_profile_verified=True,loss_normalization='token',validation_coverage=plan['coverage'],
             validation_selects_checkpoint=True,independent_test_used_for_training_or_selection=False,raw_answers_repaired=False,
             strong_play_or_reliable_coaching_proven=False,**summary)
+        if world==3:result.update(actual_three_gpu_full_decoder_preflight_passed=True,auxiliary_topology_profile=topology['profile'])
         unchanged();atomic_json(root/'verification.json',result)
         inputs=[source,source.parent/'manifest.json',source.parent/'config.json',recipe_template,recipe_path,token_manifest,
             Path(token['config']['logical']['parent_completion']),preflight/'manifest.json',trained/'manifest.json',trained/'config.json']

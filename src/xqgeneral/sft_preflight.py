@@ -1,4 +1,4 @@
-"""Full-decoder four-worker update, memory and exact-continuation preflight."""
+"""Full-decoder update, worker memory and exact-continuation preflight."""
 import argparse
 import json
 import math
@@ -15,6 +15,7 @@ from .feature_store import feature_paths
 from .training_index import build_index, index_paths, IndexedTrainingRows
 from .finite_training import FINITE_PROFILE, prepare_finite_epochs
 from .recorded_search_inputs import BoundInputs
+from .full_decoder_topology import auxiliary_topology
 
 RESUME_FIELDS = ['step', 'world_size', 'trainable', 'optimizer', 'random_state', 'torch_rng_state',
     'cuda_rng_states', 'tokens_seen', 'initial_loss', 'input_hashes', 'code', 'compute_contract',
@@ -154,9 +155,10 @@ def probe_row_indexes(common, root):
 
 def verify_updated_probe(root, initial_path, expected_inputs, config, execution_code):
     root = Path(root)
+    world=config.get('ddp_world_size',4)
     comparison = compare_resume(root / 'continuous', root / 'resumed')
-    if comparison['status'] != 'complete' or comparison['steps'] != [4, 4] or comparison['world_sizes'] != [4, 4]:
-        raise ValueError('Actual four-worker full-decoder continuation differs')
+    if comparison['status'] != 'complete' or comparison['steps'] != [4, 4] or comparison['world_sizes'] != [world, world]:
+        raise ValueError('Actual declared-worker full-decoder continuation differs')
     initial = torch.load(initial_path, map_location='cpu', weights_only=True, mmap=True)['trainable']
     actual = torch.load(root / 'continuous/latest.pt', map_location='cpu', weights_only=True, mmap=True)
     finite_state = {}
@@ -165,13 +167,13 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
         rows = IndexedTrainingRows(config['row_index_paths']['train'],
             [path / 'train.jsonl' for path in roots], config['mixture'])
         try:
-            prepare_finite_epochs(rows, config['mixture'], config, 4).check_resume(actual.get('data_state'), 4)
+            prepare_finite_epochs(rows, config['mixture'], config, world).check_resume(actual.get('data_state'), 4)
         finally:
             rows.close()
         finite_state = {'actual_finite_epoch_state_verified': True,
                         'training_data_state': actual['data_state']}
     compatible_resume(actual['config'], config)
-    if actual['code'] != execution_code or actual['input_hashes'] != expected_inputs or len(actual['cuda_rng_states']) != 4:
+    if actual['code'] != execution_code or actual['input_hashes'] != expected_inputs or len(actual['cuda_rng_states']) != world:
         raise ValueError('Full-decoder probe execution or immutable inputs differ')
     full_parameter_summary(actual['trainable'], initial)
     changes = dict.fromkeys(['decoder', 'bridge', 'board'], 0)
@@ -203,15 +205,15 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
         raise ValueError('Every probe update needs finite loss and nonzero finite gradients')
     resources = []
     for run, step in [('continuous', 4), ('resumed', 2), ('resumed', 4)]:
-        for rank in range(4):
+        for rank in range(world):
             item = json.loads((root / run / f'resources-step-{step}-rank-{rank}.json').read_text())
-            if (item['rank'] != rank or item['world_size'] != 4 or item['actual_step'] != step or
+            if (item['rank'] != rank or item['world_size'] != world or item['actual_step'] != step or
                     item.get('training_main_returned_successfully') is not True or
                     not 0 < item['peak_allocated_gib'] <= item['total_memory_gib'] or
                     not math.isfinite(item['total_memory_gib'])):
                 raise ValueError('Each actual GPU worker must report a successful finite memory measurement')
             resources.append(dict(item, run=run))
-    return {'exact_resume': comparison, 'updated_tensors_by_group': changes,
+    return {'world_size':world,'exact_resume': comparison, 'updated_tensors_by_group': changes,
             'trainable_tensors': len(initial), 'trainable_parameters': sum(t.numel() for t in initial.values()),
             'all_trainable_and_adam_states_finite_fp32': True, 'all_four_update_gradients_finite_nonzero': True,
             'actual_gpu_worker_resources': resources, **finite_state}
@@ -231,7 +233,10 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     distillation = token.get('kind') == TOKEN_KIND
     auxiliary = token.get('kind') == AUXILIARY_KIND
     post_sft = distillation or auxiliary
-    preflight_kind = ('four_gpu_auxiliary_policy_sft_preflight' if auxiliary else
+    topology=auxiliary_topology(recipe) if auxiliary else None
+    world=topology['world_size'] if auxiliary else 4
+    batch=topology['global_batch_size'] if auxiliary else 32 if distillation else 16
+    preflight_kind = (topology['preflight_kind'] if auxiliary else
         'four_gpu_search_distillation_sft_preflight' if distillation else 'four_gpu_clean_full_decoder_sft_preflight')
     if auxiliary:
         saved = auxiliary_parent(source,token,recipe,guard)
@@ -251,9 +256,9 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         saved = checked_parent(source, True, **({'authorized_prefix': prefix} if prefix else {}))
     formal = prepare_config(saved, recipe, source, root / 'unused-formal-output')
     if (formal.get('decoder_training') != 'full' or formal.get('trainable_parameter_dtype') != 'float32' or
-            formal.get('ddp_world_size') != 4 or formal['batch_size'] != (32 if post_sft else 16) or formal.get('micro_batch_size') != 1 or
+            formal.get('ddp_world_size') != world or formal['batch_size'] != batch or formal.get('micro_batch_size') != 1 or
             not formal.get('deterministic_training') or not formal.get('feature_cache_mmap')):
-        raise ValueError('Preflight requires the exact deterministic four-worker full-decoder recipe')
+        raise ValueError('Preflight requires the exact deterministic declared-worker full-decoder recipe')
     token_kind = AUXILIARY_KIND if auxiliary else TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight'
     token_data = token['config']['logical']['data'] if auxiliary else token['config']['data']
     if token.get('kind') != token_kind or token_data != recipe['data_path']:
@@ -295,9 +300,9 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
             guard.unchanged()
             return proof['verification']
     else:root.mkdir(parents=True);atomic_json(root / 'contract.json', contract)
-    selected = probe_data(recipe, token, root / 'data', train_examples=32 if post_sft else 24)
+    selected = probe_data(recipe, token, root / 'data', train_examples=batch if auxiliary else 32 if distillation else 24)
     common = dict(formal, data_path=str(root / 'data'), steps=8, min_steps=8, eval_every=2, patience=8,
-                  validation_examples=12, generation_examples=0, purpose='Four-GPU full-decoder actual 4 versus 2+2 probe; no independent test or completed SFT claim')
+                  validation_examples=12, generation_examples=0, purpose=f'{world}-worker full-decoder actual 4 versus 2+2 update probe; no independent test or completed SFT claim')
     if 'source_coverage_profile' in recipe:
         # Capacity/resume checks must exercise the longest explanations rather
         # than inherit quotas from a much larger formal course-replay corpus.
@@ -339,7 +344,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         if latest.exists():
             previous = torch.load(latest, map_location='cpu', weights_only=True, mmap=True)
             compatible_resume(previous['config'], config)
-            if previous['code'] != contract['code'] or previous['input_hashes'] != expected_inputs or previous['world_size'] != 4:
+            if previous['code'] != contract['code'] or previous['input_hashes'] != expected_inputs or previous['world_size'] != world:
                 raise ValueError('Probe continuation inputs or executed source changed')
             step = previous['step'];del previous
         if step < target:

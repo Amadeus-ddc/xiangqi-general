@@ -66,6 +66,38 @@ python -m xqgeneral.auxiliary_policy_training \
 `state.json` 区分预检、正式 SGD 和失败；实际更新读取原生训练日志。
 完整输出通过后，完成重开不新增 GPU 训练；失败及部分输出保留。
 
+## 三卡资源配置
+
+[三卡模板](../configs/auxiliary-policy-sft-three-gpu-v1.json)使用明确的
+`full_decoder_auxiliary_three_workers_v1` 配置：FSDP2、全局批量 30、每卡微批量 1，
+每次完整更新每卡累计十个微批量。原生训练器要求全局批量能够被工作进程数整除，
+所以不能在三卡上继续声明批量 32。学习率、词元损失、全部七类数据和验证规则保持原配方。
+编译器按实际行数重新计算遍历步数，尾部只补齐一个分布式微批量，而不是补齐至 30 行。
+
+三卡必须重新完成 `three_gpu_auxiliary_policy_sft_preflight`：每类最长行共 30 条训练、
+12 条验证，连续四步与两步加两步逐位比较，三份工作进程的显存、随机状态、参数、
+Adam 与有限遍历位置全部核对。四卡完成标志不能授权三卡训练。三卡完成合同明确写入
+`actual_three_gpu_full_decoder_preflight_passed=true` 与四卡标志 `false`；父模型和
+评测入口按同一配置核对实际工作进程数、批量和完成类型，辅助／搜索轮次仍分开计数。
+
+物理卡号由服务器分配策略控制，不写死在通用训练模块中。2026-11-07 用户明确保留
+物理 GPU2，后续本项目任务仅允许 0、1、3。旧四卡任务等第 243 步原生验证和完整
+检查点落盘后释放；原四卡等待队列被拦住，不能直接恢复。完整检查点保留原四卡
+优化器状态，不声称可以原样跨三卡续训。三卡新实验从声明的已完成父模型初始化，
+使用新目录和自己的实际容量／精确续跑证明。CPU 语料及分词准备可以继续。
+
+```bash
+# 先取得兼容当前分配策略的服务器资源租约，再运行；示例路径须对应实际完成输入。
+CUDA_VISIBLE_DEVICES=0,1,3 python -m xqgeneral.auxiliary_policy_training \
+  --init runs/joint-replay-initial-sft-v1/pipeline/sft/adapter.pt \
+  --recipe configs/auxiliary-policy-sft-three-gpu-v1.json \
+  --token-preflight runs/auxiliary-policy-token-preparation-v1/preflight/manifest.json \
+  --output runs/auxiliary-policy-three-gpu-joint-round-v1/round
+```
+
+三卡协议的 CPU 受控产物检查不代表真实三卡完整模型通过，也不代表已重新开训。
+实际语料、分词重编码、显存容量和学生棋力仍分别验收。
+
 ## 当前证据边界
 
 2026-11-07，J2304 父权重、2386161 个特征历史的完整祖先关系及固定底座 11 个文件已完成
