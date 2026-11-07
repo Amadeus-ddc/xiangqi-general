@@ -1,260 +1,121 @@
 # Xiangqi General model card
 
-2026-11-08（UTC+8），[辅助资源迁移](AUXILIARY_RESOURCE_TRANSITION.md)使用独立部分状态类型，保留参数、完整Adam、全局进度和原始批次，并在实际两卡原生预检后继续同一轮次。微批量1／3的明确配置均保持全局30与完整数据。CPU准备、跨资源状态保持、相同卡数准确续跑和训练完成各自记录；卡数改变后的未来逐位等价不作声明，部分捕获不增加完成轮数。166项定向控制与真实旧step4格式检查不代表当前step1000已捕获、真实两卡执行或棋力／教学收益，后续分别验收。
+本项目是受Queen研究流程启发的独立中国象棋实现，目标是强棋力与可核验的中文教学。**当前还不是经过验收的象棋教练模型。**四课和初始讲解已完成；新的七类辅助训练仍在运行，后续合格搜索蒸馏、最终独立评测和正式模型交付尚未完成。
 
-2026-11-08（UTC+8），[两卡完整参数配置](TWO_GPU_FULL_DECODER.md)覆盖七类辅助监督及新搜索讲解／六类回放，使用两进程、全局批量30、FSDP2和完整原验证。受控CPU检查与实际分词证明的预算编译已通过；真实两卡容量、准确续跑、三卡状态迁移及新模型能力另行验收。配置本身没有恢复现有三卡优化器进度，也未增加任何完成训练轮次。GPU1、2继续按运行资源策略预留，现有三卡任务临时运行到第1000步完整检查点保存后释放。
+本页采用2026-11-08 06:09:37（UTC+8）的固定训练快照。[状态页](../STATUS.md)提供任务与接手入口，[轻量执行证据](../evidence/auxiliary-two-gpu-actual-resume-v1.json)绑定本次实际收据。旧过程与早期软件控制完整保留在[历史模型卡](MODEL_CARD_HISTORY.md)及各实验文档中。
 
-2026-11-08（UTC+8），六类回放分别使用课程未来局面、数值目标PV和当前单走法的原生合同。数值变化允许在六步前以AXF和棋等合法终局结束；课程题原有限制和终局后不能继续走的规则保留。真实曾误拒的一条三步和棋数值验证记录已用原始字节通过正确合同，目标与模型输入未改。新增回归覆盖生产／消费、合法和棋、保留课程限制及非法继续；实际整库复建仍另行验收。本次修正未改变正在训练的固定数据、配方或冻结源码。
+## Current verified state (2026-11-08)
 
-2026-11-07（UTC+8），新增[搜索蒸馏的六类回放与七类验证](AUXILIARY_SEARCH_REPLAY.md)：从实际完成的七类语料确定性选择原始训练子集，保留全部四课／数值／走法验证原始字节；消费时从来源重新选择，重判原生答案，数值PV进入合并分割检查。新三卡配置按实际完整子集与新搜索标签编译有限遍历，实际保存验证ID必须覆盖全部七类，CLI可显式复用已核验输入收据。该子集不替代此前完整辅助训练；新搜索SGD、能力保持与最终质量仍待实测。当前服务器已有三卡辅助预检的真实参数／Adam精确续跑证据，正式任务已启动；本次新回放尚未用于实际搜索训练，GPU2继续保留。以下保留历史快照。
+| 阶段 | 已核验事实 | 尚未证明 |
+| --- | --- | --- |
+| 连接桥／四课 | 新四课实际完成；第4课选42000步 | 高课程正确率不能证明完整实战和教学能力 |
+| 初始讲解 | 合格标签SFT选1792步；讲解／回放联合SFT选2304步 | 旧模型原始对弈和正文质量仍有明显问题 |
+| 七类辅助 | 全量语料、完整状态迁移与真实两卡预检通过；快照记录1320步 | 整轮尚未完成，新模型开发质量尚无结果 |
+| 搜索蒸馏 | 有真实学生搜索和完整BF16教师标签；旧164更新尝试没有获选新模型 | 新的合格搜索SGD轮次为0，不能把挖掘计作训练完成 |
+| 最终测试／交付 | 独立输入与协议、完整模型导出组件已有验证 | 最终模型选择、独立分数、教学核查及正式交付未完成 |
 
-The [fixed oracle-policy validation diagnostics](ORACLE_POLICY_EVALUATION.md)
-retain381 numerical and384 move-answer views from384 original histories. Format,
-legal moves, history-valid PVs and conditional errors against the stored engine
-reference are reported separately. These are not measured playing strength or
-human coaching scores. Generation inputs omit targets and recorded futures;
-raw invalid outputs and interrupted batches remain preserved.
+本项目新任务只使用物理GPU0、3，GPU1、2供用户预留。此前三卡任务在第1000步完整检查点保存后退出，两卡实际恢复从1001步更新开始，保留全部624个FP32训练张量、Adam、全局计数、已经消费的30000行及下一批顺序。原验证ID和顺序不变。
 
-The [three-worker search-distillation profile](THREE_GPU_SEARCH_DISTILLATION.md)
-uses FSDP2, global batch30/micro1 and an actual new three-worker capacity/resume
-preflight. Its full-source template derives quotas from token-verified counts and
-uses token-average loss. A completed search round retains auxiliary-round counts
-and increments only the search count. Real search SGD and retention of the two
-auxiliary engine-supervision tasks still require separate execution and evaluation.
-
-The [descendant search pilot](DESCENDANT_SEARCH_PILOT.md) checks actual completed
-full-decoder parents, cumulative auxiliary/search round counts, all paired raw
-validation answers and the complete auxiliary neural review. Auxiliary descendants
-must retain the full validation-reference isolation certificate from their training
-corpus. An explicitly pinned historical source inventory permits compatible saved
-record/metric replay; it does not establish inference-deployment equivalence.
-Mining adds no SGD round. These CPU consumers establish neither real new-label
-yield nor improved chess strength or reliable teaching.
-
-The [search-protection exporter](SEARCH_PROTECTION.md) reconstructs the original
-held-out authority plus every auxiliary-validation reference PV and its color
-mirror, including unused long suffixes. Explicit mining, collection and merge
-contracts carry that same evidence; the original authority count remains separate.
-This isolation infrastructure is one required part of descendant pilot admission.
-It does not complete three-process search distillation or establish model quality.
-
-## Current verified state (2026-11-07)
-
-The [three-worker auxiliary profile](AUXILIARY_POLICY_TRAINING.md#三卡资源配置)
-uses FSDP2 with global batch30 and requires a new native three-worker capacity
-and exact-continuation preflight. Physical GPU2 is reserved at the user's request;
-server jobs must respect that allocation. Four-worker optimizer checkpoints are
-preserved without claiming exact continuation on three workers. CPU protocol
-checks do not establish actual three-worker capacity, SGD completion or model gains.
-
-The [auxiliary-model development evaluation](AUXILIARY_POLICY_EVALUATION.md)
-requires the actual selected full-decoder completion, preserves separate auxiliary
-and on-policy search round counts, and matches the complete original explanation
-validation rows byte-for-byte and in their original order against the seven-stage
-corpus. Paired raw generations, full-BF16 auxiliary review and raw full matches
-remain separate measurements. Fifteen new and 69 existing controlled CPU checks
-pass; these controls establish neither new neural scores nor real playing strength.
-
-The [auxiliary seven-stage training interface](AUXILIARY_POLICY_TRAINING.md)
-continues from a completed full-decoder explanation model, verifies native tokens
-and feature ancestry, compiles complete finite source coverage and validates every
-original seven-stage validation ID. It requires a fresh, typed four-GPU capacity
-and exact-resume check before formal SGD. Controlled protocol tests do not prove
-actual GPU execution or model gains. A completed auxiliary round increments only
-the auxiliary count, preserving the trained on-policy search-distillation count.
-The real parent/cache readback is complete; new auxiliary training remains pending.
-
-The expanded four-course route and initial explanation/replay SFT have completed.
-The joint model answers 2345/2600 development QA questions correctly (90.19%).
-In 384 raw development matches, it records zero wins, 383 losses and one draw;
-266 losses are invalid-move forfeits. These are validation-opening development
-measurements, not final independent-test results. No engine repairs are counted
-as student moves. The model is not yet a qualified strong player or reliable coach.
-
-The completed query-log corpus contains 293089 question views over 148157
-history contexts, with both expert features and native token-length checks.
-These rows are auxiliary policy/numeric supervision, not newly generated
-Chinese explanations or independent human games. The larger original-course
-replay pool contains 53248 training rows and 2600 unchanged validation rows.
-The [seven-stage corpus workflow](ORACLE_POLICY_CORPUS.md) preserves provenance,
-protects heldout positions and distinguishes preparation from actual SGD.
-No student improvement from that auxiliary corpus has been established.
-Qualified search-distillation gains, final independent evaluation and model
-delivery remain pending. The following sections retain historical snapshots.
-
-The explicit [full-source finite replay profile](FULL_SOURCE_REPLAY.md) requires every actual explanation and course row in each selected epoch, including when course sources exceed explanations. Native CPU readback of the actual 1114 plus 6656 rows passes SFT preparation and all 7770 unique row selections. The current four-pass budget is 972 updates, with distributed tail padding reported separately. Capacity probes use bounded longest-example mixtures and do not claim full formal data coverage. No new student GPU training or quality gain is claimed by these CPU controls.
-
-An explicit [joint explanation and course validation profile](JOINT_DISTILLATION_VALIDATION.md) compiles every original validation row and requires a bound, complete native validation-ID ledger before round qualification. CPU readback covers the actual 384 explanation and 2600 course validation rows, without model inference, tokenization or independent-test access. Selection remains aggregate token NLL; this does not establish per-course accuracy, prose quality or playing strength. The original explanation-only recipes and failed 164-update round are preserved. No new jointly selected neural model is claimed.
-
-The [integrated batched strict-search pilot](BATCHED_STRICT_SEARCH_PILOT.md) has completed actual inference on 128 new starting roots: 99 full-BF16 teacher responses, 89 accepted structured records and 10 rejections, followed by independent native merge/reconstruction. The original selected step-1792 FP32 student and unquantized BF16 consolidator are preserved. All raw failures remain recorded. A four-GPU 4096-root continuation retains the same native recipe; a failed controller was replaced by an observer adopting the four existing worker identities without restarting them. Complete production yield, full QA-replay preparation and the next student training round remain pending. Current consolidation omits unverified child prose; no complete semantic-quality, playing-strength or final-delivery claim follows from this data pilot.
-
-The [expanded-distillation diagnostic](EXPANDED_DISTILLATION_DIAGNOSIS.md) now separates actual training from model promotion. All 164 full-decoder updates ran, but the original validation selector retained step 0 and the round failed qualification. The actual last checkpoint has 624 finite, changed FP32 tensors and remains an unpromoted experimental candidate. Its independently regraded old-course accuracy is 1860/2600 (71.54%), versus 1896 for the parent and 2345 for the joint initial-SFT candidate. On the same 384 development explanation records it has 339 legal first suggestions, 163 legal main variations and 36 complete structure/rule passes; the parent has 346/99/15. Prose semantics, full matches and final independent acceptance were not completed on this candidate.
-
-Strict recollection of the five preserved teacher batches is complete: 1036 accepted records, 11 duplicate histories and 1025 distinct histories. All five sources require the narrow immediate-mate/PV check; validation/test bytes are unchanged. The original full 1046-row audit found 21 inconsistencies. These checks do not establish complete strategic prose correctness.
-
-The original frozen batched-inference branch has real trained-weight short-decode and bounded capacity measurements. Four requests at a masked input width of 2048 each generated 4096 forced new tokens, with 34.64 GiB peak allocated memory. Forced outputs are not labels. B1 compatibility controls pass; B1 and B4 texts differ. The integrated configuration adds explicit inference weight-cache controls and strict collection; whole-root throughput, final strength and reliable coaching remain unproven. [Artifact bindings and measured scope](../evidence/expanded-distillation-diagnosis-v1.json) distinguish the measured ancestor source from current integration checks. Earlier entries below are historical snapshots.
-
-The [preparation of expanded search data](EXPANDED_SEARCH_DATA_READY.md) completed at 2026-11-06 05:24 UTC. Five sources re-open all 1185 responses from the teacher using full BF16 weights, reconstruct 1057 accepts and 128 rejections, and retain 1046 distinct full histories after 11 duplicates. A second complete reconstruction passes. Original 384/512 protected rows remain identical in bytes; native game identifier and root/future split overlap are zero. The original cache is retained and 1045 new histories are added; all 10686 training/validation rows fit 2048 tokens without truncation, with zero test rows tokenized. The unchanged original search parent is used. The local development budget compiles to four passes at most, 1306 rows/41 updates per pass and 164 updates maximum; the downstream preflight has now passed with four GPUs, all 624 parent tensors containing 4694274592 parameters preserved, finite FP32 parameter and Adam states, and zero difference between continuous four updates and two plus two after recovery. This uses a 32-row explanation training probe and 12 validation examples, not the complete formal round. The first actual formal optimizer update is independently read back at 06:11 UTC: step 1, loss 1.166554570198059, reported gradient norm 15.625088691711426, 10660 supervised tokens, four GPUs and global batch 32. This is not a completed pass or round; selected weights and capability acceptance remain separate evidence. These frozen collections retain the original filter: 11 known immediate mate score/PV inconsistencies remain, and complete strategic prose semantics are unverified. No strength gain or completed distillation round follows from data preparation. The joint model has started its 384-game development run; its ordered first 37 games at 100 nodes are all losses, including 28 raw forfeits for illegal moves, as of 06:02 UTC. This prefix is not a full result or Elo estimate. Earlier paragraphs below preserve historical snapshots.
-
-An [optional full-history immediate-mate label check](IMMEDIATE_MATE_LABEL_CONSISTENCY.md) now covers root and candidate `mate +1/-1` scores at collection and merge readback. On the actual first 356 teacher responses, legacy reconstruction retains 318 labels and the opt-in check retains 307; the 11 added rejections exactly match a separate native audit. All 9823 initial training rows pass this narrow check. Retained bytes and original rejections are preserved, and mixed-source merges explicitly report partial coverage. This does not validate general prose semantics or demonstrate a student improvement. Existing frozen production jobs retain their original recipe; formal first-round training and final acceptance are still pending.
-
-A [current-cohort expert policy diagnostic and the first expanded search-label batch](CURRENT_EXPERT_AND_SEARCH_LABELS.md) have completed separate readbacks. On 286 development records where all three raw suggestions are legal, the frozen expert passes the shared-search mistake gate on 281, versus 219/216 for the original/joint language models. The subset is descriptive and post hoc; it does not isolate a single architectural or training cause. The first 512-root expanded leaf yields 318 accepted training histories from 356 full-BF16 teacher responses, with all 38 rejections reconstructed. Validation/test files are byte-preserved; full merged isolation, deduplication, training and final acceptance remain pending. Formal search-distillation SGD rounds are still zero. No new language-model queries or training were performed by the readbacks, and no strong-play or reliable-coaching claim is made.
-
-The [joint-replay SFT full development review](JOINT_SFT_FULL_DEVELOPMENT_REVIEW.md) and separate paired readback are complete. On the same 384 examples, selected update 2304 has 340 legal first moves, 263 moves passing the original engine mistake threshold, 24 complete contracts and 123 legal main lines; the original update 1792 has 346, 262, 15 and 99. Normal/zero/different-history legal counts are 340/56/35, with complete contracts 24/0/0. All are raw generations with zero oracle repairs. Independent CPU readback regrades all 2304 old/new answers, replays 5063 stored engine responses in original call order, reconstructs 768 grounded review inputs and reparses every raw rating without new queries or independent-test use. Full BF16 auxiliary review has 371 valid and 13 rejected ratings per model; the joint model's conditional factual/strategy means are 1.86253/1.91375 out of five, and only 17/384 requests score at least four on all dimensions. On the common 358 valid pairs, instruction adherence changes by exactly zero on average. These are auxiliary LLM judgments from the consolidator teacher family, not human acceptance. Results are mixed and remain below reliable coaching quality. The joint model's full matches await the shared startup lease; formal search-distillation SGD rounds remain zero.
-
-The [original initial-SFT 384-game development baseline](INITIAL_SFT_FULL_MATCHES.md) and a separate native readback are complete: the selected update-1792 model has 0 wins, 383 losses and 1 draw, including 277 raw invalid-move forfeits. All 4888 artifact bindings, 64 validation openings, both colors, three opponent node budgets and all full-game/turn checkpoints pass the original D3 replay. There are no censored games, legal action constraints, oracle repairs, new readback inference calls or Elo claims. Only 299 of 5100 model turns satisfy the complete explanation contract. These results do not meet the strong-player or reliable-coach objective. The unchanged 512-root pilot has entered actual guarded search after a proven pre-query repeated-cache-hash interruption; unknown GPU occupancy remains untouched. The joint candidate's complete development evaluation is now reported below; its match results, the full merged expanded labels, formal distillation, final independent acceptance and delivery remain outstanding.
-
-The same-setting 2600-question retention review is complete and all 7800 real new/reference answers have been regraded. The joint candidate scores 2345/2600 (90.19%), versus 1896/2600 (72.92%) for the original SFT and 2465/2600 (94.81%) before SFT under matched FP32 inference. Relative to the original SFT, 493 answers change from wrong to correct and 44 regress; all answer formats are valid, with 255 remaining content errors. Future material calculation (59/100) and future check evasion (70/100) remain weak. The same ordered questions, gold answers, original inference/grading source and raw failures are preserved. This multi-change development comparison does not establish independent chess strength or coaching acceptance. The [full paired lecture/prose development review](JOINT_SFT_FULL_DEVELOPMENT_REVIEW.md) is complete; this candidate's full match results remain pending.
-
-The [joint-replay initial SFT has completed](JOINT_SFT_COMPLETED.md): four finite passes / 3072 updates, with update 2304 selected on the original 384-case validation NLL. The actual selected checkpoint contains 4,694,274,592 finite FP32 parameters across 624 tensors and passes the original D3 native completed-model checker. Normal/zero/different-history forward NLLs are 0.6377824353 / 0.8525749888 / 1.0046338552. The real finite-epoch state records 49,116 nonpadding presentations plus four padding rows; these are not distinct examples, and the distributed microbatch tail is smaller than the global-batch ceiling. Seven of eight existing training samples have a legal first move, but zero pass the full native structure/line contract. These small diagnostics do not establish better play or coaching. The original 2600-question retention and complete lecture/prose evaluation have completed; this candidate's match results remain pending. The original update-1792 search parent is retained and completed formal distillation rounds remain zero. Public 113 modules / 306 checked files are unchanged, with the exact prior 2087-case full CPU evidence reused locally. Independent acceptance and final delivery remain outstanding.
-
-The [first distilled candidate’s 384-game development matches](FIRST_SCALED_DISTILLATION_FULL_MATCHES.md) are now an actual owned waiting process. The exact original 112-module D3 source, 64 validation openings, both colors, three node budgets and raw explanation policy are retained. Actual completed round and paired-development proofs must bind the same selected full-FP32 checkpoint before model loading. Native opening admission covers all 384 cases; 27 pairing/native-round/OS controls and two actual CLI helps pass without model loading or CUDA initialization. The explicitly labeled 37-label CPU opening control does not create the future evaluation configuration or prove expanded-data training. After complete games, comparisons against the original SFT and joint-replay SFT preserve censored and illegal outcomes; censoring earns no draw credit and no Elo is inferred. Public source and 306 checked files remain unchanged, with the exact prior 2087-case full CPU evidence reused locally. No new student/teacher queries, match results or formal distillation updates exist. Independent acceptance and final delivery remain outstanding.
-
-The [first expanded-distillation development evaluator](FIRST_SCALED_DISTILLATION_EVALUATION.md) is now an actual owned waiting process. After the real round completes it will read its native ROUND_KIND, selected full-FP32 state and training proofs, then execute the original 2600-question QA, three 384-case lecture memories and full BF16 auxiliary prose review. Historical QA and D3 evaluator sources remain unchanged. A real cache control verifies the original 2,236,975 histories / 4039 storage shards and all 1249 required development contexts retain their ordered keys and exact storage bindings; its 37 added training histories are not the future expanded-data acceptance. Thirty caller/native-round cases, five actual CLI helps and the real cache-reference check pass. Public software remains byte-identical across 113 modules / 306 checked files, so the prior 2087-test full CPU result is reused locally. No new student or teacher queries or model-quality results exist. Full match results for this distilled candidate, independent acceptance and final delivery remain outstanding.
-
-The [first expanded-data distillation continuation](FIRST_SCALED_DISTILLATION.md) passes 18 new, 102 related and all 2087 CPU checks plus build/release checks. Three actual CLI help entries and a real failed-subprocess redaction/error-propagation control pass without model loading or CUDA initialization. The actual frozen supervisor is byte-identical to the fully checked public script and its PID/start-time/command identity is live. It now waits for complete scaled data preparation and the separate joint-SFT development evaluation. The local development minimum is 512 accepted deduplicated histories, not the paper first-round scale; the 37/70-label controls cannot start this round. It retains the original update-1792 search parent, explicit full-FP32 FSDP2 settings, a data-sized four-pass ceiling and the existing native four-GPU initialization/capacity/exact-resume gates. No round directory, native expanded-data GPU result or new formal SGD exists yet. This distilled candidate will still need its own development evaluation; final strength, coaching acceptance and model delivery remain outstanding.
-
-The [explicit distillation FSDP2 and finite-pass profile](DISTILLATION_FSDP2_FINITE_BUDGET.md) passes 16 new, 84 related and all 2069 CPU checks plus build/release checks. Its optional pass ceiling derives updates, minimum training and validation interval from the actual rounded mixture while preserving the 30000-update hard cap and legacy behavior when absent. A real 37-label / certified course-replay CPU configuration readback gives 45 rows and two updates per pass: the legacy template retains 30000 updates / 15000 epochs, while the explicit four-pass profile compiles eight maximum updates and preserves all five memory controls and the pinned decoder reference. Neither control is scheduled for training or loads a model/CUDA. This is not the expanded training dataset or native GPU capacity evidence; actual feature/token checks, full four-GPU initialization and exact restoration remain required before formal SGD. No new strength or coaching improvement is established.
-
-A [matched 384-game development evaluation](JOINT_SFT_MATCH_EVALUATION.md) is queued for the new joint-replay SFT candidate after its real training and paired retention/explanation evaluation complete. It keeps the original evaluator source, 64 validation openings, both model colors, three opponent budgets and raw explanation policy. Actual native preparation covers all 384 schedule cases, four independent OS-process startup-lease controls and two CLI entries, without loading a model or initializing CUDA. The same selected checkpoint must bind both evaluations. New match results and their paired comparison remain pending; this preparation does not establish improved playing strength, coaching quality or independent acceptance.
-
-The [search-collection merger](SEARCH_COLLECTION_MERGE.md) reopens original leaf production evidence and reconstructs all accepted and rejected labels before keeping the first original record for each complete history. It requires the same selected search parent, protected splits, recorded pool, pinned full BF16 teacher and validated search-acceptance profile. It preserves retained row bytes and records all duplicate provenance, while counting attempted starting roots separately from accepted contexts. All 2049 CPU checks and build/release checks pass. The real two-collection merge and full reconstruction readback are complete: 81 accepted records yield 70 distinct complete histories, with 11 duplicate records preserved in provenance. These came from 64 unique attempted starting roots and 48 accepted starting roots. All 91 original teacher answers reproduce 81 accepted and 10 rejected labels; protected 384/512 files remain byte-identical and cross-split overlaps are zero. The merged 70-label collection still requires feature extension and token preflight before training. An automatic waiter will apply the same checks to the three existing 512-root producers after their completion. This performs no new neural inference or student training; formal distillation and final model acceptance remain outstanding.
-
-The [distillation decoder-asset handoff](DISTILLATION_MODEL_ASSETS.md) now uses the actual selected parent's pinned manifest independently of its data-only foundation proof. All 2026 CPU checks, build/release checks and real identity checks of 11 assets / three 8,044,982,000-byte Qwen3-4B base shards pass; invalid digest, revision and directory declarations are rejected. The reference survives token preflight and recipe compilation. Mixed token observations select actual primary IDs, verify replay membership and reject replay longer than the native capacity probe. These checks perform no model inference or training. The full real data preparation and output readback have completed: all 9,677 actual train/validation supervision records fit without truncation, original 384/512 heldout files are preserved, and the actual compiled recipe retains the pin. Primary/replay maxima are 641/320 training and 625/323 validation. Its four-step recipe is an unscheduled compiler control; formal distillation SGD remains outstanding.
-
-Earlier launch evidence for the now-completed [clean-foundation joint replay SFT](DISTILLATION_JOINT_REPLAY.md) covered four planned epochs / 3,072 updates. Each epoch keeps all 9,823 explanations and 614 examples from each completed course, using per-example loss at an 80% explanation / 20% course mixture. The full 4,694,274,592-parameter four-GPU continuous-four versus two-plus-two preflight has zero parameter differences and no Adam/RNG mismatches. Its first three actual optimizer updates have finite losses and nonzero finite gradients; reconstruction with the actual fixed sampler confirms course rows in all three batches. Training completion, matched retention, paired explanation quality and final playing strength require their separate evidence. The original update-1,792 model remains the measured baseline. The optional joint distillation interface binds and checks all replay sources and retains exact search-parent identity; its software and data checks do not establish a completed distillation training round.
-
-The selected initial-SFT model has completed [full-parameter export, relocation and native inference checks](FULL_SFT_INFERENCE_BUNDLE.md): all 624 FP32 tensors / 4,694,274,592 trained parameters are preserved. Three development histories, including a color-mirror pair, match in input tokens, 16 live expert layers, all first-step vocabulary logits and eight greedy generated tokens. Inference now honors the recorded disabled weight-cache setting: Torch allocator peaks fall from about 27.20 to 18.98 GiB in this fixed workload, with exact before/after outputs. All 1947 CPU tests, build/release checks and separate native-output/artifact readback pass. This checks deployment components; final playing strength, coaching quality and final model delivery remain outstanding. The measured peak does not establish total device usage, full-context capacity or a general speed claim.
-
-The [complete paired development evaluation and prose review](INITIAL_SFT_FULL_DEVELOPMENT_REVIEW.md) have finished and passed separate artifact readback. On the same 384 examples, normal/zero/different-history memory gives 346/56/43 legal first moves and 15/0/0 valid structural/line/fact contracts. Full BF16 auxiliary review has 371 valid and 13 rejected ratings; conditional means out of five are 1.71968 factual correctness, 1.81941 strategic reasoning, 2.71698 clarity and 2.21563 instruction adherence. Only 9/384 queries score at least four on every dimension. These are auxiliary LLM judgments, not human teaching acceptance. The model remains below reliable coaching quality. The selected update 1,792 is unchanged; terminal update 2,456 does not improve matched course QA. The full 384-game baseline has finished as reported above; the unchanged 512-root pilot is now in actual guarded search. The corrected isolated pool contains 229,882 candidate histories, not completed distillation labels. Formal distillation and final independent acceptance remain outstanding.
-
-Xiangqi General is an independent Chinese-chess adaptation of the [Queen research pipeline](https://arxiv.org/abs/2610.03695v1), intended to play strong Xiangqi and explain moves in Chinese for personal study.
-
-**No trained checkpoint has passed final playing-strength and coaching acceptance.** All four courses and [initial full-decoder explanation SFT](INITIAL_SFT_COMPLETED.md) are complete. SFT ran 2,456 updates over four finite passes and selected update 1,792 by fixed 384-example validation NLL (0.63950). The eight closing validation generations are preserved as an earlier small check; the complete 384-example development results above now provide the broader measured baseline. Real search distillation, independent acceptance and portable trained delivery remain outstanding.
-
-[Matched-runtime course validation](INITIAL_SFT_RETENTION.md) found regression from 2,465/2,600 before SFT (94.81%) to 1,896/2,600 after SFT (72.92%), using identical FP32 inference configuration, source, ordered questions, gold answers and grading. Post-SFT zero/shuffled features scored 17.81%/17.27%; the original shuffled aggregate includes two matching-history pairs, with 447/2,598 correct on actual different-history pairs. The post-SFT normal outputs contain 191 invalid answer formats and 513 format-valid content errors. All raw answers remain unchanged. These are correlated development observations, not independent playing-strength or human teaching measurements.
-
-The [actual full-model readback](FULL_DECODER_SFT_START.md) compares continuous four updates with two updates plus two restored updates for all 4,694,274,592 FP32 parameters, complete Adam and random states: no mismatched fields or tensors, with maximum parameter error zero. All 624 trainable tensors update. The capacity probe's peak Torch tensor allocation is 24.8100 GiB per GPU, including the restored leg at the same scale; this is neither total driver occupancy nor the peak of the complete formal run. The first three formal optimizer updates were read back. These facts prove capacity, restoration and actual training start, not chess strength or teaching quality.
-
-
-The [portable inference directory](MODEL_INFERENCE_BUNDLE.md) is accepted by QA, explanation, match, single-move and planning evaluation. Each run binds every bundle asset and pins the resolved model directory before loading. Controlled CPU fixtures cover corruption, changes during generation, switched directory aliases, raw errors, completed-match resume and incomplete generation batches. Unpaired batch responses are preserved and receive no score. These checks do not evaluate the trained model or its playing strength.
+真实两卡预检比较连续4步与2+2恢复：训练参数最大绝对差为0，参数、Adam、随机状态和数据游标合同通过。该结果验证相同两卡配置的恢复；卡数改变后的未来轨迹没有与继续三卡作逐位等价声明。快照中的最新损失约0.463是单批训练损失，下一次完整验证在2000步，尚不能报告新棋力或讲解收益。详见[完整状态迁移](AUXILIARY_RESOURCE_TRANSITION.md)。
 
 ## Current foundation evidence
 
-| Scope | Latest step 48000 | Selected step 42000 |
-| --- | ---: | ---: |
-| Fourth course | 530 / 600 (88.33%) | 535 / 600 (89.17%) |
-| Earlier three courses | 1920 / 2000 (96.00%) | 1924 / 2000 (96.20%) |
-| Combined | 2450 / 2600 (94.23%) | 2459 / 2600 (94.58%) |
+| 课程 | 实际接续记录的训练步数 | 所选步数 | 当时本课验证 |
+| --- | ---: | ---: | ---: |
+| 当前静态 | 30000 | 24000 | 682/700（97.43%） |
+| 当前动态 | 30000 | 30000 | 584/600（97.33%） |
+| 未来静态 | 26000 | 26000 | 694/700（99.14%） |
+| 未来动态 | 48000 | 42000 | 535/600（89.17%） |
 
-The [four-course completion readback](PAPER_FOUR_COURSES_COMPLETED.md) checks the actual complete curriculum, fourth-course manifest, normal controller exit, exact stopping policy and preserved user boundaries. It regrades 33800 archived answers across thirteen checkpoints with identical ordered development questions, variants and gold. The 2600 questions involve 66 declared game IDs, including 16 for the fourth course; these do not authenticate independent physical games. All latest formats are valid; prose is ungraded. The separate 26000-item independent test did not train or select the model.
-
-Relative to 42k, the fourth-course, earlier-course and combined net changes are -5, -4 and -9 answers. Evasions score 80/100. The current-course rule retains 42k, with three checks without improvement after satisfying the 48k minimum. Both complete manifests and the controller's normal exit exist. Four-course completion does not establish broad playing strength or coaching quality.
-
-The native proof of 48000 contiguous finite updates and all 671,806,496 finite source-equal FP32 trainables is reused. The selected 42k checkpoint bytes were freshly hashed. Original Adam arrays were not independently read back, and formal generated-token arrays were unavailable. Grading shares the frozen native implementation. No model inference or training was started by this publication readback.
-
-Fixed step 36000 has now completed 400 evasion, 400 capture and 450 matched-depth answers, scoring 296/400 (74%), 283/400 (70.75%) and 312/450 (69.33%). Relative to step 26000, evasions improve by 16 answers while captures lose six. For the same 50 final positions, step 36000 scores 42/50 directly and 29/50 after eight halfmoves; 13 targets are correct directly but wrong at depth 8, with zero in the reverse direction. All nine depths are correct for 24/50 targets, versus 23/21/21 at steps 26000/32000/34000. This mixed result preserves a deep reasoning gap without identifying a unique training cause.
-
-All 1250 new arrays and 2950 preserved reference arrays were decoded and regraded after the diagnostic GPU workers ended and the same original 38k QA physically resumed. A separate publication reader decoded all 4200 again. There are only 1200 unique question IDs: the 50 shared evasion/matched questions have identical generated text and final answers. Cohorts are reported separately, with no automatic model replacement or final test use. The step 32000 capture format error is preserved; all 1250 new answers have valid formats, EOS and no budget exhaustion. Decoder, native rules and grader are shared; prose and internal state are not independently certified.
-
-The [earlier matched-depth control](PAPER_MATCHED_TARGET_DEPTH.md), [capture400 error audit](PAPER_CAPTURE400_ERROR_AUDIT.md), [full depth coverage](PAPER_FOURTH_COURSE_34000.md) and [queue admission](PAPER_STEP36000_DEVELOPMENT_REPLAY.md) retain their own inputs and historical scopes. Missing deep-row quantity alone was not supported by the complete 2,295,490-anchor coverage audit. The [earlier formal38k and diagnostic36k evidence](../evidence/paper-course4-38000-and-36000-development-v1.json) records the actual formal and diagnostic results without claiming a strong player or useful coach.
+第二、三课沿用用户指定的30000／26000步边界。第四课所选42000步在同一2600题中，本课535/600、旧三课1924/2000、合计2459/2600；最终48000步没有超过它。各课训练混合旧课，原本课验证选模与旧课复核分别记录；这些是本地规则，不冒称论文规定了完整选模细则。[四课完成读回](PAPER_FOUR_COURSES_COMPLETED.md)保留实际接续、原始答案和边界。
 
 ## Completed training diagnostics
 
-The [four-arm short study and broader comparisons](PAPER_RATIONALE_LR_STUDY_RESULTS.md) are complete. Four same-parent, fresh-optimizer arms executed 632 actual updates in total; all 4000 original generated-token arrays were independently decoded. New-supervision arms score 462/600 and 424/600 on fourth-course validation, below the parent's 492/600. This short transfer result does not establish the outcome of full-scale new-target training.
+以下属于**旧联合SFT第2304步**的开发结果，不能当作当前两卡辅助模型的成绩：
 
-The subsequent same-2600-question comparison decoded all 7800 original token arrays. The step-26000 control scores fourth-course 494/600, earlier-course 1928/2000 and combined 2422/2600; the short old-supervision/lower-learning-rate candidate scores 504/600, 1875/2000 and 2379/2600. On a separate 400-game-ID evasion cohort, the control scores 280/400 and the candidate 279/400. The candidate was not adopted. Its parent, optimizer and update budget differ from the continuously trained control, so this comparison does not isolate a long-run learning-rate effect. The common replay's older-question wording differs from the formal prompt set and yields one additional control answer; it must not be treated as the identical full prompt set used in every formal checkpoint.
+| 固定开发范围 | 旧联合SFT结果 |
+| --- | --- |
+| 旧课问答 | 2345/2600（90.19%）；讲解前同设置对照为2465/2600 |
+| 正常专家特征讲解 | 384条中340条首着合法、263条通过原无明显失误门槛、123条主变化合法、24条完整结构／规则通过 |
+| 完整教师辅助评审 | 17/384条在全部维度至少4分；不是独立人类教学验收 |
+| 原始完整对弈 | 384局：0胜383负1和；266局原始走法非法判负，117局正常将死／困毙败局 |
 
-The [actual step-24000 fit/memory diagnostic](PAPER_FOURTH_COURSE_FIT_DIAGNOSTIC.md) remains a bounded earlier diagnostic: original training samples score 526/600, normal validation 492/600, zero-memory validation 169/600 and shuffled-memory validation 133/600. All 2800 generated-token arrays were independently decoded. A separate evasion cohort scores 254/400, including 76/158 single-cannon checks. This establishes feature dependence and unresolved free-generation errors, without identifying a unique training cause.
+完整对弈包括64个开局、红黑交换和100／1000／10000节点预算；相关观测不换算为人类Elo。旧对弈5326次实际决策中，5060次走法合法、266次非法；每决策约5%的非法率与每局约69%的非法判负率有不同分母。5326份原始JSON均可解析，不能把这批败局归因于JSON截断。
 
-The optional [future narration](PAPER_FORWARD_RATIONALE.md) and [evasion-mechanism profiles](PAPER_PARRY_RATIONALE.md) have CPU implementation checks and the short-study results above. Their [complete new-corpus production](PAPER_RATIONALE_CORPUS_PRODUCTION.md) has finished: 10,804,561 training, 2,600 validation and 26,000 test questions, with completed postwrite native split verification and byte bindings. Separate native source regeneration and all 10,833,161 baseline/profile row pairs have now completed, and the original job exited successfully. A second reader rehashed 111 frozen modules and rechecked 170 completed-receipt file identities; large input digests reuse the declared immutable-input receipts. At the 2026-11-02 03:15 UTC snapshot, the existing CPU consumer has completed 10,804,561 training and 2,600 validation indexes and entered full CPU preflight; token/feature checks remain unfinished, and no full-scale new-target run has been adopted. The base and incremental [source-history bundles](SOURCE_HISTORY.md) restore all 35 original commits through the auxiliary-evaluation fix and all 111 modules used by the native corpus experiment. [Worker-side text rendering](PAPER_RATIONALE_CPU_RENDERING.md) and [parallel split verification](PAPER_SPLIT_VERIFICATION.md) have bounded CPU timing controls. The current 1837-test suite is bound to 293 code, test, configuration and build files; these software results do not establish model gains. Active training and data jobs retain their own frozen sources.
+该旧模型的CPU输入路径回放重新执行384局原生对局循环：5326条历史均结束于当前FEN，未缓存特征编码的首帧与当前棋盘逐值一致；266个非法动作没有直接重复上一手己方或对方动作。实际历史缓存特征值未重算，这不能排除所有缓存问题，也不是当前模型的质量测量。具体检查范围和哈希见[执行与诊断证据](../evidence/auxiliary-two-gpu-actual-resume-v1.json)。
+
+[完整联合开发评审](JOINT_SFT_FULL_DEVELOPMENT_REVIEW.md)及[旧蒸馏失败诊断](EXPANDED_DISTILLATION_DIAGNOSIS.md)保留实际原文、拒收、参数更新和未获选结果。原始错误没有用引擎修复。
 
 ## Remaining route and acceptance
 
-The user-authorized [third-course step-26000 handoff](PAPER_FOURTH_COURSE_START_26000.md) remains the actual fourth-course parent. The source third-course run ended at 26564; its additional 564 updates are retained as discarded continuation and do not initialize this run. The [prefix contract](USER_AUTHORIZED_COURSE_PREFIX.md) records the earlier user selections.
+1. 完成363445行七类辅助训练和七类完整验证，保存真实选中模型与全部完成合同。
+2. 用原开发输入执行旧课、三组讲解、辅助盲评、固定765题诊断和384局原始对弈。
+3. 运行等待这些结果的128根后代搜索试批，以真实合格标签产量、棋力和讲解结果决定扩大规模、学习率及训练轮数。完整学生子讲解交给完整BF16教师；挖掘和训练分别验收。
+4. 选定最终模型与执行配置后，按[独立协议](FINAL_INDEPENDENT_EVALUATION.md)测试26000道问答、512条讲解和384局对弈，核查教学成功例与失败例。
+5. 导出并搬动实际选中模型，验证真实推理，完成适用范围、来源许可和分发材料后交付。
 
-All four actual courses are complete. A separate native CPU handoff is now complete: each of the four selected states has 226 shape-checked, finite FP32 tensors (671,806,496 parameters), and the exported 42k weights are byte-identical to their source. Native rule checks cover 2600 histories/answers and 2028 complete continuations. Large-cache digests reuse declared verified immutable-input receipts; the count of 4542 source bindings is not a claim to freshly read all cache bytes. No GPU network or SFT was started by this export. The later full-model capacity/resume checks and complete initial SFT are now finished as recorded above; this paragraph preserves the scope of the earlier CPU handoff. [Engine-qualified explanations](ENGINE_QUALIFIED_EXPLANATIONS.md) retain 9823 unchanged training rows and byte-preserved 384 validation / 512 test rows; the [qualified successor](QUALIFIED_SFT_ROUTE.md) completed data/cache/token preflight before the now-completed initial SFT described above. Full-label engine reference, teacher authorship and cross-review remain separately documented in [training-label validation](TRAINING_TEACHER_ENGINE_REFERENCE.md) and [prose provenance](REFERENCE_PROSE.md).
-
-The [post-SFT curriculum check](INITIAL_SFT_RETENTION.md), all three raw explanation groups, full auxiliary prose review and original 384-game development matches are complete. The separate joint candidate's development evaluation remains in progress. Sufficient real student-search yield and distillation rounds follow measured results; the 512-root yield pilot does not satisfy formal distillation or final acceptance.
-
-The [final independent protocol](FINAL_INDEPENDENT_EVALUATION.md) prepares 26000 QA items, 512 explanations and 384 matches from 64 protected test games. No final checkpoint or settings have been locked and scored. Those inputs do not establish playing strength or a useful coach. [Current foundation evidence](../evidence/paper-four-courses-completed-v1.json), [matched-depth result evidence](../evidence/paper-matched-target-depth-results-v1.json), [new-corpus production evidence](../evidence/paper-rationale-corpus-production-v1.json), [STATUS.md](../STATUS.md) and [historical snapshots](MODEL_CARD_HISTORY.md) distinguish current claims, prepared inputs and preserved earlier milestones.
+独立测试结果不回流选模。若依据已暴露测试修改训练，下一版独立结论需要新的保留测试。99%总分／95%最弱题型不是已确认的论文验收门槛。
 
 ## Intended use and interface
 
-An opt-in [microbatch padding crop](MICROBATCH_PADDING.md) preserves the legacy default. On the same 2,048 sampled training rows, the actual helper preserved valid inputs and supervised targets while reducing padded token positions by 28.14%. Tiny randomly initialized Qwen3 models with real DenseBridge blocks passed CPU output, loss, gradient and exact continuation controls. These are CPU implementation checks and token counts: full 4B/BF16 GPU equivalence, throughput and model-quality improvements from that crop remain unmeasured. The completed curriculum retained its original 89-module GPU snapshot. The earlier authorized 108-module SFT snapshot is preserved; actual formal SFT uses its separately tested 109-module parameter-sharding successor, with the original padding default and finite traversal.
+目标用途是学习局面、比较候选着法、解释可核验的变化和复盘。输入包含象棋FEN、实际走法历史和中文问题，坐标从`a0`到`i9`、红方在下；缺少更早历史的残局片段保留其边界。
 
-The intended use is studying positions, comparing candidate moves, explaining verifiable continuations and reviewing games. A completed training run or high curriculum accuracy alone does not establish useful playing strength or good coaching.
-
-The terminal study interface resumes the complete saved history and writes new moves, undo operations and raw advice back to that record by default. An explicit `--output` saves a separate branch while preserving the input file. Command-line regression checks cover both paths; they use a controlled predictor and do not establish trained-model quality. See the [usage entry](../README.md#原型推理) and [preserved development guide](DEVELOPMENT_GUIDE.md).
-
-Input is a Xiangqi FEN, the supplied move history and a Chinese question. Coordinates run from `a0` to `i9`, with Red at the bottom. Tactical fragments explicitly retain missing earlier-history boundaries. Explanation output includes a recommended move, principal variation, candidates, numerical evaluation and board facts; raw text, malformed answers and illegal moves remain available for evaluation.
+终端入口`xqgeneral-coach`支持显示棋盘、建议、走法、悔棋、保存与恢复完整记录。默认续写原记录，显式`--output`保存分支；原始建议和规则检查一起保留。结构化输出包括首着、主变化、候选、数值评价和棋盘事实。当前接口能力与模型质量分开验证；使用方法见[README](../README.md#原型推理)。
 
 ## Models and architecture
 
-| Component | Current formal plan |
+| 组件 | 实际模型与合同 |
 | --- | --- |
-| Language student | Qwen3-4B-Instruct-2507, pinned pretrained revision `cdbee75f17c01a7cc42f958dc650907174af0554` |
-| Chess expert | Frozen Px0 Xiangqi Transformer; network identity and feature layers are bound in each run |
-| Bridge | 16 full-width gated cross-attention blocks, width 2560, 16 heads, two-times-width ReLU-squared feed-forward layers and zero-initialized gates |
-| Board input | 105 learned board tokens and 90 expert square features; the formal latent curriculum supplies no literal board-text dictionary |
-| Curriculum parameters | 671,806,496 trainable FP32 bridge/board parameters with BF16 computation; the pretrained language decoder and expert are frozen |
-| Explanation SFT | Full decoder plus bridge/board parameters; 4,694,274,592 trainable parameters in the configured model, using FP32 master values and BF16 computation |
-| Initial prose teacher | User-authorized GPT-6-Astra Low annotation and review |
-| Search consolidator | Official unquantized Qwen3.8-27B weights with BF16 inference; 27,356,728,560 active model parameters, with 424,699,392 inactive MTP parameters preserved in the checkpoint |
+| 语言学生 | Qwen3-4B-Instruct-2507，固定revision `cdbee75f17c01a7cc42f958dc650907174af0554` |
+| 象棋专家 | 冻结Px0 Xiangqi Transformer，每轮绑定网络及特征层身份 |
+| 连接桥 | 16个全宽门控交叉注意力块，宽2560、16头、两倍宽ReLU-squared前馈、门初始为0 |
+| 棋盘输入 | 105个学习棋盘词元及90格专家特征；正式潜变量课程不提供字面棋盘字典 |
+| 课程参数 | 671806496个FP32连接桥／棋盘参数；语言解码器及专家冻结 |
+| 讲解与辅助训练 | 4694274592个完整解码器／连接桥／棋盘参数，FP32主参数及BF16计算 |
+| 初始正文教师 | 用户授权GPT-6-Astra Low标注及交叉复核 |
+| 搜索汇总与辅助评审 | 官方未量化Qwen3.8-27B完整权重，BF16推理；27356728560个活跃参数，424699392个非活跃MTP参数保留 |
 
-The formal curriculum starts from the pinned pretrained student and a fresh bridge. It does not inherit the earlier small-width curriculum or explanation checkpoints. Per-run manifests bind the actual copied configuration, code and model files; [source identities](../configs/sources.json) and the [third-party notices](../THIRD_PARTY_NOTICES.md) describe upstream assets.
+各次实际运行绑定自己的完整配置、源码和模型文件。当前训练使用固定131模块源码，仓库后续文档修改不会自动进入运行中的模型。上游身份和分发边界见[来源配置](../configs/sources.json)与[第三方说明](../THIRD_PARTY_NOTICES.md)。
 
 ## Data and current preparation
 
-The completed counts and audits below describe the original formal curriculum. The separate extended-rationale corpus remains subject to its own complete source pairing and token/feature preflight.
+原新四课包括10804561条训练、2600条验证及26000条独立测试题，先按棋局分割再生成问题，并检查当前／未来局面足迹。[全库原生重建](../evidence/paper-complete-native-readback-v1.json)、[完整预检](../evidence/paper-course-full-preflight-complete-v1.json)及[来源读取](../evidence/paper-course-full-source-readback-complete-v1.json)已有各自证据。机械合法性和文件一致性不认证棋手身份、原谱最优性或教学质量。
 
-The regenerated 26-task curriculum has **10,804,561 training, 2,600 validation and 26,000 independent-test questions**. Games are split before question generation, and current/future board footprints are checked for cross-split overlap. [Source-based native reconstruction, answer checks and byte comparison](../evidence/paper-complete-native-readback-v1.json) have completed for all 10,833,161 questions. This proves those mechanical data contracts; it does not authenticate participant identities, establish optimal recorded moves or measure a trained student's abilities.
+合格初始讲解数据保留9823条训练和逐字节不变的384／512条验证／独立测试；正文来源、交叉复核和修订见[REFERENCE_PROSE.md](REFERENCE_PROSE.md)。实际七类辅助组合如下：
 
-All 10,807,161 training/validation examples and 5,200 additional validation-format encodings have passed the token stage. The largest checked training/validation example is 327 tokens. The [full preflight](../evidence/paper-course-full-preflight-complete-v1.json) has also completed 2,081,078 unique-history replays, complete split-isolation checks and hashes for 4,143 bound input files totaling 3,386,878,285,696 bytes. The [independent source/cache/base readback](../evidence/paper-course-full-source-readback-complete-v1.json) has completed, and the formal continuous four-GPU capacity gate passed before training began. Independent test answers were not included in the token stage or training/selection budget.
+| 类别 | 训练行 | 验证行 |
+| --- | ---: | ---: |
+| 讲解 | 10688 | 384 |
+| 当前静态 | 16100 | 700 |
+| 当前动态 | 13743 | 600 |
+| 未来静态 | 16090 | 700 |
+| 未来动态 | 13735 | 600 |
+| 数值分析 | 144932 | 381 |
+| 单走法 | 148157 | 384 |
+| 合计 | 363445 | 3749 |
 
-The original reviewed initial explanation corpus has **10,758 training, 384 validation and 512 independent-test rows**. The active qualified successor retains **9,823 training rows**, with the same byte-identical validation and independent-test files. Existing color-derived rows preserve their parent split and do not count as independent games or teacher calls. [Reference-prose provenance](REFERENCE_PROSE.md) records authoring, cross-review and corrections. Recorded-game categories and names are source declarations; native legal replay does not establish human identity or unassisted play. Raw and derived datasets are excluded from the source release.
+辅助训练涉及217271个完整训练历史、1249个验证历史。新增数值／走法验证复用原验证历史，不能称新增独立验证棋局。完整保护范围、字节保留和实际计数见[七类语料](ORACLE_POLICY_CORPUS.md)及[执行证据](../evidence/auxiliary-two-gpu-actual-resume-v1.json)。六类后续搜索回放另有12288条训练、3365条验证，已完成实际独立重选、原生规则重判及消费者重开；它未替代当前辅助训练，也未产生新的搜索SGD结果。
 
-An additional [anonymous PvP source](PUBLIC_ANONYMOUS_GAMES.md) provides 8,828 independently read-back native full histories (486,754 plies), split into 7,072 train / 886 validation / 870 test games before question generation. Source PvP labels do not authenticate human identity or unassisted play. Source analysis and CPL are not neural labels. The [expanded unused-history pool](PUBLIC_RECORDED_SEARCH_SOURCES.md#扩充候选池-v3) now contains 229,882 candidate histories from 45,268 canonical training records, including games, fragments and isolated positions. The new anonymous source contributes 42,432 histories. All candidates were compared field by field, all ten canonical files were re-streamed and hashed, and 3,366,490 reserved root/future/color positions were reconstructed. Actual student-search yield and model benefit remain unmeasured; the current course, initial SFT and v2-pilot inputs retain their frozen versions. These are search inputs, with zero new neural labels.
+真实来源包含公开棋谱、匿名对局、引擎对局／搜索及片段。来源宣称的人类／BOT身份与棋手姓名不等于独立认证；颜色派生不增加独立棋局数。原始与衍生数据均不纳入源码发布。
 
 ## Training plan
 
-The [formal curriculum recipe](PAPER_FOUNDATION_EXPERIMENT.md) uses finite mixed-data traversal, answer-token-average loss, four GPUs, global batch 256 and microbatch 4. Old-course examples participate in training as well as separate replay diagnostics.
+已完成课程采用混合旧课的有限遍历。合格初始讲解实际运行四遍、2456次更新、全局批量16，选1792步；联合回放版本选2304步。它们的固定原始结果不会归到新辅助模型。
 
-| Course | Training mixture in course order | Maximum updates | Local minimum before plateau stopping |
-| --- | --- | --- | --- |
-| Current static | 100% | 50,000 | 20,000 |
-| Current dynamic | 10% / 90% | 60,000 | 32,000 |
-| Future static | 6% / 8% / 86% | 30,000 | 22,000 |
-| Future dynamic | 6% / 6% / 8% / 80% | 100,000 | 48,000 |
+当前辅助配置为[两卡微批量3](../configs/auxiliary-policy-sft-two-gpu-micro3-v1.json)：完整来源有限遍历、答案词元平均损失、FSDP2、全局批量30、微批量3、完整FP32参数及2048词元上限。每遍12115个全局更新，至少一遍，四遍上限48460步；尾部5行重复明确记录。原第1000步的预热、学习率、Adam和数据位置不重置，以全部七类验证选模。
 
-Current-course raw validation accuracy selects checkpoints; earlier-course replay is reported separately. Earliest ties, eligibility after warmup, three checks without improvement and the minimum stopping budgets are explicit local rules. The paper and released configuration do not establish a complete final selection rule. Local total/per-task target accuracies are diagnostics and do not independently stop this run; the budgets above are plans, not completed update counts.
-
-[Initial explanation SFT](INITIAL_SFT_COMPLETED.md) follows the actual completed new four-course checkpoint. The qualified-data run used 9,823 training labels, four finite passes, 2,456 updates, global batch 16 and microbatch 1. It selected step 1,792; the selected checkpoint therefore has fewer training presentations than the terminal four-pass run. Normal and zero-expert validation NLL were 0.63950 and 0.85969. The built-in shuffled NLL was an identity permutation at evaluation batch size one and is not a valid shuffled-control measurement. The separate paired development evaluation uses batches of four distinct histories. The full-BF16 TP4 teacher has completed the native probe and all 384 development review queries. The [completed 64-root capacity trial](SEARCH_CHILD_PROMPTS.md) subsequently executed 45 full-BF16 TP4 consolidation requests at configured batch 16 / output budget 8192, admitting 44 structurally checked training labels and rejecting one generation-limited response. This is measured batch execution, not worst-case context capacity, a completed distillation update, or human coaching acceptance.
-
-[Student-search generation](PAPER_SEARCH_GENERATION.md) uses the trained student for numerical analysis and recursive critical-line searches, followed by the full BF16 consolidator. The 512-root pilot measures usable-label yield before any expansion; it is not a finished distillation dataset or the final delivery scope. Search volume and subsequent training rounds must be chosen from actual yield, development matches and explanation quality. [Distillation training and development evaluation](PAPER_DISTILLATION_TRAINING.md) retain the selected model and its ancestry.
+后续搜索训练使用真实接受的新讲解和[六类回放](AUXILIARY_SEARCH_REPLAY.md)，先以同一完成模型的开发结果决定规模与轮数。当前没有新的合格辅助完成轮次或新的合格搜索蒸馏完成轮次。
 
 ## Evaluation and known limits
 
-Validation selects checkpoints; independent test games and labels do not train or select them. Development evaluation compares raw answers with normal, zeroed and mismatched expert memory, checks native facts and variations, and uses blinded auxiliary prose ratings. The prose reviewer shares its base model with the consolidator, so those scores are not independent human judgments.
+开发验证与最终独立测试分开。问答、规则、合法主变化、引擎门槛、正文辅助评分及完整对弈分别报告全部分母；正常／清零／错配专家特征使用同一输入与预算。历史推理／评分源码和新编排源码分别绑定。
 
-The planned SFT development match baseline covers 64 protected validation openings, both colors and Pikafish budgets of 100, 1,000 and 10,000 nodes: 384 games, with at most 256 additional plies each. Matches preserve raw turns and interruptions; ply-limited games are censored. Illegal raw moves or variations count as errors and are never repaired with an oracle in raw evaluation. The optional legal-move-trie decoder is reported separately because its output legality is imposed by construction.
+完整教师既汇总训练标签又参与正文辅助评审，其分数不是独立人类教学判断。机械事实和合法变化也不能证明解释对学习者有效。最终教学核查需要检查实际棋子、走法、理由、风险和教学例子。
 
-AXF adjudication is a fixed software rule profile. Mechanical explanation checks verify declared facts, moves, score perspectives and continuations; they do not establish that an explanation teaches a human well. Final independent playing-strength and coaching evaluation, including analysis of failure cases, remains pending. No paper Elo, useful-coach claim or improvement from completed distillation is reported for the new run.
-
-Earlier pretrained GPU controls verify frozen-decoder updates and portable-inference equivalence within their stated fixture budgets. Full-model native controls separately verify complete parameters, Adam and exact interruption/restoration. Initial full-decoder SFT and provisional full-model relocation have completed; strong play, reliable coaching and final independently accepted delivery remain unproven. Earlier measured failures are preserved in the historical evidence.
+原始非法动作、无效回答、拒收评分、自然输棋和截断均保留；原始对弈不调用引擎替换模型错误。可选合法走法约束解码单独报告。64个开局的颜色交换及预算重复属于相关观测，节点赛程不换算论文Elo或人类等级分。当前没有强棋力或可靠教学的验收结论。
 
 ## Delivery and distribution
 
-[Training-only student/engine gameplay](STUDENT_TRAINING_GAMES.md) retains original model replies and explicitly labeled legal fallbacks, with game ownership fixed before generation. A scripted-student control made 44 actual CPU-engine queries across four short games and verified saved prefixes, native histories and completed reopen behavior. It performed no neural-student or teacher inference and produced no training labels. Actual neural gameplay and protected-position isolation remain pending. These generated contexts are separate from raw-model playing-strength evaluations.
+[可搬动推理目录](MODEL_INFERENCE_BUNDLE.md)包含底座、分词器、完整已训练参数、匹配专家、配置和逐文件哈希。旧完整初始SFT模型已经通过624个FP32张量及搬动后3例短现场推理等价检查；这验证交付组件，不是正式教练模型验收。最终独立接受的模型目录尚未产生。
 
-[Strong-oracle training-game scoring](STUDENT_TRAINING_GAME_SCORING.md) replays complete histories, retains raw oracle responses, and selects mistakes plus per-game ordinary-position quotas using the released author-code policy and Xiangqi material-conditioned WDL. Missing exact root scores are obtained through restricted searches; bounds are never consumed as exact scores. The mechanical scorer does not attest neural source execution or model assets, apply held-out-position isolation, emit teaching labels, or demonstrate playing-strength improvement.
-
-[Neural training-game source admission](STUDENT_GAME_SEARCH_INPUTS.md) separately verifies the execution receipt, original actor assets and actual pinned-decoder input session, replays scoring, and reuses the existing held-out-position authority. Typed mining/collection and an explicit mixed-source merge preserve source provenance and protected bytes. Controlled CPU stage-chain and merge/reopen checks pass; the actual neural-game corpus and its real teacher-label chain remain pending. An actual selected-checkpoint dependency readback verified all 11 pinned base/tokenizer files without constructing a model. No new student improvement is established.
-
-An [explicit child-prose consolidation profile](CHILD_PROSE_CONSOLIDATION.md) can preserve the student's original child explanations while retaining structured rule evidence. A saved-input replay recovered 126 actual nonterminal explanations across 45 queries, with one terminal child, and reproduced all legacy messages byte for byte. This was an input transformation with zero new inference or SGD; raw prose remains semantically unverified, and no teaching-quality or model-strength improvement is established. Existing frozen search jobs keep their original profile.
-
-The [portable inference bundle](MODEL_INFERENCE_BUNDLE.md) carries the decoder, tokenizer, all trained tensors and matching expert assets, with per-file hashes and runtime configuration. Relocation controls now include the selected complete initial-SFT model and its cache-policy-preserving successor, with exact native outputs in three short development cases. A final independently accepted delivery bundle has not been produced.
-
-The [109-module execution-source archive](../reproducibility/full-decoder-fsdp2-v1-109-source.tar.gz) preserves the actual full-model probe and initial-SFT implementation, separate from the evolving repository head. Every module hash and a real isolated import after extraction match the native execution identity. It includes source and notices, without models, datasets, logs, credentials or test inputs; it does not replace trained-model delivery or the original data and resume contracts. The later [112-module development-evaluation archive](../reproducibility/paired-evaluation-inputs-v1-112-source.tar.gz) separately preserves the actual 1922-test consumer, with exact extracted module bytes and a real isolated import; subsequent public training/inference/bundle fixes are not attributed to that evaluation.
-
-Project source is GPL-3.0-or-later. Base-model notices and separate expert/NNUE distribution rights apply to weights; the code license does not establish permission to redistribute those assets. Models, datasets, feature caches and runtime logs are excluded from the Git source release. See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) for the existing asset-specific boundaries.
+代码使用GPL-3.0-or-later。底座、专家、NNUE和数据各有独立的许可与分发边界；源码许可不建立权重整体再分发权。模型、原始／衍生数据、缓存、私有运行记录与凭据不进入Git源码发布。[第三方说明](../THIRD_PARTY_NOTICES.md)是现有来源与分发边界入口。

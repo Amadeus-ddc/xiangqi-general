@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "kind": "public_bounded_actual_auxiliary_resource_resume_snapshot",
+  "created_UTC": "2026-11-07T22:24:36.010242+00:00",
+  "training_snapshot_UTC": "2026-11-07T22:09:37.713600+00:00",
+  "training_snapshot_UTC_plus_8": "2026-11-08 06:09:37",
+  "current_source_revision": "auxiliary-resource-transition-131-v1",
+  "frozen_source_modules": 131,
+  "current_module_bytes_match_frozen_execution": true,
+  "previously_qualified_source_tree": "b3ccaaa158741f615d32591d24d9815b4ded17b8",
+  "native_saved_step": 1000,
+  "first_actual_resumed_update": {
+    "step": 1001,
+    "loss": 0.5410204529762268,
+    "gradient_norm": 7.918247699737549,
+    "supervised_tokens": 1250292,
+    "lr": 4.1312422616591005e-07,
+    "seconds": 85.2834803191945,
+    "data_batch": {
+      "epoch": 0,
+      "optimizer_batch_in_epoch": 1000,
+      "global_valid_rows": 30,
+      "global_padding_rows": 0,
+      "global_rows": 30
+    }
+  },
+  "hourly_last_recorded_update": {
+    "step": 1320,
+    "loss": 0.4625559151172638,
+    "gradient_norm": 5.9542927742004395,
+    "supervised_tokens": 1643210,
+    "lr": 5.447791993396616e-07,
+    "seconds": 3007.322204601951,
+    "data_batch": {
+      "epoch": 0,
+      "optimizer_batch_in_epoch": 1319,
+      "global_valid_rows": 30,
+      "global_padding_rows": 0,
+      "global_rows": 30
+    }
+  },
+  "physical_GPUs": [
+    0,
+    3
+  ],
+  "reserved_GPUs": [
+    1,
+    2
+  ],
+  "release_scope": "project_owned_contexts_only_unknown_tasks_preserved",
+  "world_size": 2,
+  "global_batch_size": 30,
+  "micro_batch_size": 3,
+  "trainable_tensors": 624,
+  "trainable_parameters": 4694274592,
+  "original_parameters_and_Adam_preserved": true,
+  "consumed_unique_rows_preserved": 30000,
+  "full_original_validation_ids_and_order_preserved": true,
+  "future_three_worker_bitwise_trajectory_claimed": false,
+  "native_two_worker_continuous4_vs_resumed2_plus2": {
+    "status": "complete",
+    "mismatched_fields": [],
+    "mismatched_trainable_tensors": 0,
+    "max_parameter_absolute_error": 0,
+    "steps": [
+      4,
+      4
+    ],
+    "world_sizes": [
+      2,
+      2
+    ]
+  },
+  "all_FP32_parameters_and_Adam_finite": true,
+  "minimum_global_steps": 12115,
+  "maximum_global_steps": 48460,
+  "training_rows_by_stage": {
+    "explanation": 10688,
+    "static_current": 16100,
+    "dynamic_current": 13743,
+    "static_future": 16090,
+    "dynamic_future": 13735,
+    "engine_numeric": 144932,
+    "move_quality": 148157
+  },
+  "validation_rows_by_stage": {
+    "explanation": 384,
+    "static_current": 700,
+    "dynamic_current": 600,
+    "static_future": 700,
+    "dynamic_future": 600,
+    "engine_numeric": 381,
+    "move_quality": 384
+  },
+  "training_rows": 363445,
+  "validation_rows": 3749,
+  "training_unique_history_contexts": 217271,
+  "validation_unique_history_contexts": 1249,
+  "new_independent_validation_history_contexts": 0,
+  "search_replay_rows": {
+    "train": 12288,
+    "validation": 3365,
+    "test": 0
+  },
+  "old_J2304_position_input_diagnostic": {
+    "full_native_match_loop_replays": 384,
+    "input_records": 5326,
+    "uncached_current_frame_matches": 5326,
+    "invalid_moves": 266,
+    "immediate_previous_move_repeats": 0,
+    "actual_historical_cached_feature_values_recomputed": false,
+    "no_new_model_engine_teacher_queries": true
+  },
+  "completed_new_auxiliary_rounds": 0,
+  "completed_new_search_distillation_rounds": 0,
+  "current_two_worker_development_quality_measured": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "final_independent_test_executed": false,
+  "final_accepted_model_bundle_created": false,
+  "receipts": [
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/cpu-preparation-verification.json",
+      "sha256": "eb4f226c13bf142fe4c99957795ff30eb9ff09fc58bf3addf1b9f9bd139b0a50",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/actual-two-GPU-preflight-complete-verification.json",
+      "sha256": "e08c8a73d32585c38fac206104635ed16b6e0a4a3e21e4c214a49f2b4c9822b5",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/actual-formal-two-GPU-resume-first-update-verification.json",
+      "sha256": "f39a6b9eab03e9a19eab964def9d6683e7d79416348826e50cfca6a7cb3947ee",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/actual-formal-two-GPU-worker-allocation.json",
+      "sha256": "a87ed9d26bd65e5aa8fea72b31c0d3f3275bca36bd2d2b8e6278fd61ea704485",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-hourly-monitor-v1/readback-20261107T220937Z.json",
+      "sha256": "dc683202d4962b2d76c852a646e0fdeff698d1ed64ad33b5f66d5309164bfcd4",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/oracle-policy-corpus-production-v2/verification.json",
+      "sha256": "39cd7f0138b158fe73182908d902721b75ac0aa715b315dd010d1acff1a9b11f",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-search-replay-production-v2/verification.json",
+      "sha256": "723ecf7b6eb954fd86691f2c8f576df122152c2dbd4efd1845bef44b31f1bda7",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/joint-J2304-position-lag-diagnostics-v1/verification.json",
+      "sha256": "48cb2730a3bc67ae4fce4d340a2a7b9a0fb86e66133eb2565b415919f445704e",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/joint-J2304-raw-match-error-diagnostics-v2/verification.json",
+      "sha256": "9163662bf2b704c8afbe79a285bd88b4a1490def85e3aceecf3209d184887ba9",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/gpu1-release-request-20261108-v1/release-verification.json",
+      "sha256": "dfb6fbe1a87a7559a292a945f488764f18d8ab72f56a2bb903da1b217887befa",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/gpu2-release-request-20261107-v1/release-verification.json",
+      "sha256": "043646e88efe11e5992868d5c4792030c07fa4592a47c78504a439d54eb9a310",
+      "included_in_source_release": false
+    }
+  ],
+  "bounds": [
+    "Fixed dated snapshot, not a live training endpoint.",
+    "Public code does not contain private raw outputs or weights; receipt hashes bound the local evidence.",
+    "CPU and GPU execution checks do not establish playing strength or teaching quality.",
+    "Old J2304 development results and replay diagnostics are not current auxiliary-model quality."
+  ]
+}
