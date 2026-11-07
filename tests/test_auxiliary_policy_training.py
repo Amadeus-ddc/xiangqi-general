@@ -17,9 +17,9 @@ from xqgeneral.training_index import IndexedTrainingRows
 def setup(tmp_path,monkeypatch,damage=None,*,world=4,validation_histories=1,parent_rounds=2):
     args,saved,_=inputs_control.fixture(tmp_path,monkeypatch,validation_histories=validation_histories);auxiliary.prepare(**args)
     token=args['output']/'manifest.json';template=tmp_path/'recipe-template.json';recipe=inputs_control.template()
-    if world==3:
-        from xqgeneral.full_decoder_topology import THREE_WORKERS
-        recipe.update(auxiliary_topology_profile=THREE_WORKERS,ddp_world_size=3,batch_size=30,
+    if world in {2,3}:
+        profile={2:'full_decoder_auxiliary_two_workers_v1',3:'full_decoder_auxiliary_three_workers_v1'}[world]
+        recipe.update(auxiliary_topology_profile=profile,ddp_world_size=world,batch_size=30,
             distributed_strategy='fsdp2',fsdp_shard_paths=['bridges.*','base'])
     atomic_json(template,recipe)
     monkeypatch.setattr(training,'completed_parent',lambda source,completion,bound:(
@@ -31,7 +31,7 @@ def setup(tmp_path,monkeypatch,damage=None,*,world=4,validation_histories=1,pare
         result=dict(status='complete',world_size=world,actual_continuous_four_and_two_plus_two_updates_compared=True,
             full_decoder_initialization_preserved_all_parent_tensors=True,trainable_tensors=1)
         if damage=='failed_GPU':result['status']='failed'
-        kind=('three' if world==3 else 'four')+'_gpu_auxiliary_policy_sft_preflight'
+        kind={2:'two',3:'three',4:'four'}[world]+'_gpu_auxiliary_policy_sft_preflight'
         if damage=='wrong_probe_kind':kind='four_gpu_auxiliary_policy_sft_preflight'
         if damage=='wrong_probe_world':result['world_size']=4
         proof=manifest(kind,{},[],[initial],result)

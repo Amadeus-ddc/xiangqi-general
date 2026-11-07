@@ -1,4 +1,4 @@
-"""Train a typed auxiliary policy correction round after actual four-GPU checks."""
+"""Train an auxiliary correction round after its declared-worker GPU checks."""
 import argparse
 import json
 from pathlib import Path
@@ -130,7 +130,7 @@ def run_round(source,recipe_template,token_manifest,output,*,resume=False):
             full_source_sampling_profile_verified=True,loss_normalization='token',validation_coverage=plan['coverage'],
             validation_selects_checkpoint=True,independent_test_used_for_training_or_selection=False,raw_answers_repaired=False,
             strong_play_or_reliable_coaching_proven=False,**summary)
-        if world==3:result.update(actual_three_gpu_full_decoder_preflight_passed=True,auxiliary_topology_profile=topology['profile'])
+        if world in {2,3}:result.update({topology['completion_flag']:True},auxiliary_topology_profile=topology['profile'])
         unchanged();atomic_json(root/'verification.json',result)
         inputs=[source,source.parent/'manifest.json',source.parent/'config.json',recipe_template,recipe_path,token_manifest,
             Path(token['config']['logical']['parent_completion']),preflight/'manifest.json',trained/'manifest.json',trained/'config.json']
