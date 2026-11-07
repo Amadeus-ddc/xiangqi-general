@@ -23,6 +23,7 @@ from .sft import checked_parent
 
 TOKEN_KIND = 'latent_only_search_distillation_data_preflight'
 ROUND_KIND = 'full_decoder_search_distillation_sft_round'
+AUXILIARY_ROUND_KIND = 'full_decoder_auxiliary_policy_sft_round'
 
 
 def completed_parent(source, completion_path, bound=None):
@@ -36,13 +37,26 @@ def completed_parent(source, completion_path, bound=None):
             'actual_four_gpu_full_decoder_preflight_passed', 'initial_explanation_sft_completed'],
         ROUND_KIND: ['initial_explanation_sft_completed_before_round',
             'actual_four_gpu_full_decoder_preflight_passed', 'actual_distillation_sft_completed'],
+        AUXILIARY_ROUND_KIND: ['initial_explanation_sft_completed_before_round',
+            'actual_four_gpu_full_decoder_preflight_passed','actual_auxiliary_policy_sft_completed'],
     }
     result = proof.get('verification', {})
+    if proof.get('kind')==AUXILIARY_ROUND_KIND:
+        from .full_decoder_topology import completed_auxiliary_topology
+        topology=completed_auxiliary_topology(proof)
+        required[AUXILIARY_ROUND_KIND]=['initial_explanation_sft_completed_before_round','actual_auxiliary_policy_sft_completed']
+        world=topology['world_size']
+    elif proof.get('kind') == ROUND_KIND:
+        from .full_decoder_topology import completed_search_topology
+        topology = completed_search_topology(proof)
+        required[ROUND_KIND] = ['initial_explanation_sft_completed_before_round', 'actual_distillation_sft_completed']
+        world = topology['world_size']
+    else:world=4
     if (proof.get('status') != 'complete' or proof.get('kind') not in required or
             any(result.get(k) is not True for k in required.get(proof.get('kind'), [])) or
             result.get('complete_shapes_and_finite_fp32_verified') is not True or
             type(result.get('trainable_parameters')) is not int or result['trainable_parameters'] <= 0 or
-            result.get('world_size') != 4 or result.get('selected_checkpoint') != str(source) or
+            result.get('world_size') != world or result.get('selected_checkpoint') != str(source) or
             result.get('independent_test_used_for_training_or_selection') is not False):
         raise ValueError('Require the actual completed selected full-decoder SFT parent')
     for section in ['inputs', 'outputs']:
@@ -55,10 +69,22 @@ def completed_parent(source, completion_path, bound=None):
     training = bound.json(source.parent / 'manifest.json')
     saved = bound.json(source.parent / 'config.json')
     metrics = training.get('verification', {})
+    if proof.get('kind')==AUXILIARY_ROUND_KIND:
+        from .full_decoder_topology import auxiliary_topology
+        if (auxiliary_topology(saved)!=topology or
+                metrics.get('global_batch_size')!=topology['global_batch_size'] or
+                result.get('global_batch_size')!=topology['global_batch_size']):
+            raise ValueError('Auxiliary parent geometry differs from its actual completed training')
+    elif proof.get('kind') == ROUND_KIND and world == 3:
+        from .full_decoder_topology import search_topology
+        if (search_topology(saved) != topology or
+                metrics.get('global_batch_size') != topology['global_batch_size'] or
+                result.get('global_batch_size') != topology['global_batch_size']):
+            raise ValueError('Search parent geometry differs from its actual completed training')
     if (training.get('status') != 'complete' or training.get('kind') != 'model_training' or
             training.get('config') != saved or training['outputs'].get(str(source)) != selected_binding or
             saved.get('decoder_training') != 'full' or saved.get('trainable_parameter_dtype') != 'float32' or
-            saved.get('ddp_world_size') != 4 or metrics.get('world_size') != 4 or
+            saved.get('ddp_world_size') != world or metrics.get('world_size') != world or
             metrics.get('decoder_training') != 'full' or metrics.get('selected_step', 0) <= 0 or
             result.get('trainable_parameters') != metrics.get('trainable_parameters') or
             result.get('selected_sft_step', result.get('selected_step')) != metrics['selected_step']):

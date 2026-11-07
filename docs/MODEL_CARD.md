@@ -1,5 +1,79 @@
 # Xiangqi General model card
 
+The [fixed oracle-policy validation diagnostics](ORACLE_POLICY_EVALUATION.md)
+retain381 numerical and384 move-answer views from384 original histories. Format,
+legal moves, history-valid PVs and conditional errors against the stored engine
+reference are reported separately. These are not measured playing strength or
+human coaching scores. Generation inputs omit targets and recorded futures;
+raw invalid outputs and interrupted batches remain preserved.
+
+The [three-worker search-distillation profile](THREE_GPU_SEARCH_DISTILLATION.md)
+uses FSDP2, global batch30/micro1 and an actual new three-worker capacity/resume
+preflight. Its full-source template derives quotas from token-verified counts and
+uses token-average loss. A completed search round retains auxiliary-round counts
+and increments only the search count. Real search SGD and retention of the two
+auxiliary engine-supervision tasks still require separate execution and evaluation.
+
+The [descendant search pilot](DESCENDANT_SEARCH_PILOT.md) checks actual completed
+full-decoder parents, cumulative auxiliary/search round counts, all paired raw
+validation answers and the complete auxiliary neural review. Auxiliary descendants
+must retain the full validation-reference isolation certificate from their training
+corpus. An explicitly pinned historical source inventory permits compatible saved
+record/metric replay; it does not establish inference-deployment equivalence.
+Mining adds no SGD round. These CPU consumers establish neither real new-label
+yield nor improved chess strength or reliable teaching.
+
+The [search-protection exporter](SEARCH_PROTECTION.md) reconstructs the original
+held-out authority plus every auxiliary-validation reference PV and its color
+mirror, including unused long suffixes. Explicit mining, collection and merge
+contracts carry that same evidence; the original authority count remains separate.
+This isolation infrastructure is one required part of descendant pilot admission.
+It does not complete three-process search distillation or establish model quality.
+
+## Current verified state (2026-11-07)
+
+The [three-worker auxiliary profile](AUXILIARY_POLICY_TRAINING.md#三卡资源配置)
+uses FSDP2 with global batch30 and requires a new native three-worker capacity
+and exact-continuation preflight. Physical GPU2 is reserved at the user's request;
+server jobs must respect that allocation. Four-worker optimizer checkpoints are
+preserved without claiming exact continuation on three workers. CPU protocol
+checks do not establish actual three-worker capacity, SGD completion or model gains.
+
+The [auxiliary-model development evaluation](AUXILIARY_POLICY_EVALUATION.md)
+requires the actual selected full-decoder completion, preserves separate auxiliary
+and on-policy search round counts, and matches the complete original explanation
+validation rows byte-for-byte and in their original order against the seven-stage
+corpus. Paired raw generations, full-BF16 auxiliary review and raw full matches
+remain separate measurements. Fifteen new and 69 existing controlled CPU checks
+pass; these controls establish neither new neural scores nor real playing strength.
+
+The [auxiliary seven-stage training interface](AUXILIARY_POLICY_TRAINING.md)
+continues from a completed full-decoder explanation model, verifies native tokens
+and feature ancestry, compiles complete finite source coverage and validates every
+original seven-stage validation ID. It requires a fresh, typed four-GPU capacity
+and exact-resume check before formal SGD. Controlled protocol tests do not prove
+actual GPU execution or model gains. A completed auxiliary round increments only
+the auxiliary count, preserving the trained on-policy search-distillation count.
+The real parent/cache readback is complete; new auxiliary training remains pending.
+
+The expanded four-course route and initial explanation/replay SFT have completed.
+The joint model answers 2345/2600 development QA questions correctly (90.19%).
+In 384 raw development matches, it records zero wins, 383 losses and one draw;
+266 losses are invalid-move forfeits. These are validation-opening development
+measurements, not final independent-test results. No engine repairs are counted
+as student moves. The model is not yet a qualified strong player or reliable coach.
+
+The completed query-log corpus contains 293089 question views over 148157
+history contexts, with both expert features and native token-length checks.
+These rows are auxiliary policy/numeric supervision, not newly generated
+Chinese explanations or independent human games. The larger original-course
+replay pool contains 53248 training rows and 2600 unchanged validation rows.
+The [seven-stage corpus workflow](ORACLE_POLICY_CORPUS.md) preserves provenance,
+protects heldout positions and distinguishes preparation from actual SGD.
+No student improvement from that auxiliary corpus has been established.
+Qualified search-distillation gains, final independent evaluation and model
+delivery remain pending. The following sections retain historical snapshots.
+
 The explicit [full-source finite replay profile](FULL_SOURCE_REPLAY.md) requires every actual explanation and course row in each selected epoch, including when course sources exceed explanations. Native CPU readback of the actual 1114 plus 6656 rows passes SFT preparation and all 7770 unique row selections. The current four-pass budget is 972 updates, with distributed tail padding reported separately. Capacity probes use bounded longest-example mixtures and do not claim full formal data coverage. No new student GPU training or quality gain is claimed by these CPU controls.
 
 An explicit [joint explanation and course validation profile](JOINT_DISTILLATION_VALIDATION.md) compiles every original validation row and requires a bound, complete native validation-ID ledger before round qualification. CPU readback covers the actual 384 explanation and 2600 course validation rows, without model inference, tokenization or independent-test access. Selection remains aggregate token NLL; this does not establish per-course accuracy, prose quality or playing strength. The original explanation-only recipes and failed 164-update round are preserved. No new jointly selected neural model is claimed.

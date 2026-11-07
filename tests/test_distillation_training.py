@@ -88,6 +88,7 @@ class RoundRunner(ControlledRunner):
             p = root / 'adapter.pt'
             metrics = json.loads((root / 'metrics.json').read_text())
             metrics['global_batch_size'] = config['batch_size']
+            metrics['world_size'] = config['ddp_world_size']
             atomic_json(root / 'metrics.json', metrics)
             proof = json.loads((root / 'manifest.json').read_text())
             proof['verification'] = metrics
@@ -99,7 +100,7 @@ class RoundRunner(ControlledRunner):
             [Path(directory) / 'train.jsonl' for directory in
              [config['data_path'], *config.get('replay_data_paths', [])]], config['mixture'])
         try:
-            epochs = prepare_finite_epochs(indexed, config['mixture'], config, 4)
+            epochs = prepare_finite_epochs(indexed, config['mixture'], config, config['ddp_world_size'])
             saved['data_state'] = epochs.state_at(saved.get('step', config['steps']))
         finally:
             indexed.close()

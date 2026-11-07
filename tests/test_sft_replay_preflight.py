@@ -31,7 +31,7 @@ class IndexedProbeRunner(ControlledRunner):
         sources = [Path(config['data_path']) / 'train.jsonl', *self.replay_sources]
         rows = IndexedTrainingRows(config['row_index_paths']['train'], sources, config['mixture'])
         try:
-            saved['data_state'] = prepare_finite_epochs(rows, config['mixture'], config, 4).state_at(saved['step'])
+            saved['data_state'] = prepare_finite_epochs(rows, config['mixture'], config, config['ddp_world_size']).state_at(saved['step'])
         finally:
             rows.close()
         saved['input_hashes'] = {str(p): digest(p) for p in training_input_paths(config)}
