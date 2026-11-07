@@ -16,6 +16,8 @@ from .recorded_search_inputs import BoundInputs
 from .sft import prepare_config
 from .sft_preflight import checked_artifacts, full_parameter_summary, run_preflight
 from .training_index import build_index, index_paths, IndexedTrainingRows
+from .distillation_validation import (JOINT_VALIDATION_PROFILE, LEGACY_VALIDATION_PROFILE,
+                                       joint_validation_coverage)
 
 
 def compile_recipe(template, token, root):
@@ -24,11 +26,16 @@ def compile_recipe(template, token, root):
             token['verification'].get('all_train_validation_supervision_fits_without_truncation') is not True or
             token['verification'].get('independent_test_used_for_training_or_selection') is not False):
         raise ValueError('Require the exact completed search-label token preflight')
+    validation_profile = template.get('validation_profile', LEGACY_VALIDATION_PROFILE)
+    if validation_profile not in (LEGACY_VALIDATION_PROFILE, JOINT_VALIDATION_PROFILE):
+        raise ValueError('Unknown explicit distillation validation profile')
+    joint_validation = validation_profile == JOINT_VALIDATION_PROFILE
+    validation_stages = ['explanation', *STAGES] if joint_validation else ['explanation']
     if (template.get('require_clean_foundation_handoff') is not False or
             template.get('decoder_training') != 'full' or template.get('trainable_parameter_dtype') != 'float32' or
             template.get('ddp_world_size') != 4 or template.get('batch_size') != 32 or
             template.get('micro_batch_size') != 1 or template.get('training_data_profile') != FINITE_PROFILE or
-            template.get('validation_stages') != ['explanation'] or
+            template.get('validation_stages') != validation_stages or
             template.get('max_tokens') != token['verification']['token_limit'] or
             type(template.get('max_steps')) is not int or template['max_steps'] < 1):
         raise ValueError('Use the finite four-worker full-decoder distillation recipe and exact length limit')
@@ -73,6 +80,14 @@ def compile_recipe(template, token, root):
         source_counts.update(available['train'])
     elif template.get('stages') != ['explanation'] or template.get('mixture') != {'explanation': 1.0}:
         raise ValueError('Explanation-only distillation must retain its original mixture')
+    validation_counts = {'explanation': counts['validation']}
+    if joint_validation:
+        if not replay_paths:
+            raise ValueError('Joint validation requires the four token-verified course replay sources')
+        validation_counts.update(available['validation'])
+    if ('validation_rows_by_stage' in template and
+            (not joint_validation or template['validation_rows_by_stage'] != validation_counts)):
+        raise ValueError('Declared validation counts differ from actual token-verified original sources')
     mix = mixture_counts(source_counts, template['mixture'])
     if mix['anchor_stage'] != 'explanation' or any(count < 1 for count in mix['selected_rows_by_stage'].values()):
         raise ValueError('Keep every accepted explanation and at least one actual row from each declared course')
@@ -92,14 +107,18 @@ def compile_recipe(template, token, root):
         max_updates = min(max_updates, passes * per_pass)
     root = Path(root)
     recipe = dict(template, data_path=token['config']['data'], feature_path=token['cache_header_only_input']['path'],
-        validation_examples=counts['validation'], max_steps=max_updates, epochs=math.ceil(max_updates / per_pass),
+        validation_examples=sum(validation_counts.values()), max_steps=max_updates, epochs=math.ceil(max_updates / per_pass),
         min_steps=min(max_updates, max(per_pass, math.ceil(max_updates * warmup))),
         row_index_paths={split: str(root / (split + '-index')) for split in ['train', 'validation']})
     if 'max_finite_passes' in template:
         recipe['eval_every'] = min(template['eval_every'], per_pass)
     if base_reference is not None:
         recipe['pinned_base_model_manifest'] = base_reference
-    budget = {'accepted_training_rows': counts['train'], 'validation_rows': counts['validation'],
+    if any(weight > 1 for weight in template['mixture'].values()):
+        recipe['mixture'] = mix['requested_weights']
+    if joint_validation:
+        recipe['validation_rows_by_stage'] = validation_counts
+    budget = {'accepted_training_rows': counts['train'], 'validation_rows': sum(validation_counts.values()),
         'global_batch_size': template['batch_size'], 'updates_per_complete_pass': per_pass,
         'max_updates': max_updates, 'minimum_updates': recipe['min_steps'],
         'finite_passes_allocated_before_update_cap': recipe['epochs'],
@@ -115,6 +134,9 @@ def compile_recipe(template, token, root):
         budget.update(course_replay_source_rows_by_stage={stage: source_counts[stage] for stage in STAGES},
             finite_mixture=mix, rows_per_complete_pass=mix['rows_per_epoch'],
             course_replay_counts_toward_paper_label_scale=False)
+    if joint_validation:
+        budget.update(validation_profile=validation_profile, validation_rows_by_stage=validation_counts,
+            validation_uses_all_original_rows=True, validation_metric='token_nll_over_complete_original_validation')
     return recipe, budget
 
 
@@ -177,6 +199,26 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 IndexedTrainingRows(directory, paths, recipe['mixture'], split=split).close()
             else:
                 build_index(paths, directory, split=split)
+        validation_plan = None
+        if recipe.get('validation_profile') == JOINT_VALIDATION_PROFILE:
+            from .training import select_validation_rows
+            indexed = IndexedTrainingRows(recipe['row_index_paths']['validation'],
+                [Path(directory) / 'validation.jsonl' for directory in
+                 [recipe['data_path'], *recipe['replay_data_paths']]], recipe['mixture'], split='validation')
+            try:
+                selected_ids = [row['id'] for row in select_validation_rows(indexed,
+                    recipe['validation_stages'], recipe['seed'], recipe['validation_examples'])]
+                validation_plan = {'selected_ids': selected_ids, 'coverage': joint_validation_coverage(
+                    indexed, selected_ids, budget['validation_rows_by_stage'])}
+            finally:
+                indexed.close()
+            path = root / 'joint-validation-plan.json'
+            if path.exists():
+                if json.loads(path.read_text()) != validation_plan:
+                    raise ValueError('Preserved joint validation selection changed')
+            else:
+                atomic_json(path, validation_plan)
+            bound.bind(path)
         unchanged()
         stage = 'four_gpu_full_decoder_distillation_preflight'
         atomic_json(root / 'state.json', {'status': stage, 'formal_distillation_started': False})
@@ -213,6 +255,24 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 metrics.get('training_data_state'), metrics['steps_completed'])
         finally:
             indexed.close()
+        validation_coverage = None
+        if recipe.get('validation_profile') == JOINT_VALIDATION_PROFILE:
+            validation_ids_path = trained / 'validation_ids.json'
+            if not validation_ids_path.is_file():
+                raise ValueError('Joint validation requires the actual native saved validation ID ledger')
+            bound.bind(validation_ids_path)
+            indexed = IndexedTrainingRows(recipe['row_index_paths']['validation'],
+                [Path(directory) / 'validation.jsonl' for directory in
+                 [recipe['data_path'], *recipe.get('replay_data_paths', [])]], recipe['mixture'], split='validation')
+            try:
+                actual_ids = json.loads(validation_ids_path.read_text())
+                validation_coverage = joint_validation_coverage(indexed, actual_ids,
+                    budget['validation_rows_by_stage'])
+            finally:
+                indexed.close()
+            if (actual_ids != validation_plan['selected_ids'] or
+                    validation_coverage != validation_plan['coverage']):
+                raise ValueError('Actual native joint validation differs from its complete pretraining selection')
         selected_path = trained / 'adapter.pt'
         selected = torch.load(selected_path, weights_only=True, map_location='cpu', mmap=True)
         reference = torch.load(preflight_root / 'zero-init.pt', weights_only=True, map_location='cpu', mmap=True)['trainable']
@@ -242,6 +302,8 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 selected_training_rows_by_stage=budget['finite_mixture']['selected_rows_by_stage'],
                 rows_per_complete_pass=budget['rows_per_complete_pass'], loss_normalization='example',
                 course_replay_counts_toward_paper_label_scale=False)
+        if validation_coverage is not None:
+            result['joint_validation_coverage'] = validation_coverage
         atomic_json(root / 'verification.json', result)
         inputs = [source, source.parent / 'manifest.json', source.parent / 'config.json',
             recipe_template, recipe_path, token_manifest, Path(token['config']['parent_completion']),
@@ -250,7 +312,9 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         inputs += [Path(directory) / filename for directory in recipe.get('replay_data_paths', [])
                    for filename in ['manifest.json', 'train.jsonl', 'validation.jsonl']]
         atomic_json(root / 'manifest.json', manifest(ROUND_KIND, contract, inputs,
-            [root / 'verification.json', root / 'budget.json', selected_path, trained / 'metrics.json'], result))
+            [root / 'verification.json', root / 'budget.json', selected_path, trained / 'metrics.json',
+             *([root / 'joint-validation-plan.json', trained / 'validation_ids.json']
+               if validation_coverage is not None else [])], result))
         atomic_json(root / 'state.json', result)
         return result
     except Exception as error:
