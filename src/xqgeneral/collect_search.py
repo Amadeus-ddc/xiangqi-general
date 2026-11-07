@@ -123,7 +123,7 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
         raise ValueError('Mining query coverage differs')
     info = {'source_mining_manifest': str(source), 'source_mining_queries_byte_verified': True}
     if not declared_pool:
-        if recorded_inputs or student_game_inputs:
+        if recorded_inputs or student_game_inputs or config.get('protection_manifest') is not None:
             raise ValueError('Mining did not use the requested recorded pool')
         return set(), info
     pool = Path(declared_pool)
@@ -218,6 +218,23 @@ def mining_reservations(queries_path, queries, data, validation_data, bound,
                     recorded_mining_isolation_rechecked_during_collection=True)
     if 'root_offset' in config:
         info['student_game_root_offset' if is_student else 'recorded_root_offset'] = config['root_offset']
+    protection = config.get('protection_manifest')
+    if protection is not None:
+        from .search_protection import checked_protection
+        protected_bound = BoundInputs()
+        positions, note = checked_protection(protection, protected_bound,
+            base_data=data, source_pool=pool)
+        if proof.get('search_protection') != note:
+            raise ValueError('Mining did not apply its complete native validation protection')
+        for name, binding in protected_bound.artifacts.items():
+            bound.bind(name, declared(name))
+            if binding != declared(name):
+                raise ValueError('Mining changed a native protection dependency')
+        protected_bound.unchanged()
+        additional = additional | positions
+        info['search_protection'] = note
+    elif 'search_protection' in proof:
+        raise ValueError('Mining protection evidence has no declared certificate')
     return additional, info
 
 

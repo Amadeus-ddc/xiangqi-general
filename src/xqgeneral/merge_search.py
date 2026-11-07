@@ -208,9 +208,11 @@ def _production_leaf(data, source, bound, *, source_profile=None):
             any(a.get('query') is not None and (a.get('reason') != 'accepted_for_consolidation' or
                 a['query'].get('source_root_id') != a['source_root_id']) for a in attempts)):
         raise ValueError('Mined queries differ from the preserved original root attempts')
-    additional, _ = mining_reservations(config['queries'], queries, config['heldout_data'],
+    additional, protection_info = mining_reservations(config['queries'], queries, config['heldout_data'],
         config['validation_data'], bound, mining_path, config.get('recorded_inputs'),
         expected_attempted_root_ids=attempted_ids,student_game_inputs=config.get('student_game_inputs'))
+    if result.get('search_protection') != protection_info.get('search_protection'):
+        raise ValueError('Collection protection differs from its actual source mining')
     forbidden = reserved_positions(config['heldout_data']) | reserved_positions(config['validation_data']) | additional
     rebuilt, rejected = rebuild_labels(queries, responses, teacher, forbidden,
         require_immediate_mate_consistency=config.get('require_immediate_mate_consistency', False))
@@ -235,11 +237,14 @@ def _production_leaf(data, source, bound, *, source_profile=None):
         'search_acceptance': {'policy': policy, 'min_clean_ply': clean_ply},
         **{f'base_{s}': bound.artifacts[str(Path(config['heldout_data']) / f'{s}.jsonl')]
            for s in ['validation', 'test']}}
+    if 'search_protection' in protection_info:
+        isolation['search_protection'] = protection_info['search_protection']
     if source_profile==SHARED_SOURCE_PROFILE:
         from .student_game_inputs import shared_isolation_identity
         pool_proof = bound.json(pool/'manifest.json')
         authority = pool_proof['config']['shared_isolation_authority']['authority'] if is_student else pool
-        common = shared_isolation_identity(authority,config['heldout_data'],config['validation_data'],bound,len(additional))
+        original_count = protection_info.get('additional_reserved_canonical_and_explanation_positions', len(additional))
+        common = shared_isolation_identity(authority,config['heldout_data'],config['validation_data'],bound,original_count)
         isolation.pop('recorded_pool_manifest')
         isolation.update(shared_isolation_authority=common,
             require_immediate_mate_consistency=config.get('require_immediate_mate_consistency',False))
@@ -363,6 +368,8 @@ def _merge_plan(collections, source, bound, *, source_profile=None):
             source_kind_counts=dict(Counter(leaf['source_kind'] for leaf in leaves)))
         if any(leaf['source_kind']=='student_engine_training_game' for leaf in leaves):
             summary.pop('recorded_mining_isolation_rechecked_during_collection')
+    if 'search_protection' in isolation:
+        summary['search_protection'] = isolation['search_protection']
     bound.unchanged()
     return paths, lines, provenance, summary
 

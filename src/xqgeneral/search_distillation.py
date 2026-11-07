@@ -519,6 +519,8 @@ def _main():
     pools.add_argument('--recorded-inputs', help='Completed unused canonical-game roots and held-out positions')
     pools.add_argument('--student-game-inputs',default=argparse.SUPPRESS,
                        help='Completed actual neural training-game roots under the shared held-out authority')
+    parser.add_argument('--protection-manifest', default=argparse.SUPPRESS,
+                        help='Completed native protection for every auxiliary validation reference and mirror')
     parser.add_argument('--output', required=True)
     parser.add_argument('--limit', type=int, default=512)
     parser.add_argument('--root-offset', type=int,
@@ -553,6 +555,10 @@ def _main():
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     args = parser.parse_args()
     student_game_inputs = getattr(args,'student_game_inputs',None)
+    protection_manifest = getattr(args,'protection_manifest',None)
+    if protection_manifest is not None and (
+            not protection_manifest.strip() or not (args.recorded_inputs or student_game_inputs)):
+        raise ValueError('Extended protection needs an explicit completed recorded or student-game pool')
     if student_game_inputs is not None and not student_game_inputs.strip():
         raise ValueError('An explicit neural training-game pool cannot be empty')
     if args.limit <= 0 or args.nodes <= 0 or args.max_depth < 0:
@@ -609,6 +615,14 @@ def _main():
         if Path(student_pool['config']['checkpoint']).resolve()!=Path(args.checkpoint).resolve():
             raise ValueError('Student training-game roots require the exact same original search actor')
         input_paths.append(student_pool['config']['expert_weights'])
+    protection_reserved, protection_note, protection_bound = set(), None, None
+    if protection_manifest is not None:
+        from .search_protection import checked_protection
+        from .recorded_search_inputs import BoundInputs
+        protection_bound = BoundInputs()
+        protection_reserved, protection_note = checked_protection(protection_manifest, protection_bound,
+            base_data=args.data, source_pool=student_game_inputs or args.recorded_inputs)
+        input_paths.extend(Path(name) for name in protection_bound.artifacts)
     contract = {'arguments': arguments, 'input_hashes': {str(p): digest(p) for p in input_paths},
                 'code': code_identity()}
     if generation_policy is not None:
@@ -678,7 +692,8 @@ def _main():
         raise ValueError('Student inference cache override was not applied')
     session_counts, batch_statistics = Counter(), {}
     ledger_lock = threading.Lock()
-    reserved = reserved_positions(args.data) | additional_reserved
+    if protection_bound is not None:protection_bound.unchanged()
+    reserved = reserved_positions(args.data) | additional_reserved | protection_reserved
     with partial.open('a') as handle, oracle_log.open('a') as oracle_handle, ExitStack() as cleanup:
         batch_handle = cleanup.enter_context(batch_log.open('a')) if batching is not None else None
         batch_ordinal = len(prior_batches)
@@ -762,6 +777,9 @@ def _main():
     if args.recorded_inputs:
         proof.update(unused_recorded_training_inputs=True,
                      additional_reserved_canonical_and_explanation_positions=len(additional_reserved))
+    if protection_note is not None:
+        protection_bound.unchanged()
+        proof['search_protection'] = protection_note
     if student_game_inputs:
         proof.update(student_game_training_inputs=True,
                      student_game_continuation_is_best_move_label=False,

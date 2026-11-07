@@ -1,5 +1,12 @@
 # Xiangqi General model card
 
+The [search-protection exporter](SEARCH_PROTECTION.md) reconstructs the original
+held-out authority plus every auxiliary-validation reference PV and its color
+mirror, including unused long suffixes. Explicit mining, collection and merge
+contracts carry that same evidence; the original authority count remains separate.
+This is isolation infrastructure. It does not admit an auxiliary checkpoint to
+the pilot, complete three-process search distillation, or establish model quality.
+
 ## Current verified state (2026-11-07)
 
 The [three-worker auxiliary profile](AUXILIARY_POLICY_TRAINING.md#三卡资源配置)
