@@ -1,6 +1,9 @@
 """Reconstruct the complete held-out footprint for searches after auxiliary SFT."""
 import argparse
+import ast
 from collections import Counter
+import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,6 +14,65 @@ from .verified_inputs import input_session_from_environment
 KIND = 'completed_auxiliary_corpus_search_protection'
 PROFILE = 'original_authority_plus_all_validation_reference_PVs_and_mirrors_v1'
 FILES = ('protected-positions.json', 'counts.json', 'contract.json')
+
+# The earlier producer rejected an unscored best move with RuntimeError.
+# The scoring recovery only gave that same rejected case a typed exception.
+# Pin the complete previous parser AST, not an open-ended version allowance.
+_LEGACY_ORACLE = '2bed40736e2d0e4fe05405783a60bb85073ee92876f79aadf6863ea1c53edb19'
+_LEGACY_ORACLE_AST = '41a5f7988759890ffe083890001bf8c167aeca24fd91b9a4b6d58171e5a630e2'
+_UNSCORED_CLASS_AST = '1236650141bd26a6a4a5d3bbfbfb4845dd8ac14adbb99cf8906ae42f8e00b769'
+
+
+def _ast_digest(node):
+    canonical = copy.deepcopy(node)
+    # Python3.12 added empty type_params fields to ordinary functions/classes.
+    # Omit only that empty field; actual generic parameters remain significant.
+    for item in ast.walk(canonical):
+        if 'type_params' in item._fields and getattr(item, 'type_params', None) == []:
+            item._fields = tuple(field for field in item._fields if field != 'type_params')
+    return hashlib.sha256(ast.dump(canonical, include_attributes=False).encode()).hexdigest()
+
+
+def _typed_unscored_upgrade(source):
+    """Prove the sole parser edit without importing or running historical code."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return False
+    classes = [node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == 'UnscoredBestMove']
+    if len(classes) != 1 or _ast_digest(classes[0]) != _UNSCORED_CLASS_AST:
+        return False
+    tree.body.remove(classes[0])
+    upgraded = ast.parse('raise UnscoredBestMove(fen, output, nodes)').body[0]
+    legacy = ast.parse("raise RuntimeError('Engine completed without a scored best-move candidate')").body[0]
+
+    class RestoreRejectedCase(ast.NodeTransformer):
+        replacements = 0
+
+        def visit_Raise(self, node):
+            if ast.dump(node) == ast.dump(upgraded):
+                self.replacements += 1
+                return legacy
+            return self.generic_visit(node)
+
+    restore = RestoreRejectedCase();tree = restore.visit(tree)
+    return restore.replacements == 1 and _ast_digest(tree) == _LEGACY_ORACLE_AST
+
+
+def _decoder_compatibility(producer, current):
+    if producer == current:
+        return None
+    if (not isinstance(producer, dict) or set(producer) != set(current) or
+            producer.get('oracle.py') != _LEGACY_ORACLE or
+            any(producer[name] != value for name, value in current.items() if name != 'oracle.py') or
+            not _typed_unscored_upgrade(Path(__file__).with_name('oracle.py').read_text())):
+        raise ValueError('Corpus counts or native validation decoding changed')
+    return dict(profile='exact_successful_decoder_typed_unscored_error_upgrade_v2',
+        producer_oracle_sha256=producer['oracle.py'], current_oracle_sha256=current['oracle.py'],
+        previous_full_module_AST_sha256=_LEGACY_ORACLE_AST,
+        AST_canonical_profile='omit_only_empty_type_params_v1',
+        all_other_closure_modules_byte_identical=True, artifact_source_code_executed=False,
+        unscored_best_moves_remain_rejected=True)
 
 
 def _plan(data, bound):
@@ -31,8 +93,11 @@ def _plan(data, bound):
         raise ValueError('Search protection needs the completed isolated seven-stage corpus')
     actual_counts = bound.json(data / 'counts.json', _binding(proof['outputs'], data / 'counts.json'))
     saved = bound.json(data / 'contract.json', _binding(proof['outputs'], data / 'contract.json'))
-    if actual_counts != counts or saved.get('closure') != corpus._closure():
+    if actual_counts != counts:
         raise ValueError('Corpus counts or native validation decoding changed')
+    compatibility = _decoder_compatibility(saved.get('closure'), corpus._closure())
+    if compatibility is not None and proof.get('code', {}).get('source_sha256', {}).get('src/xqgeneral/oracle.py') != _LEGACY_ORACLE:
+        raise ValueError('Historical corpus decoder differs from its bound producer identity')
     shared = saved['original_shared_isolation_authority']
     if shared.get('profile') != 'shared_canonical_heldout_authority_v1':
         raise ValueError('Require the original complete canonical held-out authority')
@@ -119,6 +184,8 @@ def _plan(data, bound):
         independent_final_test_labels_read=False, new_engine_or_model_queries=0, new_SGD_updates=0)
     contract = dict(profile=PROFILE, corpus=str(data), corpus_manifest_binding=bound.artifacts[str(data / 'manifest.json')],
         shared_isolation_authority=shared, native_closure=corpus._closure())
+    if compatibility is not None:
+        contract['native_decoder_compatibility'] = compatibility
     bound.unchanged()
     return contract, result, reserved
 
