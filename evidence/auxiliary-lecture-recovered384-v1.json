@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "auxiliary_round1_QA_and_recovered384_lecture_development_results",
+  "snapshot_UTC": "2026-11-09T17:20:21.555477+00:00",
+  "snapshot_UTC8": "2026-11-10 01:20:21",
+  "selected_step": 12000,
+  "selected_checkpoint_sha256": "dcef22a6789c45b18b002d802dd76175eeb289131e9eada51107df37bf0e7a8e",
+  "completed_auxiliary_rounds": 1,
+  "completed_genuine_new_search_SGD_rounds": 0,
+  "same_question_QA": {
+    "examples": 2600,
+    "actual_correct": 2417,
+    "joint_parent_correct": 2345,
+    "clean_pre_SFT_correct": 2465,
+    "same_questions_and_generation_budgets": true,
+    "causal_gain_claimed": false
+  },
+  "normal_explanations": {
+    "examples": 384,
+    "parse_valid": 384,
+    "first_move_legal": 372,
+    "first_move_no_mistake_at_existing_material_WDL_loss_below_0_10": 327,
+    "full_PV_legal": 217,
+    "full_rich_lecture_contract_valid": 65,
+    "root_scores_unmeasured": 0,
+    "PV_plies_with_missing_exact_engine_scores": 1,
+    "missing_exact_score_is_model_error": false,
+    "independent_engine_nodes_per_query": 1000000,
+    "generation_modules": 112,
+    "scoring_modules": 113,
+    "raw_answer_bytes_preserved": true,
+    "new_neural_queries_for_recovery": 0,
+    "prose_semantic_rating": "unmeasured",
+    "different_contract_from_fixed765_four_field_numeric_diagnostics": true
+  },
+  "receipts": [
+    {
+      "path": "runs/auxiliary-lecture-score-recovery-normal-v1/verification.json",
+      "sha256": "93704a804fc5a3fde44898d79eb94431ee2ad8378462e7d44848db2407f4d7ad",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-lecture-score-recovery-normal-v1/evaluation/manifest.json",
+      "sha256": "94d7804db4b712e1270e4fa5f111d231f3ba05736e1a1b3fc34196d9043ac5b0",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-lecture-score-recovery-normal-v1/CPU-result-readback.json",
+      "sha256": "0189256c31fc63cb6ab93ccfbef08c877914c71a3d591fac7db3a9a6be17e269",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-qa2600-raw-readback-v2/verification.json",
+      "sha256": "fa32d1f959b6a9ccf3e708950d5e166afa705fa7dc8797da315add0ce7a21e8e",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/explanation-score-recovery-development-v1/source-run/source-manifest.json",
+      "sha256": "ded0cacb52868b096d5a799758f3c4ff0c6d3f283d1dd7293dea1d24944c2a4c",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/search-recovered-evaluation-development-v1/actual113-and384-admission-readback.json",
+      "sha256": "caae6c84e52d51fe1f6b96414d5112b0858dbefe7493755ca2c3e156af5be8f5",
+      "included_in_source_release": false
+    }
+  ],
+  "raw_answers_weights_or_datasets_published": false,
+  "independent_final_test_used": false,
+  "complete_new_gameplay_or_teacher_review_accepted": false,
+  "strong_play_or_reliable_Chinese_coaching_proven": false,
+  "full_goal_complete": false
+}

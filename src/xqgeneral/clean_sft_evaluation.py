@@ -305,6 +305,15 @@ def checked_raw(root, memory, rows, args, core, *, expected_code=None):
     return metrics, judged
 
 
+def checked_validation_raw(root, memory, rows, args, core, *, expected_code=None):
+    """Admit explicit recovered scores while preserving the legacy native checker."""
+    proof = json.loads((root / 'manifest.json').read_text())
+    if proof.get('kind') == 'recovered_independent_explanation_evaluation':
+        from .recovered_explanation_scores import checked_recovered_raw
+        return checked_recovered_raw(root, memory, rows, args, core, expected_code=expected_code)
+    return checked_raw(root, memory, rows, args, core, expected_code=expected_code)
+
+
 def run_evaluation(pipeline, producer_session, config_path, output, *, resume=False, poll_seconds=30):
     config_path = Path(config_path);root = Path(output);config = json.loads(config_path.read_text())
     rows, token, recipe = validation_spec(config)
@@ -374,7 +383,7 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
                 command = [sys.executable, '-u', '-m', 'xqgeneral.evaluate_explanations']
                 for key, value in args.items():command += ['--' + key.replace('_', '-'), str(value)]
                 execute(command)
-            metrics[memory], judged = checked_raw(dest, memory, rows, args, core, expected_code=expected_code)
+            metrics[memory], judged = checked_validation_raw(dest, memory, rows, args, core, expected_code=expected_code)
             raw_paths[memory] = dest
             raw_guard.add(dest / 'manifest.json', {'sha256': digest(dest / 'manifest.json'),
                                                   'bytes': (dest / 'manifest.json').stat().st_size})
