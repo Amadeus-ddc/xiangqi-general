@@ -11,6 +11,15 @@ import time
 from .rules import legal_moves, play, piece_map, piece_name, side
 
 
+class UnscoredBestMove(RuntimeError):
+    """A legal engine move was returned without an exact score at this budget."""
+    def __init__(self, fen, output, nodes):
+        super().__init__('Engine completed without a scored best-move candidate')
+        self.details = {'reason': 'missing_exact_best_move_score', 'fen': fen,
+                        'best_move': output[-1].split()[1], 'requested_nodes': nodes,
+                        'raw_output': list(output)}
+
+
 def parse_analysis(fen, output, nodes):
     best = output[-1].split()[1]
     ranks, scored = {}, {}
@@ -35,7 +44,7 @@ def parse_analysis(fen, output, nodes):
     if best not in legal_moves(fen):
         raise RuntimeError(f'Oracle returned an illegal or terminal move: {best}')
     if best not in scored:
-        raise RuntimeError('Engine completed without a scored best-move candidate')
+        raise UnscoredBestMove(fen, output, nodes)
     # Preserve previous exact scores by move when a stop interrupts a MultiPV iteration.
     # A partial iteration can put the same move in two ranks. Fill only from
     # previously observed exact scores; never interpret a bound as an exact score.

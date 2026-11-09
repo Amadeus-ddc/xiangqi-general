@@ -59,7 +59,7 @@ def plan_summary(rows):
     verdicts = [r['judgment'] for r in rows]
     plies = [p for v in verdicts for p in v['plies'] if not p['exclude_from_quality']]
     losses = [p['first_move_expected_score_loss'] for p in plies if 'first_move_expected_score_loss' in p]
-    return {'examples': len(rows),
+    summary = {'examples': len(rows),
             **{key + '_rate': sum(v[key] for v in verdicts) / len(rows)
                for key in ('format_valid', 'full_line_legal', 'conditional_first_move_matches',
                            'length_sufficient', 'contract_valid')},
@@ -72,6 +72,11 @@ def plan_summary(rows):
             'teacher_line_exact_rate': sum(r['raw'].strip() == r['record']['answer'] for r in rows) / len(rows),
             'forced_root_excluded_from_quality': True, 'full_history_termination_checked': True,
             'raw_generation': True, 'oracle_repairs': 0}
+    unscored = sum(bool(p.get('first_move_score_unavailable')) for p in plies)
+    if unscored:
+        summary.update(quality_plies_unscored=unscored, quality_ply_no_mistake_rate_is_lower_bound=True,
+                       unscored_is_not_a_model_error=True)
+    return summary
 
 
 def judge_shard(rows, args):

@@ -64,6 +64,12 @@ def blinded_query(row):
                                           for b in value.get('branches', []) if isinstance(b, dict)]
                                           if isinstance(value.get('branches'), list) else [],
                'pv_move_expected_score_losses': judgment.get('pv_move_losses', [])}
+    if judgment.get('oracle_scoring_errors'):
+        content['oracle_scoring_unavailable'] = [
+            {k: error[k] for k in ('reason', 'phase', 'ply', 'fen', 'requested_nodes')}
+            for error in judgment['oracle_scoring_errors']]
+        content['oracle_score_coverage_note'] = ('部分引擎精确评分未测量；上下界不等于精确分数。'
+            '评分缺失本身不是模型错误，不能补造分数；规则事实和原始回答仍须完整评审。')
     return {'id': row['id'], 'messages': [{'role': 'system', 'content': RUBRIC},
                                          {'role': 'user', 'content': json.dumps(content, ensure_ascii=False)}]}
 

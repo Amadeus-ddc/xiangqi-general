@@ -25,7 +25,7 @@ def move_summary(rows):
         raise ValueError('No raw move predictions were evaluated')
     losses = [r['judgment']['first_move_expected_score_loss'] for r in rows
               if 'first_move_expected_score_loss' in r['judgment']]
-    return {'examples': len(rows), 'format_valid_rate': sum(r['move'] is not None for r in rows)/len(rows),
+    summary = {'examples': len(rows), 'format_valid_rate': sum(r['move'] is not None for r in rows)/len(rows),
             'legal_rate': sum(r['judgment']['first_move_legal'] for r in rows)/len(rows),
             'no_mistake_rate': sum(r['judgment']['first_move_no_mistake'] for r in rows)/len(rows),
             'teacher_best_move_exact_rate': sum(r['move'] == r['record']['answer'] for r in rows)/len(rows),
@@ -35,6 +35,11 @@ def move_summary(rows):
             'original_examples': sum(not r['record']['teacher'].get('derivation') for r in rows),
             'color_derived_examples': sum(bool(r['record']['teacher'].get('derivation')) for r in rows),
             'raw_generation': True, 'oracle_repairs': 0, 'score_model': 'pinned_Pikafish_material_WDL'}
+    unscored = sum(bool(r['judgment'].get('first_move_score_unavailable')) for r in rows)
+    if unscored:
+        summary.update(legal_unscored_moves=unscored, no_mistake_rate_is_lower_bound=True,
+                       unscored_is_not_a_model_error=True)
+    return summary
 
 
 def judge_shard(rows, args):
