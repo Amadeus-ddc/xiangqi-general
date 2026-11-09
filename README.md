@@ -88,6 +88,8 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 问答、讲解和对弈均保留原始输出及失败。独立评测不使用引擎替换模型的非法走法；规则约束解码的结果与原始生成分别报告。固定开发题、教师辅助评分和CPU测试不能替代最终独立棋力与教学验收。
 
+引擎在固定预算下只给出评分上下界时，会保留“精确评分未测量”的覆盖信息；已保存的完整讲解可[单独恢复 CPU 评分](docs/EXPLANATION_SCORE_RECOVERY.md)，无需重新生成模型回答。
+
 ## 公共源码与模型
 
 源码及模型资产身份由[来源配置](configs/sources.json)与对应完成清单固定。专家网络、教师权重、数据、特征缓存和训练产物不提交到源码仓库。下载、构建、数据生成及早期实验命令见[开发指南与历史记录](docs/DEVELOPMENT_GUIDE.md)。

@@ -13,9 +13,21 @@ from .feature_store import feature_paths
 from .model_bundle import checkpoint_input_paths
 from .recorded_search_inputs import BoundInputs
 from .explanations import EXPLANATION_QUESTION, parse_explanation, validate_explanation
-from .oracle import Pikafish
+from .oracle import Pikafish, UnscoredBestMove
 from .rules import adjudicate, legal_moves, play
 from .verified_inputs import input_session_from_environment
+
+
+def scored_analysis(oracle, fen, nodes, initial_fen, moves, errors, phase, ply, searchmoves=None):
+    """Keep unavailable exact scores separate from rule/model errors; never retry."""
+    try:
+        if searchmoves is None:
+            return oracle.analyze(fen, nodes, initial_fen, moves)
+        return oracle.analyze(fen, nodes, initial_fen, moves, searchmoves=searchmoves)
+    except UnscoredBestMove as error:
+        errors.append({**error.details, 'initial_fen': initial_fen, 'moves': list(moves),
+                       'searchmoves': searchmoves, 'phase': phase, 'ply': ply})
+        return None
 
 
 def judge_move(oracle, record, move, nodes):
@@ -27,12 +39,19 @@ def judge_move(oracle, record, move, nodes):
     if move not in legal_moves(record['fen']):
         return result
     result['first_move_legal'] = True
-    engine = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'])
+    errors = []
+    engine = scored_analysis(oracle, record['fen'], nodes, record['initial_fen'], record['moves'],
+                             errors, 'first_move_root', 0)
+    if engine is None:
+        return dict(result, oracle_scoring_errors=errors, first_move_score_unavailable=True)
+    result['first_move_oracle'] = engine
     best = next(c for c in engine['candidates'] if c['move'] == engine['best_move'])
     chosen = next((c for c in engine['candidates'] if c['move'] == move), None)
     if chosen is None:
-        restricted = oracle.analyze(record['fen'], nodes, record['initial_fen'], record['moves'],
-                                     searchmoves=[move])
+        restricted = scored_analysis(oracle, record['fen'], nodes, record['initial_fen'], record['moves'],
+                                     errors, 'first_move_restricted', 0, searchmoves=[move])
+        if restricted is None:
+            return dict(result, oracle_scoring_errors=errors, first_move_score_unavailable=True)
         chosen = next(c for c in restricted['candidates'] if c['move'] == move)
         result['first_move_restricted_oracle'] = restricted
     loss = max(0, candidate_probability(record['fen'], best) - candidate_probability(record['fen'], chosen))
@@ -56,7 +75,7 @@ def judgment(oracle, record, raw, nodes):
         result['errors'].append('move_after_terminal_root')
         return result
     root_engine = result.get('first_move_oracle')
-    if result['first_move_legal']:
+    if root_engine is not None:
         best = next(c for c in root_engine['candidates'] if c['move'] == root_engine['best_move'])
         try:
             result['evaluation_probability_error'] = abs(evaluation_probability(record['fen'], analysis.get('evaluation')) -
@@ -69,6 +88,7 @@ def judgment(oracle, record, raw, nodes):
         return result
     position, moves = record['fen'], list(record['moves'])
     engine_judgments = []
+    scoring_errors = result.get('oracle_scoring_errors', [])
     for i, move in enumerate(pv):
         if adjudicate(record['initial_fen'], moves)['ended']:
             result['pv_legal'] = False
@@ -77,20 +97,37 @@ def judgment(oracle, record, raw, nodes):
         if not isinstance(move, str) or move not in legal_moves(position):
             result['pv_legal'] = False
             break
-        engine = root_engine if i == 0 and root_engine is not None else oracle.analyze(position, nodes, record['initial_fen'], moves)
-        best = next(c for c in engine['candidates'] if c['move'] == engine['best_move'])
-        candidate = next((c for c in engine['candidates'] if c['move'] == move), None)
+        # Reuse a root failure just as we reuse its successful analysis. Spending
+        # another node budget until a score appears would change the experiment.
+        root_unscored = i == 0 and root_engine is None and result.get('first_move_score_unavailable')
+        if i == 0 and (root_engine is not None or root_unscored):
+            engine = root_engine
+        else:
+            engine = scored_analysis(oracle, position, nodes, record['initial_fen'], moves,
+                                     scoring_errors, 'pv_root', i)
+        candidate = next((c for c in engine['candidates'] if c['move'] == move), None) if engine else None
         restricted = None
-        if candidate is None:
-            restricted = oracle.analyze(position, nodes, record['initial_fen'], moves, searchmoves=[move])
-            candidate = next(c for c in restricted['candidates'] if c['move'] == move)
-        loss = max(0, candidate_probability(position, best) - candidate_probability(position, candidate))
-        result['pv_move_losses'].append(loss)
-        engine_judgments.append({'fen': position, 'move': move, 'oracle': engine, 'restricted': restricted})
+        previous_restricted_failure = (i == 0 and move == analysis.get('move') and
+                                       result.get('first_move_score_unavailable'))
+        if engine is not None and candidate is None and not previous_restricted_failure:
+            restricted = scored_analysis(oracle, position, nodes, record['initial_fen'], moves,
+                                         scoring_errors, 'pv_restricted', i, searchmoves=[move])
+            if restricted is not None:
+                candidate = next(c for c in restricted['candidates'] if c['move'] == move)
+        entry = {'fen': position, 'move': move, 'oracle': engine, 'restricted': restricted}
+        if candidate is not None:
+            best = next(c for c in engine['candidates'] if c['move'] == engine['best_move'])
+            loss = max(0, candidate_probability(position, best) - candidate_probability(position, candidate))
+            result['pv_move_losses'].append(loss)
+        else:
+            entry['score_unavailable'] = True
+        engine_judgments.append(entry)
         position = play(position, move); moves.append(move)
     else:
         result['pv_legal'] = True
     result['engine_judgments'] = engine_judgments
+    if scoring_errors:
+        result['oracle_scoring_errors'] = scoring_errors
     return result
 
 
@@ -101,7 +138,7 @@ def explanation_summary(rows):
     move_losses = [v['first_move_expected_score_loss'] for v in verdicts if 'first_move_expected_score_loss' in v]
     pv_losses = [loss for v in verdicts for loss in v.get('pv_move_losses', [])]
     errors = Counter(e for v in verdicts for e in v.get('errors', []))
-    return {'examples': len(rows), 'parse_valid_rate': sum(v['parse_valid'] for v in verdicts) / len(rows),
+    summary = {'examples': len(rows), 'parse_valid_rate': sum(v['parse_valid'] for v in verdicts) / len(rows),
             'first_move_legal_rate': sum(v['first_move_legal'] for v in verdicts) / len(rows),
             'structured_contract_valid_rate': sum(v['contract_valid'] for v in verdicts) / len(rows),
             'first_move_no_mistake_rate': sum(v['first_move_no_mistake'] for v in verdicts) / len(rows),
@@ -112,6 +149,17 @@ def explanation_summary(rows):
             'pv_no_mistake_fraction_conditional': sum(v < .10 for v in pv_losses)/len(pv_losses) if pv_losses else None,
             'errors': dict(errors), 'raw_generation': True, 'oracle_repairs': 0,
             'score_model': 'pinned_Pikafish_material_WDL', 'prose_semantic_rating': 'unmeasured'}
+    if any(v.get('oracle_scoring_errors') for v in verdicts):
+        first_unscored = sum(bool(v.get('first_move_score_unavailable')) for v in verdicts)
+        summary['oracle_scoring_coverage'] = {
+            'questions_with_unscored_queries': sum(bool(v.get('oracle_scoring_errors')) for v in verdicts),
+            'unscored_engine_queries': sum(len(v.get('oracle_scoring_errors', [])) for v in verdicts),
+            'legal_first_moves_unscored': first_unscored,
+            'legal_pv_plies_unscored': sum('score_unavailable' in p for v in verdicts
+                                          for p in v.get('engine_judgments', [])),
+            'first_move_no_mistake_rate_is_lower_bound': bool(first_unscored),
+            'unscored_is_not_a_model_error': True}
+    return summary
 
 
 def judge_shard(rows, args):
