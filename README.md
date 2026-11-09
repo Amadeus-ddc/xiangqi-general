@@ -18,6 +18,7 @@
 | [七类辅助训练](docs/AUXILIARY_POLICY_TRAINING.md) | 讲解、四课、走法和数值分析的全量有限遍历 |
 | [后续开发评测](docs/AUXILIARY_POLICY_EVALUATION.md) | 原始问答、三组讲解、完整教师辅助评审和原始对弈 |
 | [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及原生消费检查 |
+| [验证参考解析器兼容](docs/VALIDATION_DECODER_COMPATIBILITY.md) | 类型化缺分错误的严格源码核验与新保护清单重建 |
 | [最终独立验收](docs/FINAL_INDEPENDENT_EVALUATION.md) | 锁定最终模型后执行的独立测试 |
 
 历史里程碑保留在[状态档案](STATUS_HISTORY.md)、[模型卡档案](docs/MODEL_CARD_HISTORY.md)及各实验文档中；其中的旧卡数、等待器和中间结果按当时快照解释。
