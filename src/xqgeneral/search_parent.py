@@ -3,7 +3,7 @@ import ast
 from pathlib import Path
 
 from .auxiliary_policy_preflight import KIND as AUXILIARY_TOKEN_KIND
-from .clean_sft_evaluation import checked_raw, validation_spec
+from .clean_sft_evaluation import checked_validation_raw as checked_raw, validation_spec
 from .distillation_preflight import AUXILIARY_ROUND_KIND, ROUND_KIND, TOKEN_KIND, completed_parent
 from .evidence import code_identity, digest, load_jsonl
 from .feature_store import feature_paths

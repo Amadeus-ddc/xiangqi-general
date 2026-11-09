@@ -2,6 +2,14 @@
 
 本页是运行与接手入口。模型、数据和质量结论以[当前模型卡](docs/MODEL_CARD.md)为准；[旧状态原文](STATUS_HISTORY.md)保留历史用途。
 
+## 2026-11-10 01:20 补充快照
+
+同一2600道旧课问答已逐项复核：当前2417/2600（92.96%），联合父模型2345/2600，讲解前同题对照2465/2600。普通模式384条讲解的原始回答完整保留，CPU评分已恢复：首步合法372、现有material-WDL阈值下无明显损失327、完整主变化合法217、完整讲解结构／规则通过65。只有一个变化位置缺少精确引擎分数，没有首步缺分；未测量评分与模型错误分别记录。
+
+这些讲解的变化与分支仍有明显问题，尚不能作为可靠教练交付。完整讲解合同包含事实和分支，不等于765题的数值四字段合同。原评测和后代搜索等待器因单题引擎缺分而退出并保留；新恢复队列复用已完成问答及普通模式讲解，等待评分修复的完整CPU验证后继续清零／错配、完整BF16评审和原始对弈。此快照没有新增SGD或新的合格搜索训练轮次。
+
+[讲解与问答证据摘要](evidence/auxiliary-lecture-recovered384-v1.json)绑定实际私有收据；[评分恢复协议](docs/EXPLANATION_SCORE_RECOVERY.md)区分原始生成、CPU评分和后续原生接收。以下保留更早23:19快照的训练与765题细节。
+
 ## 已验证
 
 以下是2026-11-09 23:19:17（UTC+8）的固定快照。公开仓库不提供实时进度；[完成与诊断摘要](evidence/auxiliary-round-completed-fixed765-v1.json)绑定实际私有收据，原始权重、回答、数据和日志不随源码发布。
@@ -44,8 +52,9 @@
 
 | 用途 | tmux会话 | 本地运行目录 |
 | --- | --- | --- |
-| 完整开发评测 | `xqgeneral-auxiliary-two-gpu-development-evaluation-v1` | `runs/auxiliary-policy-two-gpu-development-evaluation-v1` |
-| 后代搜索等待器 | `xqgeneral-auxiliary-two-gpu-search-pilot-v1` | `runs/auxiliary-two-gpu-search-pilot-v1` |
+| 完整开发评测恢复 | `xqgeneral-auxiliary-two-gpu-development-recovery-v1` | `runs/auxiliary-policy-two-gpu-development-recovery-v1` |
+| 已退出：旧评测／搜索等待器 | 原E2／Q2，失败尝试保留，不重启 | `runs/auxiliary-policy-two-gpu-development-evaluation-v1`、`runs/auxiliary-two-gpu-search-pilot-v1` |
+| 已完成：保存回答CPU评分 | 原`xqgeneral-auxiliary-lecture-score-recovery-normal-v1` | `runs/auxiliary-lecture-score-recovery-normal-v1` |
 | 已完成：辅助训练 | 原`xqgeneral-two-GPU-native1000-resume-micro3-v1` | `runs/auxiliary-two-gpu-resource-resume-micro3-v1` |
 | 已完成：训练小时观察 | 原`xqgeneral-auxiliary-two-gpu-hourly-monitor-v1` | `runs/auxiliary-two-gpu-hourly-monitor-v1` |
 | 已完成：固定765题 | 原`xqgeneral-two-gpu-fixed765-development-diagnostics-v1` | `runs/oracle-policy-two-gpu-development-diagnostics-v1` |
@@ -53,9 +62,9 @@
 已完成的训练、观察器和765题进程均有正常退出记录，不重启。后续每小时读回由本地按需入口保存，不存在新的常驻观察daemon：
 
 ```bash
-cat runs/auxiliary-posttraining-hourly-readbacks-v1/latest.json
-cat runs/auxiliary-posttraining-hourly-readbacks-v1/state.json
-cat runs/auxiliary-policy-two-gpu-development-evaluation-v1/state.json
+cat runs/auxiliary-development-recovery-hourly-readbacks-v1/latest.json
+cat runs/auxiliary-development-recovery-hourly-readbacks-v1/state.json
+cat runs/auxiliary-policy-two-gpu-development-recovery-v1/state.json
 cat runs/auxiliary-two-gpu-resource-resume-micro3-v1/exit.json
 ```
 
