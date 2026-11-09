@@ -1,0 +1,275 @@
+{
+  "kind": "actual_auxiliary_round_and_fixed765_development_summary",
+  "as_of_utc": "2026-11-09T15:19:17.636323+00:00",
+  "evidence_state": "reconstructed_baseline",
+  "actual_auxiliary_round_completed": true,
+  "completed_new_auxiliary_rounds": 1,
+  "completed_new_search_distillation_rounds": 0,
+  "source": {
+    "revision": "auxiliary-resource-transition-131-v1",
+    "modules": 131,
+    "qualified_local_commit": "ad285540c7ebb1ecd3b35478b085398d55368deb"
+  },
+  "training": {
+    "completed_at_utc": "2026-11-09T14:58:12.483175+00:00",
+    "steps_completed": 16000,
+    "original_three_worker_updates": 1000,
+    "new_two_worker_updates": 15000,
+    "selected_step": 12000,
+    "world_size": 2,
+    "global_batch_size": 30,
+    "micro_batch_size": 3,
+    "trainable_tensors": 624,
+    "trainable_parameters": 4694274592,
+    "parameter_dtype": "torch.float32",
+    "compute_dtype": "torch.bfloat16",
+    "strategy": "fsdp2",
+    "supervised_tokens_seen": 20082326,
+    "training_rows": 363445,
+    "training_history_contexts": 217271,
+    "training_rows_by_stage": {
+      "explanation": 10688,
+      "static_current": 16100,
+      "dynamic_current": 13743,
+      "static_future": 16090,
+      "dynamic_future": 13735,
+      "engine_numeric": 144932,
+      "move_quality": 148157
+    },
+    "validation_rows": 3749,
+    "validation_history_contexts": 1249,
+    "validation_rows_by_stage": {
+      "explanation": 384,
+      "static_current": 700,
+      "dynamic_current": 600,
+      "static_future": 700,
+      "dynamic_future": 600,
+      "engine_numeric": 381,
+      "move_quality": 384
+    },
+    "validation_selects_checkpoint": true,
+    "independent_test_used_for_training_or_selection": false,
+    "minimum_steps": 12115,
+    "planned_maximum_steps": 48460,
+    "patience": 4,
+    "saved_native_patience_counter": 4,
+    "first_full_pass_completed_at_step": 12115,
+    "first_pass_padding_rows": 5,
+    "actual_job_completed_full_passes": 1,
+    "cumulative_valid_row_occurrences": 479995,
+    "cumulative_padding_occurrences": 5,
+    "selected_checkpoint_complete_passes": 0,
+    "selected_checkpoint_valid_row_occurrences": 360000,
+    "remaining_first_pass_rows_at_selected_step": 3445,
+    "selected_checkpoint": {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/round/sft/adapter.pt",
+      "sha256": "dcef22a6789c45b18b002d802dd76175eeb289131e9eada51107df37bf0e7a8e",
+      "bytes": 18778274949
+    },
+    "latest_optimizer_checkpoint": {
+      "saved_step": 16000,
+      "world_size": 2,
+      "optimizer_state_slots": 624,
+      "bytes": 56333019470,
+      "metadata_only_readback": true,
+      "numerical_values_or_complete_bytes_hashed_by_readback": false
+    },
+    "selected_model_reloaded_for_final_validation": true,
+    "validation_nll": {
+      "initial": 0.5082008056691949,
+      "normal": 0.3842951523006088,
+      "zero_memory": 0.8205985472390923,
+      "shuffled_memory": 1.1683686870934258
+    },
+    "generation_examples": 0
+  },
+  "fixed_development": {
+    "completed_at_utc": "2026-11-09T15:04:55.254764+00:00",
+    "examples": 765,
+    "history_contexts": 384,
+    "selected_parent_step": 12000,
+    "batch_size": 8,
+    "numeric_max_new_tokens": 768,
+    "move_max_new_tokens": 64,
+    "memory": "normal",
+    "current_counts": {
+      "engine_numeric": {
+        "examples": 381,
+        "counts": {
+          "answer_format_valid": 381,
+          "first_move_legal": 369,
+          "reference_move_match": 172,
+          "pv_history_legal": 228,
+          "six_ply_or_terminal": 228,
+          "candidates_valid": 332,
+          "evaluation_contract_valid": 381,
+          "contract_valid": 207,
+          "reference_exact": 0,
+          "raw_exact": 0
+        },
+        "errors": {
+          "invalid_full_history_PV": 153,
+          "invalid_candidates": 49,
+          "illegal_or_missing_move": 12
+        }
+      },
+      "move_quality": {
+        "examples": 384,
+        "counts": {
+          "answer_format_valid": 384,
+          "first_move_legal": 369,
+          "reference_move_match": 171,
+          "contract_valid": 369,
+          "reference_exact": 171,
+          "raw_exact": 171
+        },
+        "errors": {
+          "invalid_or_illegal_single_move": 15
+        }
+      }
+    },
+    "baseline_counts": {
+      "engine_numeric": {
+        "examples": 381,
+        "counts": {
+          "answer_format_valid": 380,
+          "first_move_legal": 340,
+          "reference_move_match": 119,
+          "contract_valid": 85,
+          "reference_exact": 0,
+          "raw_exact": 0,
+          "pv_history_legal": 120,
+          "six_ply_or_terminal": 119,
+          "candidates_valid": 219,
+          "evaluation_contract_valid": 381
+        }
+      },
+      "move_quality": {
+        "examples": 384,
+        "counts": {
+          "answer_format_valid": 0,
+          "first_move_legal": 0,
+          "reference_move_match": 0,
+          "contract_valid": 0,
+          "reference_exact": 0,
+          "raw_exact": 0
+        }
+      }
+    },
+    "numeric_expected_score_mean_absolute_error": 0.04605905511811024,
+    "numeric_expected_score_scored_responses": 381,
+    "same_inputs_and_budgets": true,
+    "complete_package_source_identical": false,
+    "identical_core_module_sha256": {
+      "inference.py": "13a65f437a52e30fc14fa104a546246c63b931f1a27b4fc679f999ced505a0d7",
+      "modeling.py": "abd2a8901d36a188d7f18881f4155ccc4cf4fbe95e5007fccb171146820ec4a4",
+      "model_inputs.py": "5b3a8e23e8d05043c9b8d360157b85b74d1a5db1ed5f901b1281e52e8f624002",
+      "oracle_policy_evaluation.py": "93e60049e9a7c0beb04a7836fe3641557c669a7ff2670b61aed472572e61d18e",
+      "oracle_policy_reference.py": "d90e3d0209a47f41183a2db046981bd0d2fe911b1a53786fc2cbfafb2d8684a6",
+      "rules.py": "9381eb6560758511d77859d7bdb42a64e689617526bbc1b5634f3ca332e178c3",
+      "prose_moves.py": "eae89f1e6766fcf5d65e7122ac7e27587f490205b924dc2741f9781c947adf4a",
+      "feature_store.py": "5db3e7bc10b8da176a9b41b2dab01b753f1dd35b4461714f5c7792c941f6563f"
+    },
+    "all_actual_raw_answers_CPU_regraded": 765,
+    "original_input_rows_and_order_matched": 765,
+    "shared_native_grader_and_rules": true,
+    "independent_rules_rewrite": false,
+    "all_native_output_bytes_rehashed": true,
+    "raw_predictions_sha256": "5765c7a503ff4ea6f310ed0abb7517632554b6c3833b8fdfb6441c82804e292a",
+    "new_engine_queries": 0,
+    "raw_answers_repaired": false,
+    "error_buckets_may_overlap": true,
+    "independent_final_test_used": false,
+    "bare_move_baseline_zero_means_format_rejection_not_zero_semantic_chess_ability": true,
+    "measured_human_Elo_or_game_winrate": false
+  },
+  "remaining_development_as_of_snapshot": {
+    "selected_checkpoint_CPU_consumer_admitted": true,
+    "selected_checkpoint_step": 12000,
+    "allowed_GPU_pipeline_lease_acquired": true,
+    "original_2600_QA_and_paired384_lectures_and_384_games_complete": false,
+    "descendant_128_root_search_pilot_complete": false,
+    "original_two_GPU_training_and_its_observer_and_fixed765_controller_terminal": true
+  },
+  "physical_GPU_policy": {
+    "permitted": [
+      0,
+      3
+    ],
+    "reserved": [
+      1,
+      2
+    ],
+    "unknown_other_occupants_untouched": true
+  },
+  "current_two_worker_fixed_development_quality_measured": true,
+  "strong_gameplay_or_reliable_Chinese_teaching_proven": false,
+  "final_independent_test_executed": false,
+  "final_accepted_model_bundle_created": false,
+  "weights_or_raw_answers_or_datasets_included_in_source_release": false,
+  "raw_neural_results_independently_recomputable_from_public_summary_alone": false,
+  "receipts": [
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/verification.json",
+      "sha256": "1ccf3837dc2e0c9fa6063bd2c8aacff4e6abb0a6be77f9d0563b2773e08484c3",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/round/manifest.json",
+      "sha256": "f112954ddb3ed34fe27bd5a818d6f3d4b42a4aaa9a002054614b9d2efc71d75c",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-resource-resume-micro3-v1/round/sft/manifest.json",
+      "sha256": "3361417d127d35f6814e53234a3361556ed9721316a7c92fe5cb261d32daeb64",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-two-gpu-step16000-checkpoint-readback-v1/verification.json",
+      "sha256": "3b2eae78150f0196ef9a8b1e9671f57090b7c94b6e751a8d15b84a8584297732",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/oracle-policy-two-gpu-development-diagnostics-v1/verification.json",
+      "sha256": "ab215efa86070f01dc806cd3be5b7616f46f7ef1cd1957a07568dcf42e2dd89b",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/oracle-policy-two-gpu-development-diagnostics-v1/comparison.json",
+      "sha256": "461e8465502bee8fa265029d12eab6303b475f2c8bd88eeba0e2cc1e08d624cf",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-fixed765-raw-readback-v1/verification.json",
+      "sha256": "b7658412e1e2fb63ebc91453f6c7108fefdfd547e83ef80cf9182ef14c19a2af",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-first-pass-readback-v1/verification.json",
+      "sha256": "a079344ed4bab4486576646142e782dd734d27916d6b1d87c6c68c487d1c023b",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-policy-two-gpu-development-evaluation-v1/CPU-selected-checkpoint.json",
+      "sha256": "2a962c670f57582ef37cc4c1d4db7cf3c7596a8d189ce1e0f696c8aa97279e4f",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/auxiliary-posttraining-hourly-readbacks-v1/readback-20261109T151917636323Z.json",
+      "sha256": "c3135398108a5d9e7d053ce90b9382ec146245c837e900fc4e3e39b25254bbdb",
+      "included_in_source_release": false
+    },
+    {
+      "path": "runs/GPU_ALLOCATION_POLICY.json",
+      "sha256": "fb09e632021f0775af87cc74cde1edf5588849cf786f887f75b23c9c13d23fd5",
+      "included_in_source_release": false
+    }
+  ],
+  "interpretation_bounds": [
+    "The actual job completed a full source pass; selected step12000 predates its12115-step boundary.",
+    "765 responses share384 validation histories and are neither765 independent games nor a final independent test.",
+    "Old bare-move rejection was caused by format; it does not establish zero semantic chess ability.",
+    "Reference agreement and native rule compliance do not establish game win rate, human Elo or teaching quality.",
+    "Raw weights, inputs and answers remain outside the public source release; hashes are provenance summaries."
+  ]
+}
