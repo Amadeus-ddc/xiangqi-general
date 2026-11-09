@@ -1,5 +1,7 @@
 # 走法与数值分析的固定开发诊断
 
+2026-11-09的首轮辅助模型已完成765题原始执行与逐条CPU复算；结果、基线可比性及剩余错误见[本轮实测](AUXILIARY_ROUND_COMPLETED.md)。下文定义通用执行和评分合同。
+
 `xqgeneral.oracle_policy_evaluation` 用于比较辅助训练及后续模型在原始两类引擎监督题上的
 变化。数据来自已经完成生产的七类组合语料，完整保留原验证题、字节和顺序。当前真实
 输入为381道数值分析、384道单走法题，共765个问题、384个历史上下文；这些问题不代表
@@ -28,7 +30,7 @@ python -m xqgeneral.oracle_policy_evaluation prepare \
 ## 原始模型执行
 
 ```bash
-# 先取得当前服务器资源租约。GPU2为用户保留；此例使用物理GPU3。
+# 先取得当前服务器资源租约。GPU1、2为用户保留；此例使用物理GPU3。
 CUDA_VISIBLE_DEVICES=3 python -m xqgeneral.oracle_policy_evaluation evaluate \
   --checkpoint ACTUAL_COMPLETED_MODEL/sft/adapter.pt \
   --completion ACTUAL_COMPLETED_MODEL/manifest.json \
@@ -48,4 +50,4 @@ CUDA_VISIBLE_DEVICES=3 python -m xqgeneral.oracle_policy_evaluation evaluate \
 长任务放入tmux并冻结源码、配置和输入。在同一冻结合同中断后加`--resume`，保留已完成
 的原始批次；重新核对原始行与评分。完成结果的续读不再次加载或生成模型回答。更改模型、
 预算、缓存、输出目录或源码时使用新的运行。真实模型结果与受控CPU生产者的接口检查
-分别记录；新增诊断不代表三卡训练已经完成。
+分别记录。接口检查、实际训练完成和神经诊断结果分别验收；本轮两卡训练与实测见上面的固定记录。
