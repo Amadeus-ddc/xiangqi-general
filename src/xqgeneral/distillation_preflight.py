@@ -125,7 +125,7 @@ def extended_cache(features, saved, bound):
     return cache
 
 
-def course_replay_sources(paths, bound, *, profile=LEGACY_REPLAY_PROFILE):
+def course_replay_sources(paths, bound, *, profile=LEGACY_REPLAY_PROFILE, workers=1):
     """Reopen certified original-course subsets; keep tests out of replay."""
     if not isinstance(paths, (list, tuple)):
         raise ValueError('Course replay data paths must be an explicit sequence')
@@ -133,7 +133,7 @@ def course_replay_sources(paths, bound, *, profile=LEGACY_REPLAY_PROFILE):
         if len(paths) != 1 or not isinstance(paths[0], (str, Path)) or not str(paths[0]):
             raise ValueError('Six-stage replay requires exactly one declared original-corpus subset')
         from .auxiliary_search_replay import checked_subset
-        rows, result = checked_subset(paths[0], bound)
+        rows, result = checked_subset(paths[0], bound, workers=workers)
         return rows, dict(data_paths=[str(Path(paths[0]).resolve())], by_split_and_stage=result['by_split_and_stage'])
     if profile != LEGACY_REPLAY_PROFILE:
         raise ValueError('Unknown explicit replay source profile')
@@ -209,7 +209,7 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             ids.add(row['id']); keys.add(row['feature_key']); counts[split] += 1; rows.append(row)
     if counts['train'] != labels['verification']['accepted_training_roots'] or not counts['validation']:
         raise ValueError('Actual label coverage differs from completed collection')
-    replay, replay_result = course_replay_sources(replay_data_paths, bound, profile=replay_profile)
+    replay, replay_result = course_replay_sources(replay_data_paths, bound, profile=replay_profile, workers=workers)
     for row in replay:
         if row['id'] in ids:
             raise ValueError('Course replay and explanation labels must have distinct IDs')
@@ -228,7 +228,10 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
     split_proof = verify_splits(native_split_rows, workers=workers)
     if list(ordered_native_map(native_label, rows, workers)) != [r['feature_key'] for r in rows]:
         raise ValueError('Native full-history label coverage differs')
-    if replay and list(ordered_native_map(native_replay_label, replay, workers)) != [r['feature_key'] for r in replay]:
+    # The six-stage checked_subset call already regraded every returned row in
+    # this operation. Legacy sources above only checked their metadata/bytes.
+    if (replay and replay_profile == LEGACY_REPLAY_PROFILE and
+            list(ordered_native_map(native_replay_label, replay, workers)) != [r['feature_key'] for r in replay]):
         raise ValueError('Native course replay coverage differs')
     foundation = bound.json(foundation_preflight)
     if (foundation.get('status') != 'complete' or
