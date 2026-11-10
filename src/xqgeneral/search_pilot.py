@@ -21,6 +21,30 @@ from .teacher_prefill import checked_prefill_chunk_size
 from .prose_moves import checked_consolidation_profile, consolidation_queries_evidence
 
 
+def consolidation_teacher_path(config, evaluation, bound):
+    """Separate inference placement from the already completed review identity."""
+    original = evaluation['teacher_config']
+    if 'teacher_deployment_config' not in config:
+        return original
+    path = config['teacher_deployment_config']
+    if not isinstance(path, str) or not path.strip():
+        raise ValueError('Teacher deployment must be an explicit configuration file path')
+    if config.get('teacher_backend', 'transformers') != 'vllm':
+        raise ValueError('An explicit teacher deployment requires the vLLM backend')
+    reviewed_document, selected_document = bound.json(original), bound.json(path)
+    reviewed = reviewed_document.get('search_consolidator') if isinstance(reviewed_document, dict) else None
+    selected = selected_document.get('search_consolidator') if isinstance(selected_document, dict) else None
+    if not isinstance(reviewed, dict) or not isinstance(selected, dict):
+        raise ValueError('Teacher deployment requires the original search_consolidator identity')
+    placement = {'tensor_parallel_size', 'gpu_memory_utilization'}
+    if ({key: value for key, value in reviewed.items() if key not in placement} !=
+            {key: value for key, value in selected.items() if key not in placement}):
+        raise ValueError('Teacher deployment may change only tensor parallelism and GPU memory allocation')
+    from .vllm_teacher import deployment_settings
+    deployment_settings(selected)
+    return path
+
+
 def _source_pool(config):
     recorded,student = config.get('recorded_inputs'),config.get('student_game_inputs')
     if bool(recorded)==bool(student):
@@ -108,8 +132,10 @@ def pilot_spec(config, bound):
             raise ValueError('The initial pilot requires the exact clean SFT validation inputs')
     else:
         validation_spec(evaluation)
-    teacher, teacher_guard = teacher_artifacts(evaluation['teacher_config'])
+    teacher_path = consolidation_teacher_path(config, evaluation, bound)
+    teacher, teacher_guard = teacher_artifacts(teacher_path)
     bound.bind(evaluation['teacher_config'])
+    bound.bind(teacher_path)
     return evaluation, recipe, token, pool, teacher, teacher_guard
 
 
@@ -146,6 +172,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
     bound = BoundInputs()
     config = bound.json(config_path)
     evaluation, recipe, token, pool, teacher, teacher_guard = pilot_spec(config, bound)
+    teacher_path = config.get('teacher_deployment_config', evaluation['teacher_config'])
     pilot_kind = ('clean_student_game_search_yield_pilot' if _source_pool(config)[0]=='student_game_inputs'
                   else 'clean_recorded_search_yield_pilot')
     parent_family = family(token)
@@ -310,7 +337,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             stage = 'full_bf16_consolidation'
             atomic_json(root / 'state.json', {'status': stage, 'mined_queries': len(queries)})
             consolidation = root / 'consolidation'
-            args = {'config': evaluation['teacher_config'], 'input': str(mining / 'queries.jsonl'),
+            args = {'config': teacher_path, 'input': str(mining / 'queries.jsonl'),
                     'output': str(consolidation), 'max_new_tokens': config['teacher_max_new_tokens']}
             if config.get('teacher_batch_size', 1) != 1:
                 args['batch_size'] = config['teacher_batch_size']
@@ -332,7 +359,7 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
             atomic_json(root / 'state.json', {'status': stage})
             data = root / 'labels'
             args = {'queries': str(mining / 'queries.jsonl'), 'responses': str(consolidation / 'responses.jsonl'),
-                    'config': evaluation['teacher_config'], 'heldout_data': config['data'],
+                    'config': teacher_path, 'heldout_data': config['data'],
                     'validation_data': evaluation['data'], 'mining_manifest': str(mining / 'manifest.json'),
                     'recorded_inputs': None if is_student else source_path,'output': str(data)}
             if is_student:
@@ -368,6 +395,15 @@ def run_pilot(pipeline, validation, producer_session, config_path, output, *, re
                            if labels else 'Inspect preserved raw failures before spending more teacher or training budget'}
         if admission is not None:
             final['descendant_admission'] = admission
+        if 'teacher_deployment_config' in config:
+            from .vllm_teacher import deployment_settings
+            final['consolidation_teacher_deployment'] = {
+                'validation_teacher_config': evaluation['teacher_config'],
+                'consolidation_teacher_config': teacher_path,
+                'configured_placement': deployment_settings(teacher),
+                'same_authorized_teacher_and_original_review_identity': True,
+                'actual_neural_consolidation_executed': bool(queries),
+                'numeric_equivalence_to_validation_deployment_proven': False}
         atomic_json(root / 'verification.json', final)
         completed = manifest(pilot_kind, contract, proofs,
                              [root / 'verification.json'], final)
