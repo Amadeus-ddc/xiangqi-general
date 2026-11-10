@@ -18,6 +18,7 @@ from .prose_moves import validate_prose_moves
 from .recorded_search_inputs import BoundInputs
 from .search_critical import checked_acceptance_evidence, checked_acceptance_policy
 from .search_distillation import reserved_positions
+from .search_prose_exclusions import SUMMARY_FIELDS, exclude_reviewed_prose
 
 MERGED_KIND = 'merged_search_consolidated_dataset'
 
@@ -58,6 +59,11 @@ def _leaf_dataset(data, source, bound, minimum_labels=32, *, source_profile=None
         for path, expected in proof[section].items():
             bound.bind(path, expected)
     config = proof['config']
+    has_review = 'prose_review_exclusions' in config
+    if (has_review != any(name in result for name in SUMMARY_FIELDS) or
+            has_review and (not isinstance(config['prose_review_exclusions'], str) or
+                            not config['prose_review_exclusions'].strip())):
+        raise ValueError('Prose review configuration and collection evidence differ')
     required = config.get('require_immediate_mate_consistency', False)
     if (type(required) is not bool or
             result.get('immediate_mate_score_consistency_required', False) is not required or
@@ -216,6 +222,15 @@ def _production_leaf(data, source, bound, *, source_profile=None):
     forbidden = reserved_positions(config['heldout_data']) | reserved_positions(config['validation_data']) | additional
     rebuilt, rejected = rebuild_labels(queries, responses, teacher, forbidden,
         require_immediate_mate_consistency=config.get('require_immediate_mate_consistency', False))
+    if 'prose_review_exclusions' in config:
+        path = config['prose_review_exclusions']
+        _required_binding(proof, 'inputs', path, bound)
+        rebuilt, rejected, review_summary = exclude_reviewed_prose(rebuilt, rejected, bound.json(path),
+            queries_sha256=bound.artifacts[str(config['queries'])]['sha256'],
+            responses_sha256=bound.artifacts[str(config['responses'])]['sha256'])
+        if any(type(result.get(name)) is not type(review_summary[name]) or
+               result[name] != review_summary[name] for name in SUMMARY_FIELDS):
+            raise ValueError('Prose exclusion summary differs from its bound case review')
     actual = list(iter_jsonl(data / 'train.jsonl'))
     if (actual != rebuilt or bound.json(data / 'rejected.json') != rejected or
             len(actual) != result['accepted_training_roots'] or
@@ -414,6 +429,11 @@ def collected_dataset(data, source, bound):
     data = Path(data)
     proof = bound.json(data / 'manifest.json')
     if proof.get('kind') != MERGED_KIND:
+        if 'prose_review_exclusions' in proof.get('config', {}):
+            # Keep the original 32-label floor, then reconstruct exclusions from
+            # the actual raw production records for direct-leaf training too.
+            _leaf_dataset(data, source, bound)
+            return _production_leaf(data, source, bound)[0]
         return _leaf_dataset(data, source, bound)
     config = proof.get('config', {})
     if proof.get('status') != 'complete' or config.get('checkpoint') != str(source):

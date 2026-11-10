@@ -16,6 +16,7 @@ from .rules import replay
 from .search_distillation import reserved_positions
 from .prose_moves import validate_prose_moves
 from .calibration import evaluation_probability
+from .search_prose_exclusions import exclude_reviewed_prose
 
 EVALUATION_FILTER_PROFILE = 'selected_branch_vs_oracle_winrate_xiangqi_v1'
 
@@ -281,6 +282,8 @@ def _main():
     parser.add_argument('--require-immediate-mate-consistency', action='store_true',
                         default=argparse.SUPPRESS,
                         help='Require mate +/-1 scores to be realized by the supplied full-history PV prefix')
+    parser.add_argument('--prose-review-exclusions', default=argparse.SUPPRESS,
+                        help='Explicit case-level exclusions bound to the original queries and raw responses')
     args = parser.parse_args()
     dest = Path(args.output)
     if dest.exists():
@@ -302,6 +305,12 @@ def _main():
                                      max_eval_error_exclusive=args.max_eval_error_exclusive,
                                      require_immediate_mate_consistency=getattr(
                                          args, 'require_immediate_mate_consistency', False))
+    review_summary = {}
+    if hasattr(args, 'prose_review_exclusions'):
+        review = bound.json(args.prose_review_exclusions)
+        train, rejected, review_summary = exclude_reviewed_prose(train, rejected, review,
+            queries_sha256=bound.artifacts[str(args.queries)]['sha256'],
+            responses_sha256=bound.artifacts[str(args.responses)]['sha256'])
     dest.mkdir(parents=True)
     atomic_json(dest / 'rejected.json', rejected)
     if not train:
@@ -332,7 +341,7 @@ def _main():
                'max_absolute_winrate_error_exclusive': args.max_eval_error_exclusive,
                'consolidated_prose_evaluation_error_measured': False,
                'validation_source_unchanged': args.validation_data, 'strategic_prose_human_rating': False,
-               **source_proof}
+               **source_proof, **review_summary}
     if getattr(args, 'require_immediate_mate_consistency', False):
         summary.update(immediate_mate_score_consistency_required=True,
                        immediate_mate_consistency_profile=IMMEDIATE_MATE_CONSISTENCY_PROFILE)

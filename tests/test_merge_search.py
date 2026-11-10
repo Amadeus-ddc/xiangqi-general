@@ -21,7 +21,7 @@ def rebind(proof_path, section, path):
     atomic_json(proof_path, proof)
 
 
-def setup_merge(tmp_path, monkeypatch, unique_count=35):
+def setup_merge(tmp_path, monkeypatch, unique_count=35, leaf_slices=None):
     args, _, _, _ = recorded_collection(tmp_path)
     pool = tmp_path / 'merge-pool'
     counts = prepare(**args, output=pool, min_ply=1, per_game=16)
@@ -53,7 +53,8 @@ def setup_merge(tmp_path, monkeypatch, unique_count=35):
         loaded_worker_identities=[worker, deepcopy(worker)], weight_manifest_sha256=digest(weights))
     source = tmp_path / 'selected.pt'; source.write_bytes(b'controlled full student parent')
     outputs = []
-    for index, selected in enumerate([queries[:20], queries[17:]]):
+    selections = [queries[:20], queries[17:]] if leaf_slices is None else [queries[part] for part in leaf_slices]
+    for index, selected in enumerate(selections):
         leaf = tmp_path / f'leaf-{index}'; leaf.mkdir()
         mining, inference = leaf / 'mining', leaf / 'teacher'
         mining.mkdir(); inference.mkdir()
