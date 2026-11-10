@@ -4,6 +4,21 @@ from collections import defaultdict
 import torch
 
 
+def validate_cpu_moment_placement(summary, tensors, parameters):
+    """Check native between-update residency against the full parameter set."""
+    if (type(tensors) is not int or tensors < 1 or type(parameters) is not int or parameters < tensors or
+            not isinstance(summary, dict) or summary.get('parameter_device') != 'cuda:0' or
+            type(summary.get('parameters_with_state')) is not int or
+            type(summary.get('state_tensors')) is not int or
+            summary.get('parameters_with_state') != tensors or summary.get('state_tensors') != tensors * 3 or
+            summary.get('all_states_on_CPU') is not True or summary.get('all_moments_FP32') is not True or
+            type(summary.get('total_state_bytes')) is not int or
+            summary['total_state_bytes'] != parameters * 8 + tensors * 4 or
+            type(summary.get('peak_active_moment_bytes')) is not int or
+            not 0 < summary['peak_active_moment_bytes'] <= parameters * 8):
+        raise ValueError('CPU moment residency differs from the complete FP32 GPU parameter state')
+
+
 class CPUOffloadedAdamW(torch.optim.AdamW):
     """Use PyTorch's single-tensor AdamW, staging only one parameter's state.
 

@@ -77,12 +77,16 @@ def completed_parent(source, completion_path, bound=None):
                 metrics.get('global_batch_size')!=topology['global_batch_size'] or
                 result.get('global_batch_size')!=topology['global_batch_size']):
             raise ValueError('Auxiliary parent geometry differs from its actual completed training')
-    elif proof.get('kind') == ROUND_KIND and world in {2, 3}:
+    elif proof.get('kind') == ROUND_KIND and world in {1, 2, 3}:
         from .full_decoder_topology import search_topology
         if (search_topology(saved) != topology or
                 metrics.get('global_batch_size') != topology['global_batch_size'] or
                 result.get('global_batch_size') != topology['global_batch_size']):
             raise ValueError('Search parent geometry differs from its actual completed training')
+        if world == 1:
+            from .optimizer_offload import validate_cpu_moment_placement
+            validate_cpu_moment_placement(metrics.get('optimizer_runtime_state_placement'),
+                                          result.get('trainable_tensors'), result['trainable_parameters'])
     if (training.get('status') != 'complete' or training.get('kind') != 'model_training' or
             training.get('config') != saved or training['outputs'].get(str(source)) != selected_binding or
             saved.get('decoder_training') != 'full' or saved.get('trainable_parameter_dtype') != 'float32' or

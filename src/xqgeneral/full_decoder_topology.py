@@ -4,6 +4,7 @@ TWO_WORKERS = 'full_decoder_auxiliary_two_workers_v1'
 TWO_WORKERS_MICRO3 = 'full_decoder_auxiliary_two_workers_micro3_v1'
 THREE_WORKERS = 'full_decoder_auxiliary_three_workers_v1'
 FOUR_WORKERS = 'full_decoder_auxiliary_four_workers_v1'
+ONE_SEARCH_WORKER_CPU_MOMENTS = 'full_decoder_search_one_worker_cpu_moments_v1'
 TWO_SEARCH_WORKERS = 'full_decoder_search_two_workers_v1'
 THREE_SEARCH_WORKERS = 'full_decoder_search_three_workers_v1'
 FOUR_SEARCH_WORKERS = 'full_decoder_search_four_workers_v1'
@@ -50,7 +51,8 @@ def search_topology(config):
     if not isinstance(config, dict):
         raise ValueError('Search topology requires its complete recipe or training configuration')
     profile = config.get('search_topology_profile', FOUR_SEARCH_WORKERS)
-    geometries = {TWO_SEARCH_WORKERS: (2, 30, 'two'), THREE_SEARCH_WORKERS: (3, 30, 'three'),
+    geometries = {ONE_SEARCH_WORKER_CPU_MOMENTS: (1, 30, 'one'),
+                  TWO_SEARCH_WORKERS: (2, 30, 'two'), THREE_SEARCH_WORKERS: (3, 30, 'three'),
                   FOUR_SEARCH_WORKERS: (4, 32, 'four')}
     if profile not in geometries:
         raise ValueError('Unknown search full-decoder topology profile')
@@ -60,6 +62,14 @@ def search_topology(config):
             raise ValueError('Search topology differs from its declared worker count and divisible global batch')
     if world in {2, 3} and config.get('distributed_strategy') != 'fsdp2':
         raise ValueError('Two and three search workers require full parameter and gradient sharding')
+    if world == 1:
+        if (config.get('distributed_strategy', 'ddp') != 'ddp' or config.get('fsdp_shard_paths') is not None or
+                config.get('optimizer_state_sharding', 'none') != 'none' or
+                config.get('optimizer_state_offload') != 'cpu' or config.get('optimizer_foreach') is not False or
+                config.get('decoder_training') != 'full' or config.get('trainable_parameter_dtype') != 'float32'):
+            raise ValueError('One search worker requires full FP32 parameters and CPU Adam moments without sharding')
+    elif config.get('optimizer_state_offload', 'none') != 'none':
+        raise ValueError('CPU Adam moments require the explicit one-worker search profile')
     return dict(profile=profile, world_size=world, global_batch_size=batch,
         preflight_kind=word + '_gpu_search_distillation_sft_preflight',
         completion_flag='actual_' + word + '_gpu_full_decoder_preflight_passed')
@@ -78,10 +88,11 @@ def completed_search_topology(proof):
     if (result.get('world_size') != topology['world_size'] or
             result.get(topology['completion_flag']) is not True or
             any(result.get('actual_' + word + '_gpu_full_decoder_preflight_passed') is True
-                for word in ['two', 'three', 'four']
+                for word in ['one', 'two', 'three', 'four']
                 if 'actual_' + word + '_gpu_full_decoder_preflight_passed' != topology['completion_flag']) or
-            topology['world_size'] in {2, 3} and (
+            topology['world_size'] in {1, 2, 3} and (
                 result.get('actual_four_gpu_full_decoder_preflight_passed') is not False or
-                result.get('search_topology_profile') != topology['profile'])):
+                result.get('search_topology_profile') != topology['profile']) or
+            topology['world_size'] == 1 and result.get('actual_cpu_optimizer_state_placement_verified') is not True):
         raise ValueError('Completed search model must identify its actual worker count and capacity proof')
     return topology

@@ -213,10 +213,23 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
                     not math.isfinite(item['total_memory_gib'])):
                 raise ValueError('Each actual GPU worker must report a successful finite memory measurement')
             resources.append(dict(item, run=run))
-    return {'world_size':world,'exact_resume': comparison, 'updated_tensors_by_group': changes,
+    result = {'world_size':world,'exact_resume': comparison, 'updated_tensors_by_group': changes,
             'trainable_tensors': len(initial), 'trainable_parameters': sum(t.numel() for t in initial.values()),
             'all_trainable_and_adam_states_finite_fp32': True, 'all_four_update_gradients_finite_nonzero': True,
             'actual_gpu_worker_resources': resources, **finite_state}
+    if config.get('optimizer_state_offload') == 'cpu':
+        from .optimizer_offload import validate_cpu_moment_placement
+        placements = []
+        for run, step in [('continuous', 2), ('continuous', 4), ('resumed', 2), ('resumed', 4)]:
+            path = root / run / f'optimizer-placement-step-{step}.json'
+            value = json.loads(path.read_text())
+            if value.get('actual_step') != step:
+                raise ValueError('Offloaded optimizer residency must identify its actual update')
+            validate_cpu_moment_placement(value, result['trainable_tensors'], result['trainable_parameters'])
+            placements.append(dict(run=run, artifact_sha256=digest(path), **value))
+        result.update(actual_cpu_optimizer_state_placement_verified=True,
+                      actual_optimizer_state_placement=placements)
+    return result
 
 
 def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
@@ -378,6 +391,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     for run in ['continuous', 'resumed']:
         outputs += [root / run / name for name in ['latest.pt', 'training.jsonl', 'config.json', 'execution.json']]
         outputs += sorted((root / run).glob('resources-step-*-rank-*.json'))
+        outputs += sorted((root / run).glob('optimizer-placement-step-*.json'))
     inputs = [recipe_path, token_manifest, foundation_path, Path(source), Path(source).parent / 'manifest.json',
               Path(source).parent / 'config.json', *[Path(p) for p in token['inputs']], *[Path(p) for p in token['outputs']],
               *[Path(p) for p in base_assets]]
