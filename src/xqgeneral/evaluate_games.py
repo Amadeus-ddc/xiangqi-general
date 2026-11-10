@@ -241,6 +241,8 @@ def main():
     parser.add_argument('--move-beams', type=int, default=4)
     parser.add_argument('--opening-suite', help='Completed heldout recorded opening suite directory')
     parser.add_argument('--expert-weights', help='Defaults to the bound bundle expert or models/px0-latest.pb.gz')
+    parser.add_argument('--autocast-cache', choices=['on', 'off'],
+                        help='Override inference cast-weight caching; otherwise retain the checkpoint setting')
     parser.add_argument('--executable', default='vendor/pikafish/src/pikafish')
     parser.add_argument('--weights', default='vendor/pikafish/src/pikafish.nnue')
     parser.add_argument('--output', required=True)
@@ -268,7 +270,8 @@ def main():
         for group in ['inputs', 'outputs']:
             for path, item in opening_proof[group].items():core.bind(path, item)
     code = code_identity()
-    config = {k: v for k, v in vars(args).items() if k != 'resume'}
+    config = {k: v for k, v in vars(args).items()
+              if k != 'resume' and (k != 'autocast_cache' or v is not None)}
     contract = {'schema_version': 1, 'config': config, 'code': code, 'inputs': core.artifacts}
     schedule = [(opening, color, nodes) for nodes in args.nodes for opening in openings for color in ['red', 'black']]
     if args.resume:
@@ -298,7 +301,12 @@ def main():
             if game is None or game['status'] == 'playing':
                 if predictor is None:
                     from .inference import Predictor
-                    predictor = Predictor(args.checkpoint, args.expert_weights)
+                    options = ({} if args.autocast_cache is None else
+                               {'autocast_cache_enabled': args.autocast_cache == 'on'})
+                    predictor = Predictor(args.checkpoint, args.expert_weights, **options)
+                    if (options and predictor.config.get('autocast_cache_enabled') is not
+                            options['autocast_cache_enabled']):
+                        raise ValueError('Match inference cache override was not applied')
                     oracle = Pikafish(args.executable, args.weights, threads=1, multipv=1)
                 game = play_game(predictor, oracle, opening, color, nodes, args.max_plies,
                                  args.action_mode, args.move_beams, resume_state=game,
@@ -324,6 +332,13 @@ def main():
              'completed_games_reused': sum(g['status'] != 'playing' for g in saved.values()),
              'saved_turns_reused': sum(len(g['turns']) for g in saved.values()),
              'rule_profile': 'pyffish-0.0.90-xiangqi-AXF'}
+    if args.autocast_cache is not None:
+        proof['inference_autocast_cache'] = {
+            'requested_override': args.autocast_cache == 'on',
+            'observed_this_invocation': (predictor.config['autocast_cache_enabled']
+                                         if predictor is not None else None),
+            'model_loaded_this_invocation': predictor is not None,
+            'checkpoint_settings_modified': False}
     atomic_json(dest/'metrics.json', proof)
     core.unchanged()
     if code_identity() != code:
