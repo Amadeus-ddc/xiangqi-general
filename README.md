@@ -19,6 +19,7 @@
 | [后续开发评测](docs/AUXILIARY_POLICY_EVALUATION.md) | 原始问答、三组讲解、完整教师辅助评审和原始对弈 |
 | [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及原生消费检查 |
 | [搜索讲解复核剔除](docs/SEARCH_PROSE_EXCLUSIONS.md) | 保留原始回答，绑定逐条剔除原因并在合并／训练预检时重建 |
+| [单卡 FP32 Adam 状态卸载](docs/SINGLE_GPU_ADAM_OFFLOAD.md) | CPU 保存动量，逐参数执行原生 GPU AdamW，实际容量仍需预检 |
 | [验证参考解析器兼容](docs/VALIDATION_DECODER_COMPATIBILITY.md) | 类型化缺分错误的严格源码核验与新保护清单重建 |
 | [最终独立验收](docs/FINAL_INDEPENDENT_EVALUATION.md) | 锁定最终模型后执行的独立测试 |
 
