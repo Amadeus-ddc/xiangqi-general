@@ -36,9 +36,12 @@ def native_label(row):
     return row['feature_key']
 
 
-def selection(data, train_per_stage, seed, bound):
+def selection(data, train_per_stage, seed, bound, *, workers=1):
     from .auxiliary_policy_preflight import corpus_source
     from .oracle_policy_corpus import ALL_STAGES, _basic, _lines
+    from .recorded_coach import ordered_native_map
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Native replay workers must be a positive integer')
     if type(train_per_stage) is not int or train_per_stage < 1 or type(seed) is not int or seed < 0:
         raise ValueError('Use a positive per-stage quota and a nonnegative integer seed')
     data = Path(data).resolve()
@@ -80,9 +83,12 @@ def selection(data, train_per_stage, seed, bound):
         if actual != expected:
             raise ValueError('Every stage must retain its exact selected training and complete validation coverage')
         for _, row in items:
-            if row['id'] in ids or native_label(row) != row['feature_key']:
+            if row['id'] in ids:
                 raise ValueError('Replay rows require unique native history identities')
             ids.add(row['id'])
+    rows = [row for items in selected.values() for _, row in items]
+    if list(ordered_native_map(native_label, rows, workers)) != [row['feature_key'] for row in rows]:
+        raise ValueError('Replay rows require unique native history identities')
     result = dict(by_split={split: len(items) for split, items in selected.items()},
         by_split_and_stage={split: dict(Counter(row['stage'] for _, row in items))
                             for split, items in selected.items()},
@@ -106,7 +112,9 @@ def selection(data, train_per_stage, seed, bound):
     return selected, result
 
 
-def checked_subset(directory, bound):
+def checked_subset(directory, bound, *, workers=1):
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Native replay workers must be a positive integer')
     directory = Path(directory).resolve()
     proof = bound.json(directory / 'manifest.json')
     config = proof.get('config', {})
@@ -117,7 +125,7 @@ def checked_subset(directory, bound):
         bound.bind(name, identity)
     for name, identity in proof['outputs'].items():
         bound.bind(name, identity)
-    selected, expected = selection(config['data'], config['train_per_stage'], config['seed'], bound)
+    selected, expected = selection(config['data'], config['train_per_stage'], config['seed'], bound, workers=workers)
     for split in ['train', 'validation', 'test']:
         path = directory / (split + '.jsonl')
         bound.bind(path, proof['outputs'].get(str(path)))
