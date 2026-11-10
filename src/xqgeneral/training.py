@@ -74,6 +74,12 @@ def training_memory_settings(config):
     sharding = config.get('optimizer_state_sharding', 'none')
     if not isinstance(sharding, str) or sharding not in {'none', 'zero1'}:
         raise ValueError('optimizer_state_sharding must be none or zero1')
+    offload = config.get('optimizer_state_offload', 'none')
+    if not isinstance(offload, str) or offload not in {'none', 'cpu'}:
+        raise ValueError('optimizer_state_offload must be none or cpu')
+    if offload == 'cpu' and (foreach is not False or sharding != 'none' or
+            config.get('ddp_world_size', 1) != 1 or config.get('distributed_strategy', 'ddp') != 'ddp'):
+        raise ValueError('CPU optimizer state offload requires single-rank, unsharded, foreach=false training')
     settings = {'optimizer_foreach': foreach, 'ddp_gradient_as_bucket_view': bucket_view, **parallel_settings(config)}
     if decoder_checkpointing(config):
         settings['decoder_gradient_checkpointing'] = True
@@ -82,6 +88,8 @@ def training_memory_settings(config):
     if sharding != 'none':
         settings['optimizer_state_sharding'] = sharding
         settings['optimizer_checkpoint_transport'] = 'gloo_cpu'
+    if offload != 'none':
+        settings['optimizer_state_offload'] = offload
     return settings
 
 
@@ -140,6 +148,11 @@ def training_optimizer(model, config):
     parameters = [{'params': values, 'lr': rates[name], 'base_lr': rates[name], 'name': name}
                   for name, values in groups.items()]
     options = dict(weight_decay=config.get('weight_decay', 0.01), foreach=settings['optimizer_foreach'])
+    if settings.get('optimizer_state_offload') == 'cpu':
+        if dist.is_initialized() and dist.get_world_size() != 1:
+            raise ValueError('CPU optimizer state offload requires one actual rank')
+        from .optimizer_offload import CPUOffloadedAdamW
+        return CPUOffloadedAdamW(parameters, **options)
     if settings.get('optimizer_state_sharding') == 'zero1':
         if not dist.is_initialized() or dist.get_world_size() < 2:
             raise ValueError('zero1 requires an initialized multi-rank process group')
@@ -192,6 +205,10 @@ def consolidate_optimizer_state(optimizer, config):
 
 def restore_optimizer_state(optimizer, saved, config, device):
     optimizer.load_state_dict(saved)
+    if training_memory_settings(config).get('optimizer_state_offload') == 'cpu':
+        if not optimizer.placement_summary()['all_states_on_CPU']:
+            raise ValueError('Restored offloaded optimizer state must remain on CPU')
+        return
     local = optimizer.optim if training_memory_settings(config).get('optimizer_state_sharding') == 'zero1' else optimizer
     for state in local.state.values():
         for name, value in state.items():
@@ -432,6 +449,8 @@ def _main():
     padding_policy = microbatch_padding_policy(config)
     compute_contract = {**configure_determinism(config.get('deterministic_training', False)), **memory_settings}
     world, rank = int(os.environ.get('WORLD_SIZE', 1)), int(os.environ.get('RANK', 0))
+    if memory_settings.get('optimizer_state_offload') == 'cpu' and world != 1:
+        raise ValueError('CPU optimizer state offload requires one actual rank before CUDA initialization')
     if world > 1:
         local_rank = int(os.environ['LOCAL_RANK'])
         torch.cuda.set_device(local_rank)
@@ -674,6 +693,9 @@ def _main():
             else:
                 cuda_states = [torch.cuda.get_rng_state(device)]
             if rank == 0:
+                if memory_settings.get('optimizer_state_offload') == 'cpu':
+                    atomic_json(dest / f'optimizer-placement-step-{completed}.json',
+                                dict(actual_step=completed, **optimizer.placement_summary()))
                 atomic_checkpoint(dest / 'latest.pt', {'trainable': latest_state if sharded else trainable_state(model),
                             'optimizer': latest_optimizer if sharded else optimizer.state_dict(), 'step': completed,
                             'config': config, 'best_loss': best_loss, 'best_step': best_step, 'tokens_seen': tokens_seen,
@@ -724,6 +746,8 @@ def _main():
                   'training_loss_normalization': normalization, 'validation_loss_normalization': 'token',
                   **compute_contract,
                   'optimizer_foreach_by_group': {g['name']: g['foreach'] for g in optimizer.param_groups},
+                  **({'optimizer_runtime_state_placement': optimizer.placement_summary()}
+                     if memory_settings.get('optimizer_state_offload') == 'cpu' else {}),
                   'gradient_parameters': sum(p.numel() for p in parameters if p.grad is not None),
                   'gradient_view_parameters': sum(p.numel() for p in parameters
                                                   if p.grad is not None and p.grad._is_view()),
