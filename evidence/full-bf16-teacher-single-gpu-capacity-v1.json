@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "actual_pinned_full_BF16_teacher_single_GPU_capacity_not_search_or_student_quality",
+  "observed_UTC": "2026-11-09T23:22:38.284873+00:00",
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "weight_manifest_SHA256": "01969d64835c9946e426d0d788e131338623d88573290116edc9f507d69619da",
+    "quantization": "none",
+    "inference_dtype": "bfloat16",
+    "observed_active_parameter_elements_by_dtype": {
+      "torch.bfloat16": 27356726256,
+      "torch.float32": 2304
+    },
+    "tensor_parallel_size": 1,
+    "gpu_memory_utilization": 0.7,
+    "max_context_tokens": 16384,
+    "max_new_tokens": 8192,
+    "batch_size": 2,
+    "generation_profile": {
+      "do_sample": true,
+      "temperature": 1.0,
+      "top_k": 20,
+      "top_p": 0.95,
+      "max_context_tokens": 16384,
+      "max_new_tokens": 8192,
+      "reasoning_effort": "low"
+    },
+    "generation_software": {
+      "vllm": "0.19.1",
+      "torch": "2.10.0",
+      "transformers": "5.8.1"
+    }
+  },
+  "hardware": {
+    "model": "NVIDIA H20",
+    "visible_total_memory_MiB": 97871,
+    "preexisting_other_memory_MiB": 21867,
+    "sampled_peak_total_memory_MiB": 88832,
+    "post_cleanup_total_memory_MiB": 21867
+  },
+  "actual_queries": 2,
+  "prompt_tokens": [
+    5220,
+    5958
+  ],
+  "generated_tokens": [
+    2727,
+    2796
+  ],
+  "generations_truncated": 0,
+  "reasoning_completed": 2,
+  "all_original_outputs_rehashed": true,
+  "teacher_engine_closed": true,
+  "created_controller_and_workers_terminal": true,
+  "query_source": "two_existing_blinded_validation_review_queries",
+  "new_training_labels": 0,
+  "new_SGD_updates": 0,
+  "independent_final_test_used": false,
+  "long_recursive_search_prompt_capacity_proven": false,
+  "TP1_TP2_numeric_equivalence_proven": false,
+  "strong_student_play_or_reliable_coaching_proven": false,
+  "neural_runtime_source_commit": "9e503ad2eb510e605911fd8b815981189cfadc05",
+  "runtime_module_SHA256": {
+    "local_teacher.py": "f5d8037867106196da09b353a15e5be3f8e7597e50a45cdfd239f7d1eb639fb3",
+    "vllm_teacher.py": "3a51f1018372f0a44f678165cb66d1b476bd1ff09526705befb8e9aa0b7263bf"
+  },
+  "private_native_teacher_manifest_SHA256": "7f636d939d6aa61ec5e12386f888ef3601c1635edcaee8412af6a56f74cc0307",
+  "private_capacity_verification_SHA256": "a208fe531125c909bb5f7e7062190becdff7e687a4a37734459feb1f436726a2",
+  "private_completion_readback_SHA256": "bdc2dbfc612fb619da2b8b091a7c56119871d79759cbcb05c8ba9acd6f88716d",
+  "full_goal_complete": false
+}
