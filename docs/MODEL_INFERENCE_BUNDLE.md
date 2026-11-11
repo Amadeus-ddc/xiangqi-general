@@ -23,6 +23,34 @@ xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 
 `runs/completed-model-training` 是待替换的实际选模目录。当前新四课、真实全模型门禁及[完整初始SFT](INITIAL_SFT_COMPLETED.md)已完成；足量蒸馏、最终独立验收和正式交付仍待完成。原 `adapter.pt` 文件入口继续可用。模型和数据不提交到源码仓库；权重来源与用途仍依照 [模型说明](MODEL_CARD.md) 和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
 
+## 随目录保存组件说明
+
+导出时可通过 `--asset-notices asset-notices.json` 携带原底座或专家资产的上游声明和许可文本。省略该选项时，已有导出格式不变；已有目录也继续按原合同读取。
+
+例如，在源码根目录新建下面的 `asset-notices.json`，即可引用仓库中已经保存的 Px0 许可原文。此示例只匹配已核验的那份专家资产；换成其他字节时需要另行核对来源及声明，不能直接复用这个哈希。
+
+```json
+{
+  "profile": "inference_asset_notices_v1",
+  "components": [{
+    "name": "Px0 network weights",
+    "assets": {
+      "expert/px0.pb.gz": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c"
+    },
+    "source_url": "https://github.com/official-pikafish/pxzero-networks/blob/85daedc818d0a86929e5a97ed1f5487d29a03d5b/LICENSE",
+    "license_id": "CC0-1.0",
+    "license_file": "LICENSES/Px0-Networks-CC0-1.0.txt",
+    "license_sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+  }]
+}
+```
+
+`assets` 列出导出目录中原底座或专家文件的相对路径及 SHA256，可以把多个文件归入同一组件。`license_file` 相对于输入说明文件所在目录，须为该目录内不经过符号链接的普通 UTF-8 文本。导出器先核对实际资产和许可文本，再把文本复制至 `notices/`，并将组件对应关系写入完整目录清单；输入说明的本机路径不写入目录。源许可或说明在导出期间变化时，不生成完成清单。
+
+读取包含组件说明的目录时，同时检查资产、许可文本、对应关系和匹配版本的校验代码。评测输入也绑定这些新增文本，不能在已经开始的对弈中替换。说明只记录精确资产的上游声明；程序不分析法律含义，也不将它扩展为整个训练检查点或数据集的发布许可。
+
+已完成[实际组件说明导出验证](../evidence/portable-component-notices-v1.json)：原生导出并迁移真实12000步开发模型，重新读取全部624个FP32训练张量及绑定的许可文本；完整2911项CPU套件、构建与发布检查，以及wheel／源码包中的136个模块和许可文本检查通过。此验证覆盖导出与组件声明，不是棋力、讲解质量或整个检查点的再分发许可证明。
+
 ## 评测交付目录
 
 问答、讲解、对弈评测，以及单着和主线辅助诊断的 `--checkpoint` 均可使用交付目录，也继续接受原 `adapter.pt` 文件。评测输入清单绑定目录中的模型参数、底座、分词器、配置、专家权重和交付清单；损坏或缺失的目录资产在生成前拒收。运行中输入或源码发生改变时，不发布完成清单，保留已生成的原始回答。对弈续跑还会核对全部目录资产与原合同，即使重新绑定过的目录内部自洽，也不能替换已开始评测的模型。

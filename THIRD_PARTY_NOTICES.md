@@ -31,6 +31,12 @@ release or reproduction of the published Western-chess checkpoint. Checkpoint
 distribution must retain the base-model notices and separately establish rights
 for any included expert or NNUE assets. The source release contains no weights.
 
+Portable exports can optionally carry exact-asset component declarations and license
+texts through `--asset-notices`; see the [bundle documentation](docs/MODEL_INFERENCE_BUNDLE.md#随目录保存组件说明).
+The exporter checks the declared asset and text hashes and preserves the text in
+the bundle. These records describe the specified component only; they do not
+establish a license for the complete trained checkpoint or its training datasets.
+
 Recorded-game categories and participant names are source assertions, not independent
 authenticity or identity verification. Native legal replay does not establish move
 optimality or rights to publish a trained checkpoint. Dataset notices do not change
