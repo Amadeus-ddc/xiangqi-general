@@ -59,6 +59,8 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 
 交互命令为UCCI走法（如`b0c2`）、`hint`、`undo`、`board`和`quit`。恢复记录时默认续写原文件；指定`--output`可另存分支。记录保留原始模型回答及规则核验结果。规则合法不等于选招或讲解正确。
 
+Python 推理接口可显式使用 `Predictor(..., device='cpu')`。CPU 精度与交付目录的运行时版本要求见[CPU 推理说明](docs/MODEL_INFERENCE_BUNDLE.md#cpu-推理)。
+
 ## 数据与训练
 
 [新监督语料的来源重建与整库配对](docs/PAPER_RATIONALE_CORPUS_PRODUCTION.md)及其CPU准备另有记录；本次四课和初始讲解始终使用各自冻结的原数据及配方，未采用该新监督另训学生。[原始源码历史](docs/SOURCE_HISTORY.md)可按实验引用的提交编号恢复。
