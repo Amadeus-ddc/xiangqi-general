@@ -53,6 +53,7 @@ class _Search:
         self.initial, self.winner = initial, winner
         self.deadline, self.max_checks = time.monotonic() + seconds, max_checks
         self.checks = 0
+        self.positions = lru_cache(maxsize=8192)(self._position)
         self.facts = lru_cache(maxsize=8192)(self._facts)
 
     def tick(self):
@@ -60,12 +61,21 @@ class _Search:
         if self.checks > self.max_checks or time.monotonic() > self.deadline:
             raise _Limit
 
-    def _facts(self, history):
+    def _position(self, history):
         self.tick()
         fen = rules.replay(self.initial, list(history))[-1]
-        return fen, tuple(rules.legal_moves(fen)), rules.adjudicate(self.initial, list(history))
+        return fen, tuple(rules.legal_moves(fen))
+
+    def _facts(self, history):
+        fen, legal = self.positions(history)
+        return fen, legal, rules.adjudicate(self.initial, list(history))
 
     def terminal(self, history):
+        # A mate/stalemate witness requires zero legal replies. Defer the full
+        # history ruling for other scan positions until solve expands them.
+        fen, legal = self.positions(tuple(history))
+        if legal:
+            return None
         fen, legal, outcome = self.facts(tuple(history))
         if outcome['ended'] and outcome['winner'] == self.winner and not legal:
             return {'kind': 'terminal', 'upper': 0, 'fen': fen,

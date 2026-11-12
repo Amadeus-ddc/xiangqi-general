@@ -117,7 +117,34 @@ def test_zero_move_bound_can_certify_an_already_realized_terminal_only():
     r.update(moves=['f7f2'], fen=play(POSITIVE, 'f7f2'))
     proof = audit.prove_terminal_win(r, 'black', max_winner_moves=0)
     assert audit.verify_terminal_certificate(r, proof) == 0
+    assert audit.prove_terminal_win(r, 'red', max_winner_moves=0)['status'] == 'no_witness_within_bound'
     assert audit.prove_terminal_win(record(START_FEN), 'red', max_winner_moves=0)['status'] == 'no_witness_within_bound'
+
+
+def test_immediate_probe_avoids_history_rulings_for_positions_with_legal_replies(monkeypatch):
+    histories = []
+    native = audit.rules.adjudicate
+
+    def tracked(initial, moves):
+        histories.append(tuple(moves))
+        return native(initial, moves)
+
+    monkeypatch.setattr(audit.rules, 'adjudicate', tracked)
+    result = audit.prove_terminal_win(record(START_FEN), 'red', max_winner_moves=1)
+    assert result['status'] == 'no_witness_within_bound'
+    assert histories and all(not moves for moves in histories)
+
+
+@pytest.mark.parametrize('winner', ['red', 'black'])
+def test_full_history_rule_draw_with_legal_replies_is_not_a_mate_witness(winner):
+    moves = ['b0c2', 'b9c7', 'c2b0', 'c7b9'] * 2
+    r = record(START_FEN)
+    r.update(moves=moves, fen=replay(START_FEN, moves)[-1])
+    assert adjudicate(START_FEN, moves)['ended']
+    assert audit.rules.legal_moves(r['fen'])
+    result = audit.prove_terminal_win(r, winner)
+    assert result['status'] == 'no_witness_within_bound'
+    assert result['proof'] is None
 
 
 def test_full_history_cannot_continue_after_an_AXF_terminal():
