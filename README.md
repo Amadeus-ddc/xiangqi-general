@@ -19,6 +19,7 @@
 | [后续开发评测](docs/AUXILIARY_POLICY_EVALUATION.md) | 原始问答、三组讲解、完整教师辅助评审和原始对弈 |
 | [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及按指定CPU进程数执行的完整原生复核 |
 | [搜索讲解复核剔除](docs/SEARCH_PROSE_EXCLUSIONS.md) | 保留原始回答，绑定逐条剔除原因并在合并／训练预检时重建 |
+| [候选杀棋步数的原生证明](docs/NATIVE_TERMINAL_AUDIT.md) | 完整历史下覆盖全部对手应手，区分更短杀棋反例、未找到证明与资源耗尽 |
 | [汇总讲解的原生核对信息](docs/GROUNDED_CONSOLIDATION.md) | 显式新提示区分分数来源、应将方式和双方吃子统计；教师质量仍须实测 |
 | [单卡 FP32 Adam 状态卸载及搜索蒸馏](docs/SINGLE_GPU_ADAM_OFFLOAD.md) | CPU 保存动量；单卡正式入口核验实际状态位置、七类回放及完整恢复；真实容量仍需预检 |
 | [验证参考解析器兼容](docs/VALIDATION_DECODER_COMPATIBILITY.md) | 类型化缺分错误的严格源码核验与新保护清单重建 |
