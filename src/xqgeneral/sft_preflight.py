@@ -10,7 +10,7 @@ import torch
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, write_jsonl
 from .modeling import expanded_initialization_reference
 from .sft import checked_parent, prepare_config, training_command
-from .training import atomic_checkpoint, compatible_resume, training_input_paths
+from .training import atomic_checkpoint, compatible_resume, training_input_paths, load_training_rows
 from .feature_store import feature_paths
 from .training_index import build_index, index_paths, IndexedTrainingRows
 from .finite_training import FINITE_PROFILE, prepare_finite_epochs
@@ -164,12 +164,15 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
     finite_state = {}
     if config.get('training_data_profile') == FINITE_PROFILE:
         roots = [Path(config['data_path']), *[Path(p) for p in config.get('replay_data_paths', [])]]
-        rows = IndexedTrainingRows(config['row_index_paths']['train'],
-            [path / 'train.jsonl' for path in roots], config['mixture'])
+        paths = [path / 'train.jsonl' for path in roots]
+        rows = (IndexedTrainingRows(config['row_index_paths']['train'], paths, config['mixture'])
+                if 'train' in config.get('row_index_paths', {}) else
+                load_training_rows(paths, config['mixture']))
         try:
             prepare_finite_epochs(rows, config['mixture'], config, world).check_resume(actual.get('data_state'), 4)
         finally:
-            rows.close()
+            if hasattr(rows, 'close'):
+                rows.close()
         finite_state = {'actual_finite_epoch_state_verified': True,
                         'training_data_state': actual['data_state']}
     compatible_resume(actual['config'], config)
