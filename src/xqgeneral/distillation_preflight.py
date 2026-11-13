@@ -20,6 +20,7 @@ from .recorded_coach import ordered_native_map
 from .recorded_search_inputs import BoundInputs
 from .sft import checked_parent
 from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
+    COACHING_PROFILE as COACHING_REPLAY_PROFILE,
     LEGACY_PROFILE as LEGACY_REPLAY_PROFILE)
 
 
@@ -129,12 +130,15 @@ def course_replay_sources(paths, bound, *, profile=LEGACY_REPLAY_PROFILE, worker
     """Reopen certified original-course subsets; keep tests out of replay."""
     if not isinstance(paths, (list, tuple)):
         raise ValueError('Course replay data paths must be an explicit sequence')
-    if profile == AUXILIARY_REPLAY_PROFILE:
+    if profile in (AUXILIARY_REPLAY_PROFILE, COACHING_REPLAY_PROFILE):
         if len(paths) != 1 or not isinstance(paths[0], (str, Path)) or not str(paths[0]):
             raise ValueError('Six-stage replay requires exactly one declared original-corpus subset')
         from .auxiliary_search_replay import checked_subset
-        rows, result = checked_subset(paths[0], bound, workers=workers)
-        return rows, dict(data_paths=[str(Path(paths[0]).resolve())], by_split_and_stage=result['by_split_and_stage'])
+        rows, result = checked_subset(paths[0], bound, workers=workers, profile=profile)
+        verified = dict(data_paths=[str(Path(paths[0]).resolve())], by_split_and_stage=result['by_split_and_stage'])
+        if profile == COACHING_REPLAY_PROFILE:
+            verified['original_coaching_replay'] = result['original_coaching_replay']
+        return rows, verified
     if profile != LEGACY_REPLAY_PROFILE:
         raise ValueError('Unknown explicit replay source profile')
     directories, rows, seen, counts = [], [], set(), {split: Counter() for split in ['train', 'validation']}
@@ -210,9 +214,14 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
     if counts['train'] != labels['verification']['accepted_training_roots'] or not counts['validation']:
         raise ValueError('Actual label coverage differs from completed collection')
     replay, replay_result = course_replay_sources(replay_data_paths, bound, profile=replay_profile, workers=workers)
+    explanation_keys = {row['feature_key'] for row in rows}
     for row in replay:
         if row['id'] in ids:
             raise ValueError('Course replay and explanation labels must have distinct IDs')
+        if row['stage'] == 'explanation':
+            if row['feature_key'] in explanation_keys:
+                raise ValueError('Original coaching and new explanations must have distinct full histories')
+            explanation_keys.add(row['feature_key'])
         ids.add(row['id']); keys.add(row['feature_key'])
     cached_keys = set(cache.keys)
     if not keys.issubset(cached_keys):
@@ -315,7 +324,7 @@ def _main():
     parser.add_argument('--max-tokens', type=int, default=2048)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--replay-data', nargs='+', default=[], help='Certified original-course replay subsets')
-    parser.add_argument('--replay-profile', choices=[LEGACY_REPLAY_PROFILE, AUXILIARY_REPLAY_PROFILE],
+    parser.add_argument('--replay-profile', choices=[LEGACY_REPLAY_PROFILE, AUXILIARY_REPLAY_PROFILE, COACHING_REPLAY_PROFILE],
                         default=LEGACY_REPLAY_PROFILE)
     args = parser.parse_args()
     print(json.dumps(preflight(args.init, args.parent_completion, args.data, args.features,

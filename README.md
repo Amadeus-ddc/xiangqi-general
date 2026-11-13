@@ -18,6 +18,7 @@
 | [七类辅助训练](docs/AUXILIARY_POLICY_TRAINING.md) | 讲解、四课、走法和数值分析的全量有限遍历 |
 | [后续开发评测](docs/AUXILIARY_POLICY_EVALUATION.md) | 原始问答、三组讲解、完整教师辅助评审和原始对弈 |
 | [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及按指定CPU进程数执行的完整原生复核 |
+| [原始讲解回放](docs/ORIGINAL_COACHING_REPLAY.md) | 显式绑定旧训练来源与配额；新旧讲解合并训练计数，验证只保留一份 |
 | [搜索讲解复核剔除](docs/SEARCH_PROSE_EXCLUSIONS.md) | 保留原始回答，绑定逐条剔除原因并在合并／训练预检时重建 |
 | [候选杀棋步数的原生证明](docs/NATIVE_TERMINAL_AUDIT.md) | 完整历史下覆盖全部对手应手，区分更短杀棋反例、未找到证明与资源耗尽 |
 | [汇总讲解的原生核对信息](docs/GROUNDED_CONSOLIDATION.md) | 显式新提示区分分数来源、应将方式和双方吃子统计；教师质量仍须实测 |

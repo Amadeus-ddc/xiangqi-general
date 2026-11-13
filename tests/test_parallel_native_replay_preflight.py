@@ -34,7 +34,9 @@ def test_requested_native_preflight_workers_reach_auxiliary_replay_validation(tm
     args,subset,_=native_gate(tmp_path,monkeypatch)
     class ObservedWorkers(Exception):
         def __init__(self,workers):self.workers=workers
-    def observe(directory,bound,*,workers=1):raise ObservedWorkers(workers)
+    def observe(directory,bound,*,workers=1,profile=replay.PROFILE):
+        assert profile == replay.PROFILE
+        raise ObservedWorkers(workers)
     monkeypatch.setattr(replay,'checked_subset',observe)
     with pytest.raises(ObservedWorkers) as seen:
         distillation_preflight.preflight(*args,tmp_path/'gate',workers=4,

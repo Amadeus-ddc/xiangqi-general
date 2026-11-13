@@ -21,6 +21,7 @@ from .full_decoder_topology import search_topology
 from .distillation_validation import (JOINT_VALIDATION_PROFILE, LEGACY_VALIDATION_PROFILE,
     AUXILIARY_VALIDATION_PROFILE, joint_validation_coverage, validation_stages as stage_names)
 from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
+    COACHING_PROFILE as COACHING_REPLAY_PROFILE,
     LEGACY_PROFILE as LEGACY_REPLAY_PROFILE, STAGES as AUXILIARY_REPLAY_STAGES)
 
 
@@ -36,8 +37,10 @@ def compile_recipe(template, token, root):
     auxiliary_replay = validation_profile == AUXILIARY_VALIDATION_PROFILE
     replay_stages = AUXILIARY_REPLAY_STAGES if auxiliary_replay else STAGES
     topology = search_topology(template)
-    replay_profile = AUXILIARY_REPLAY_PROFILE if auxiliary_replay else LEGACY_REPLAY_PROFILE
-    if (template.get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
+    replay_profile = template.get('replay_profile', LEGACY_REPLAY_PROFILE)
+    allowed_profiles = (AUXILIARY_REPLAY_PROFILE, COACHING_REPLAY_PROFILE) if auxiliary_replay else (LEGACY_REPLAY_PROFILE,)
+    coaching_replay = replay_profile == COACHING_REPLAY_PROFILE
+    if (replay_profile not in allowed_profiles or
             token['config'].get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
             auxiliary_replay and (topology['world_size'] not in {1, 2, 3} or template.get('loss_normalization') != 'token' or
                 template.get('source_coverage_profile') != FULL_SOURCE_PROFILE)):
@@ -80,15 +83,27 @@ def compile_recipe(template, token, root):
                 replay.get('independent_test_rows_tokenized') != 0):
             raise ValueError('Joint distillation requires all four certified courses and its declared loss reduction')
         available = replay.get('by_split_and_stage', {})
+        expected_stages = dict(train=set(replay_stages), validation=set(replay_stages))
+        if coaching_replay:
+            expected_stages['train'].add('explanation')
         if (not isinstance(available, dict) or set(available) != {'train', 'validation'} or
-                any(not isinstance(available[split], dict) or set(available[split]) != set(replay_stages)
+                any(not isinstance(available[split], dict) or set(available[split]) != expected_stages[split]
                     for split in available) or
                 any(type(available[split][stage]) is not int or available[split][stage] < 1
-                    for split in available for stage in replay_stages)):
+                    for split in available for stage in expected_stages[split])):
             raise ValueError('Course replay needs actual positive train and validation coverage for every course')
         if replay.get('train_validation_rows_tokenized') != sum(sum(available[split].values()) for split in available):
             raise ValueError('Course replay token coverage differs from its raw source counts')
-        source_counts.update(available['train'])
+        if coaching_replay:
+            retained = replay.get('original_coaching_replay', {})
+            if (type(retained.get('selected_training_rows')) is not int or
+                    retained['selected_training_rows'] != available['train']['explanation'] or
+                    type(retained.get('source_training_rows')) is not int or
+                    retained['source_training_rows'] < retained['selected_training_rows'] or
+                    retained.get('heldout_answers_parsed_or_tokenized') != 0):
+                raise ValueError('Original coaching retention needs exact train-only source coverage')
+        for stage, count in available['train'].items():
+            source_counts[stage] = source_counts.get(stage, 0) + count
     elif template.get('stages') != ['explanation'] or template.get('mixture') != {'explanation': 1.0}:
         raise ValueError('Explanation-only distillation must retain its original mixture')
     validation_counts = {'explanation': counts['validation']}
@@ -160,6 +175,11 @@ def compile_recipe(template, token, root):
         budget.update(replay_profile=replay_profile, auxiliary_policy_replay_included=True,
                       replay_is_explicit_original_training_subset=True,
                       auxiliary_replay_counts_toward_new_search_label_scale=False)
+    if coaching_replay:
+        budget.update(original_coaching_replay_training_rows=available['train']['explanation'],
+                      all_explanation_training_rows=source_counts['explanation'],
+                      original_coaching_replay_additional_validation_rows=0,
+                      original_coaching_replay_counts_toward_new_search_label_scale=False)
     if full_source:
         budget.update(source_coverage_profile=template['source_coverage_profile'],
             all_actual_training_rows_selected_each_epoch=True, finite_anchor_stage=mix['anchor_stage'])
