@@ -127,6 +127,7 @@ def token_initializer(recipe):
 
 
 def token_chunk(rows):
+    from .explanation_answer_format import answer_profile_kwargs
     lengths, extra, checked, validated = {}, 0, 0, 0
     profile = recipe_profile(_RECIPE)
     for row in rows:
@@ -140,7 +141,8 @@ def token_chunk(rows):
             selected += [dict(row, question=question_variant(row, variant)) for variant in (1, 2)]
             extra += 2
         for record in selected:
-            tokens, labels = encode_record(_TOKENIZER, record, _RECIPE['max_tokens'], 'bridge', True, None)
+            tokens, labels = encode_record(_TOKENIZER, record, _RECIPE['max_tokens'], 'bridge', True, None,
+                                           **answer_profile_kwargs(_RECIPE))
             if not any(label != -100 for label in labels):
                 raise ValueError('Course record has no supervised answer')
             lengths[row['stage']] = max(lengths.get(row['stage'], 0), len(tokens))

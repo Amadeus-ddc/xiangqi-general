@@ -1,4 +1,5 @@
 """Evaluate completed initial or distilled full-decoder SFT with paired raw outputs."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 import json
 import os
@@ -24,9 +25,9 @@ from .full_decoder_topology import auxiliary_topology, search_topology
 
 
 def capability_kind(token):
-    if token.get('kind') == AUXILIARY_TOKEN_KIND:
+    if checked_token_answer_kind(token) == AUXILIARY_TOKEN_KIND:
         return 'auxiliary_policy_capability_validation'
-    return ('search_distillation_capability_validation' if token.get('kind') == TOKEN_KIND
+    return ('search_distillation_capability_validation' if checked_token_answer_kind(token) == TOKEN_KIND
             else 'clean_initial_sft_capability_validation')
 
 
@@ -79,12 +80,12 @@ def validation_spec(config):
         if type(config[key]) is not int or config[key] <= 0:raise ValueError('Evaluation budgets must be positive integers')
     token = json.loads(Path(config['token_preflight']).read_text());checked_artifacts(token)
     recipe = json.loads(Path(config['sft_recipe']).read_text())
-    auxiliary = token.get('kind') == AUXILIARY_TOKEN_KIND
-    distilled = token.get('kind') == TOKEN_KIND
+    auxiliary = checked_token_answer_kind(token) == AUXILIARY_TOKEN_KIND
+    distilled = checked_token_answer_kind(token) == TOKEN_KIND
     if auxiliary:
         checked_auxiliary_validation(config,token,recipe)
     else:
-        if (token.get('kind') not in {'latent_only_reviewed_explanation_data_preflight', TOKEN_KIND} or
+        if (checked_token_answer_kind(token) not in {'latent_only_reviewed_explanation_data_preflight', TOKEN_KIND} or
                 token['config']['data'] != config['data'] or recipe['data_path'] != config['data'] or
                 recipe.get('require_clean_foundation_handoff') is not (not distilled) or
                 recipe['feature_path'] != config['features'] or token['cache_header_only_input']['path'] != config['features']):
@@ -208,7 +209,7 @@ def checked_distilled_sft(root, config, recipe, proof):
     topology = auxiliary_topology(recipe) if auxiliary else search_topology(recipe)
     token = json.loads(Path(config['token_preflight']).read_text())
     token_source = token['config']['logical']['source'] if auxiliary else token['config'].get('source')
-    if (parent != proof or token.get('kind') != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND) or
+    if (parent != proof or checked_token_answer_kind(token) != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND) or
             type(result.get('selected_step')) is not int or result['selected_step'] < 1 or
             type(result.get('actual_steps')) is not int or result['actual_steps'] < result['selected_step'] or
             contract.get('compiled_recipe') != recipe or
@@ -358,7 +359,7 @@ def run_evaluation(pipeline, producer_session, config_path, output, *, resume=Fa
         unchanged();source, parent = checked_sft(pipeline, config, recipe)
         distilled = parent['kind'] == ROUND_KIND
         auxiliary = parent['kind'] == AUXILIARY_ROUND_KIND
-        if (distilled, auxiliary) != (token['kind'] == TOKEN_KIND, token['kind'] == AUXILIARY_TOKEN_KIND):
+        if (distilled, auxiliary) != (checked_token_answer_kind(token) == TOKEN_KIND, checked_token_answer_kind(token) == AUXILIARY_TOKEN_KIND):
             raise ValueError('Evaluation data preflight and selected training completion have different stages')
         core = Artifacts()
         core.add(source, parent['outputs'][str(source)])

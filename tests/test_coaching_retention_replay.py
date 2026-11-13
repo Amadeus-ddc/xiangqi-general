@@ -115,6 +115,34 @@ def coaching_budget():
     return template, token
 
 
+def test_explanation_first_profile_preserves_the_full_coaching_replay_budget(tmp_path):
+    from xqgeneral.explanation_answer_format import EXPLANATION_FIRST_PROFILE
+    template, token = coaching_budget()
+    _, before = distillation_training.compile_recipe(template, token, tmp_path / 'legacy')
+    template['explanation_answer_profile'] = EXPLANATION_FIRST_PROFILE
+    token['config']['explanation_answer_profile'] = EXPLANATION_FIRST_PROFILE
+    token['verification']['explanation_answer_profile'] = EXPLANATION_FIRST_PROFILE
+    from xqgeneral.explanation_answer_format import profiled_token_kind
+    token['kind'] = profiled_token_kind(distillation_preflight.TOKEN_KIND, EXPLANATION_FIRST_PROFILE)
+    recipe, after = distillation_training.compile_recipe(template, token, tmp_path / 'active')
+    assert recipe['explanation_answer_profile'] == EXPLANATION_FIRST_PROFILE
+    assert before == after
+
+
+@pytest.mark.parametrize('change', ['recipe_only', 'token_only', 'unknown'])
+def test_explanation_profile_mismatch_cannot_reuse_a_previous_token_proof(tmp_path, change):
+    from xqgeneral.explanation_answer_format import EXPLANATION_FIRST_PROFILE
+    template, token = coaching_budget()
+    if change != 'token_only':
+        template['explanation_answer_profile'] = EXPLANATION_FIRST_PROFILE
+    if change != 'recipe_only':
+        token['config']['explanation_answer_profile'] = EXPLANATION_FIRST_PROFILE
+    if change == 'unknown':
+        template['explanation_answer_profile'] = token['config']['explanation_answer_profile'] = 'unknown'
+    with pytest.raises(ValueError, match='answer profile'):
+        distillation_training.compile_recipe(template, token, tmp_path / 'unused')
+
+
 def test_compiler_sums_old_and_new_explanations_but_keeps_new_label_budget_and_validation(tmp_path):
     template, token = coaching_budget()
     recipe, budget = distillation_training.compile_recipe(template, token, tmp_path)
