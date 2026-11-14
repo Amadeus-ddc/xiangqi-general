@@ -1,6 +1,7 @@
 """Full-decoder update, worker memory and exact-continuation preflight."""
 from .explanation_answer_format import checked_token_answer_kind
 import argparse
+import gc
 import json
 import math
 from pathlib import Path
@@ -342,8 +343,13 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     if not initial.exists():
         torch.manual_seed(common['seed'])
         state = expanded_initialization_reference(common, source)
-        atomic_checkpoint(initial, {'trainable': state, 'config': common, 'code': contract['code']})
-        del state
+        try:
+            atomic_checkpoint(initial, {'trainable': state, 'config': common, 'code': contract['code']})
+        finally:
+            del state
+            # Board injection hooks form model cycles. Reclaim the temporary
+            # CPU decoder before launching workers, even when saving fails.
+            gc.collect()
         atomic_json(initial_manifest, manifest('expanded_full_decoder_initial_reference', common,
             [Path(source), Path(source).parent / 'config.json', *[Path(p) for p in base_assets]], [initial],
             {'all_foundation_values_preserved': True, 'gpu_training_started': False}))
