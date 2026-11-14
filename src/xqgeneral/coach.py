@@ -53,6 +53,7 @@ def main():
     parser = argparse.ArgumentParser(description='中国象棋学习：显示棋盘、分析局面并保存完整历史')
     parser.add_argument('--checkpoint', required=True, help='Checkpoint file or exported model directory')
     parser.add_argument('--weights', help='Px0 weights; exported model directories include their own weights')
+    parser.add_argument('--device', default='cuda', help='推理设备，例如 cpu、cuda 或 cuda:0')
     parser.add_argument('--initial-fen', default=START_FEN)
     parser.add_argument('--moves', nargs='*', default=[])
     parser.add_argument('--resume', help='恢复学习记录，并默认续写原 JSON 文件')
@@ -67,7 +68,7 @@ def main():
     history = replay(initial, moves)
     print(board_text(history[-1]))
     from .inference import Predictor
-    predictor = Predictor(args.checkpoint, args.weights)
+    predictor = Predictor(args.checkpoint, args.weights, device=args.device)
 
     def save():
         if output:
