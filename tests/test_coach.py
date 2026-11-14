@@ -9,10 +9,11 @@ from xqgeneral.explanations import move_facts
 from xqgeneral.rules import START_FEN, replay
 
 
-def run_resumed_session(monkeypatch, path, commands, output=None):
+def run_resumed_session(monkeypatch, path, commands, output=None, device=None):
     class Predictor:
-        def __init__(self, checkpoint, weights):
+        def __init__(self, checkpoint, weights, *, device):
             assert checkpoint == 'chosen-model' and weights is None
+            assert device == expected_device
 
         def generate(self, record, max_new_tokens):
             assert record['history'] == replay(START_FEN, record['moves'])
@@ -21,6 +22,9 @@ def run_resumed_session(monkeypatch, path, commands, output=None):
 
     arguments = ['xqgeneral-coach', '--checkpoint', 'chosen-model',
                  '--resume', str(path), '--interactive']
+    expected_device = device or 'cuda'
+    if device is not None:
+        arguments.extend(['--device', device])
     if output is not None:
         arguments.extend(['--output', str(output)])
     inputs = iter(commands)
@@ -32,14 +36,15 @@ def run_resumed_session(monkeypatch, path, commands, output=None):
 
 
 @pytest.mark.parametrize('separate_output', [False, True])
-def test_resumed_coach_persists_new_moves_and_unmodified_advice(tmp_path, monkeypatch, separate_output):
+@pytest.mark.parametrize('device', [None, 'cpu'])
+def test_resumed_coach_persists_new_moves_and_unmodified_advice(tmp_path, monkeypatch, separate_output, device):
     original = tmp_path / 'study.json'
     original.write_text(json.dumps({'initial_fen': START_FEN, 'moves': ['b0c2'],
                                    'analyses': [{'raw': '原有分析'}], 'checkpoint': 'previous-model'}))
     before = original.read_bytes()
     destination = tmp_path / 'branch.json' if separate_output else original
     run_resumed_session(monkeypatch, original, ['b9c7', 'quit'],
-                        output=destination if separate_output else None)
+                        output=destination if separate_output else None, device=device)
     saved = json.loads(destination.read_text())
     assert saved['initial_fen'] == START_FEN
     assert saved['moves'] == ['b0c2', 'b9c7']

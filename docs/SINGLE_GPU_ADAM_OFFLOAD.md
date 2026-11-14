@@ -11,7 +11,7 @@ step, one parameter's moments move to its GPU, native PyTorch single-tensor
 AdamW updates that parameter, and its moments return to CPU. This reduces
 persistent GPU storage without quantization, parameter freezing or a change
 to the learning rate, gradient accumulation, clipping or AdamW arithmetic.
-The host must hold the full moments; copies add step time. DDP, FSDP, ZeRO,
+The host must hold the full moments; copies add step time. Multi-rank DDP, FSDP, ZeRO,
 foreach/fused/capturable/differentiable optimizers are unsupported with this
 setting.
 
@@ -33,3 +33,40 @@ checkpoints. CPU tests cannot prove CUDA capacity or GPU arithmetic parity.
 The unchanged full-model continuous-four-versus-two-plus-two probe must still
 pass with all 624 trainable tensors and FP32 moments before formal training.
 No successful full-model offload probe or search-SGD round is claimed here.
+
+The explicit search profile is
+`full_decoder_search_one_worker_cpu_moments_v1`, supplied by
+`configs/search-distillation-sft-one-gpu-cpu-offload-with-auxiliary-v1.json`.
+It keeps global batch 30, microbatch 1, full FP32 parameters, token-normalized
+loss, finite coverage of every new label and all six replay tasks, and complete
+seven-stage validation. The recipe uses the existing single-rank `ddp`
+configuration value; no distributed wrapper is constructed at world size 1.
+Other search profiles cannot silently opt into CPU moment offload.
+
+After native data acceptance, immutable feature extension, token preflight and
+the required original development baseline are complete, run in a new directory:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m xqgeneral.distillation_training \
+  --init /path/to/selected-parent/adapter.pt \
+  --recipe configs/search-distillation-sft-one-gpu-cpu-offload-with-auxiliary-v1.json \
+  --token-preflight /path/to/new-data-token-preflight/manifest.json \
+  --output runs/new-one-worker-search-round
+```
+
+Bind `replay_data_paths` to the actual accepted replay dataset before launch.
+Use `--resume` only for the same immutable experiment. Physical GPU allocation
+must follow the user's current reservation; this example does not grant access
+to another card. These commands load the real model and execute the real GPU
+preflight before formal updates; a recipe alone does not establish capacity.
+
+The native preflight requires `optimizer-placement-step-2.json` and
+`optimizer-placement-step-4.json` from both continuous and resumed execution.
+Each must bind its actual update and describe all trainable tensors, three
+state tensors per parameter, FP32 CPU moments, CUDA parameter placement and
+the exact complete state byte count. Formal completion and later parent
+acceptance independently reject missing or incompatible runtime residency.
+CPU integration controls replace only the GPU producers with explicitly
+constructed fixtures, then exercise native preflight, training orchestration,
+completion reopening, resume, and normal/zero/shuffled raw validation. They
+do not prove a real single-GPU search round or coaching gain.

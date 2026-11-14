@@ -6,20 +6,27 @@
 
 四门课程、初始讲解和讲解／旧课联合训练已完成；**可靠教练模型尚未交付**。旧联合模型的384局开发对弈为0胜383负1和，其中266局因原始走法非法判负。软件测试通过、课程正确率和训练损失均不能替代棋力或教学验收。
 
-截至2026-11-09 23:19（UTC+8）的固定快照，首轮七类辅助训练已正常完成：累计16000步，选中12000步最佳权重。固定765题的全部原始回答已重算；数值题首着合法369/381、六个半回合变化有效228/381，仍有非法走法与变化线错误。完整讲解、原始对弈、合格新搜索训练和最终独立验收继续推进。2026-11-10起，本项目仅允许物理GPU0，GPU1、2、3供用户预留。
+2026-11-14补充：加入971条新搜索讲解及原始讲解／六类回放的训练已完成1000次更新，连续四次验证未超过起点，未接收新模型。原模型与未入选750步权重的同32题CPU原始讲解，完整规则通过为4→3，未显示净收益；详见[训练与对照记录](docs/SEARCH_RETENTION_TRIAL_1000.md)。384局基线和讲解语义评审尚未完成。
+
+此前截至2026-11-09 23:19（UTC+8）的固定快照，首轮七类辅助训练已正常完成：累计16000步，选中12000步最佳权重。固定765题的全部原始回答已重算；数值题首着合法369/381、六个半回合变化有效228/381，仍有非法走法与变化线错误。完整讲解、原始对弈、合格新搜索训练和最终独立验收继续推进。2026-11-10起，本项目仅允许物理GPU0，GPU1、2、3供用户预留。
 
 当前事实与证据统一见[模型卡](docs/MODEL_CARD.md)；实际任务、小时观察和恢复入口见[状态页](STATUS.md)。两页均注明快照日期，公开仓库不提供实时训练步数。
 
 | 入口 | 内容 |
 | --- | --- |
+| [1000步试验与32题原始对照](docs/SEARCH_RETENTION_TRIAL_1000.md) | 实际优化、未获选新模型、同题规则结果及证据边界 |
 | [当前模型与质量证据](docs/MODEL_CARD.md) | 已完成阶段、已测失败、数据范围、未完成验收 |
 | [首轮辅助训练与765题实测](docs/AUXILIARY_ROUND_COMPLETED.md) | 实际16000步完成、所选12000步、原始回答诊断和剩余缺口 |
 | [两卡训练与完整状态迁移](docs/AUXILIARY_RESOURCE_TRANSITION.md) | 全参数／Adam／进度保留、真实容量和恢复证明 |
 | [七类辅助训练](docs/AUXILIARY_POLICY_TRAINING.md) | 讲解、四课、走法和数值分析的全量有限遍历 |
 | [后续开发评测](docs/AUXILIARY_POLICY_EVALUATION.md) | 原始问答、三组讲解、完整教师辅助评审和原始对弈 |
-| [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及原生消费检查 |
+| [搜索及六类回放](docs/AUXILIARY_SEARCH_REPLAY.md) | 合格新标签、旧能力保留及按指定CPU进程数执行的完整原生复核 |
+| [原始讲解回放](docs/ORIGINAL_COACHING_REPLAY.md) | 显式绑定旧训练来源与配额；新旧讲解合并训练计数，验证只保留一份 |
+| [可选讲解字段前置](docs/EXPLANATION_ANSWER_ORDER.md) | 显式改变讲解监督的字段次序；分词、训练、验证和续训使用同一声明 |
 | [搜索讲解复核剔除](docs/SEARCH_PROSE_EXCLUSIONS.md) | 保留原始回答，绑定逐条剔除原因并在合并／训练预检时重建 |
-| [单卡 FP32 Adam 状态卸载](docs/SINGLE_GPU_ADAM_OFFLOAD.md) | CPU 保存动量，逐参数执行原生 GPU AdamW，实际容量仍需预检 |
+| [候选杀棋步数的原生证明](docs/NATIVE_TERMINAL_AUDIT.md) | 完整历史下覆盖全部对手应手，区分更短杀棋反例、未找到证明与资源耗尽 |
+| [汇总讲解的原生核对信息](docs/GROUNDED_CONSOLIDATION.md) | 显式新提示区分分数来源、应将方式和双方吃子统计；教师质量仍须实测 |
+| [单卡 FP32 Adam 状态卸载及搜索蒸馏](docs/SINGLE_GPU_ADAM_OFFLOAD.md) | CPU 保存动量；单卡正式入口核验实际状态位置、七类回放及完整恢复；真实容量仍需预检 |
 | [验证参考解析器兼容](docs/VALIDATION_DECODER_COMPATIBILITY.md) | 类型化缺分错误的严格源码核验与新保护清单重建 |
 | [最终独立验收](docs/FINAL_INDEPENDENT_EVALUATION.md) | 锁定最终模型后执行的独立测试 |
 
@@ -57,6 +64,8 @@ python -m xqgeneral.coach --checkpoint MODEL_DIR --interactive --resume runs/stu
 ```
 
 交互命令为UCCI走法（如`b0c2`）、`hint`、`undo`、`board`和`quit`。恢复记录时默认续写原文件；指定`--output`可另存分支。记录保留原始模型回答及规则核验结果。规则合法不等于选招或讲解正确。
+
+`coach` 和 `ask` 命令可增加 `--device cpu` 在 CPU 上推理，默认设备为 `cuda`，也支持 `--device cuda:0`。Python 接口使用 `Predictor(..., device='cpu')`。CPU 精度与交付目录的运行时版本要求见[CPU 推理说明](docs/MODEL_INFERENCE_BUNDLE.md#cpu-推理)。
 
 ## 数据与训练
 

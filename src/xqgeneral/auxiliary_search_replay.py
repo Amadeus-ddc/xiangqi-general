@@ -1,4 +1,4 @@
-"""Deterministic six-task replay from a completed seven-stage corpus."""
+"""Deterministic original-task replay with optional original-coaching retention."""
 import argparse
 from collections import Counter
 import hashlib
@@ -9,9 +9,11 @@ from pathlib import Path
 from .curriculum_data import STAGES as COURSES
 from .evidence import atomic_json, manifest
 from .recorded_search_inputs import BoundInputs
+from .coaching_replay import coaching_config, original_training_subset
 
 KIND = 'latent_only_auxiliary_search_replay'
 PROFILE = 'original_courses_and_oracle_policy_replay_v1'
+COACHING_PROFILE = 'original_coaching_courses_and_oracle_policy_replay_v1'
 LEGACY_PROFILE = 'original_courses_replay_v1'
 STAGES = (*COURSES, 'engine_numeric', 'move_quality')
 
@@ -27,20 +29,33 @@ def native_label(row):
         validate_task(row, PAPER_PROFILE)
         if not grade_answer(native_answer(row), row['answer'], row['task_type'])['correct']:
             raise ValueError('Replay answer differs from its native course rules')
+    elif row['stage'] == 'explanation':
+        from .reviewed_explanations import checked_label
+        from .explanations import parse_explanation
+        from .prose_moves import validate_prose_moves
+        checked_label(row)
+        value = parse_explanation(row['answer'])
+        if not validate_prose_moves(row['fen'], value, value['explanation'])['valid']:
+            raise ValueError('Original coaching contains invalid explicit prose moves')
     elif row['stage'] in STAGES:
         from .oracle_policy_evaluation import grade
         if not grade(row, row['answer'])['contract_valid']:
             raise ValueError('Replay answer violates its native numeric or move contract')
     else:
-        raise ValueError('Replay supports only the six declared non-explanation stages')
+        raise ValueError('Replay supports only declared original task stages')
     return row['feature_key']
 
 
-def selection(data, train_per_stage, seed, bound):
+def selection(data, train_per_stage, seed, bound, *, workers=1,
+              coaching_data=None, coaching_train_rows=0):
     from .auxiliary_policy_preflight import corpus_source
     from .oracle_policy_corpus import ALL_STAGES, _basic, _lines
+    from .recorded_coach import ordered_native_map
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Native replay workers must be a positive integer')
     if type(train_per_stage) is not int or train_per_stage < 1 or type(seed) is not int or seed < 0:
         raise ValueError('Use a positive per-stage quota and a nonnegative integer seed')
+    coaching = coaching_config(coaching_data, coaching_train_rows)
     data = Path(data).resolve()
     corpus, counts = corpus_source(data, bound)
     queues = {stage: [] for stage in STAGES}
@@ -72,17 +87,26 @@ def selection(data, train_per_stage, seed, bound):
             selected['validation'].append((raw, row))
     if observed != counts['validation']:
         raise ValueError('The original corpus validation counts changed')
+    if coaching is not None:
+        retained, coaching_result = original_training_subset(
+            coaching['coaching_data'], coaching['coaching_train_rows'], seed, bound)
+        selected['train'].extend(retained)
     ids = set()
     for split, items in selected.items():
         actual = Counter(row['stage'] for _, row in items)
         expected = {s: min(train_per_stage, counts[split][s]) if split == 'train' else counts[split][s]
                     for s in STAGES}
+        if coaching is not None and split == 'train':
+            expected['explanation'] = coaching_result['selected_training_rows']
         if actual != expected:
             raise ValueError('Every stage must retain its exact selected training and complete validation coverage')
         for _, row in items:
-            if row['id'] in ids or native_label(row) != row['feature_key']:
+            if row['id'] in ids:
                 raise ValueError('Replay rows require unique native history identities')
             ids.add(row['id'])
+    rows = [row for items in selected.values() for _, row in items]
+    if list(ordered_native_map(native_label, rows, workers)) != [row['feature_key'] for row in rows]:
+        raise ValueError('Replay rows require unique native history identities')
     result = dict(by_split={split: len(items) for split, items in selected.items()},
         by_split_and_stage={split: dict(Counter(row['stage'] for _, row in items))
                             for split, items in selected.items()},
@@ -102,22 +126,36 @@ def selection(data, train_per_stage, seed, bound):
         independent_test_answers_parsed_or_tokenized=0,
         strong_play_or_reliable_coaching_proven=False)
     result['by_split']['test'] = 0
+    if coaching is not None:
+        result['original_coaching_replay'] = coaching_result
+        result['supervised_future_contract_by_stage']['explanation'] = 'native_original_coaching_lines_v1'
     bound.unchanged()
     return selected, result
 
 
-def checked_subset(directory, bound):
+def checked_subset(directory, bound, *, workers=1, profile=PROFILE):
+    if type(workers) is not int or workers < 1:
+        raise ValueError('Native replay workers must be a positive integer')
     directory = Path(directory).resolve()
     proof = bound.json(directory / 'manifest.json')
     config = proof.get('config', {})
-    if (proof.get('status') != 'complete' or proof.get('kind') != KIND or
-            config.get('profile') != PROFILE or not isinstance(config.get('data'), str)):
-        raise ValueError('Require a completed explicitly typed six-stage replay subset')
+    if (profile not in (PROFILE, COACHING_PROFILE) or
+            proof.get('status') != 'complete' or proof.get('kind') != KIND or
+            config.get('profile') != profile or not isinstance(config.get('data'), str)):
+        raise ValueError('Require a completed replay subset with the exact explicit profile')
+    coaching = {}
+    if profile == COACHING_PROFILE:
+        coaching = coaching_config(config.get('coaching_data'), config.get('coaching_train_rows'))
+        if coaching is None:
+            raise ValueError('Coaching retention requires the frozen original source and quota')
+    elif 'coaching_data' in config or 'coaching_train_rows' in config:
+        raise ValueError('Six-task replay cannot silently include original coaching')
     for name, identity in proof['inputs'].items():
         bound.bind(name, identity)
     for name, identity in proof['outputs'].items():
         bound.bind(name, identity)
-    selected, expected = selection(config['data'], config['train_per_stage'], config['seed'], bound)
+    selected, expected = selection(config['data'], config['train_per_stage'], config['seed'], bound,
+                                   workers=workers, **coaching)
     for split in ['train', 'validation', 'test']:
         path = directory / (split + '.jsonl')
         bound.bind(path, proof['outputs'].get(str(path)))
@@ -130,9 +168,13 @@ def checked_subset(directory, bound):
     return [row for items in selected.values() for _, row in items], expected
 
 
-def prepare(data, output, *, train_per_stage=2048, seed=20261107, resume=False):
+def prepare(data, output, *, train_per_stage=2048, seed=20261107, resume=False,
+            coaching_data=None, coaching_train_rows=0, workers=1):
     root, data = Path(output).resolve(), Path(data).resolve()
-    config = dict(profile=PROFILE, data=str(data), train_per_stage=train_per_stage, seed=seed)
+    coaching = coaching_config(coaching_data, coaching_train_rows)
+    profile = COACHING_PROFILE if coaching is not None else PROFILE
+    config = dict(profile=profile, data=str(data), train_per_stage=train_per_stage, seed=seed)
+    config.update(coaching or {})
     bound = BoundInputs()
     if root.exists():
         if not resume:
@@ -140,9 +182,9 @@ def prepare(data, output, *, train_per_stage=2048, seed=20261107, resume=False):
         proof = bound.json(root / 'manifest.json')
         if proof.get('config') != config:
             raise ValueError('Replay resume must keep its frozen source, quota and seed')
-        _, result = checked_subset(root, bound)
+        _, result = checked_subset(root, bound, workers=workers, profile=profile)
         return result
-    selected, result = selection(data, train_per_stage, seed, bound)
+    selected, result = selection(data, train_per_stage, seed, bound, workers=workers, **(coaching or {}))
     root.mkdir(parents=True)
     outputs = []
     for split in ['train', 'validation', 'test']:
@@ -162,6 +204,9 @@ def main():
     parser.add_argument('--output', required=True)
     parser.add_argument('--train-per-stage', type=int, default=2048)
     parser.add_argument('--seed', type=int, default=20261107)
+    parser.add_argument('--coaching-data', help='Explicit qualified original coaching dataset')
+    parser.add_argument('--coaching-train-rows', type=int, default=0)
+    parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--resume', action='store_true')
     from .verified_inputs import input_session_from_environment
     with input_session_from_environment():

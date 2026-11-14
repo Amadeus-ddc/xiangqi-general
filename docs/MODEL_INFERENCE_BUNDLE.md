@@ -23,6 +23,34 @@ xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 
 `runs/completed-model-training` 是待替换的实际选模目录。当前新四课、真实全模型门禁及[完整初始SFT](INITIAL_SFT_COMPLETED.md)已完成；足量蒸馏、最终独立验收和正式交付仍待完成。原 `adapter.pt` 文件入口继续可用。模型和数据不提交到源码仓库；权重来源与用途仍依照 [模型说明](MODEL_CARD.md) 和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
 
+## 随目录保存组件说明
+
+导出时可通过 `--asset-notices asset-notices.json` 携带原底座或专家资产的上游声明和许可文本。省略该选项时，已有导出格式不变；已有目录也继续按原合同读取。
+
+例如，在源码根目录新建下面的 `asset-notices.json`，即可引用仓库中已经保存的 Px0 许可原文。此示例只匹配已核验的那份专家资产；换成其他字节时需要另行核对来源及声明，不能直接复用这个哈希。
+
+```json
+{
+  "profile": "inference_asset_notices_v1",
+  "components": [{
+    "name": "Px0 network weights",
+    "assets": {
+      "expert/px0.pb.gz": "a701de3f3e062b69fe8536462f12f820be6588e73a9d9e3ff55fc5ea6e6fc20c"
+    },
+    "source_url": "https://github.com/official-pikafish/pxzero-networks/blob/85daedc818d0a86929e5a97ed1f5487d29a03d5b/LICENSE",
+    "license_id": "CC0-1.0",
+    "license_file": "LICENSES/Px0-Networks-CC0-1.0.txt",
+    "license_sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+  }]
+}
+```
+
+`assets` 列出导出目录中原底座或专家文件的相对路径及 SHA256，可以把多个文件归入同一组件。`license_file` 相对于输入说明文件所在目录，须为该目录内不经过符号链接的普通 UTF-8 文本。导出器先核对实际资产和许可文本，再把文本复制至 `notices/`，并将组件对应关系写入完整目录清单；输入说明的本机路径不写入目录。源许可或说明在导出期间变化时，不生成完成清单。
+
+读取包含组件说明的目录时，同时检查资产、许可文本、对应关系和匹配版本的校验代码。评测输入也绑定这些新增文本，不能在已经开始的对弈中替换。说明只记录精确资产的上游声明；程序不分析法律含义，也不将它扩展为整个训练检查点或数据集的发布许可。
+
+已完成[实际组件说明导出验证](../evidence/portable-component-notices-v1.json)：原生导出并迁移真实12000步开发模型，重新读取全部624个FP32训练张量及绑定的许可文本；完整2911项CPU套件、构建与发布检查，以及wheel／源码包中的136个模块和许可文本检查通过。此验证覆盖导出与组件声明，不是棋力、讲解质量或整个检查点的再分发许可证明。
+
 ## 评测交付目录
 
 问答、讲解、对弈评测，以及单着和主线辅助诊断的 `--checkpoint` 均可使用交付目录，也继续接受原 `adapter.pt` 文件。评测输入清单绑定目录中的模型参数、底座、分词器、配置、专家权重和交付清单；损坏或缺失的目录资产在生成前拒收。运行中输入或源码发生改变时，不发布完成清单，保留已生成的原始回答。对弈续跑还会核对全部目录资产与原合同，即使重新绑定过的目录内部自洽，也不能替换已开始评测的模型。
@@ -49,3 +77,22 @@ xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 独立 CPU 入口重新哈希 39 份约 21.80 GB 的产物，重建运行配置、对照全部 226 个 FP32 训练张量及 35 道金标，检查完整目录和 144 次显存记录。现场 GPU 等价结果继承自已经完成的真实控制，CPU 入口没有重新前向。全套 1473 项通过，188 份源码／测试／测试配置不变。小模型单测另覆盖完整解码器参数、缺失分片、损坏文件、未绑定权重、错误专家、搬动和遗失源目录。
 
 本验证没有新增课程、初始讲解或蒸馏训练，没有评判完整讲解质量或棋力。控制产物保留在 `runs/model-inference-bundle-v1/worktree/runs/`，轻量依据见 [交付验证记录](../evidence/model-inference-bundle-v1.json)。
+
+## CPU 推理
+
+命令行支持显式选择设备，省略 `--device` 时使用 `cuda`。例如：
+
+```bash
+python -m xqgeneral.coach --checkpoint MODEL_DIR --device cpu --interactive --output runs/study.json
+python -m xqgeneral.ask --adapter MODEL_DIR --device cpu --question '轮到哪方走棋？'
+```
+
+模型目录使用其绑定的专家；原检查点文件仍可通过 `--weights` 指定专家权重。`cuda:0` 等设备编号对应当前进程可见的设备。
+
+Python 接口 `Predictor(checkpoint, device='cpu')` 使用 FP32 模型和桥接层，无需外加 CPU 自动混合精度上下文。专家特征继续先经过训练使用的 FP16 缓存舍入和 BF16 转换；送入 CPU 桥接层之前再精确扩为 FP32。这不改写缓存、参数或原始回答，也不改变 GPU 的生成分支。
+
+旧版默认 CPU 路径曾在密集桥接层的线性投影处因 BF16 特征与 FP32 权重不匹配而失败。另行显式启用 CPU BF16 计算的控制仍属于不同执行配置，其输出不能与默认 FP32 计算混作同一结果。缓存与现场特征、记忆消融和完整模型推理各自需要验证；CPU 组件检查不代表棋力或讲解质量通过。
+
+交付目录绑定推理源码。使用本次修正时，应由匹配版本的原生导出器生成新目录；已有目录仍保留原运行时要求，不能修改其清单绕过检查。原检查点文件入口继续可用，模型选择与独立最终评测要求不变。
+
+完整2892项CPU套件、构建与发布检查通过。真实12000步开发权重使用两条验证问题，原检查点与新导出迁移目录共四次默认CPU生成、26个新词元逐值一致；每种加载方式的624个FP32训练张量和16层专家特征均核对。这仅验证默认CPU加载与迁移推理，不证明棋力或讲解质量提升。见[轻量验证记录](../evidence/cpu-inference-memory-precision-v1.json)。

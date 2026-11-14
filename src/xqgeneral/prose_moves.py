@@ -6,7 +6,8 @@ from collections import Counter, defaultdict
 import json
 import re
 
-from .rules import move_notation, play
+from .rules import (check_evasion_facts, in_check, king_checkers, legal_moves,
+                    move_notation, piece_map, piece_name, play, side)
 
 
 NUMBERS = '一二三四五六七八九零〇十0123456789０１２３４５６７８９'
@@ -20,7 +21,11 @@ TRANSLATION = str.maketrans(dict(zip('一二三四五六七八九零〇', '12345
 
 VERIFIED_EVIDENCE_PROFILE = 'verified_evidence_v1'
 RAW_CHILD_PROSE_PROFILE = 'raw_child_prose_v1'
-CONSOLIDATION_PROFILES = (VERIFIED_EVIDENCE_PROFILE, RAW_CHILD_PROSE_PROFILE)
+GROUNDED_CHILD_PROSE_PROFILE = 'grounded_child_prose_v2'
+TERMINAL_CHILD_PROSE_PROFILE = 'grounded_terminal_child_prose_v3'
+GROUNDED_PROFILES = (GROUNDED_CHILD_PROSE_PROFILE, TERMINAL_CHILD_PROSE_PROFILE)
+CONSOLIDATION_PROFILES = (VERIFIED_EVIDENCE_PROFILE, RAW_CHILD_PROSE_PROFILE,
+                          *GROUNDED_PROFILES)
 
 
 class MissingChildProseError(ValueError):
@@ -30,7 +35,8 @@ class MissingChildProseError(ValueError):
 def checked_consolidation_profile(profile, *, child_prompt_profile=None):
     if type(profile) is not str or profile not in CONSOLIDATION_PROFILES:
         raise ValueError('Unknown consolidation profile')
-    if (profile == RAW_CHILD_PROSE_PROFILE and child_prompt_profile is not None and
+    if (profile in (RAW_CHILD_PROSE_PROFILE, *GROUNDED_PROFILES) and
+            child_prompt_profile is not None and
             child_prompt_profile != 'full_explanation'):
         raise ValueError('Raw child prose requires full_explanation child generation')
     return profile
@@ -78,6 +84,23 @@ def checked_consolidation_payload(packet, profile):
     actual = _child_prose_evidence(packet, require_prose=not omission, require_omission=omission)
     if packet.get('child_prose_evidence') != actual:
         raise ValueError('Consolidation profile child prose evidence differs from actual text')
+    if profile in GROUNDED_PROFILES:
+        try:
+            expected = native_coaching_evidence(packet['root_fen'], packet['target_fields'],
+                include_line_endings=profile == TERMINAL_CHILD_PROSE_PROFILE)
+        except (KeyError, TypeError) as error:
+            raise ValueError('Malformed grounded consolidation evidence') from error
+        supplied = packet.get('native_coaching_evidence')
+        if profile == TERMINAL_CHILD_PROSE_PROFILE:
+            try:
+                matches = (json.dumps(supplied, sort_keys=True, allow_nan=False) ==
+                           json.dumps(expected, sort_keys=True, allow_nan=False))
+            except (TypeError, ValueError):
+                matches = False
+        else:
+            matches = supplied == expected
+        if not matches:
+            raise ValueError('Grounded consolidation evidence differs from native facts')
     return actual
 
 
@@ -107,6 +130,88 @@ def notation_lines(fen, target):
             current = play(current, move)
         lines.append({'move':line[0], 'plies':plies})
     return lines
+
+
+def _material_counts(board):
+    return {color: {kind: sum(p.lower() == kind and p.isupper() == red
+                             for p in board.values()) for kind in 'rhcpaek'}
+            for color, red in [('red', True), ('black', False)]}
+
+
+def _root_score(value):
+    if (not isinstance(value, dict) or value.get('type') not in ('cp', 'mate') or
+            type(value.get('value')) is not int or
+            value.get('perspective') != 'side_to_move'):
+        raise ValueError('Grounded scores require typed root-side integer evaluations')
+    return dict(value)
+
+
+def native_coaching_evidence(fen, target, *, include_line_endings=False):
+    """Summarize supplied legal lines; neither search nor infer their strategy."""
+    if type(include_line_endings) is not bool:
+        raise ValueError('Line-ending evidence requires a boolean option')
+    root = piece_map(fen)
+    checked = in_check(fen)
+    evasions = {f.move: f for f in check_evasion_facts(fen)} if checked else {}
+    branches = target['branches']
+    parries = []
+    for branch in branches:
+        if checked:
+            if branch['move'] not in evasions:
+                raise ValueError('Grounded candidate fails to evade the root check')
+            fact = evasions[branch['move']]
+            parries.append({'move': fact.move, 'checker_mechanisms': [
+                {'checker': square, 'mechanism': mechanism}
+                for square, mechanism in fact.checker_mechanisms]})
+    lines, seen = [], set()
+    before = _material_counts(root)
+    for moves in [target['pv'], *[b['pv'] for b in branches]]:
+        key = tuple(moves)
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        current = fen
+        captures = {color: {kind: 0 for kind in 'rhcpaek'} for color in ('red', 'black')}
+        for move in moves:
+            if move not in legal_moves(current):
+                raise ValueError('Grounded material ledger requires legal supplied lines')
+            board = piece_map(current)
+            victim = board.get(move[2:])
+            if victim:
+                color = 'red' if board[move[:2]].isupper() else 'black'
+                captures[color][victim.lower()] += 1
+            current = play(current, move)
+        after = _material_counts(piece_map(current))
+        mover_red = root[moves[0][:2]].isupper()
+        lines.append({'move': moves[0], 'pv': list(moves), 'captured_by': captures,
+                      'final_material': after, 'material_change': {
+                          color: {kind: after[color][kind] - before[color][kind]
+                                  for kind in 'rhcpaek'} for color in ('red', 'black')},
+                      'first_move_destination': {
+                          'file_for_moving_side': 9 - (ord(moves[0][2]) - 97) if mover_red
+                                                  else ord(moves[0][2]) - 96,
+                          'rank_zero_based': int(moves[0][3])}})
+        if include_line_endings:
+            replies = legal_moves(current)
+            final_check = in_check(current)
+            lines[-1]['line_end'] = {
+                'fen': current, 'side_to_move': side(current), 'in_check': final_check,
+                'legal_move_count': len(replies),
+                'position_result': ('ongoing' if replies else
+                                    'checkmate' if final_check else 'stalemate_loss'),
+                'winner': None if replies else ('black' if current.split()[1] == 'w' else 'red'),
+            }
+    evidence = {'root_side': side(fen), 'root_in_check': checked,
+            'root_checkers': [{'square': square, 'piece': piece_name(piece)}
+                              for square, piece in king_checkers(fen)],
+            'candidate_evasions': parries, 'root_material': before,
+            'root_oracle_evaluation': _root_score(target['evaluation']),
+            'branch_estimates_root_perspective': [
+                {'move': b['move'], 'evaluation': _root_score(b['evaluation'])} for b in branches],
+            'lines': lines}
+    if include_line_endings:
+        evidence['line_ending_scope'] = 'supplied_line_endpoint_without_pre_root_history'
+    return evidence
 
 
 def validate_prose_moves(fen, target, prose):
@@ -142,7 +247,7 @@ def validate_prose_moves(fen, target, prose):
 def consolidation_messages(packet, fen, target, *, consolidation_profile=None):
     profile = (VERIFIED_EVIDENCE_PROFILE if consolidation_profile is None else
                checked_consolidation_profile(consolidation_profile))
-    include_prose = profile == RAW_CHILD_PROSE_PROFILE
+    include_prose = profile in (RAW_CHILD_PROSE_PROFILE, *GROUNDED_PROFILES)
     content = dict(packet, verified_move_notation=notation_lines(fen, target),
                    unverified_child_prose_omitted=not include_prose,
                    score_sources={'target_fields.evaluation':'独立引擎根评分，根行棋方视角',
@@ -169,6 +274,31 @@ def consolidation_messages(packet, fen, target, *, consolidation_profile=None):
             '每段子讲解对应走完该分支首着后的子局面，行棋方已切换；不得把子建议当作根着法。'
             '汇总原文中由所给棋盘与变化支持的理由，不引入原文及规则证据之外的战略结论；'
             '原文与规则事实冲突时以规则事实为准，不得照抄错误。')
+    if profile in GROUNDED_PROFILES:
+        if packet.get('root_fen') != fen or packet.get('target_fields') != target:
+            raise ValueError('Grounded prompt root and target differ from the actual packet')
+        content['native_coaching_evidence'] = native_coaching_evidence(fen, target,
+            include_line_endings=profile == TERMINAL_CHILD_PROSE_PROFILE)
+        system = system.replace('根评分来自根行棋方，子评分来自对手，不得混淆。',
+            'target_fields.evaluation和target_fields.branches[*].evaluation均已统一为根行棋方视角；'
+            '分支表不要再次反号。原始child_analyses或verified_child_analyses里的评分属于子局面行棋方，'
+            '与分支表相反；正文只引用根评分与已统一的分支表，并明确说根方红或黑。')
+        system += ('native_coaching_evidence是规则派生的核对表，不是额外搜索或战略证明。'
+                   '根局面正在被将军时，先解释推荐着法如何应将，区分吃将军子、移将、挡车线、'
+                   '增加或撤去炮架、塞马腿。cp单位为厘兵，100厘兵为一个兵分单位，不能换称一枚棋子；'
+                   'mate正数表示根方杀对方、负数表示根方被杀，原杀分步数不等于截断PV已走步数。'
+                   'captured_by是各方吃到的子，material_change是各方自身剩余数量的变化；'
+                   '说明交换时同时核算双方损失，区分本段净收益和原本总材料差。'
+                   '只断言给定变化中发生的得失，不把暂未给出的回吃说成不存在。'
+                   'file_for_moving_side是纵向路数，rank_zero_based是横线坐标，不能混称。'
+                   '不明确的战略理由宁可省略，不从数值差或可选变化推断唯一合法、强制获胜或无杀。')
+        if profile == TERMINAL_CHILD_PROSE_PROFILE:
+            system += ('lines[*].line_end给出实际走完该条给定变化后的局面、行棋方、将军状态和合法应着数。'
+                       'position_result为checkmate时，该线已经将死，不能只写将军或仍能周旋；'
+                       'stalemate_loss表示未被将军但无合法应着，在象棋中是困毙败局，不是和棋。'
+                       'winner为该末端局面的获胜方，不能与根行棋方混淆。'
+                       '这些仅是给定线末端的棋盘事实，不含根局之前的历史，也不证明所有其他应对同样强制结束。'
+                       '档案中的根评分和子分析估计仍分别引用，不把已走步数或一个终局替换成新的根评分或强制杀棋距离。')
     if consolidation_profile is not None:
         content['consolidation_profile'] = profile
         content['child_prose_evidence'] = _child_prose_evidence(content,
@@ -180,5 +310,9 @@ def consolidation_messages(packet, fen, target, *, consolidation_profile=None):
     if isinstance(source_context, dict) and source_context.get('pre_fragment_game_history_available') is False:
         system += ('来源只提供一个局面或对局片段，起点之前的历史未提供。禁止杜撰此前的走子或布局过程；'
                    '棋手字段只作来源署名，不据此推断身份、棋风或赛事背景。')
-    return [{'role':'system', 'content':system},
-            {'role':'user', 'content':json.dumps(content, ensure_ascii=False)}]
+    # Preserve every value, including raw child prose; remove JSON layout
+    # whitespace only for the opt-in profile so grounding does not waste context.
+    encoded = (json.dumps(content, ensure_ascii=False, separators=(',', ':'))
+               if profile in GROUNDED_PROFILES
+               else json.dumps(content, ensure_ascii=False))
+    return [{'role':'system', 'content':system}, {'role':'user', 'content':encoded}]

@@ -11,7 +11,7 @@ from xqgeneral import sft_preflight
 from xqgeneral.evidence import atomic_json, digest, iter_jsonl, write_jsonl
 from xqgeneral.finite_training import FINITE_PROFILE, prepare_finite_epochs
 from xqgeneral.foundation_handoff import export_curriculum
-from xqgeneral.training import training_input_paths
+from xqgeneral.training import training_input_paths, load_training_rows
 from xqgeneral.training_index import IndexedTrainingRows
 
 
@@ -29,18 +29,20 @@ class IndexedProbeRunner(ControlledRunner):
         path = Path(config['output']) / 'latest.pt'
         saved = torch.load(path, weights_only=True)
         sources = [Path(config['data_path']) / 'train.jsonl', *self.replay_sources]
-        rows = IndexedTrainingRows(config['row_index_paths']['train'], sources, config['mixture'])
+        rows = (IndexedTrainingRows(config['row_index_paths']['train'], sources, config['mixture'])
+                if 'row_index_paths' in config else load_training_rows(sources, config['mixture']))
         try:
             saved['data_state'] = prepare_finite_epochs(rows, config['mixture'], config, config['ddp_world_size']).state_at(saved['step'])
         finally:
-            rows.close()
+            if hasattr(rows, 'close'):
+                rows.close()
         saved['input_hashes'] = {str(p): digest(p) for p in training_input_paths(config)}
         torch.save(saved, path)
         atomic_json(path.parent / 'execution.json', {'code': saved['code'], 'input_hashes': saved['input_hashes']})
         return result
 
 
-def replay_probe(tmp_path, monkeypatch, count=1):
+def replay_probe(tmp_path, monkeypatch, count=1, *, indexed=True):
     curriculum, recipe_path, token_path = setup_data(tmp_path)
     recipe = json.loads(recipe_path.read_text())
     token = json.loads(token_path.read_text())
@@ -65,6 +67,8 @@ def replay_probe(tmp_path, monkeypatch, count=1):
     recipe.update(training_data_profile=FINITE_PROFILE, stages=list(mixture), mixture=mixture,
                   replay_data_paths=[str(p) for p in roots], mixture_seed=0,
                   row_index_paths={s: str(tmp_path / ('formal-' + s + '-index')) for s in ['train', 'validation']})
+    if not indexed:
+        recipe.pop('row_index_paths')
     atomic_json(recipe_path, recipe)
     original = install_runner(monkeypatch)
     runner = IndexedProbeRunner(original.original, [p / 'train.jsonl' for p in roots])
@@ -116,6 +120,36 @@ def test_completed_unchanged_replay_probe_is_reused_without_new_workers(tmp_path
 
 def test_equal_but_incorrect_mixed_finite_states_are_not_a_valid_resume(tmp_path, monkeypatch):
     root, _, _, _, _, _, _ = replay_probe(tmp_path, monkeypatch)
+    for name in ['continuous', 'resumed']:
+        path = root / name / 'latest.pt'
+        saved = torch.load(path, weights_only=True)
+        saved['data_state']['epoch'] += 1
+        torch.save(saved, path)
+    actual = torch.load(root / 'continuous/latest.pt', weights_only=True)
+    with pytest.raises(ValueError, match='finite data selection'):
+        sft_preflight.verify_updated_probe(root, root / 'zero-init.pt', actual['input_hashes'],
+                                           actual['config'], actual['code'])
+
+
+@pytest.mark.parametrize('count', [0, 1, 2])
+def test_unindexed_finite_probe_uses_actual_training_sources(tmp_path, monkeypatch, count):
+    root, result, _, recipe, token, source, runner = replay_probe(tmp_path, monkeypatch, count, indexed=False)
+    saved = torch.load(root / 'continuous/latest.pt', weights_only=True)
+    assert 'row_index_paths' not in saved['config']
+    assert result['actual_finite_epoch_state_verified']
+    assert result['training_data_state'] == saved['data_state']
+    assert result['exact_resume']['mismatched_fields'] == []
+    contract = saved['data_state']['contract']
+    assert contract['source_rows_by_stage']['explanation'] == 24
+    assert all(contract['source_rows_by_stage'][f'old-{i}'] == 8 for i in range(count))
+    jobs = len(runner.jobs)
+    assert sft_preflight.run_preflight(source, recipe, token, root, resume=True) == result
+    assert len(runner.jobs) == jobs
+
+
+@pytest.mark.parametrize('count', [0, 1, 2])
+def test_unindexed_finite_probe_rejects_equal_but_wrong_epoch_state(tmp_path, monkeypatch, count):
+    root, _, _, _, _, _, _ = replay_probe(tmp_path, monkeypatch, count, indexed=False)
     for name in ['continuous', 'resumed']:
         path = root / name / 'latest.pt'
         saved = torch.load(path, weights_only=True)

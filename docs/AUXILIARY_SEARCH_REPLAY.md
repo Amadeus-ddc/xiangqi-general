@@ -1,6 +1,9 @@
 # 搜索蒸馏中的四课、数值与走法回放
 
 `xqgeneral.auxiliary_search_replay` 从已经完成的七类语料选择六类非讲解回放，供后续搜索蒸馏复习。
+
+需要保留原讲解时，使用[显式原始讲解回放类型](ORIGINAL_COACHING_REPLAY.md)。
+它另行绑定原讲解训练来源和配额，保持旧六类默认行为及原验证集不变。
 它使用原始训练分割；讲解训练仍来自实际合格搜索标签，讲解验证沿用原始保留题。
 辅助训练本身继续使用完整七类语料，回放子集不替代它。
 
@@ -42,22 +45,39 @@ python -m xqgeneral.distillation_preflight \
   --foundation-preflight ACTUAL_PINNED_FOUNDATION_PREFLIGHT \
   --replay-data FRESH_SIX_STAGE_REPLAY \
   --replay-profile original_courses_and_oracle_policy_replay_v1 \
+  --workers 8 \
   --output FRESH_SEARCH_TOKEN_PREFLIGHT
 ```
 
-使用[三卡七类配置](../configs/search-distillation-sft-three-gpu-with-auxiliary-v1.json)，将其中
-`replay_data_paths`填为预检返回的真实绝对路径。此配置明确三进程／批量30／微批量1／FSDP2，
-以回答词元平均损失训练。分词预检和正式轮次CLI均支持显式`XQGENERAL_VERIFIED_INPUT_RECEIPT`，
+当前服务器仅允许物理GPU0，使用[单卡全FP32、CPU动量配置](../configs/search-distillation-sft-one-gpu-cpu-offload-with-auxiliary-v1.json)，将其中
+`replay_data_paths`填为预检返回的真实绝对路径。单进程／全局批量30／微批量1保持完整参数，
+以回答词元平均损失训练；真实GPU容量与精确恢复仍须通过原生预检。
+分词预检和正式轮次CLI均支持显式`XQGENERAL_VERIFIED_INPUT_RECEIPT`，
 仅复用已核验且签名保持的字节哈希；没有收据时完整哈希。模型、缓存、标签和输出目录仍须绑定。
 
 每轮完整遍历全部合格新讲解标签和子集中每一行，比例按实际数量编译；至少一整轮后才能提前停止，
 最多四轮且不超过30000步，尾部重复另行计数。新数值与单走法回放不计作新增在策略搜索标签。
-数值目标PV也进入合并来源的原生分割隔离检查。正式训练前仍需本轮真实三卡容量和精确续跑预检，
-物理GPU2按服务器分配策略排除。
+数值目标PV也进入合并来源的原生分割隔离检查。正式训练前须验证本轮实际配方和数据的GPU容量与精确续跑，
+物理GPU1、2、3当前按用户要求预留。
 
 验证选模必须包含原始讲解及全部六类回放验证；训练前的选择计划与实际训练保存的验证ID完整核对。
 遗漏数值／走法题不能发布完成清单。完成时沿用辅助轮次数，仅增加实际完成的搜索训练轮次。
 旧五类配方保留原有合同；六类回放需要新类型和显式配置。
+
+## CPU原生复核
+
+数据预检的`--workers`同时用于六类回放子集重建后的逐条校验、分割／历史复核及分词。
+子集仍由同一源语料、配额和种子确定，保留原始行字节和顺序、每类全部验证项；
+进程数不进入子集选择合同，已有单进程生产的完成子集可以由多进程重新核验。
+
+子集读取器在本次调用内实际执行全部原生历史、未来和答案检查，再返回已检查的行。
+后续预检复用这次结果，继续执行合并分割隔离和全部词元检查。
+旧四类回放仍走其原有逐条原生校验路径。完成标志或重新计算的哈希不能代替答案校验：
+源文件与子集同时被改写并重新绑定时，错误答案仍必须被原生规则拒收。
+
+`selection`与`checked_subset`的Python接口接受可选`workers`，默认值仍为1；
+并行执行使用有界、保持输入顺序的原生映射器。此改动针对CPU数据接收，训练预算、精度、
+优化器及最终能力验收保持原有合同。
 
 ## 能力验收
 

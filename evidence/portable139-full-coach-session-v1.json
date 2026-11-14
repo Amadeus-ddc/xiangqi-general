@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_actual_native139_export_relocated_full_CPU_coach_workflow_raw_quality_failure_preserved",
+  "checked_utc": "2026-11-14T10:34:26.250611+00:00",
+  "selected_development_model_step": 12000,
+  "selected_checkpoint_sha256": "dcef22a6789c45b18b002d802dd76175eeb289131e9eada51107df37bf0e7a8e",
+  "runtime_source_modules": 139,
+  "bundle_manifest_sha256": "c58fee870a41971f6b71de53d431721b3b281de7b555fcc37a0af84a13178ba8",
+  "bound_inference_assets": 15,
+  "trainable_tensors": 624,
+  "trainable_parameters": 4694274592,
+  "all_native_exported_values_and_dtypes_exact": true,
+  "actual_model_generate_calls": 1,
+  "actual_fresh_expert_positions": 1,
+  "feature_cache_used": false,
+  "prompt_tokens": 145,
+  "generated_tokens": 417,
+  "max_new_tokens": 768,
+  "EOS_ended": true,
+  "raw_generated_token_decoding_independently_repeated": true,
+  "native_board_vocabulary_size": 105,
+  "actual_legal_user_move_and_undo_and_save": true,
+  "session_save_snapshots": 4,
+  "observed_file_trace_excludes_original_models_datasets_training_checkpoint": true,
+  "original_assets_not_hidden_by_OS_sandbox": true,
+  "raw_rule_verdict": {
+    "valid": false,
+    "errors": [
+      "illegal_pv",
+      "illegal_branch_pv",
+      "illegal_branch_pv"
+    ],
+    "strategic_prose_verdict": "requires_separate_human_review"
+  },
+  "invalid_answer_warning_printed": true,
+  "external_oracle_used": false,
+  "answer_repaired": false,
+  "CUDA_initialized": false,
+  "physical_GPUs": [],
+  "private_receipt_sha256": {
+    "verification.json": "538d053c879e64a7bcc0401098e032b9c15cca97b22bfedf6d5589b0c90792ce",
+    "FRESH139_NATIVE_EXPORT_VERIFICATION.json": "9ada95aad813ed5d56cc1b218d1c44f5acf91b123abb2291e5e9a978d0b0e3ea",
+    "COACH_SESSION_VERIFICATION.json": "4c5cbfe51414532cd2e369c1222da0408280e099b2f7f1d8c5fe92491fe9809a",
+    "actual-generated-token-ids.json": "1eea32bffe0a0c36a32d9bfdb80cf6b58b10eb6064ba80ff7233a53efeb0334b",
+    "coach-openat.trace": "660ef87cc74b443faf38c96915b64d6fb35384031cf7c005ebbbfc7ecdff2318",
+    "ROOT_COMPLETE139_PORTABLE_COACH_READBACK.json": "7394000574b844bdb432932c6c9f35133e776107295ebb951f3b37243639f009"
+  },
+  "weights_published": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "new_SGD_updates": 0,
+  "full_goal_complete": false
+}

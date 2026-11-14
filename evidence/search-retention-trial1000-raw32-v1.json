@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "status": "completed_optimization_attempt_and_paired_development_rule_readback_no_new_selected_model",
+  "checked_utc": "2026-11-14T10:31:15.021129+00:00",
+  "training_attempt": {
+    "actual_optimizer_updates": 1000,
+    "selected_step_relative_to_start": 0,
+    "model_promoted": false,
+    "new_search_training_rows": 971,
+    "original_coaching_replay_training_rows": 2048,
+    "six_task_replay_training_rows": 12288,
+    "total_distinct_training_rows": 15307,
+    "validation_rows": 3749,
+    "actual_row_consumptions_including_second_pass": 29977,
+    "actual_supervised_tokens": 3259117,
+    "global_batch_size": 30,
+    "updates_per_complete_pass": 511,
+    "minimum_updates": 511,
+    "maximum_compiled_updates": 2044,
+    "validation_interval": 250,
+    "patience": 4,
+    "initial_validation_nll": 0.384295152300609,
+    "periodic_raw_weight_validation": [
+      {
+        "step": 250,
+        "nll": 0.3910194810647543,
+        "best_step": 0
+      },
+      {
+        "step": 500,
+        "nll": 0.39045921813716117,
+        "best_step": 0
+      },
+      {
+        "step": 750,
+        "nll": 0.4182344822659003,
+        "best_step": 0
+      },
+      {
+        "step": 1000,
+        "nll": 0.4171805744679892,
+        "best_step": 0
+      }
+    ],
+    "final_validation_nll_after_restoring_selected_start": 0.384295152300609,
+    "final_value_is_not_raw_step1000_score": true,
+    "full_decoder": true,
+    "trainable_parameters": 4694274592,
+    "trainable_tensors": 624,
+    "parameter_dtype": "float32",
+    "compute_dtype": "bfloat16",
+    "Adam_moments_on_CPU": true,
+    "formal_round_rejected_only_for_no_positive_selected_checkpoint": true,
+    "training_hardware_failure_not_established": true,
+    "complete_native1000_weights_optimizer_RNG_and_data_state_preserved": true
+  },
+  "paired_coaching_diagnostic": {
+    "positions": 32,
+    "declared_game_ids": 29,
+    "color_mirror_rows": 4,
+    "not32_independent_games": true,
+    "answers": 64,
+    "conditions": [
+      "parent12000",
+      "unselected750"
+    ],
+    "device": "cpu",
+    "model_dtype": "float32",
+    "sampling": "greedy",
+    "max_new_tokens": 768,
+    "cached_expert_features": true,
+    "all_raw_token_decodings_and_native_rules_independently_reopened": true,
+    "results": {
+      "parent12000": {
+        "responses": 32,
+        "first_move_legal": 32,
+        "full_contract_valid": 4,
+        "main_PV_legal": 20,
+        "EOS_count": 32,
+        "truncated_count": 0,
+        "errors": {
+          "illegal_pv": 12,
+          "illegal_branch_pv": 50,
+          "invalid_candidates": 2
+        }
+      },
+      "unselected750": {
+        "responses": 32,
+        "first_move_legal": 31,
+        "full_contract_valid": 3,
+        "main_PV_legal": 19,
+        "EOS_count": 32,
+        "truncated_count": 0,
+        "errors": {
+          "illegal_or_missing_move": 1,
+          "illegal_pv": 13,
+          "invalid_candidates": 4,
+          "illegal_branch_pv": 49,
+          "branch_candidates_mismatch": 1
+        }
+      }
+    },
+    "paired_transitions": {
+      "first_move_legal": {
+        "both_pass": 31,
+        "parent_only": 1,
+        "trained_only": 0,
+        "both_fail": 0
+      },
+      "full_contract": {
+        "both_pass": 0,
+        "parent_only": 4,
+        "trained_only": 3,
+        "both_fail": 25
+      },
+      "main_PV_legal": {
+        "both_pass": 15,
+        "parent_only": 5,
+        "trained_only": 4,
+        "both_fail": 8
+      }
+    },
+    "no_net_rule_quality_gain_demonstrated": true,
+    "population_decline_not_statistically_established": true,
+    "not_a_GPU_execution_equivalence_proof": true,
+    "strategic_prose_quality_not_measured_by_this_rule_diagnostic": true
+  },
+  "actual_native139_CPU_data_preflight": {
+    "train_validation_rows_tokenized": 19056,
+    "training_rows": 15307,
+    "validation_rows": 3749,
+    "no_supervision_truncation": true,
+    "independent_test_rows_tokenized": 0,
+    "new_model_loaded_or_training_started": false,
+    "future_GPU_capacity_and_exact_resume_still_required": true
+  },
+  "current_selected_development_model": {
+    "selected_step_in_auxiliary_training": 12000,
+    "checkpoint_sha256": "dcef22a6789c45b18b002d802dd76175eeb289131e9eada51107df37bf0e7a8e",
+    "base_model": "Qwen3-4B",
+    "final_model_selected": false
+  },
+  "private_receipt_sha256": {
+    "native_training_manifest": "efbbb7243e04e6a359cb0d47b0dd0d23c778cb612e64efc52d9123f742c1710f",
+    "native_training_metrics": "cf34c5510123236a140868748d5800cec17caffcd25e4c6690edaaf4a13e3585",
+    "native_training_log": "0eaa997aaeb9ada2db5a724401adab8bff6ea9fa097d0a61ea70ee4f0e22f89d",
+    "selection_gate_readback": "07c2f8591a7aff64b4b02dbda5ed40bd758994083972dcbcc7d19945a8968112",
+    "full1000_checkpoint_metadata": "22cbc056dd4c7944e9ac7b18acd2b99590e554dc6a389e721cec3848f8e6ffdf",
+    "actual_paired_raw_generation": "748cd0dc5077fcc11ce1202b2bd9e69823bbddbf8795f384395dc4bad7324ccf",
+    "independent_raw64_readback": "cc7d2e12f93d00b807a2c1a0f9344fc13dfdb8419fb26c681f192fb32969e7fc",
+    "paired_comparison": "1229a3fbf4a21a1989dc218f0b1e9a25132ed2da65290ea9af5cf9a866820749",
+    "cohort_and_illegal_root_readback": "81bca6b069b040817e4b6379e01c9a1c30136efde364400b9cd24a8533210a7a",
+    "full139_data_CPU_preflight": "57f742555bb2b2da5d98cce579baab9d86cea595991f7b7aedd303fd26db8b10"
+  },
+  "successful_formal_search_rounds_not_incremented": true,
+  "original384_baseline_not_completed_by_this_evidence": true,
+  "independent_final_test_used": false,
+  "weights_published": false,
+  "strong_play_or_reliable_coaching_proven": false,
+  "full_goal_complete": false
+}
