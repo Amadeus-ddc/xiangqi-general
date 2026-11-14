@@ -1,4 +1,5 @@
 """Train one real search-distillation round after its data and GPU preflights."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 import json
 import math
@@ -9,6 +10,7 @@ import sys
 import torch
 
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
+from .explanation_answer_format import require_matching_answer_profiles
 from .curriculum_data import STAGES
 from .evidence import atomic_json, code_identity, digest, manifest
 from .finite_training import (FINITE_PROFILE, FULL_SOURCE_PROFILE, check_full_source_selection,
@@ -27,10 +29,11 @@ from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
 
 def compile_recipe(template, token, root):
     """Cover all accepted labels at least once within the explicit update cap."""
-    if (token.get('status') != 'complete' or token.get('kind') != TOKEN_KIND or
+    if (token.get('status') != 'complete' or checked_token_answer_kind(token) != TOKEN_KIND or
             token['verification'].get('all_train_validation_supervision_fits_without_truncation') is not True or
             token['verification'].get('independent_test_used_for_training_or_selection') is not False):
         raise ValueError('Require the exact completed search-label token preflight')
+    require_matching_answer_profiles(template, token.get('config', {}))
     validation_profile = template.get('validation_profile', LEGACY_VALIDATION_PROFILE)
     validation_stages = stage_names(validation_profile)
     joint_validation = validation_profile in (JOINT_VALIDATION_PROFILE, AUXILIARY_VALIDATION_PROFILE)

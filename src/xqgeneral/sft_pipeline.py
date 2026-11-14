@@ -1,4 +1,5 @@
 """Wait for four courses, verify full-decoder execution, then train initial SFT."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 import json
 from pathlib import Path
@@ -45,7 +46,7 @@ def run_pipeline(curriculum, producer_session, recipe_path, token_manifest, outp
     prefix = declared_prefix_reference(recipe)
     token = json.loads(token_manifest.read_text())
     checked_artifacts(token)
-    if token.get('kind') != 'latent_only_reviewed_explanation_data_preflight' or token['config']['data'] != recipe['data_path']:
+    if checked_token_answer_kind(token) != 'latent_only_reviewed_explanation_data_preflight' or token['config']['data'] != recipe['data_path']:
         raise ValueError('The sequential pipeline needs the exact completed reviewed-data token preflight')
     contract = {'curriculum': str(curriculum), 'producer_session': producer_session,
         'recipe': str(recipe_path), 'recipe_sha256': digest(recipe_path), 'token_preflight': str(token_manifest),

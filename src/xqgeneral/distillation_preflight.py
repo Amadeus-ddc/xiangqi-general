@@ -19,6 +19,8 @@ from .foundation_preflight import bounded_results, native_answer, validate_task
 from .recorded_coach import ordered_native_map
 from .recorded_search_inputs import BoundInputs
 from .sft import checked_parent
+from .explanation_answer_format import (EXPLANATION_FIRST_PROFILE, answer_profile_kwargs,
+                                       checked_answer_profile, profiled_token_kind)
 from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
     COACHING_PROFILE as COACHING_REPLAY_PROFILE,
     LEGACY_PROFILE as LEGACY_REPLAY_PROFILE)
@@ -192,9 +194,10 @@ def native_replay_label(row):
 
 
 def preflight(source, parent_completion, data, features, foundation_preflight, output, *, max_tokens=2048,
-              workers=8, replay_data_paths=(), replay_profile=LEGACY_REPLAY_PROFILE):
+              workers=8, replay_data_paths=(), replay_profile=LEGACY_REPLAY_PROFILE, explanation_answer_profile=None):
     if type(workers) is not int or workers < 1 or type(max_tokens) is not int or max_tokens < 1:
         raise ValueError('Positive native/token worker and length budgets are required')
+    profile = checked_answer_profile(explanation_answer_profile)
     root, data, source = Path(output), Path(data), Path(source)
     if root.exists():
         raise FileExistsError('Preserve completed and interrupted preflights; use a fresh output')
@@ -270,12 +273,13 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
                 maxima[item['split']] = max(maxima[item['split']], item['tokens'])
                 token_counts[item['split']] += 1
                 handle.write(json.dumps(item) + '\n')
+        initargs = (str(model_path), max_tokens) + ((profile,) if profile is not None else ())
         if workers == 1:
-            token_initializer(str(model_path), max_tokens)
+            token_initializer(*initargs)
             emit(token_chunk(eligible))
         else:
             with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'),
-                    initializer=token_initializer, initargs=(str(model_path), max_tokens)) as pool:
+                    initializer=token_initializer, initargs=initargs) as pool:
                 for result in bounded_results(pool, token_chunk, eligible, workers, 128):
                     emit(result)
     expected_tokens = Counter(row['split'] for row in eligible)
@@ -299,8 +303,9 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
             independent_test_rows_tokenized=0)
     if base_reference is not None:
         result['pinned_base_model_manifest'] = base_reference
+    result.update(answer_profile_kwargs({'explanation_answer_profile': profile}))
     atomic_json(root / 'verification.json', result)
-    proof = manifest(TOKEN_KIND, {'data': str(data), 'source': str(source),
+    proof = manifest(profiled_token_kind(TOKEN_KIND, profile), {'data': str(data), 'source': str(source),
         'parent_completion': str(parent_completion), 'foundation_preflight': str(foundation_preflight),
         'evaluation_filter_profile': EVALUATION_FILTER_PROFILE,
         'max_tokens': max_tokens, 'workers': workers}, outputs=[observed, root / 'verification.json'], verification=result)
@@ -311,6 +316,7 @@ def preflight(source, parent_completion, data, features, foundation_preflight, o
         proof['config']['replay_data_paths'] = replay_result['data_paths']
     if replay_profile != LEGACY_REPLAY_PROFILE:
         proof['config']['replay_profile'] = replay_profile
+    proof['config'].update(answer_profile_kwargs({'explanation_answer_profile': profile}))
     proof['cache_header_only_input'] = {'path': str(features), **bound.artifacts[str(features)],
                                        'fresh_full_bytes_hash_verified_by_this_preflight': True}
     atomic_json(root / 'manifest.json', proof)
@@ -326,10 +332,11 @@ def _main():
     parser.add_argument('--replay-data', nargs='+', default=[], help='Certified original-course replay subsets')
     parser.add_argument('--replay-profile', choices=[LEGACY_REPLAY_PROFILE, AUXILIARY_REPLAY_PROFILE, COACHING_REPLAY_PROFILE],
                         default=LEGACY_REPLAY_PROFILE)
+    parser.add_argument('--explanation-answer-profile', choices=[EXPLANATION_FIRST_PROFILE])
     args = parser.parse_args()
     print(json.dumps(preflight(args.init, args.parent_completion, args.data, args.features,
         args.foundation_preflight, args.output, max_tokens=args.max_tokens, workers=args.workers,
-        replay_data_paths=args.replay_data, replay_profile=args.replay_profile)), flush=True)
+        replay_data_paths=args.replay_data, replay_profile=args.replay_profile, **answer_profile_kwargs(vars(args)))), flush=True)
 
 
 def main():

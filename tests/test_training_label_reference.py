@@ -315,19 +315,28 @@ def test_extra_score_policy_refuses_other_protocol_errors_or_a_different_best_mo
 
 @pytest.mark.skipif(not hasattr(os, 'pidfd_open'), reason='Linux process descriptors required')
 def test_orphan_reader_keeps_the_lock_after_its_original_parent_exits(tmp_path):
+    child_code = '''from pathlib import Path
+import hashlib,json,os,sys,time
+proc=Path('/proc/self');stat=(proc/'stat').read_text().rsplit(')',1)[1].split()
+command=(proc/'cmdline').read_bytes()
+assert command
+Path(sys.argv[1]).write_text(json.dumps(dict(pid=os.getpid(),start_time=int(stat[19]),command_sha256=hashlib.sha256(command).hexdigest())))
+print('ready',flush=True)
+time.sleep(30)
+'''
     parent = '''from pathlib import Path
-import hashlib,json,os,subprocess,sys
+import os,subprocess,sys
 from xqgeneral.training_label_reference import owned_run
 root=Path(sys.argv[1])
 with owned_run(root/'reference',False) as descriptor:
  (root/'reference/plan.json').write_text('{"purpose":"controlled_lock_probe"}')
- child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'],pass_fds=(descriptor,),stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
- proc=Path('/proc')/str(child.pid);stat=(proc/'stat').read_text().rsplit(')',1)[1].split()
- (root/'child.json').write_text(json.dumps(dict(pid=child.pid,start_time=int(stat[19]),command_sha256=hashlib.sha256((proc/'cmdline').read_bytes()).hexdigest())))
+ child=subprocess.Popen([sys.executable,'-c',sys.argv[2],str(root/'child.json')],pass_fds=(descriptor,),stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,text=True)
+ assert child.stdout.readline()=='ready\\n'
+ child.stdout.close()
  os._exit(0)
 '''
     env = dict(os.environ, PYTHONPATH=str(Path(reference.__file__).resolve().parent.parent))
-    subprocess.run([sys.executable, '-P', '-c', parent, str(tmp_path)], env=env, check=True)
+    subprocess.run([sys.executable, '-P', '-c', parent, str(tmp_path), child_code], env=env, check=True)
     child = reference.read(tmp_path / 'child.json')
     import hashlib
     proc = Path('/proc') / str(child['pid'])

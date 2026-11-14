@@ -1,4 +1,5 @@
 """Recheck all four validation courses after completed initial or distilled SFT."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 from collections import Counter, defaultdict
 import json
@@ -72,7 +73,7 @@ def course_reference(parent, config, core):
         if token_path in seen:raise ValueError('Cyclic distillation completion lineage')
         seen.add(token_path)
         token = bound_json(core, token_path, current['inputs'][token_path])
-        if token.get('status') != 'complete' or token.get('kind') != TOKEN_KIND:
+        if token.get('status') != 'complete' or checked_token_answer_kind(token) != TOKEN_KIND:
             raise ValueError('Distilled replay requires its actual completed data preflight')
         previous_path = token['config']['parent_completion']
         previous = bound_json(core, previous_path, current['inputs'][previous_path])

@@ -1,4 +1,5 @@
 """Full-decoder update, worker memory and exact-continuation preflight."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 import json
 import math
@@ -241,13 +242,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     recipe = guard.json(recipe_path)
     token = guard.json(token_manifest)
     if token.get('status') != 'complete':raise ValueError('Completed token preflight evidence is required')
+    from .explanation_answer_format import require_matching_answer_profiles
+    require_matching_answer_profiles(recipe, token.get('config', {}))
     for section in ['inputs', 'outputs']:
         for path, binding in token[section].items():
             guard.bind(path, binding)
     from .distillation_preflight import TOKEN_KIND, completed_parent
     from .auxiliary_policy_preflight import KIND as AUXILIARY_KIND, auxiliary_parent
-    distillation = token.get('kind') == TOKEN_KIND
-    auxiliary = token.get('kind') == AUXILIARY_KIND
+    distillation = checked_token_answer_kind(token) == TOKEN_KIND
+    auxiliary = checked_token_answer_kind(token) == AUXILIARY_KIND
     post_sft = distillation or auxiliary
     topology = auxiliary_topology(recipe) if auxiliary else search_topology(recipe) if distillation else None
     world = topology['world_size'] if post_sft else 4
@@ -277,7 +280,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         raise ValueError('Preflight requires the exact deterministic declared-worker full-decoder recipe')
     token_kind = AUXILIARY_KIND if auxiliary else TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight'
     token_data = token['config']['logical']['data'] if auxiliary else token['config']['data']
-    if token.get('kind') != token_kind or token_data != recipe['data_path']:
+    if checked_token_answer_kind(token) != token_kind or token_data != recipe['data_path']:
         raise ValueError('A completed token preflight for the exact reviewed data is required')
     if (token['verification']['token_limit'] != formal['max_tokens'] or
             not token['verification']['all_train_validation_supervision_fits_without_truncation']):
