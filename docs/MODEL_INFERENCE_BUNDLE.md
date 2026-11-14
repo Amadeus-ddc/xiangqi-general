@@ -80,6 +80,15 @@ xqgeneral-coach --checkpoint runs/xiangqi-general-inference-v1 --interactive
 
 ## CPU 推理
 
+命令行支持显式选择设备，省略 `--device` 时使用 `cuda`。例如：
+
+```bash
+python -m xqgeneral.coach --checkpoint MODEL_DIR --device cpu --interactive --output runs/study.json
+python -m xqgeneral.ask --adapter MODEL_DIR --device cpu --question '轮到哪方走棋？'
+```
+
+模型目录使用其绑定的专家；原检查点文件仍可通过 `--weights` 指定专家权重。`cuda:0` 等设备编号对应当前进程可见的设备。
+
 Python 接口 `Predictor(checkpoint, device='cpu')` 使用 FP32 模型和桥接层，无需外加 CPU 自动混合精度上下文。专家特征继续先经过训练使用的 FP16 缓存舍入和 BF16 转换；送入 CPU 桥接层之前再精确扩为 FP32。这不改写缓存、参数或原始回答，也不改变 GPU 的生成分支。
 
 旧版默认 CPU 路径曾在密集桥接层的线性投影处因 BF16 特征与 FP32 权重不匹配而失败。另行显式启用 CPU BF16 计算的控制仍属于不同执行配置，其输出不能与默认 FP32 计算混作同一结果。缓存与现场特征、记忆消融和完整模型推理各自需要验证；CPU 组件检查不代表棋力或讲解质量通过。
