@@ -15,6 +15,20 @@ from xqgeneral.explanation_answer_format import (
 )
 
 
+def test_explanation_profile_preserves_admission_of_the_protected_native_course_corpus():
+    from xqgeneral import oracle_policy_corpus, search_protection
+
+    current = oracle_policy_corpus._closure()
+    producer = dict(current)
+    # The real protected corpus binds this original foundation module. Its course
+    # tokenizer does not consume explanation targets and must retain its identity.
+    producer['foundation_preflight.py'] = '30452d75da538b0383cefb92e1c90546828cb307ec37cea55b8a2044ceefdf03'
+    producer['oracle.py'] = search_protection._LEGACY_ORACLE
+    result = search_protection._decoder_compatibility(producer, current)
+    assert result['profile'] == 'exact_successful_decoder_typed_unscored_error_upgrade_v2'
+    assert result['all_other_closure_modules_byte_identical'] is True
+
+
 def payload():
     return dict(move='a0a1', pv=['a0a1', 'a9a8'],
                 facts=dict(piece='红车', check=False, integer=1, decimal=1.0),
