@@ -21,6 +21,7 @@ from .finite_training import data_profile, prepare_finite_epochs
 from .training_index import IndexedTrainingRows, index_paths, training_row_indexes
 from .feature_store import FeatureStore, feature_paths, gather_features, is_feature_store, open_feature_cache
 from .verified_inputs import input_digest_execution, input_session_from_environment
+from .explanation_answer_format import (answer_profile_kwargs, checked_answer_profile, serialized_answer)
 from .training_parallel import (parallel_settings, shard_training_model, parameter_prefix,
                                 gather_sharded_state, restore_sharded_optimizer, load_sharded_trainable)
 
@@ -65,6 +66,7 @@ def configure_determinism(enabled):
 
 def training_memory_settings(config):
     """Validate explicit memory choices while retaining the legacy defaults."""
+    checked_answer_profile(config.get('explanation_answer_profile'))
     foreach = config.get('optimizer_foreach')
     bucket_view = config.get('ddp_gradient_as_bucket_view', False)
     if foreach is not None and type(foreach) is not bool:
@@ -239,9 +241,10 @@ def messages(record, mode='bridge', board_text=None):
     return [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': text}]
 
 
-def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=False, board_text=None):
+def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=False, board_text=None, *,
+                  explanation_answer_profile=None):
     text = tokenizer.apply_chat_template(messages(record, mode, board_text), tokenize=False, add_generation_prompt=True)
-    answer = record['answer']
+    answer = serialized_answer(record, explanation_answer_profile)
     if board_tokens:
         text, answer = encode_board_text(text), encode_board_text(answer)
     prefix = tokenizer.encode(text, add_special_tokens=False)
@@ -251,8 +254,10 @@ def encode_record(tokenizer, record, max_tokens, mode='bridge', board_tokens=Fal
     return prefix + target, [-100] * len(prefix) + target
 
 
-def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_tokens=False, board_text=None):
-    pairs = [encode_record(tokenizer, r, max_tokens, mode, board_tokens, board_text) for r in records]
+def batch_inputs(tokenizer, records, max_tokens, device, mode='bridge', board_tokens=False, board_text=None, *,
+                 explanation_answer_profile=None):
+    options = answer_profile_kwargs({'explanation_answer_profile': explanation_answer_profile})
+    pairs = [encode_record(tokenizer, r, max_tokens, mode, board_tokens, board_text, **options) for r in records]
     length = max(len(p[0]) for p in pairs)
     ids, labels, mask = [], [], []
     for inputs, targets in pairs:
@@ -359,7 +364,7 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
     for offset in range(0, len(rows), size):
         batch = rows[offset:offset + size]
         inputs = batch_inputs(tokenizer, batch, config['max_tokens'], device, config.get('mode', 'bridge'),
-                              config.get('board_tokens', False), config.get('board_text'))
+                              config.get('board_tokens', False), config.get('board_text'), **answer_profile_kwargs(config))
         tokens = int((inputs['labels'][:, 1:] != -100).sum())
         features = select_features(cache, indices, feature_rows[offset:offset + size], device, zero=zero)
         with model.board_context(features), model_autocast(device, autocast_cache_setting(config)):
@@ -372,7 +377,9 @@ def evaluate(model, tokenizer, rows, cache, indices, config, device, zero=False,
 
 
 @torch.no_grad()
-def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None, autocast_cache_enabled=True, synced_gpus=False):
+def generate_examples(model, tokenizer, rows, cache, indices, device, mode='bridge', max_new_tokens=64, board_tokens=False, board_text=None, autocast_cache_enabled=True, synced_gpus=False, *,
+                      explanation_answer_profile=None):
+    checked_answer_profile(explanation_answer_profile)
     model.eval()
     results = []
     for record in rows:
@@ -387,15 +394,18 @@ def generate_examples(model, tokenizer, rows, cache, indices, device, mode='brid
         answer = tokenizer.decode(tokens[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True).strip()
         if board_tokens:
             answer = decode_board_text(answer)
+        expected = serialized_answer(record, explanation_answer_profile)
         results.append({'id': record['id'], 'game_id': record['game_id'], 'stage': record['stage'],
-                        'question': record['question'], 'expected': record['answer'], 'generated': answer,
-                        'exact_match': answer == record['answer']})
+                        'question': record['question'], 'expected': expected, 'generated': answer,
+                        'exact_match': answer == expected})
     return results
 
 
 def compatible_resume(saved, requested):
     # Optimizer/data/sampling contracts cannot change in an exact continuation.
     from .course_tasks import row_profile
+    if checked_answer_profile(saved.get('explanation_answer_profile')) != checked_answer_profile(requested.get('explanation_answer_profile')):
+        raise ValueError('Resume explanation answer profile differs; initialize a new experiment instead')
     if training_memory_settings(saved) != training_memory_settings(requested):
         raise ValueError('Resume optimizer/DDP memory settings differ; initialize a new experiment instead')
     if microbatch_padding_policy(saved) != microbatch_padding_policy(requested):
@@ -594,7 +604,7 @@ def _main():
         else:
             records, data_batch = finite_epochs.batch(step, rank)
         inputs = batch_inputs(tokenizer, records, config['max_tokens'], device, config.get('mode', 'bridge'),
-                              config.get('board_tokens', False), config.get('board_text'))
+                              config.get('board_tokens', False), config.get('board_text'), **answer_profile_kwargs(config))
         local_tokens = (inputs['labels'][:, 1:] != -100).sum().to(dtype=torch.float32)
         total_tokens = local_tokens.clone()
         if world > 1:
@@ -737,7 +747,8 @@ def _main():
         examples = generate_examples(model, tokenizer, validation[:config.get('generation_examples', 12)], cache,
                                      indices, device, config.get('mode', 'bridge'), config.get('max_new_tokens', 64),
                                      config.get('board_tokens', False), config.get('board_text'),
-                                     autocast_cache_enabled=autocast_cache_setting(config), synced_gpus=sharded)
+                                     autocast_cache_enabled=autocast_cache_setting(config), synced_gpus=sharded,
+                                     **answer_profile_kwargs(config))
     if rank == 0:
         atomic_json(dest / 'examples.json', examples)
         result = {'mode': config.get('mode', 'bridge'), 'courses': list(mixture), 'mixture': mixture,
@@ -775,6 +786,7 @@ def _main():
                   'seconds': time.monotonic() - started, 'purpose': config['purpose']}
         if sharded:
             result['decoder_probe_scope'] = 'rank_zero_local_parameter_shard'
+        result.update(answer_profile_kwargs(config))
         inputs = [p / f'{s}.jsonl' for p in data_roots for s in ['train', 'validation']]
         if config.get('init_from'):
             inputs.append(config['init_from'])

@@ -9,6 +9,7 @@ def main():
     parser = argparse.ArgumentParser(description="Xiangqi General inference with complete game history")
     parser.add_argument("--adapter", default="runs/pilot-v1/adapter.pt", help="Checkpoint file or exported model directory")
     parser.add_argument("--weights", help="Px0 weights; exported model directories include their own weights")
+    parser.add_argument("--device", default="cuda", help="Inference device, for example cpu, cuda or cuda:0")
     parser.add_argument("--initial-fen", default=START_FEN)
     parser.add_argument("--moves", nargs="*", default=[])
     parser.add_argument("--question", required=True)
@@ -17,7 +18,7 @@ def main():
     torch.set_num_threads(8)
     history = replay(args.initial_fen, args.moves)
     record = {"fen": history[-1], "history": history, "question": args.question}
-    predictor = Predictor(args.adapter, args.weights)
+    predictor = Predictor(args.adapter, args.weights, device=args.device)
     answer = predictor.generate(record, max_new_tokens=args.max_new_tokens)
     print(json.dumps({"fen": record["fen"], "question": args.question, "answer": answer,
                       "checkpoint": args.adapter, "mode": predictor.config.get('mode', 'bridge'),

@@ -154,7 +154,8 @@ def query_with_profile(query, profile):
     return query
 
 
-@pytest.mark.parametrize('profile', [RAW, VERIFIED])
+@pytest.mark.parametrize('profile', [RAW, VERIFIED, 'grounded_child_prose_v2',
+                                     'grounded_terminal_child_prose_v3'])
 def test_profile_cache_batch_and_strict_collection_survive_native_CLI_chain(tmp_path, monkeypatch, profile):
     from test_stochastic_search_generation import POLICY
     pipeline, validation, config, query, _ = setup_pilot(tmp_path, monkeypatch)
@@ -175,7 +176,7 @@ def test_profile_cache_batch_and_strict_collection_survive_native_CLI_chain(tmp_
     assert proof['verification']['consolidation_profile'] == profile
     evidence = proof['verification']['consolidation_child_prose_evidence']
     assert evidence['profile'] == profile and evidence['queries'] == 1
-    assert bool(evidence['children_with_prose']) == (profile == RAW)
+    assert bool(evidence['children_with_prose']) == (profile != VERIFIED)
     assert result == search_pilot.run_pilot(pipeline, validation, 'owned-validation', config, out, resume=True)
     assert len(chain.commands) == 3 and chain.student_loads == chain.teacher_loads == 1
 

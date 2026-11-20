@@ -141,6 +141,31 @@ def test_native_preflight_regrades_replay_and_tokenizes_all_actual_sources_excep
     assert all(str(replay / name) in proof['inputs'] for name in ['manifest.json', 'train.jsonl', 'validation.jsonl'])
 
 
+def test_answer_profile_reaches_token_initializer_and_completed_native_proof(tmp_path, monkeypatch):
+    from xqgeneral.explanation_answer_format import EXPLANATION_FIRST_PROFILE, checked_token_answer_kind
+    args, replay, rows, originals, tokenized = native_replay(tmp_path, monkeypatch)
+    initializer = distillation_preflight.token_initializer
+    seen = []
+
+    def observe(model_path, limit, profile):
+        seen.append(profile)
+        return initializer(model_path, limit)
+
+    monkeypatch.setattr(distillation_preflight, 'token_initializer', observe)
+    output = tmp_path / 'ordered-token-proof'
+    before = {str(path): path.read_bytes() for path in Path(args[2]).glob('*.jsonl')}
+    result = distillation_preflight.preflight(*args, output, workers=1, replay_data_paths=[replay],
+        explanation_answer_profile=EXPLANATION_FIRST_PROFILE)
+    proof = json.loads((output / 'manifest.json').read_text())
+    assert seen == [EXPLANATION_FIRST_PROFILE]
+    assert result['explanation_answer_profile'] == proof['config']['explanation_answer_profile'] == EXPLANATION_FIRST_PROFILE
+    assert proof['kind'] != distillation_preflight.TOKEN_KIND
+    assert checked_token_answer_kind(proof) == distillation_preflight.TOKEN_KIND
+    assert Counter(tokenized) == Counter(row['id'] for row in [*originals, *rows] if row['split'] != 'test')
+    assert all(Path(path).read_bytes() == raw for path, raw in before.items())
+    assert result['independent_test_rows_tokenized'] == 0
+
+
 @pytest.mark.parametrize('problem', ['answer', 'heldout_history', 'duplicate_ID', 'duplicate_directory', 'uncertified'])
 def test_replay_claims_do_not_replace_native_answers_history_isolation_or_unique_sources(tmp_path, monkeypatch, problem):
     args, replay, rows, originals, tokenized = native_replay(tmp_path, monkeypatch)

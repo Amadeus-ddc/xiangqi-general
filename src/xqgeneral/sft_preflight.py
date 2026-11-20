@@ -1,5 +1,7 @@
 """Full-decoder update, worker memory and exact-continuation preflight."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
+import gc
 import json
 import math
 from pathlib import Path
@@ -10,7 +12,7 @@ import torch
 from .evidence import atomic_json, code_identity, digest, load_jsonl, manifest, write_jsonl
 from .modeling import expanded_initialization_reference
 from .sft import checked_parent, prepare_config, training_command
-from .training import atomic_checkpoint, compatible_resume, training_input_paths
+from .training import atomic_checkpoint, compatible_resume, training_input_paths, load_training_rows
 from .feature_store import feature_paths
 from .training_index import build_index, index_paths, IndexedTrainingRows
 from .finite_training import FINITE_PROFILE, prepare_finite_epochs
@@ -164,12 +166,15 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
     finite_state = {}
     if config.get('training_data_profile') == FINITE_PROFILE:
         roots = [Path(config['data_path']), *[Path(p) for p in config.get('replay_data_paths', [])]]
-        rows = IndexedTrainingRows(config['row_index_paths']['train'],
-            [path / 'train.jsonl' for path in roots], config['mixture'])
+        paths = [path / 'train.jsonl' for path in roots]
+        rows = (IndexedTrainingRows(config['row_index_paths']['train'], paths, config['mixture'])
+                if 'train' in config.get('row_index_paths', {}) else
+                load_training_rows(paths, config['mixture']))
         try:
             prepare_finite_epochs(rows, config['mixture'], config, world).check_resume(actual.get('data_state'), 4)
         finally:
-            rows.close()
+            if hasattr(rows, 'close'):
+                rows.close()
         finite_state = {'actual_finite_epoch_state_verified': True,
                         'training_data_state': actual['data_state']}
     compatible_resume(actual['config'], config)
@@ -213,10 +218,23 @@ def verify_updated_probe(root, initial_path, expected_inputs, config, execution_
                     not math.isfinite(item['total_memory_gib'])):
                 raise ValueError('Each actual GPU worker must report a successful finite memory measurement')
             resources.append(dict(item, run=run))
-    return {'world_size':world,'exact_resume': comparison, 'updated_tensors_by_group': changes,
+    result = {'world_size':world,'exact_resume': comparison, 'updated_tensors_by_group': changes,
             'trainable_tensors': len(initial), 'trainable_parameters': sum(t.numel() for t in initial.values()),
             'all_trainable_and_adam_states_finite_fp32': True, 'all_four_update_gradients_finite_nonzero': True,
             'actual_gpu_worker_resources': resources, **finite_state}
+    if config.get('optimizer_state_offload') == 'cpu':
+        from .optimizer_offload import validate_cpu_moment_placement
+        placements = []
+        for run, step in [('continuous', 2), ('continuous', 4), ('resumed', 2), ('resumed', 4)]:
+            path = root / run / f'optimizer-placement-step-{step}.json'
+            value = json.loads(path.read_text())
+            if value.get('actual_step') != step:
+                raise ValueError('Offloaded optimizer residency must identify its actual update')
+            validate_cpu_moment_placement(value, result['trainable_tensors'], result['trainable_parameters'])
+            placements.append(dict(run=run, artifact_sha256=digest(path), **value))
+        result.update(actual_cpu_optimizer_state_placement_verified=True,
+                      actual_optimizer_state_placement=placements)
+    return result
 
 
 def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
@@ -225,13 +243,15 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     recipe = guard.json(recipe_path)
     token = guard.json(token_manifest)
     if token.get('status') != 'complete':raise ValueError('Completed token preflight evidence is required')
+    from .explanation_answer_format import require_matching_answer_profiles
+    require_matching_answer_profiles(recipe, token.get('config', {}))
     for section in ['inputs', 'outputs']:
         for path, binding in token[section].items():
             guard.bind(path, binding)
     from .distillation_preflight import TOKEN_KIND, completed_parent
     from .auxiliary_policy_preflight import KIND as AUXILIARY_KIND, auxiliary_parent
-    distillation = token.get('kind') == TOKEN_KIND
-    auxiliary = token.get('kind') == AUXILIARY_KIND
+    distillation = checked_token_answer_kind(token) == TOKEN_KIND
+    auxiliary = checked_token_answer_kind(token) == AUXILIARY_KIND
     post_sft = distillation or auxiliary
     topology = auxiliary_topology(recipe) if auxiliary else search_topology(recipe) if distillation else None
     world = topology['world_size'] if post_sft else 4
@@ -261,7 +281,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
         raise ValueError('Preflight requires the exact deterministic declared-worker full-decoder recipe')
     token_kind = AUXILIARY_KIND if auxiliary else TOKEN_KIND if distillation else 'latent_only_reviewed_explanation_data_preflight'
     token_data = token['config']['logical']['data'] if auxiliary else token['config']['data']
-    if token.get('kind') != token_kind or token_data != recipe['data_path']:
+    if checked_token_answer_kind(token) != token_kind or token_data != recipe['data_path']:
         raise ValueError('A completed token preflight for the exact reviewed data is required')
     if (token['verification']['token_limit'] != formal['max_tokens'] or
             not token['verification']['all_train_validation_supervision_fits_without_truncation']):
@@ -323,8 +343,13 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     if not initial.exists():
         torch.manual_seed(common['seed'])
         state = expanded_initialization_reference(common, source)
-        atomic_checkpoint(initial, {'trainable': state, 'config': common, 'code': contract['code']})
-        del state
+        try:
+            atomic_checkpoint(initial, {'trainable': state, 'config': common, 'code': contract['code']})
+        finally:
+            del state
+            # Board injection hooks form model cycles. Reclaim the temporary
+            # CPU decoder before launching workers, even when saving fails.
+            gc.collect()
         atomic_json(initial_manifest, manifest('expanded_full_decoder_initial_reference', common,
             [Path(source), Path(source).parent / 'config.json', *[Path(p) for p in base_assets]], [initial],
             {'all_foundation_values_preserved': True, 'gpu_training_started': False}))
@@ -378,6 +403,7 @@ def run_preflight(source, recipe_path, token_manifest, output, *, resume=False):
     for run in ['continuous', 'resumed']:
         outputs += [root / run / name for name in ['latest.pt', 'training.jsonl', 'config.json', 'execution.json']]
         outputs += sorted((root / run).glob('resources-step-*-rank-*.json'))
+        outputs += sorted((root / run).glob('optimizer-placement-step-*.json'))
     inputs = [recipe_path, token_manifest, foundation_path, Path(source), Path(source).parent / 'manifest.json',
               Path(source).parent / 'config.json', *[Path(p) for p in token['inputs']], *[Path(p) for p in token['outputs']],
               *[Path(p) for p in base_assets]]

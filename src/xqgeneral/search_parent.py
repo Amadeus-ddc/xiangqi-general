@@ -1,4 +1,5 @@
 """CPU-only admission of evaluated descendants to the existing search pilot."""
+from .explanation_answer_format import checked_token_answer_kind
 import ast
 from pathlib import Path
 
@@ -17,9 +18,9 @@ INITIAL_ROUND_KIND = 'clean_curriculum_to_initial_sft_pipeline'
 
 def family(token):
     kinds = {INITIAL_TOKEN_KIND: 'clean', AUXILIARY_TOKEN_KIND: 'auxiliary', TOKEN_KIND: 'distilled'}
-    if token.get('kind') not in kinds:
+    if checked_token_answer_kind(token) not in kinds:
         raise ValueError('Search requires a declared initial, auxiliary or search-distillation token stage')
-    return kinds[token['kind']]
+    return kinds[checked_token_answer_kind(token)]
 
 
 def round_counts(proof):
@@ -41,7 +42,7 @@ def auxiliary_ancestors(source, proof, token, bound):
             raise ValueError('Completed search-parent lineage contains a cycle')
         seen.add(key)
         auxiliary = proof['kind'] == AUXILIARY_ROUND_KIND
-        if token.get('kind') != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND):
+        if checked_token_answer_kind(token) != (AUXILIARY_TOKEN_KIND if auxiliary else TOKEN_KIND):
             raise ValueError('Search-parent lineage changed its native data preflight stage')
         contract = proof['config']; token_path = contract['token_preflight']
         bound.bind(token_path, proof['inputs'].get(token_path))

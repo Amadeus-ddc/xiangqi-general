@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "evidence_state": "reconstructed_baseline",
+  "status": "complete_reviewed_first_two_native_search_data_shards_not_training_completion",
+  "checked_utc": "2026-11-11T21:37:42.219758+00:00",
+  "parent_selected_step": 12000,
+  "parent_selected_checkpoint_sha256": "dcef22a6789c45b18b002d802dd76175eeb289131e9eada51107df37bf0e7a8e",
+  "planned_original_candidate_roots": 2048,
+  "planned_shards": 4,
+  "completed_reviewed_native_shards": 2,
+  "shards": [
+    {
+      "shard": 1,
+      "original_candidate_roots": 512,
+      "raw_teacher_responses": 433,
+      "native_structurally_accepted_before_review": 351,
+      "original_native_rejections": 82,
+      "whole_labels_excluded_after_review": 87,
+      "actual_reviewed_native_training_rows": 264,
+      "total_rejected_responses": 169,
+      "native_verification": {
+        "path": "runs/auxiliary-next2048-shard01-reviewed-native-collection-v2/verification.json",
+        "sha256": "f88176ea90216f8585c7985302085dff7343095fe0f749f045cc734a8e81a1e4"
+      },
+      "final_artifact_readback": {
+        "path": "runs/auxiliary-next2048-shard01-reviewed-native-collection-v2/root-final-readback.json",
+        "sha256": "dc9f95d604b9619153de60339dc2e81284dcbabaa2efc46a92e3973fe2ce4a0a"
+      },
+      "training_file": {
+        "path": "runs/auxiliary-next2048-shard01-reviewed-native-collection-v2/merged/train.jsonl",
+        "sha256": "6a8070a60d33d3b9ea4cfa5e5a0fdc19d9dd5b3219555272bd55b9bc00865ec2"
+      }
+    },
+    {
+      "shard": 2,
+      "original_candidate_roots": 512,
+      "raw_teacher_responses": 434,
+      "native_structurally_accepted_before_review": 356,
+      "original_native_rejections": 78,
+      "whole_labels_excluded_after_review": 124,
+      "actual_reviewed_native_training_rows": 232,
+      "total_rejected_responses": 202,
+      "native_verification": {
+        "path": "runs/auxiliary-next2048-shard02-reviewed-native-collection-v1/verification.json",
+        "sha256": "2578602f4f43f6fea9ac7419ce7894eb4f89bbae613b17c0090a6a5f6ba7c1e8"
+      },
+      "final_artifact_readback": {
+        "path": "runs/auxiliary-next2048-shard02-reviewed-native-collection-v1/root-final-readback.json",
+        "sha256": "678ce541e28423ddb74928681c838a57d69ceb91dffe4f286c59ad4846829874"
+      },
+      "training_file": {
+        "path": "runs/auxiliary-next2048-shard02-reviewed-native-collection-v1/merged/train.jsonl",
+        "sha256": "44e9c845aae1a8fb06cd449223cad792075f9781b63d543ab687ca89c0d4e33d"
+      }
+    }
+  ],
+  "totals": {
+    "raw_teacher_responses": 867,
+    "native_structurally_accepted_before_review": 707,
+    "original_native_rejections": 160,
+    "whole_labels_excluded_after_review": 211,
+    "actual_reviewed_native_training_rows": 496,
+    "distinct_full_history_keys": 496,
+    "total_rejected_responses": 371
+  },
+  "teacher": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "inference_dtype": "bfloat16",
+    "quantization": "none"
+  },
+  "native_collection_source": {
+    "revision": "parallel-native-replay-preflight-135-v1",
+    "modules": 135,
+    "qualified_local_commit": "6d17b2a5a4ebf209c0a56025c2813692b5093dcb",
+    "source_tree": "e1dca826153e12a4c40875ffaf660ade5cd7289b",
+    "source_CPU_tests_passed_before_collection": 2863
+  },
+  "checks": {
+    "retained_row_bytes_values_and_order_preserved": true,
+    "original_validation_and_test_bytes_preserved": true,
+    "shared_validation_rows": 384,
+    "shared_test_rows": 512,
+    "duplicate_full_histories_between_current_two_shards": 0,
+    "native_reported_game_root_and_future_split_overlap_per_shard": 0,
+    "same_rows_as_completed_train_only_token_screen": true,
+    "maximum_training_tokens": 649,
+    "silent_token_truncation": false,
+    "known_positive_terminal_contradiction_label_ids_excluded": 16,
+    "known_positive_terminal_contradictions_in_current496": 0
+  },
+  "declared_source_kind_counts": {
+    "recorded_human_match": 294,
+    "published_recorded_match": 132,
+    "recorded_human_computer_match": 42,
+    "recorded_tactical_line": 15,
+    "recorded_tactical_position": 13
+  },
+  "source_kind_counts_are_not_authenticated_player_or_complete_game_counts": true,
+  "private_evidence": {
+    "current_native_inventory": {
+      "path": "runs/auxiliary-next2048-shard02-reviewed-native-collection-v1/current496-native-inventory-readback.json",
+      "sha256": "f30f855be3e97201cf76be131d4dc039687776b5c09cd8fc781fd366e292718e"
+    },
+    "train_only_length_screen": {
+      "path": "runs/auxiliary-current-reviewed496-train-only-capacity-screen-v1/root-readback.json",
+      "sha256": "ded453cfe4c59466df61268b954d471555ee18145c0f4621429fd2e1c7517e7e"
+    }
+  },
+  "limits": {
+    "shared_native_rule_implementation_with_collection": true,
+    "all_student_search_and_oracle_comparisons_independently_recomputed": false,
+    "independent_human_xiangqi_expert_validation": false,
+    "all_strategic_truth_or_mate_distances_certified": false,
+    "complete_four_shard_formal_dataset_ready": false,
+    "final_feature_manifest_and_full_six_stage_replay_preflight_complete": false,
+    "actual_single_GPU_capacity_and_exact_resume_proven": false,
+    "new_search_SGD_rounds": 0,
+    "strength_or_coaching_gain_measured_by_this_data_work": false,
+    "final_independent_model_evaluation_completed": false,
+    "model_weights_or_raw_data_published": false,
+    "full_goal_complete": false
+  }
+}

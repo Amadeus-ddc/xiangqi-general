@@ -122,6 +122,10 @@ class Predictor:
                        _move_constraints[batch].allowed(ids[prefix_length:].tolist()),
                        'num_beams': _beams, 'length_penalty': 0.0}
             features = [f.repeat_interleave(_beams, dim=0) for f in features]
+        if torch.device(self.device).type == 'cpu':
+            # CPU models use FP32 without autocast. Widen the already rounded
+            # memory exactly; keep the expert/cache rounding used in training.
+            features = [f.float() for f in features]
         cache_options = {} if autocast_cache_setting(self.config) else {'cache_enabled': False}
         with self.model.board_context(features), model_autocast(self.device, **cache_options), sample_rng(self.device, seed):
             outputs = self.model.base.generate(**inputs, max_new_tokens=max_new_tokens,

@@ -289,6 +289,153 @@ def training(tmp_path):
     return run, expert, base, cache, state
 
 
+@pytest.fixture
+def component_notices(training, tmp_path):
+    _, expert, _, _, _ = training
+    inputs = tmp_path / 'notice-inputs'
+    inputs.mkdir()
+    license_text = inputs / 'LICENSE.txt'
+    license_text.write_text('fixture upstream declaration\n')
+    specification = inputs / 'asset-notices.json'
+    atomic_json(specification, {
+        'profile': 'inference_asset_notices_v1',
+        'components': [{'name': 'Fixture expert', 'assets': {'expert/px0.pb.gz': digest(expert)},
+                        'source_url': 'https://example.org/pinned-revision/LICENSE',
+                        'license_id': 'LicenseRef-Fixture', 'license_file': 'LICENSE.txt',
+                        'license_sha256': digest(license_text)}]})
+    return specification, license_text
+
+
+def test_asset_notices_survive_relocation_and_preserve_exact_trained_values(
+        training, component_notices, tmp_path):
+    run, expert, _, _, state = training
+    specification, original_license = component_notices
+    selected_bytes = (run / 'adapter.pt').read_bytes()
+    original_text = original_license.read_bytes()
+    bundle = tmp_path / 'noted-model'
+    proof = export_model(run, expert, bundle, asset_notices=specification)
+    component = proof['asset_notices']['components'][0]
+    assert proof['asset_notices']['scope'] == 'upstream_declarations_for_exact_assets_only'
+    assert component['license_file'] == 'notices/component-0001-LICENSE.txt'
+    assert component['license_sha256'] == digest(original_license)
+    assert (bundle / component['license_file']).read_bytes() == original_text
+    assert str(specification.parent) not in json.dumps(proof)
+    moved = tmp_path / 'relocated-noted-model'
+    bundle.rename(moved)
+    specification.parent.rename(tmp_path / 'unavailable-notice-inputs')
+    checkpoint, reopened = read_bundle(moved)
+    assert reopened['asset_notices'] == proof['asset_notices']
+    assert all(torch.equal(checkpoint['trainable'][key], value) for key, value in state.items())
+    assert (run / 'adapter.pt').read_bytes() == selected_bytes
+    assert moved / component['license_file'] in model_bundle.checkpoint_input_paths(moved)
+
+
+def test_one_component_can_bind_multiple_original_inference_assets(training, component_notices, tmp_path):
+    run, expert, base, _, _ = training
+    specification, _ = component_notices
+    value = json.loads(specification.read_text())
+    value['components'][0]['assets']['decoder/model.safetensors'] = digest(base / 'model.safetensors')
+    atomic_json(specification, value)
+    proof = export_model(run, expert, tmp_path / 'model', asset_notices=specification)
+    assert len(proof['asset_notices']['components'][0]['assets']) == 2
+    assert len(list((tmp_path / 'model/notices').iterdir())) == 1
+    read_bundle(tmp_path / 'model')
+
+
+@pytest.mark.parametrize('problem', [
+    'asset_hash', 'license_hash', 'unlisted_asset', 'license_escape', 'license_symlink',
+    'duplicate_name', 'credential_url', 'empty_components', 'malformed_digest'])
+def test_asset_notice_input_rejected_before_creating_output(
+        training, component_notices, tmp_path, problem):
+    run, expert, _, _, _ = training
+    specification, license_text = component_notices
+    value = json.loads(specification.read_text())
+    component = value['components'][0]
+    if problem == 'asset_hash':component['assets']['expert/px0.pb.gz'] = '0' * 64
+    elif problem == 'license_hash':component['license_sha256'] = '0' * 64
+    elif problem == 'unlisted_asset':component['assets'] = {'adapter.pt': digest(run / 'adapter.pt')}
+    elif problem == 'license_escape':component['license_file'] = '../LICENSE.txt'
+    elif problem == 'license_symlink':
+        (specification.parent / 'alias.txt').symlink_to(license_text)
+        component['license_file'] = 'alias.txt'
+    elif problem == 'duplicate_name':value['components'].append(dict(component))
+    elif problem == 'credential_url':
+        component['source_url'] = 'https://' + 'fixture:fixture' + '@example.org/LICENSE'
+    elif problem == 'empty_components':value['components'] = []
+    else:component['license_sha256'] = True
+    atomic_json(specification, value)
+    output = tmp_path / 'rejected-model'
+    with pytest.raises(ValueError):
+        export_model(run, expert, output, asset_notices=specification)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize('problem', [
+    'rebound_license_bytes', 'rebound_expert', 'missing_declarations',
+    'external_notice_path', 'validator_identity'])
+def test_asset_notice_changes_rejected_before_loading_parameters(
+        training, component_notices, tmp_path, monkeypatch, problem):
+    run, expert, _, _, _ = training
+    specification, _ = component_notices
+    output = tmp_path / 'noted-model'
+    proof = export_model(run, expert, output, asset_notices=specification)
+    component = proof['asset_notices']['components'][0]
+    if problem in {'rebound_license_bytes', 'rebound_expert'}:
+        relative = component['license_file'] if problem == 'rebound_license_bytes' else 'expert/px0.pb.gz'
+        target = output / relative
+        target.write_bytes(b'changed but internally rebound input')
+        proof['files'][relative] = {'sha256': digest(target), 'bytes': target.stat().st_size}
+    elif problem == 'missing_declarations':proof.pop('asset_notices')
+    elif problem == 'external_notice_path':component['license_file'] = '../LICENSE.txt'
+    else:proof['code']['source_sha256']['src/xqgeneral/asset_notices.py'] = '0' * 64
+    atomic_json(output / 'manifest.json', proof)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Invalid notice identities must fail before any tensor load')
+    monkeypatch.setattr(model_bundle.torch, 'load', forbidden)
+    with pytest.raises(ValueError):
+        read_bundle(output)
+
+
+def test_license_input_changed_while_copying_never_creates_complete_manifest(
+        training, component_notices, tmp_path, monkeypatch):
+    run, expert, _, _, _ = training
+    specification, license_text = component_notices
+    original_copy = model_bundle.shutil.copy2
+    def changed_document(source, target):
+        result = original_copy(source, target)
+        if Path(source) == license_text:license_text.write_text('changed during export')
+        return result
+    monkeypatch.setattr(model_bundle.shutil, 'copy2', changed_document)
+    output = tmp_path / 'interrupted-export'
+    with pytest.raises(ValueError, match='changed'):
+        export_model(run, expert, output, asset_notices=specification)
+    assert not (output / 'manifest.json').exists()
+
+
+def test_legacy_bundle_without_component_notices_keeps_its_original_contract(training, tmp_path):
+    run, expert, _, _, _ = training
+    output = tmp_path / 'legacy-model'
+    proof = export_model(run, expert, output)
+    assert 'asset_notices' not in proof and not (output / 'notices').exists()
+    proof['code']['source_sha256'].pop('src/xqgeneral/asset_notices.py')
+    atomic_json(output / 'manifest.json', proof)
+    read_bundle(output)
+
+
+def test_model_bundle_cli_exports_requested_component_notices(
+        training, component_notices, tmp_path, monkeypatch):
+    run, expert, _, _, _ = training
+    specification, _ = component_notices
+    output = tmp_path / 'cli-model'
+    monkeypatch.setattr(sys, 'argv', ['model_bundle', '--training', str(run), '--weights', str(expert),
+                                    '--output', str(output), '--asset-notices', str(specification)])
+    previous_threads = torch.get_num_threads()
+    try:model_bundle.main()
+    finally:torch.set_num_threads(previous_threads)
+    _, proof = read_bundle(output)
+    assert proof['asset_notices']['components'][0]['assets']['expert/px0.pb.gz'] == digest(expert)
+
+
 def test_relocated_bundle_loads_exact_parameters_without_original_paths(training, tmp_path, monkeypatch):
     run, expert, base, cache, state = training
     bundle = tmp_path / 'bundle'

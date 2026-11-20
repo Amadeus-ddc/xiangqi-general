@@ -72,7 +72,7 @@ def _binding(path):
     return {'sha256': digest(path), 'bytes': path.stat().st_size}
 
 
-def export_model(training, weights, output):
+def export_model(training, weights, output, *, asset_notices=None):
     """Copy inference dependencies and exact trained values; leave all source artifacts intact."""
     training, weights, output = Path(training).resolve(), Path(weights).resolve(), Path(output).resolve()
     if output.exists():
@@ -117,12 +117,17 @@ def export_model(training, weights, output):
         raise ValueError('Export outside the preserved training and decoder directories')
     assets = _decoder_assets(decoder)
     signatures.update({p: file_signature(p) for p in assets.values()})
+    asset_paths = {**{f'decoder/{k}': v for k, v in assets.items()}, 'expert/px0.pb.gz': weights}
+    notices, documents = None, {}
+    if asset_notices is not None:
+        from .asset_notices import prepare_asset_notices
+        notices, documents, notice_signatures = prepare_asset_notices(asset_notices, asset_paths)
+        signatures.update(notice_signatures)
     runtime = {k: config[k] for k in RUNTIME_FIELDS if k in config}
     runtime['model_path'] = 'decoder'
     output.mkdir(parents=True, exist_ok=False)
     copied = {}
-    for relative, source in {**{f'decoder/{k}': v for k, v in assets.items()},
-                             'expert/px0.pb.gz': weights}.items():
+    for relative, source in {**asset_paths, **documents}.items():
         before = _binding(source)
         target = output / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -152,6 +157,10 @@ def export_model(training, weights, output):
                                'optimizer_or_rng_state_included': False,
                                'datasets_or_feature_cache_included': False,
                                'quality_assessed_by_export': False}}
+    if notices is not None:
+        from .asset_notices import validate_asset_notices
+        validate_asset_notices(notices, copied)
+        result['asset_notices'] = notices
     atomic_json(output / 'manifest.json', result)
     return result
 
@@ -187,6 +196,13 @@ def _checked_bundle(directory):
     hashes = proof.get('code', {}).get('source_sha256', {})
     if any(hashes.get('src/xqgeneral/' + name) != digest(source / name) for name in RUNTIME_MODULES):
         raise ValueError('Installed inference and encoder source differs from the recorded bundle runtime')
+    if 'asset_notices' in proof:
+        from .asset_notices import validate_asset_notices
+        if hashes.get('src/xqgeneral/asset_notices.py') != digest(source / 'asset_notices.py'):
+            raise ValueError('Installed component notice validator differs from the recorded bundle runtime')
+        validate_asset_notices(proof['asset_notices'], files)
+    elif any(name.startswith('notices/') for name in files):
+        raise ValueError('Inference component notice documents need their asset declarations')
     _decoder_assets(root / 'decoder')
     return root, proof
 
@@ -230,9 +246,10 @@ def main():
     parser.add_argument('--training', required=True, help='Completed model_training directory with adapter.pt')
     parser.add_argument('--weights', required=True, help='The Px0 weights used for the training cache')
     parser.add_argument('--output', required=True, help='New portable model directory')
+    parser.add_argument('--asset-notices', help='Optional exact-asset declarations and local license text')
     args = parser.parse_args()
     torch.set_num_threads(4)
-    proof = export_model(args.training, args.weights, args.output)
+    proof = export_model(args.training, args.weights, args.output, asset_notices=args.asset_notices)
     print(json.dumps({'status': proof['status'], 'output': args.output, **proof['verification']}, ensure_ascii=False))
 
 

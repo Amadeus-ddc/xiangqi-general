@@ -17,16 +17,20 @@ from .recorded_coach import SPLITS, checked_manifest, check_artifacts
 from .reviewed_explanations import ENGINE_QUALIFIED_KIND, REFERENCE_CORRECTION_KIND, source_contract
 from .training import encode_record, messages
 from .verified_inputs import input_digest_execution, input_session_from_environment
+from .explanation_answer_format import (EXPLANATION_FIRST_PROFILE, answer_profile_kwargs,
+                                       checked_answer_profile, profiled_token_kind)
 
 _TOKENIZER = None
 _TOKEN_LIMIT = None
+_ANSWER_PROFILE = None
 
 
-def encoded_lengths(tokenizer, row, token_limit):
+def encoded_lengths(tokenizer, row, token_limit, *, explanation_answer_profile=None):
     prompt = messages(row, 'bridge', None)[1]['content']
     if row['fen'] in prompt or '棋盘FEN：' in prompt or '棋盘各格：' in prompt:
         raise ValueError('Latent-only explanation prompt contains literal board state')
-    tokens, labels = encode_record(tokenizer, row, token_limit, 'bridge', True, None)
+    options = answer_profile_kwargs({'explanation_answer_profile': explanation_answer_profile})
+    tokens, labels = encode_record(tokenizer, row, token_limit, 'bridge', True, None, **options)
     supervised = sum(label != -100 for label in labels)
     if not supervised:
         raise ValueError('Explanation has no supervised answer tokens')
@@ -34,9 +38,10 @@ def encoded_lengths(tokenizer, row, token_limit):
             'supervised_tokens': supervised, 'prompt_tokens': len(tokens) - supervised}
 
 
-def token_initializer(model_path, token_limit):
+def token_initializer(model_path, token_limit, explanation_answer_profile=None):
     from transformers import AutoTokenizer
-    global _TOKENIZER, _TOKEN_LIMIT
+    global _TOKENIZER, _TOKEN_LIMIT, _ANSWER_PROFILE
+    _ANSWER_PROFILE = checked_answer_profile(explanation_answer_profile)
     torch.set_num_threads(1)
     _TOKENIZER = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
     _TOKENIZER.pad_token = _TOKENIZER.eos_token
@@ -46,13 +51,16 @@ def token_initializer(model_path, token_limit):
 
 
 def token_chunk(rows):
-    return [encoded_lengths(_TOKENIZER, row, _TOKEN_LIMIT) for row in rows]
+    options = answer_profile_kwargs({'explanation_answer_profile': _ANSWER_PROFILE})
+    return [encoded_lengths(_TOKENIZER, row, _TOKEN_LIMIT, **options) for row in rows]
 
 
-def preflight(data, foundation_config, foundation_preflight, output, *, max_tokens=1024, workers=8):
+def preflight(data, foundation_config, foundation_preflight, output, *, max_tokens=1024, workers=8,
+              explanation_answer_profile=None):
     """Precheck immutable labels without loading a model or starting training."""
     if type(workers) is not int or workers < 1 or type(max_tokens) is not int or max_tokens < 1:
         raise ValueError('Positive worker and token budgets are required')
+    profile = checked_answer_profile(explanation_answer_profile)
     root, data = Path(output), Path(data)
     if root.exists():
         raise FileExistsError('Preserve every completed or interrupted preflight; use a fresh output')
@@ -108,12 +116,13 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
             maximum[item['split']] = max(maximum[item['split']], item['tokens'])
             token_counts[item['split']] += 1;handle.write(json.dumps(item) + '\n')
     with observations.open('x') as handle:
+        initargs = (str(model_path), max_tokens) + ((profile,) if profile is not None else ())
         if workers == 1:
-            token_initializer(str(model_path), max_tokens)
+            token_initializer(*initargs)
             save(token_chunk(eligible), handle)
         else:
             with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'),
-                    initializer=token_initializer, initargs=(str(model_path), max_tokens)) as pool:
+                    initializer=token_initializer, initargs=initargs) as pool:
                 for result in bounded_results(pool, token_chunk, eligible, workers, 128):
                     save(result, handle)
     if dict(token_counts) != {s: n for s, n in counts.items() if s != 'test' and n}:
@@ -146,13 +155,15 @@ def preflight(data, foundation_config, foundation_preflight, output, *, max_toke
         'new_neural_labels_generated': False, 'active_foundation_inputs_changed': False,
         'four_new_raw_course_gates_required_before_sft': True, 'ready_to_start_sft': False,
         'student_benefit_proven': False, **execution}
+    summary.update(answer_profile_kwargs({'explanation_answer_profile': profile}))
     atomic_json(root / 'verification.json', summary)
-    proof = manifest('latent_only_reviewed_explanation_data_preflight',
+    proof = manifest(profiled_token_kind('latent_only_reviewed_explanation_data_preflight', profile),
         {'data': str(data), 'foundation_config': str(config_path), 'foundation_preflight': str(completed_path),
          'workers': workers, 'max_tokens': max_tokens},
         [data_manifest, *paths, config_path, completed_path, cache_manifest,
          *(feature_paths(cache_path) if is_feature_store(cache_path) else []), *tokenizer_paths],
         [observations, root / 'verification.json'], summary)
+    proof['config'].update(answer_profile_kwargs({'explanation_answer_profile': profile}))
     proof['cache_header_only_input'] = {'path': str(cache_path), **expected,
                                        'fresh_full_bytes_hash_verified_by_this_preflight': fresh_full_cache_hash}
     atomic_json(root / 'manifest.json', proof)
@@ -167,11 +178,12 @@ def main():
     parser.add_argument('--output', required=True)
     parser.add_argument('--max-tokens', type=int, default=1024)
     parser.add_argument('--workers', type=int, default=8)
+    parser.add_argument('--explanation-answer-profile', choices=[EXPLANATION_FIRST_PROFILE])
     parser.add_argument('--public-evidence')
     args = parser.parse_args()
     with input_session_from_environment():
         summary = preflight(args.data, args.foundation_config, args.foundation_preflight, args.output,
-                            max_tokens=args.max_tokens, workers=args.workers)
+                            max_tokens=args.max_tokens, workers=args.workers, **answer_profile_kwargs(vars(args)))
     if args.public_evidence:
         atomic_json(args.public_evidence, dict(summary, manifest_sha256=digest(Path(args.output) / 'manifest.json')))
     print(json.dumps(summary, ensure_ascii=False), flush=True)

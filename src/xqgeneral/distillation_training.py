@@ -1,4 +1,5 @@
 """Train one real search-distillation round after its data and GPU preflights."""
+from .explanation_answer_format import checked_token_answer_kind
 import argparse
 import json
 import math
@@ -9,6 +10,7 @@ import sys
 import torch
 
 from .distillation_preflight import ROUND_KIND, TOKEN_KIND, completed_parent
+from .explanation_answer_format import require_matching_answer_profiles
 from .curriculum_data import STAGES
 from .evidence import atomic_json, code_identity, digest, manifest
 from .finite_training import (FINITE_PROFILE, FULL_SOURCE_PROFILE, check_full_source_selection,
@@ -21,27 +23,31 @@ from .full_decoder_topology import search_topology
 from .distillation_validation import (JOINT_VALIDATION_PROFILE, LEGACY_VALIDATION_PROFILE,
     AUXILIARY_VALIDATION_PROFILE, joint_validation_coverage, validation_stages as stage_names)
 from .auxiliary_search_replay import (PROFILE as AUXILIARY_REPLAY_PROFILE,
+    COACHING_PROFILE as COACHING_REPLAY_PROFILE,
     LEGACY_PROFILE as LEGACY_REPLAY_PROFILE, STAGES as AUXILIARY_REPLAY_STAGES)
 
 
 def compile_recipe(template, token, root):
     """Cover all accepted labels at least once within the explicit update cap."""
-    if (token.get('status') != 'complete' or token.get('kind') != TOKEN_KIND or
+    if (token.get('status') != 'complete' or checked_token_answer_kind(token) != TOKEN_KIND or
             token['verification'].get('all_train_validation_supervision_fits_without_truncation') is not True or
             token['verification'].get('independent_test_used_for_training_or_selection') is not False):
         raise ValueError('Require the exact completed search-label token preflight')
+    require_matching_answer_profiles(template, token.get('config', {}))
     validation_profile = template.get('validation_profile', LEGACY_VALIDATION_PROFILE)
     validation_stages = stage_names(validation_profile)
     joint_validation = validation_profile in (JOINT_VALIDATION_PROFILE, AUXILIARY_VALIDATION_PROFILE)
     auxiliary_replay = validation_profile == AUXILIARY_VALIDATION_PROFILE
     replay_stages = AUXILIARY_REPLAY_STAGES if auxiliary_replay else STAGES
     topology = search_topology(template)
-    replay_profile = AUXILIARY_REPLAY_PROFILE if auxiliary_replay else LEGACY_REPLAY_PROFILE
-    if (template.get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
+    replay_profile = template.get('replay_profile', LEGACY_REPLAY_PROFILE)
+    allowed_profiles = (AUXILIARY_REPLAY_PROFILE, COACHING_REPLAY_PROFILE) if auxiliary_replay else (LEGACY_REPLAY_PROFILE,)
+    coaching_replay = replay_profile == COACHING_REPLAY_PROFILE
+    if (replay_profile not in allowed_profiles or
             token['config'].get('replay_profile', LEGACY_REPLAY_PROFILE) != replay_profile or
-            auxiliary_replay and (topology['world_size'] not in {2, 3} or template.get('loss_normalization') != 'token' or
+            auxiliary_replay and (topology['world_size'] not in {1, 2, 3} or template.get('loss_normalization') != 'token' or
                 template.get('source_coverage_profile') != FULL_SOURCE_PROFILE)):
-        raise ValueError('Six-stage replay requires matching two or three worker token-loss and full-subset profiles')
+        raise ValueError('Six-stage replay requires matching declared-worker token-loss and full-subset profiles')
     if (template.get('require_clean_foundation_handoff') is not False or
             template.get('decoder_training') != 'full' or template.get('trainable_parameter_dtype') != 'float32' or
             template.get('training_data_profile') != FINITE_PROFILE or
@@ -73,22 +79,34 @@ def compile_recipe(template, token, root):
         replay = token['verification'].get('course_replay', {})
         if (template.get('stages') != ['explanation', *replay_stages] or
                 not isinstance(template.get('mixture'), dict) or set(template['mixture']) != {'explanation', *replay_stages} or
-                template.get('loss_normalization') not in ({'example', 'token'} if topology['world_size'] in {2, 3} else {'example'}) or
+                template.get('loss_normalization') not in ({'example', 'token'} if topology['world_size'] in {1, 2, 3} else {'example'}) or
                 replay.get('data_paths') != replay_paths or
                 any(replay.get(key) is not True for key in ['all_raw_train_validation_answers_natively_regraded',
                     'all_features_present', 'combined_split_isolation_verified']) or
                 replay.get('independent_test_rows_tokenized') != 0):
             raise ValueError('Joint distillation requires all four certified courses and its declared loss reduction')
         available = replay.get('by_split_and_stage', {})
+        expected_stages = dict(train=set(replay_stages), validation=set(replay_stages))
+        if coaching_replay:
+            expected_stages['train'].add('explanation')
         if (not isinstance(available, dict) or set(available) != {'train', 'validation'} or
-                any(not isinstance(available[split], dict) or set(available[split]) != set(replay_stages)
+                any(not isinstance(available[split], dict) or set(available[split]) != expected_stages[split]
                     for split in available) or
                 any(type(available[split][stage]) is not int or available[split][stage] < 1
-                    for split in available for stage in replay_stages)):
+                    for split in available for stage in expected_stages[split])):
             raise ValueError('Course replay needs actual positive train and validation coverage for every course')
         if replay.get('train_validation_rows_tokenized') != sum(sum(available[split].values()) for split in available):
             raise ValueError('Course replay token coverage differs from its raw source counts')
-        source_counts.update(available['train'])
+        if coaching_replay:
+            retained = replay.get('original_coaching_replay', {})
+            if (type(retained.get('selected_training_rows')) is not int or
+                    retained['selected_training_rows'] != available['train']['explanation'] or
+                    type(retained.get('source_training_rows')) is not int or
+                    retained['source_training_rows'] < retained['selected_training_rows'] or
+                    retained.get('heldout_answers_parsed_or_tokenized') != 0):
+                raise ValueError('Original coaching retention needs exact train-only source coverage')
+        for stage, count in available['train'].items():
+            source_counts[stage] = source_counts.get(stage, 0) + count
     elif template.get('stages') != ['explanation'] or template.get('mixture') != {'explanation': 1.0}:
         raise ValueError('Explanation-only distillation must retain its original mixture')
     validation_counts = {'explanation': counts['validation']}
@@ -100,7 +118,7 @@ def compile_recipe(template, token, root):
             (not joint_validation or template['validation_rows_by_stage'] != validation_counts)):
         raise ValueError('Declared validation counts differ from actual token-verified original sources')
     weights = template['mixture']
-    derived_full_source = topology['world_size'] in {2, 3} and template.get('source_coverage_profile') == FULL_SOURCE_PROFILE
+    derived_full_source = topology['world_size'] in {1, 2, 3} and template.get('source_coverage_profile') == FULL_SOURCE_PROFILE
     if derived_full_source:
         if any(type(v) not in (int, float) or not math.isfinite(v) or v <= 0 for v in weights.values()):
             raise ValueError('Declared full-source mixture weights must be positive finite values')
@@ -160,10 +178,15 @@ def compile_recipe(template, token, root):
         budget.update(replay_profile=replay_profile, auxiliary_policy_replay_included=True,
                       replay_is_explicit_original_training_subset=True,
                       auxiliary_replay_counts_toward_new_search_label_scale=False)
+    if coaching_replay:
+        budget.update(original_coaching_replay_training_rows=available['train']['explanation'],
+                      all_explanation_training_rows=source_counts['explanation'],
+                      original_coaching_replay_additional_validation_rows=0,
+                      original_coaching_replay_counts_toward_new_search_label_scale=False)
     if full_source:
         budget.update(source_coverage_profile=template['source_coverage_profile'],
             all_actual_training_rows_selected_each_epoch=True, finite_anchor_stage=mix['anchor_stage'])
-    if topology['world_size'] in {2, 3}:
+    if topology['world_size'] in {1, 2, 3}:
         budget.update(search_topology_profile=topology['profile'], world_size=topology['world_size'],
             loss_normalization=recipe['loss_normalization'],
             mixture_derived_from_actual_token_verified_counts=derived_full_source,
@@ -266,6 +289,8 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
                 probe.get('actual_continuous_four_and_two_plus_two_updates_compared') is not True or
                 probe.get('full_decoder_initialization_preserved_all_parent_tensors') is not True):
             raise ValueError('The actual full-decoder distillation GPU preflight must pass first')
+        if world == 1 and probe.get('actual_cpu_optimizer_state_placement_verified') is not True:
+            raise ValueError('One-worker distillation requires actual CPU moment residency during its GPU probe')
         probe_proof = json.loads((preflight_root / 'manifest.json').read_text())
         if (probe_proof.get('status') != 'complete' or probe_proof.get('kind') != topology['preflight_kind'] or
                 probe_proof.get('verification') != probe or probe_proof.get('code') != contract['code'] or
@@ -328,6 +353,10 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
         summary = full_parameter_summary(selected['trainable'], reference)
         if summary['trainable_parameters'] != metrics['trainable_parameters'] or summary['trainable_tensors'] != probe['trainable_tensors']:
             raise ValueError('Distillation did not retain the actual full-decoder parameter set')
+        if world == 1:
+            from .optimizer_offload import validate_cpu_moment_placement
+            validate_cpu_moment_placement(metrics.get('optimizer_runtime_state_placement'),
+                                          summary['trainable_tensors'], summary['trainable_parameters'])
         del selected, reference
         result = {'status': 'complete', 'evidence_state': 'reconstructed_baseline',
             'initial_explanation_sft_completed_before_round': True,
@@ -342,9 +371,11 @@ def run_round(source, recipe_template, token_manifest, output, *, resume=False):
             'validation_selects_checkpoint': True, 'independent_test_used_for_training_or_selection': False,
             'raw_answers_repaired': False, 'strength_and_coaching_gain_evaluated': False,
             'strong_play_or_reliable_coaching_proven': False, **summary}
-        if world in {2, 3}:
+        if world in {1, 2, 3}:
             result.update({topology['completion_flag']: True},
                           search_topology_profile=topology['profile'])
+        if world == 1:
+            result['actual_cpu_optimizer_state_placement_verified'] = True
         if recipe.get('replay_data_paths'):
             result.update(course_replay_sources=recipe['replay_data_paths'],
                 selected_training_rows_by_stage=budget['finite_mixture']['selected_rows_by_stage'],
