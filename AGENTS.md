@@ -1,6 +1,7 @@
 # Xiangqi General development
 
 - Work only in this project. Read `STATUS.md` for evidence and `README.md` for commands.
+- Before admitting GPU work or restarting a queue on the training server, read `runs/GPU_ALLOCATION_POLICY_CURRENT.json` and the current goal state. A paused goal or an empty permitted list forbids resumption; the legacy compatibility policy and old tmux sessions are not authorization. Documentation closeout does not resume training.
 - Run `.venv/bin/python -m pytest -q` before committing a milestone. CPU tests require no model downloads.
 - Keep models, datasets, checkpoints, vendor checkouts, and runtime logs out of Git.
 - Preserve completed experiments; use a new output directory for changed configurations.

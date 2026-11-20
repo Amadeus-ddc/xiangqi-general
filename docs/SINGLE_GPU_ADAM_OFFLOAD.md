@@ -1,5 +1,10 @@
 # Single-GPU FP32 Adam state offload
 
+Resource permission and current jobs are recorded in [STATUS](../STATUS.md).
+The project is paused as of 2026-11-20, with no GPU admitted. The commands below
+describe the implementation and require separate authorization to resume work;
+they are not a live queue or permission to acquire a card.
+
 Set `optimizer_state_offload` to `"cpu"` and `optimizer_foreach` to `false`
 for single-rank, unsharded training. Existing configurations retain their
 ordinary AdamW behavior. Changing this setting requires a new experiment;
