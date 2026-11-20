@@ -1,6 +1,8 @@
 # Xiangqi General development
 
 - Work only in this project. Read `STATUS.md` for evidence and `README.md` for commands.
+- `STATUS.md` identifies the current development docs; match commands to the checkout you are using. Documentation updates do not merge unfinished development code.
+- Before GPU work or queue restarts on the training server, read `runs/GPU_ALLOCATION_POLICY_CURRENT.json` and the goal state. A paused goal or empty permitted list forbids resumption; old compatibility policy and tmux sessions are not authorization.
 - Run `.venv/bin/python -m pytest -q` before committing a milestone. CPU tests require no model downloads.
 - Keep models, datasets, checkpoints, vendor checkouts, and runtime logs out of Git.
 - Preserve completed experiments; use a new output directory for changed configurations.
