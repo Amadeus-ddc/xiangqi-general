@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "status": "verified_paused_preserved_partial_evaluation_no_model_promotion",
+  "checked_utc": "2026-11-20T10:03:17.171591+00:00",
+  "evidence_basis": "archived_native_run_receipts_and_read_only_runtime_observation",
+  "goal_status": "paused",
+  "permitted_project_GPUs": [],
+  "previous_GPU0_only_permission_superseded": true,
+  "retained_development_model_step": 12000,
+  "final_model_selected": false,
+  "full_goal_complete": false,
+  "training_attempt": {
+    "actual_optimizer_updates": 1000,
+    "original_NLL_selected_step": 0,
+    "model_promoted": false,
+    "successful_new_search_rounds": 0
+  },
+  "actual1000_fixed32": {
+    "arms": {
+      "parent12000": {
+        "answers": 32,
+        "first_move_legal": 32,
+        "main_PV_legal": 20,
+        "full_contract_valid": 4,
+        "EOS": 32,
+        "capped": 0,
+        "scored_first_moves": 32,
+        "unscored_legal": 0,
+        "no_mistake_below_point10": 27,
+        "mean_expected_score_loss_conditional": 0.056
+      },
+      "unselected1000": {
+        "answers": 32,
+        "first_move_legal": 32,
+        "main_PV_legal": 22,
+        "full_contract_valid": 8,
+        "EOS": 32,
+        "capped": 0,
+        "scored_first_moves": 32,
+        "unscored_legal": 0,
+        "no_mistake_below_point10": 28,
+        "mean_expected_score_loss_conditional": 0.049375
+      }
+    },
+    "paired_rules": {
+      "move_legal": {
+        "both_pass": 32
+      },
+      "main_PV_legal": {
+        "both_fail": 4,
+        "both_pass": 14,
+        "unselected1000_only": 8,
+        "parent_only": 6
+      },
+      "full_contract_valid": {
+        "both_fail": 20,
+        "unselected1000_only": 8,
+        "parent_only": 4
+      }
+    },
+    "actual_fresh_engine_queries_in_archived_diagnostic": 40,
+    "complete_readback": true,
+    "not_winrate_Elo_final_test_or_semantic_acceptance": true
+  },
+  "preserved_development_match": {
+    "completed_raw_games_at_user_stop": 328,
+    "planned_games": 384,
+    "incomplete": true,
+    "partial_next_game_preserved": true,
+    "full_match_winrate_not_claimed": true
+  },
+  "locked64_auxiliary_review": {
+    "requested": 64,
+    "valid_ratings": 25,
+    "rejected_ratings": 39,
+    "independent_human_teaching_acceptance": false
+  },
+  "teacher_style_pilot": {
+    "actual_raw_responses": 32,
+    "paired_cases": 16,
+    "training_labels_admitted": 0,
+    "student_gain_not_measured": true
+  },
+  "next512": {
+    "mining_exit": 1,
+    "reason": "no completed full4096 profile with sufficient CPU capacity",
+    "dependent_features_exit": 1,
+    "complete_new512_mining_or_features_not_claimed": true
+  },
+  "resource_observation": {
+    "project_GPU_device_handles_found": 0,
+    "unknown_GPU_occupant_ownership_not_claimed": true,
+    "unknown_processes_untouched": true,
+    "CPU_reservation_guards_and_frozen_preparation_tasks_retained": true
+  },
+  "this_closeout": {
+    "new_student_teacher_or_engine_queries": 0,
+    "new_SGD_updates": 0,
+    "GPUs_admitted": [],
+    "models_or_checkpoints_deleted": false,
+    "branches_or_worktrees_deleted": false,
+    "memory_generated_read_only": true
+  },
+  "private_receipt_sha256": {
+    "all_project_GPU_release": "fd05052548887fae4cfaf741c5acc263553d47f39bb78f3b9fa8482d2b05b825",
+    "old_GPU_dispatcher_termination": "1ec3bbaf3214a0f442fc937f44bcbb2d0600aefc2f7876c0e1a8a3a23cb6d7e4",
+    "actual1000_generation": "fb4fff85a7f77b37f9bdf76e32e3c1caa9a0893884389e89841dea832bb1886d",
+    "actual1000_closed_scoring": "5ef1282c54a9683957fe2c328445efe857efc36e93475f141f0b796d33129054",
+    "actual1000_paired_summary": "7cbb7dff0064821b9b791d13486f79966dbcb5763201de292334bf27922454ce",
+    "locked64_review_readback": "5e0b1dad812194a5fc308e4b4d991cf95c378ec66991e063b848473995a4eea5",
+    "teacher_style32_generation": "3d13e964d30169eb46af6a4bf868294581a519c5aa1bcb3fabdf78984246a993",
+    "teacher_style32_native_readback": "2818160c22f93732d6022ffdb5567cca1601d0ca77e6e2a35d7c03b1f21a09b4",
+    "next512_mining_failure": "ac1afda2c310dab4a18d617f9f37b349c268039b7a5bac114a3c315b2f8ccf1c",
+    "dependent_features_exit": "5cd12fc42aef220f582cf43d5b06f91f057493139a0f5460554203745df81961",
+    "read_only_runtime_observation": "a391ea9ef869730c703822ac35bc8b57e8708c36a16cb480a4c6d36fda3a466e"
+  }
+}
